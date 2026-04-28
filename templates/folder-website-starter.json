@@ -1,0 +1,38 @@
+{
+  "itemId": "catalog-template-folder-website-starter",
+  "templateId": "folder-website-starter",
+  "name": "Folder Website Starter",
+  "description": "Файловый шаблон сайта из папки templates: hero, about, services, CTA.",
+  "version": "0.1.0",
+  "installed": true,
+  "trust": "local-file",
+  "template": {
+    "id": "folder-website-starter",
+    "name": "Folder Website Starter",
+    "category": "website",
+    "description": "Файловый шаблон сайта из папки templates.",
+    "defaults": {
+      "kicker": "Folder Website Starter",
+      "title": "Untitled Folder Website",
+      "author": "IRGEZTNE Desk",
+      "summary": "Локальный файловый шаблон, загруженный из папки templates.",
+      "excerpt": "A website starter that now lives as a real JSON file.",
+      "seoTitle": "Untitled Folder Website",
+      "seoDescription": "Локальный файловый шаблон сайта, загруженный из папки templates.",
+      "keywords": ["website", "folder", "template"],
+      "visualHtml": "<section class=\"ns-page-section ns-page-hero ns-page-hero--split\"><div class=\"ns-page-hero__content\"><div class=\"ns-page-kicker\">Folder Website Starter</div><h1>Запуск из реального файла шаблона</h1><p>Этот шаблон теперь лежит в папке templates и загружается в Каталог и Редактор как отдельный элемент.</p></div><aside class=\"ns-page-panel ns-page-panel--feature\"><div class=\"ns-page-panel__eyebrow\">Local file</div><strong>Реальный JSON-шаблон</strong><p>Держите шаблоны отдельно от JS-инкубатора и развивайте их по одному.</p></aside></section><section class=\"ns-page-section\" id=\"about\"><div class=\"ns-page-section__head\"><h2>About</h2><p>Опишите здесь сайт, проект, редакцию или профиль.</p></div></section><section class=\"ns-page-section\" id=\"services\"><div class=\"ns-page-section__head\"><h2>Services</h2><p>Используйте карточки, секции и простую структуру для первого пути публикации.</p></div></section><section class=\"ns-page-section\" id=\"contact\"><div class=\"ns-page-callout\"><div><div class=\"ns-page-callout__eyebrow\">Call to action</div><h2>Готовы публиковать?</h2><p>Добавьте здесь финальное действие.</p></div><a class=\"ns-page-button ns-page-button--primary\" href=\"mailto:hello@example.com\">Контакт</a></div></section>",
+      "markdown": "# Запуск из реального файла шаблона\n\nЭтот шаблон теперь лежит в папке templates и загружается в Каталог и Редактор как отдельный элемент.\n\n## About\n\nОпишите здесь сайт, проект, редакцию или профиль.\n\n## Services\n\nИспользуйте карточки, секции и простую структуру для первого пути публикации.\n\n## Call to action\n\nДобавьте здесь финальное действие.",
+      "blocks": [
+        { "type": "heading-1", "text": "Запуск из реального файла шаблона" },
+        { "type": "paragraph", "text": "Этот шаблон теперь лежит в папке templates и загружается в Каталог и Редактор как отдельный элемент." },
+        { "type": "heading-2", "text": "About" },
+        { "type": "paragraph", "text": "Опишите здесь сайт, проект, редакцию или профиль." },
+        { "type": "heading-2", "text": "Services" },
+        { "type": "paragraph", "text": "Используйте карточки, секции и простую структуру для первого пути публикации." },
+        { "type": "heading-2", "text": "Call to action" },
+        { "type": "paragraph", "text": "Добавьте здесь финальное действие." }
+      ],
+      "tags": ["website", "folder", "local-file"]
+    }
+  }
+}

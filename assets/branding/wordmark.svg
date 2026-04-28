@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 160" fill="none">
+  <rect x="8" y="16" width="128" height="128" rx="28" fill="#0B1730"/>
+  <path d="M40 36H88L70 52H58L40 36Z" fill="#4C8FFF" transform="translate(8 16)"/>
+  <path d="M40 92H88L70 76H58L40 92Z" fill="#EAF2FF" transform="translate(8 16)"/>
+  <path d="M40 36V92" stroke="#EAF2FF" stroke-width="10" stroke-linecap="round" transform="translate(8 16)"/>
+  <path d="M88 36V92" stroke="#4C8FFF" stroke-width="10" stroke-linecap="round" transform="translate(8 16)"/>
+  <rect x="34" y="42" width="76" height="76" rx="20" stroke="#162846" stroke-width="4"/>
+  <text x="170" y="101" fill="#EAF2FF" font-family="Inter, Arial, sans-serif" font-size="58" font-weight="800" letter-spacing="2">IRGEZTNE</text>
+</svg>

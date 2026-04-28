@@ -1,0 +1,704 @@
+/* =========================================================
+   NS Browser v8
+   CodeHub v1
+   ========================================================= */
+
+.ns-codehub-v1 {
+  display: grid;
+  gap: 12px;
+}
+
+.ns-codehub-v1,
+.ns-codehub-v1 * {
+  box-sizing: border-box;
+}
+
+.ns-codehub-v1__hero,
+.ns-codehub-v1__panel,
+.ns-codehub-v1__builder-shell,
+.ns-codehub-v1__side {
+  display: grid;
+  gap: 12px;
+}
+
+.ns-codehub-v1__hero {
+  padding: 14px;
+}
+
+.ns-codehub-v1__kicker,
+.ns-codehub-v1__card-kicker {
+  font-size: 11px;
+  line-height: 1.1;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(184, 204, 236, 0.82);
+}
+
+.ns-codehub-v1__hero h3,
+.ns-codehub-v1__panel h4,
+.ns-codehub-v1__builder-shell h4,
+.ns-codehub-v1__submit-card h4 {
+  margin: 0;
+  color: #f4f8ff;
+}
+
+.ns-codehub-v1__hero h3 {
+  font-size: 22px;
+  line-height: 1.08;
+}
+
+.ns-codehub-v1__hero p,
+.ns-codehub-v1__panel-head span,
+.ns-codehub-v1__card-copy,
+.ns-codehub-v1__validation p,
+.ns-codehub-v1__rules-grid span,
+.ns-codehub-v1__overview-note p {
+  margin: 0;
+  color: rgba(194, 210, 232, 0.9);
+  line-height: 1.45;
+  font-size: 13px;
+}
+
+.ns-codehub-v1__hero-actions,
+.ns-codehub-v1__actions,
+.ns-codehub-v1__card-actions,
+.ns-codehub-v1__builder-head-actions,
+.ns-codehub-v1__file-actions,
+.ns-codehub-v1__builder-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ns-codehub-v1__topnav {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 8px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+}
+
+.ns-codehub-v1__btn,
+.ns-codehub-v1__topnav-btn,
+.ns-codehub-v1__builder-tab,
+.ns-codehub-v1__inline-btn,
+.ns-codehub-v1__upload span {
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(118, 169, 255, 0.16);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(234, 242, 255, 0.94);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.18s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  word-break: normal;
+  overflow-wrap: normal;
+  flex: 0 0 auto;
+}
+
+.ns-codehub-v1__btn:hover,
+.ns-codehub-v1__topnav-btn:hover,
+.ns-codehub-v1__builder-tab:hover,
+.ns-codehub-v1__inline-btn:hover,
+.ns-codehub-v1__upload span:hover,
+.ns-codehub-v1__type-card:hover,
+.ns-codehub-v1__recent-row:hover {
+  border-color: rgba(118, 169, 255, 0.3);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.ns-codehub-v1__btn--primary,
+.ns-codehub-v1__topnav-btn.is-active,
+.ns-codehub-v1__builder-tab.is-active {
+  background: linear-gradient(180deg, rgba(46, 82, 152, 0.98), rgba(23, 45, 86, 0.98));
+  border-color: rgba(118, 169, 255, 0.24);
+  color: #fff;
+}
+
+.ns-codehub-v1__btn--muted {
+  color: rgba(204, 218, 241, 0.86);
+}
+
+.ns-codehub-v1__notice {
+  min-height: 44px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(118, 169, 255, 0.14);
+  background: rgba(255,255,255,0.04);
+  color: rgba(218, 231, 250, 0.92);
+  display: flex;
+  align-items: center;
+}
+
+.ns-codehub-v1__grid {
+  display: grid;
+  gap: 12px;
+}
+
+.ns-codehub-v1__grid--home,
+.ns-codehub-v1__grid--builder {
+  grid-template-columns: 1fr;
+}
+
+.ns-codehub-v1__summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.ns-codehub-v1__summary-card,
+.ns-codehub-v1__overview-card,
+.ns-codehub-v1__rule-card {
+  min-width: 0;
+  min-height: 76px;
+  border-radius: 16px;
+  padding: 12px 14px;
+  border: 1px solid rgba(119, 173, 255, 0.14);
+  background: linear-gradient(180deg, rgba(20, 37, 68, 0.98), rgba(11, 22, 42, 0.99));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+}
+
+.ns-codehub-v1__summary-card span,
+.ns-codehub-v1__overview-card span,
+.ns-codehub-v1__rule-card strong,
+.ns-codehub-v1__panel-head span,
+.ns-codehub-v1__field > span,
+.ns-codehub-v1__validation-group > span,
+.ns-codehub-v1__side-row strong {
+  display: block;
+  color: rgba(173, 193, 221, 0.84);
+  font-size: 12px;
+  line-height: 1.25;
+}
+
+.ns-codehub-v1__summary-card strong,
+.ns-codehub-v1__overview-card strong {
+  display: block;
+  margin-top: 8px;
+  font-size: 22px;
+  line-height: 1.05;
+  color: #f4f8ff;
+}
+
+.ns-codehub-v1__panel-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.ns-codehub-v1__panel-head.compact {
+  grid-template-columns: 1fr;
+}
+
+.ns-codehub-v1__recent-list,
+.ns-codehub-v1__list,
+.ns-codehub-v1__file-list,
+.ns-codehub-v1__rules-grid,
+.ns-codehub-v1__flow {
+  display: grid;
+  gap: 10px;
+}
+
+.ns-codehub-v1__recent-row,
+.ns-codehub-v1__type-card,
+.ns-codehub-v1__card,
+.ns-codehub-v1__file-row,
+.ns-codehub-v1__submit-card,
+.ns-codehub-v1__overview-note,
+.ns-codehub-v1__validation {
+  min-width: 0;
+  border-radius: 16px;
+  border: 1px solid rgba(118, 169, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.ns-codehub-v1__recent-row,
+.ns-codehub-v1__type-card {
+  padding: 12px 14px;
+  text-align: left;
+}
+
+.ns-codehub-v1__recent-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.ns-codehub-v1__recent-copy,
+.ns-codehub-v1__type-card {
+  display: grid;
+  gap: 4px;
+}
+
+.ns-codehub-v1__recent-copy strong,
+.ns-codehub-v1__type-card strong,
+.ns-codehub-v1__card h5 {
+  color: #f4f8ff;
+}
+
+.ns-codehub-v1__recent-copy span,
+.ns-codehub-v1__type-card span,
+.ns-codehub-v1__card-meta,
+.ns-codehub-v1__badge,
+.ns-codehub-v1__side-row span,
+.ns-codehub-v1__submit-meta span {
+  color: rgba(188, 205, 232, 0.88);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.ns-codehub-v1__badge,
+.ns-codehub-v1__tag {
+  min-height: 24px;
+  padding: 0 9px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(118, 169, 255, 0.14);
+  background: rgba(255,255,255,0.04);
+}
+
+.ns-codehub-v1__badge-row,
+.ns-codehub-v1__card-tags,
+.ns-codehub-v1__submit-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ns-codehub-v1__badge--muted,
+.ns-codehub-v1__tag--muted {
+  opacity: 0.88;
+}
+
+.ns-codehub-v1__card {
+  padding: 14px;
+  display: grid;
+  gap: 10px;
+}
+
+.ns-codehub-v1__card-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: start;
+}
+
+.ns-codehub-v1__card h5 {
+  margin: 6px 0 0;
+  font-size: 18px;
+  line-height: 1.12;
+}
+
+.ns-codehub-v1__field-grid.two-up {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.ns-codehub-v1__field {
+  display: grid;
+  gap: 8px;
+}
+
+.ns-codehub-v1__input,
+.ns-codehub-v1__textarea,
+.ns-codehub-v1__select {
+  width: 100%;
+  min-width: 0;
+  border-radius: 14px;
+  border: 1px solid rgba(118, 169, 255, 0.16);
+  background: rgba(4, 11, 23, 0.5);
+  color: #eef4ff;
+  padding: 11px 12px;
+  font: inherit;
+}
+
+.ns-codehub-v1__select.compact {
+  min-height: 34px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+
+.ns-codehub-v1__toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 180px 180px;
+  gap: 10px;
+  align-items: center;
+}
+
+.ns-codehub-v1__search {
+  min-width: 0;
+}
+
+.ns-codehub-v1__input::placeholder,
+.ns-codehub-v1__textarea::placeholder,
+.ns-codehub-v1__search::placeholder {
+  color: rgba(158, 182, 218, 0.7);
+}
+
+.ns-codehub-v1__select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding-right: 38px;
+  background-image: linear-gradient(45deg, transparent 50%, rgba(210, 225, 248, 0.9) 50%), linear-gradient(135deg, rgba(210, 225, 248, 0.9) 50%, transparent 50%);
+  background-position: calc(100% - 18px) calc(50% - 2px), calc(100% - 13px) calc(50% - 2px);
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+}
+
+.ns-codehub-v1__select::-ms-expand {
+  display: none;
+}
+
+.ns-codehub-v1__textarea {
+  resize: vertical;
+  min-height: 84px;
+}
+
+.ns-codehub-v1__builder-tabs {
+  padding-top: 2px;
+}
+
+.ns-codehub-v1__section {
+  display: grid;
+  gap: 12px;
+}
+
+.ns-codehub-v1__overview-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.ns-codehub-v1__overview-note,
+.ns-codehub-v1__submit-card,
+.ns-codehub-v1__validation {
+  padding: 14px;
+}
+
+.ns-codehub-v1__file-row {
+  padding: 12px 14px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.ns-codehub-v1__file-copy {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.ns-codehub-v1__file-copy strong,
+.ns-codehub-v1__validation-head strong,
+.ns-codehub-v1__submit-card strong {
+  color: #f4f8ff;
+}
+
+.ns-codehub-v1__upload {
+  display: inline-flex;
+}
+
+.ns-codehub-v1__upload input {
+  display: none;
+}
+
+.ns-codehub-v1__validation {
+  display: grid;
+  gap: 10px;
+}
+
+.ns-codehub-v1__validation.is-passed {
+  border-color: rgba(57, 196, 111, 0.24);
+}
+
+.ns-codehub-v1__validation.is-failed {
+  border-color: rgba(255, 120, 120, 0.22);
+}
+
+.ns-codehub-v1__validation-group {
+  display: grid;
+  gap: 6px;
+}
+
+.ns-codehub-v1__validation-group ul {
+  margin: 0;
+  padding-left: 18px;
+  color: rgba(224, 235, 252, 0.94);
+}
+
+.ns-codehub-v1__validation-group li {
+  margin: 0 0 4px;
+}
+
+.ns-codehub-v1__rules-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.ns-codehub-v1__flow {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.ns-codehub-v1__flow-step {
+  min-height: 84px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(119, 173, 255, 0.12);
+  background: rgba(255,255,255,0.04);
+  display: grid;
+  gap: 8px;
+}
+
+.ns-codehub-v1__flow-step strong {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(46, 82, 152, 0.98), rgba(23, 45, 86, 0.98));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
+.ns-codehub-v1__side {
+  align-self: start;
+  padding: 14px;
+}
+
+.ns-codehub-v1__side-row {
+  display: grid;
+  gap: 4px;
+}
+
+.ns-codehub-v1__empty {
+  min-height: 132px;
+  border-radius: 18px;
+  border: 1px dashed rgba(118, 169, 255, 0.18);
+  background: rgba(255,255,255,0.03);
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 20px;
+  color: rgba(187, 205, 232, 0.86);
+}
+
+[data-codehub-surface="workspace"] .ns-codehub-v1__hero {
+  padding: 12px;
+}
+
+[data-codehub-surface="workspace"] .ns-codehub-v1__hero h3 {
+  font-size: 20px;
+}
+
+[data-codehub-surface="workspace"] .ns-codehub-v1__summary {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+[data-codehub-surface="workspace"] .ns-codehub-v1__overview-grid,
+[data-codehub-surface="workspace"] .ns-codehub-v1__flow,
+[data-codehub-surface="workspace"] .ns-codehub-v1__rules-grid,
+[data-codehub-surface="workspace"] .ns-codehub-v1__field-grid.two-up,
+[data-codehub-surface="workspace"] .ns-codehub-v1__toolbar {
+  grid-template-columns: 1fr;
+}
+
+[data-codehub-surface="workspace"] .ns-codehub-v1__card,
+[data-codehub-surface="workspace"] .ns-codehub-v1__submit-card,
+[data-codehub-surface="workspace"] .ns-codehub-v1__overview-note,
+[data-codehub-surface="workspace"] .ns-codehub-v1__validation,
+[data-codehub-surface="workspace"] .ns-codehub-v1__summary-card {
+  border-radius: 14px;
+}
+
+[data-codehub-surface="cabinet"] .ns-codehub-v1__grid--builder {
+  grid-template-columns: minmax(0, 1fr) 280px;
+}
+
+@media (max-width: 1180px) {
+  .ns-codehub-v1__summary,
+  .ns-codehub-v1__overview-grid,
+  .ns-codehub-v1__rules-grid,
+  .ns-codehub-v1__flow,
+  .ns-codehub-v1__field-grid.two-up,
+  .ns-codehub-v1__toolbar,
+  [data-codehub-surface="cabinet"] .ns-codehub-v1__grid--builder {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  [data-codehub-surface="cabinet"] .ns-codehub-v1__grid--builder {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .ns-codehub-v1__summary,
+  .ns-codehub-v1__overview-grid,
+  .ns-codehub-v1__rules-grid,
+  .ns-codehub-v1__flow,
+  .ns-codehub-v1__field-grid.two-up,
+  .ns-codehub-v1__toolbar,
+  .ns-codehub-v1__card-head,
+  .ns-codehub-v1__file-row,
+  .ns-codehub-v1__panel-head,
+  .ns-codehub-v1__recent-row {
+    grid-template-columns: 1fr;
+  }
+
+  .ns-codehub-v1__builder-head-actions,
+  .ns-codehub-v1__hero-actions,
+  .ns-codehub-v1__card-actions,
+  .ns-codehub-v1__file-actions {
+    width: 100%;
+  }
+}
+
+/* =========================================================
+   UI polish pass: CodeHub spacing and responsiveness
+   ========================================================= */
+.ns-codehub-v1__type-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px;
+  align-items: stretch;
+}
+
+.ns-codehub-v1__type-card {
+  min-height: 92px;
+  width: 100%;
+  align-content: start;
+}
+
+.ns-codehub-v1__hero-actions,
+.ns-codehub-v1__topnav,
+.ns-codehub-v1__builder-tabs,
+.ns-codehub-v1__actions,
+.ns-codehub-v1__card-actions,
+.ns-codehub-v1__file-actions,
+.ns-codehub-v1__builder-head-actions {
+  row-gap: 8px;
+}
+
+.ns-codehub-v1__btn,
+.ns-codehub-v1__topnav-btn,
+.ns-codehub-v1__builder-tab,
+.ns-codehub-v1__inline-btn {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+}
+
+.ns-codehub-v1__btn:hover,
+.ns-codehub-v1__topnav-btn:hover,
+.ns-codehub-v1__builder-tab:hover,
+.ns-codehub-v1__inline-btn:hover,
+.ns-codehub-v1__type-card:hover,
+.ns-codehub-v1__recent-row:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(4, 10, 22, 0.18), inset 0 1px 0 rgba(255,255,255,0.03);
+}
+
+.ns-codehub-v1__btn:focus-visible,
+.ns-codehub-v1__topnav-btn:focus-visible,
+.ns-codehub-v1__builder-tab:focus-visible,
+.ns-codehub-v1__inline-btn:focus-visible,
+.ns-codehub-v1__type-card:focus-visible,
+.ns-codehub-v1__recent-row:focus-visible {
+  outline: none;
+  border-color: rgba(118, 169, 255, 0.38);
+  box-shadow: 0 0 0 2px rgba(118, 169, 255, 0.14);
+}
+
+[data-codehub-surface="workspace"] .ns-codehub-v1__type-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 900px) {
+  .ns-codehub-v1__type-grid,
+  [data-codehub-surface="workspace"] .ns-codehub-v1__type-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+.ns-codehub-v1__btn--danger,
+.ns-codehub-v1__inline-btn--danger {
+  background: linear-gradient(180deg, rgba(91, 26, 38, 0.98), rgba(56, 16, 25, 0.98));
+  border-color: rgba(244, 114, 182, 0.28);
+  color: #ffe0e6;
+}
+
+.ns-codehub-v1__btn--danger:hover,
+.ns-codehub-v1__inline-btn--danger:hover {
+  background: linear-gradient(180deg, rgba(112, 31, 47, 0.98), rgba(69, 18, 31, 0.98));
+  border-color: rgba(244, 114, 182, 0.42);
+}
+
+.ns-codehub-v1__recent-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.ns-codehub-v1__recent-row {
+  align-items: start;
+}
+
+
+/* pass11: CodeHub cleanup and calmer brand surface */
+.ns-codehub-v1__hero-copy {
+  display: grid;
+  gap: 8px;
+}
+
+.ns-codehub-v1__hero {
+  background:
+    radial-gradient(circle at top right, rgba(118, 169, 255, 0.10), transparent 30%),
+    linear-gradient(180deg, rgba(12, 20, 36, 0.98), rgba(8, 16, 30, 0.98));
+}
+
+.ns-codehub-v1__hero h3 {
+  letter-spacing: 0.01em;
+}
+
+.ns-codehub-v1__topnav {
+  padding-top: 4px;
+  border-top: 1px solid rgba(118, 169, 255, 0.10);
+}
+
+.ns-codehub-v1__recent-actions,
+.ns-codehub-v1__card-actions,
+.ns-codehub-v1__builder-head-actions {
+  align-items: center;
+}
+
+.ns-codehub-v1__recent-actions .ns-codehub-v1__inline-btn,
+.ns-codehub-v1__card-actions .ns-codehub-v1__btn {
+  white-space: nowrap;
+}
+
+.ns-codehub-v1__panel-head h4,
+.ns-codehub-v1__builder-shell h4,
+.ns-codehub-v1__card h5 {
+  overflow-wrap: anywhere;
+}
+
+
+.ns-codehub-v1__brand {
+  white-space: nowrap;
+}
+
+.ns-codehub-v1__rule-card {
+  cursor: default;
+}

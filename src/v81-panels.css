@@ -1,0 +1,901 @@
+/* =========================================================
+   NS SOURCE LIBRARY
+   Shared root for Workspace + Cabinet
+   ========================================================= */
+
+[data-source-library-root]{
+  width:100%;
+  min-width:0;
+  min-height:0;
+  height:100%;
+  display:block;
+}
+
+.workspace-panel[data-panel="files"] [data-source-library-root],
+.cabinet-section-panel[data-cabinet-panel="files"] [data-source-library-root]{
+  width:100%;
+  min-width:0;
+  min-height:0;
+  flex:1 1 auto;
+}
+
+.ns-library-shell{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  min-width:0;
+  min-height:0;
+  width:100%;
+  height:100%;
+  color:#fff;
+}
+
+.ns-library-toolbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+  padding:2px 0;
+}
+
+.ns-library-toolbar-left{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  align-items:center;
+  min-width:0;
+}
+
+.ns-library-upload{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:32px;
+  padding:0 12px;
+  border-radius:10px;
+  border:1px solid rgba(120,160,255,.4);
+  background:linear-gradient(180deg,#3d6bff,#2b4fd1);
+  color:#fff;
+  font-weight:500;
+  cursor:pointer;
+}
+
+.ns-library-search,
+.ns-library-select{
+  min-height:32px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,0.12);
+  background:rgba(255,255,255,0.08);
+  color:#fff;
+  padding:0 10px;
+}
+
+.ns-library-search{
+  min-width:180px;
+  flex:1 1 180px;
+}
+
+.ns-library-select{
+  appearance:none;
+  -webkit-appearance:none;
+}
+
+.ns-library-select option{
+  background:#0f1e3a;
+  color:#fff;
+}
+
+.ns-library-dropzone{
+  border:1px dashed rgba(255,255,255,0.25);
+  border-radius:12px;
+  padding:8px 10px;
+  text-align:center;
+  background:rgba(255,255,255,0.04);
+  line-height:1.25;
+}
+
+.ns-library-dropzone.is-dragover{
+  background:rgba(255,255,255,0.12);
+  border-color:rgba(255,255,255,0.45);
+}
+
+.ns-library-main{
+  display:grid;
+  grid-template-columns:minmax(240px,320px) minmax(0,1fr);
+  gap:10px;
+  min-width:0;
+  min-height:240px;
+  flex:1 1 auto;
+}
+
+.ns-library-list,
+.ns-library-preview{
+  min-width:0;
+  min-height:240px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.10);
+  background:rgba(255,255,255,0.05);
+  padding:8px;
+  overflow:auto;
+}
+
+.ns-library-list{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.ns-library-card{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  width:100%;
+  text-align:left;
+  border:1px solid rgba(255,255,255,0.10);
+  background:rgba(255,255,255,0.04);
+  border-radius:10px;
+  padding:8px;
+  color:#fff;
+  cursor:pointer;
+}
+
+.ns-library-card.is-active{
+  border-color:rgba(255,255,255,0.35);
+  background:rgba(255,255,255,0.10);
+}
+
+.ns-library-card-top{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  min-width:0;
+}
+
+.ns-library-name{
+  font-weight:600;
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  word-break:normal;
+  overflow-wrap:normal;
+}
+
+.ns-library-meta{
+  display:flex;
+  gap:8px;
+  font-size:12px;
+  opacity:.8;
+  flex-wrap:wrap;
+}
+
+.ns-library-tags{
+  display:flex;
+  gap:4px;
+  flex-wrap:wrap;
+}
+
+.ns-library-tag{
+  display:inline-flex;
+  align-items:center;
+  min-height:20px;
+  padding:0 6px;
+  border-radius:999px;
+  font-size:11px;
+  background:rgba(255,255,255,0.10);
+}
+
+.ns-library-actions-inline{
+  display:flex;
+  gap:6px;
+}
+
+.ns-library-actions-inline button,
+.ns-library-preview-actions button{
+  min-height:28px;
+  border-radius:8px;
+  border:1px solid rgba(255,255,255,0.10);
+  background:rgba(255,255,255,0.08);
+  color:#fff;
+  padding:0 8px;
+  cursor:pointer;
+}
+
+.ns-library-preview{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.ns-library-preview-title{
+  font-size:16px;
+  font-weight:700;
+  min-width:0;
+  word-break:normal;
+  overflow-wrap:normal;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+  overflow:hidden;
+}
+
+.ns-library-preview-subtitle{
+  opacity:.75;
+  font-size:12px;
+}
+
+.ns-library-preview-body{
+  border-radius:10px;
+  background:rgba(255,255,255,0.04);
+  padding:8px;
+  min-height:120px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+
+.ns-library-preview-image{
+  display:block;
+  max-width:100%;
+  max-height:320px;
+  width:auto;
+  height:auto;
+  margin:0 auto;
+  border-radius:8px;
+  object-fit:contain;
+}
+
+.ns-library-preview-text{
+  white-space:pre-wrap;
+  word-break:break-word;
+  margin:0;
+  font:12px/1.4 monospace;
+  width:100%;
+}
+
+.ns-library-inspector{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  font-size:12px;
+}
+
+.ns-library-preview-actions{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.ns-library-empty{
+  opacity:.7;
+  padding:12px;
+}
+
+@media (max-width:900px){
+  .ns-library-main{
+    grid-template-columns:1fr;
+  }
+
+  .ns-library-preview-title{
+    white-space:normal;
+    overflow:visible;
+    text-overflow:clip;
+  }
+
+  .ns-library-name{
+    white-space:normal;
+    overflow:visible;
+    text-overflow:clip;
+  }
+}
+
+.ns-library-knowledge{
+  margin-left:auto;
+  padding:2px 8px;
+  font-size:11px;
+  line-height:1.2;
+  border-radius:999px;
+  background:rgba(0,150,255,0.15);
+  border:1px solid rgba(0,150,255,0.35);
+  color:#6ec8ff;
+  white-space:nowrap;
+}
+
+.ns-library-pack-actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-top:6px;
+  flex-wrap:wrap;
+}
+
+.ns-library-pack-button{
+  appearance:none;
+  border:none;
+  background:#2b7cff;
+  color:#fff;
+  font:inherit;
+  font-size:12px;
+  line-height:1.2;
+  padding:6px 10px;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+.ns-library-pack-button:hover{
+  background:#1f5fd1;
+}
+
+.ns-library-pack-button:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
+
+.ns-library-pack-button:disabled:hover{
+  background:#2b7cff;
+}
+
+.ns-library-pack-count{
+  font-size:11px;
+  opacity:.7;
+}
+
+/* =====================================
+   NS Knowledge Graph / Links / Backlinks
+===================================== */
+
+.ns-library-related-block,
+.ns-library-graph-block {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid #333;
+  font-size: 12px;
+}
+
+.ns-library-related-title,
+.ns-library-graph-title {
+  font-weight: 600;
+  margin-bottom: 6px;
+  opacity: 0.8;
+}
+
+.ns-library-related-body,
+.ns-library-graph-body {
+  display: block;
+}
+
+.ns-library-linked-item,
+.ns-library-graph-node {
+  line-height: 1.45;
+  margin-bottom: 4px;
+}
+
+.ns-library-linked-button,
+.ns-library-graph-link {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.ns-library-linked-button:hover,
+.ns-library-graph-link:hover {
+  text-decoration: underline;
+}
+
+.ns-library-linked-label,
+.ns-library-graph-label {
+  opacity: 0.7;
+  font-size: 12px;
+}
+
+.ns-library-related-empty {
+  opacity: 0.5;
+}
+
+.ns-library-graph-root {
+  margin-bottom: 6px;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+
+/* =========================================================
+   NS Browser v8
+   Files module refinement pass
+   append to END of src/v81-panels.css
+   ========================================================= */
+
+.ns-library-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 0;
+}
+
+.ns-library-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ns-library-toolbar-left,
+.ns-library-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ns-library-toolbar-right {
+  margin-left: auto;
+}
+
+.ns-library-count {
+  font-size: 12px;
+  opacity: 0.9;
+  white-space: nowrap;
+}
+
+.ns-library-search {
+  min-width: 180px;
+  flex: 1 1 220px;
+}
+
+.ns-library-select {
+  min-width: 74px;
+}
+
+.ns-library-dropzone {
+  padding: 6px 10px;
+  min-height: 30px;
+  border-radius: 10px;
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.ns-library-main {
+  display: grid;
+  grid-template-columns: minmax(240px, 320px) minmax(0, 1fr);
+  gap: 8px;
+  min-height: 220px;
+  height: 100%;
+}
+
+.ns-library-list,
+.ns-library-preview {
+  min-height: 0;
+  height: 100%;
+}
+
+.ns-library-list {
+  overflow: auto;
+  padding-right: 2px;
+}
+
+.ns-library-preview {
+  overflow: auto;
+}
+
+.ns-library-card {
+  padding: 10px;
+  border-radius: 12px;
+}
+
+.ns-library-card + .ns-library-card {
+  margin-top: 8px;
+}
+
+.ns-library-card-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ns-library-name {
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ns-library-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.ns-library-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.ns-library-actions-inline {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.ns-library-pack-actions {
+  margin-top: 8px;
+}
+
+.ns-library-pack-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.ns-library-pack-row select {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+/* preview */
+
+.ns-library-preview-head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 8px;
+}
+
+.ns-library-preview-title {
+  font-size: 18px;
+  line-height: 1.15;
+}
+
+.ns-library-preview-subtitle {
+  font-size: 12px;
+  opacity: 0.82;
+}
+
+.ns-library-preview-body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 220px;
+  padding: 12px;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.ns-library-preview-image {
+  display: block;
+  max-width: 100%;
+  max-height: 320px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 10px;
+}
+
+.ns-library-preview-text {
+  margin: 0;
+  width: 100%;
+  max-height: 320px;
+  overflow: auto;
+}
+
+/* inspector becomes cleaner */
+.ns-library-inspector {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(180px, 1fr));
+  gap: 8px 14px;
+  margin-top: 10px;
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+.ns-library-inspector > div {
+  min-width: 0;
+}
+
+.ns-library-preview-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.ns-source-links-block,
+.ns-source-graph-block {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(120, 170, 255, 0.12);
+}
+
+.ns-source-links-list,
+.ns-source-graph-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.ns-source-link-item,
+.ns-source-graph-node {
+  padding: 8px 10px;
+  border-radius: 10px;
+}
+
+/* split / narrow mode */
+@media (max-width: 1380px) {
+  .ns-library-main {
+    grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+  }
+
+  .ns-library-preview-body {
+    min-height: 180px;
+  }
+
+  .ns-library-preview-image {
+    max-height: 240px;
+  }
+
+  .ns-library-inspector {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* very narrow workspace mode */
+@media (max-width: 1100px) {
+  .ns-library-toolbar {
+    align-items: stretch;
+  }
+
+  .ns-library-toolbar-left,
+  .ns-library-toolbar-right {
+    width: 100%;
+  }
+
+  .ns-library-main {
+    grid-template-columns: 1fr;
+  }
+
+  .ns-library-list {
+    max-height: 260px;
+  }
+
+  .ns-library-preview-body {
+    min-height: 160px;
+  }
+
+  .ns-library-preview-image {
+    max-height: 200px;
+  }
+}
+
+/* =========================================================
+   NS Browser v8
+   Files split-mode refinement
+   append to END of src/v81-panels.css
+   ========================================================= */
+
+/* tighter top area inside Files */
+.ns-library-shell > .ns-library-header,
+.ns-library-shell > .module-header,
+.ns-library-shell > .panel-card-header {
+  margin-bottom: 6px;
+}
+
+.ns-library-shell .panel-card-header p,
+.ns-library-shell .module-subtitle,
+.ns-library-shell .panel-subtitle {
+  margin-top: 2px;
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+/* keep count visually attached to toolbar */
+.ns-library-toolbar {
+  margin-bottom: 0;
+}
+
+.ns-library-count {
+  font-size: 12px;
+  opacity: 0.88;
+}
+
+/* full mode preview slightly tighter */
+.ns-library-preview-head {
+  margin-bottom: 6px;
+}
+
+.ns-library-preview-body {
+  min-height: 190px;
+  padding: 10px;
+}
+
+.ns-library-inspector {
+  margin-top: 8px;
+  gap: 6px 12px;
+  font-size: 12px;
+}
+
+/* split / narrow workspace mode */
+@media (max-width: 1500px) {
+  .ns-library-main {
+    grid-template-columns: minmax(210px, 1fr) minmax(150px, 0.72fr);
+    gap: 8px;
+  }
+
+  .ns-library-preview-body {
+    min-height: 140px;
+    padding: 8px;
+  }
+
+  .ns-library-preview-image {
+    max-height: 150px;
+  }
+
+  .ns-library-inspector {
+    grid-template-columns: 1fr;
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  .ns-source-links-block,
+  .ns-source-graph-block {
+    margin-top: 8px;
+    padding-top: 8px;
+  }
+
+  .ns-source-link-item,
+  .ns-source-graph-node {
+    padding: 6px 8px;
+  }
+}
+
+/* extra narrow right-side panel */
+@media (max-width: 1320px) {
+  .ns-library-toolbar-left,
+  .ns-library-toolbar-right {
+    width: 100%;
+  }
+
+  .ns-library-search {
+    min-width: 140px;
+    flex: 1 1 160px;
+  }
+
+  .ns-library-main {
+    grid-template-columns: 1fr;
+  }
+
+  .ns-library-list {
+    max-height: 220px;
+  }
+
+  .ns-library-preview-body {
+    min-height: 120px;
+  }
+
+  .ns-library-preview-image {
+    max-height: 120px;
+  }
+}
+
+.ns-library-preview-text {
+  margin: 0;
+  width: 100%;
+  max-height: 320px;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.45;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 12px;
+}
+
+.ns-library-preview-text {
+  margin: 0;
+  width: 100%;
+  max-height: 320px;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.45;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 12px;
+}
+
+/* =========================================================
+   UI polish pass: Source Library destructive actions
+   ========================================================= */
+.ns-library-actions-inline button,
+.ns-library-preview-actions button,
+.ns-library-pack-actions button {
+  transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease, color 0.18s ease;
+}
+
+.ns-library-actions-inline button:hover,
+.ns-library-preview-actions button:hover,
+.ns-library-pack-actions button:hover {
+  transform: translateY(-1px);
+  border-color: rgba(120,160,255,.22);
+  box-shadow: 0 8px 16px rgba(4, 10, 22, 0.12);
+}
+
+.ns-library-actions-inline button[data-action*="delete" i],
+.ns-library-actions-inline button[data-action*="remove" i],
+.ns-library-actions-inline button[data-action*="trash" i],
+.ns-library-preview-actions button[data-action*="delete" i],
+.ns-library-preview-actions button[data-action*="remove" i],
+.ns-library-preview-actions button[data-action*="trash" i],
+.ns-library-pack-actions button[data-action*="delete" i],
+.ns-library-pack-actions button[data-action*="remove" i],
+.ns-library-pack-actions button[data-action*="trash" i],
+.ns-library-actions-inline button[title*="Delete" i],
+.ns-library-preview-actions button[title*="Delete" i],
+.ns-library-pack-actions button[title*="Delete" i],
+.ns-library-actions-inline button[aria-label*="Delete" i],
+.ns-library-preview-actions button[aria-label*="Delete" i],
+.ns-library-pack-actions button[aria-label*="Delete" i] {
+  border-color: rgba(244, 114, 182, 0.28);
+  background: linear-gradient(180deg, rgba(91, 26, 38, 0.98), rgba(56, 16, 25, 0.98));
+  color: #ffe0e6;
+}
+
+.ns-library-actions-inline button[data-action*="delete" i]:hover,
+.ns-library-actions-inline button[data-action*="remove" i]:hover,
+.ns-library-actions-inline button[data-action*="trash" i]:hover,
+.ns-library-preview-actions button[data-action*="delete" i]:hover,
+.ns-library-preview-actions button[data-action*="remove" i]:hover,
+.ns-library-preview-actions button[data-action*="trash" i]:hover,
+.ns-library-pack-actions button[data-action*="delete" i]:hover,
+.ns-library-pack-actions button[data-action*="remove" i]:hover,
+.ns-library-pack-actions button[data-action*="trash" i]:hover,
+.ns-library-actions-inline button[title*="Delete" i]:hover,
+.ns-library-preview-actions button[title*="Delete" i]:hover,
+.ns-library-pack-actions button[title*="Delete" i]:hover,
+.ns-library-actions-inline button[aria-label*="Delete" i]:hover,
+.ns-library-preview-actions button[aria-label*="Delete" i]:hover,
+.ns-library-pack-actions button[aria-label*="Delete" i]:hover {
+  border-color: rgba(244, 114, 182, 0.42);
+  background: linear-gradient(180deg, rgba(112, 31, 47, 0.98), rgba(69, 18, 31, 0.98));
+}
+
+
+/* keep pin/bookmark actions neutral even when their action names contain remove */
+.ns-library-actions-inline button[data-action*="pin" i],
+.ns-library-actions-inline button[data-action*="bookmark" i],
+.ns-library-actions-inline button[data-action*="favorite" i],
+.ns-library-preview-actions button[data-action*="pin" i],
+.ns-library-preview-actions button[data-action*="bookmark" i],
+.ns-library-preview-actions button[data-action*="favorite" i],
+.ns-library-pack-actions button[data-action*="pin" i],
+.ns-library-pack-actions button[data-action*="bookmark" i],
+.ns-library-pack-actions button[data-action*="favorite" i] {
+  border-color: rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+}
+
+.ns-library-actions-inline button[data-action*="pin" i]:hover,
+.ns-library-actions-inline button[data-action*="bookmark" i]:hover,
+.ns-library-actions-inline button[data-action*="favorite" i]:hover,
+.ns-library-preview-actions button[data-action*="pin" i]:hover,
+.ns-library-preview-actions button[data-action*="bookmark" i]:hover,
+.ns-library-preview-actions button[data-action*="favorite" i]:hover,
+.ns-library-pack-actions button[data-action*="pin" i]:hover,
+.ns-library-pack-actions button[data-action*="bookmark" i]:hover,
+.ns-library-pack-actions button[data-action*="favorite" i]:hover {
+  border-color: rgba(120,160,255,.22);
+  background: rgba(255,255,255,0.10);
+}

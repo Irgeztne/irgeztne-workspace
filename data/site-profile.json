@@ -1,0 +1,16 @@
+{
+  "siteName": "IRGEZTNE Studio",
+  "tagline": "Local-first publishing workspace",
+  "logoPath": "../../../assets/branding/wordmark.svg",
+  "logoAlt": "IRGEZTNE",
+  "faviconPath": "../../../assets/branding/favicon.svg",
+  "contactEmail": "hello@example.com",
+  "footerText": "Built with IRGEZTNE",
+  "navItems": ["Overview", "Stories", "Contact"],
+  "socialLinks": [
+    { "label": "Email", "url": "mailto:hello@example.com" },
+    { "label": "Contact", "url": "#contact" }
+  ],
+  "primaryColor": "#9a6b40",
+  "accentColor": "#724729"
+}

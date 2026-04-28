@@ -1,0 +1,13 @@
+{
+  "name": "irgeztne-workspace",
+  "version": "1.0.0-preview.1",
+  "description": "IRGEZTNE Workspace v1 Preview",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron . --no-sandbox"
+  },
+  "dependencies": {
+    "electron": "41.3.0",
+    "jodit": "^4.12.2"
+  }
+}

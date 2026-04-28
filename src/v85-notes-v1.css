@@ -1,0 +1,240 @@
+[data-notes-root] {
+  display: block;
+  min-height: 560px;
+}
+
+.ns-notes-root-shell {
+  display: grid;
+  grid-template-columns: minmax(280px, 340px) minmax(0, 1fr);
+  gap: 12px;
+  min-height: 560px;
+}
+
+.ns-notes-sidebar,
+.ns-notes-main {
+  min-height: 100%;
+  position: relative;
+}
+
+.ns-notes-sidebar {
+  display: grid;
+  gap: 10px;
+}
+
+.ns-notes-toolbar,
+.ns-notes-list,
+.ns-note-view {
+  display: grid;
+  gap: 10px;
+}
+
+.ns-notes-toolbar-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) minmax(120px, 150px) auto;
+  gap: 8px;
+}
+
+.ns-note-card {
+  display: grid;
+  gap: 8px;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.ns-note-card.is-active {
+  border-color: rgba(102, 168, 255, 0.55);
+  background: rgba(102, 168, 255, 0.08);
+}
+
+.ns-note-card-main {
+  all: unset;
+  display: grid;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.ns-note-card-title-row,
+.ns-note-view-header,
+.ns-note-section-head,
+.ns-note-card-actions,
+.ns-note-view-actions,
+.ns-note-actions,
+.ns-note-linked-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ns-note-view-header,
+.ns-note-section-head {
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ns-note-card-title-row {
+  align-items: center;
+}
+
+.ns-note-card-title,
+.ns-note-view h2,
+.ns-note-section h3,
+.ns-note-empty h3 {
+  margin: 0;
+}
+
+.ns-note-card-meta,
+.ns-note-card-preview,
+.ns-note-card-updated,
+.ns-note-view-meta,
+.ns-note-linked-main span,
+.is-muted {
+  font-size: 13px;
+  opacity: 0.78;
+}
+
+.ns-note-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: rgba(102, 168, 255, 0.14);
+  font-size: 12px;
+}
+
+.ns-note-chip.is-muted {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.ns-note-section,
+.ns-note-empty,
+.ns-note-empty-inline {
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.ns-note-empty-inline {
+  border-style: dashed;
+}
+
+.ns-note-field {
+  display: grid;
+  gap: 6px;
+}
+
+.ns-note-field-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.ns-note-linked-list {
+  display: grid;
+  gap: 8px;
+}
+
+.ns-note-linked-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  padding: 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.ns-note-linked-main {
+  display: grid;
+  gap: 4px;
+}
+
+[data-notes-root] input,
+[data-notes-root] select,
+[data-notes-root] textarea,
+[data-notes-root] button {
+  box-sizing: border-box;
+  font: inherit;
+}
+
+[data-notes-root] input,
+[data-notes-root] select,
+[data-notes-root] textarea {
+  min-height: 36px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  color: inherit;
+  outline: none;
+}
+
+[data-notes-root] textarea {
+  min-height: 280px;
+  resize: vertical;
+  line-height: 1.45;
+}
+
+[data-notes-root] select {
+  color-scheme: dark;
+}
+
+[data-notes-root] button {
+  min-height: 34px;
+  padding: 7px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(130, 180, 255, 0.16);
+  color: #eaf2ff;
+  background: linear-gradient(180deg, rgba(27, 50, 93, 0.96), rgba(17, 34, 66, 0.96));
+}
+
+[data-notes-root] button:hover {
+  border-color: rgba(120, 180, 255, 0.26);
+  background: linear-gradient(180deg, rgba(34, 63, 116, 0.98), rgba(20, 40, 78, 0.98));
+}
+
+[data-notes-root][data-notes-surface="workspace"],
+[data-notes-root][data-notes-surface="cabinet"] {
+  min-height: 0;
+}
+
+[data-notes-surface="workspace"] .ns-notes-root-shell,
+[data-notes-surface="cabinet"] .ns-notes-root-shell {
+  grid-template-columns: 1fr;
+  min-height: 0;
+}
+
+[data-notes-surface="workspace"] .ns-notes-toolbar-row,
+[data-notes-surface="cabinet"] .ns-notes-toolbar-row {
+  grid-template-columns: 1fr;
+}
+
+[data-notes-surface="workspace"] .ns-note-view,
+[data-notes-surface="cabinet"] .ns-note-view {
+  gap: 12px;
+}
+
+[data-notes-surface="workspace"] [data-notes-root] textarea,
+[data-notes-surface="cabinet"] [data-notes-root] textarea {
+  min-height: 220px;
+}
+
+@media (max-width: 1080px) {
+  .ns-notes-root-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .ns-notes-toolbar-row,
+  .ns-note-field-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ns-note-linked-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

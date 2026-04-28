@@ -1,0 +1,4341 @@
+/* NS Browser v8.3 — Editor / Author Studio v2 Shell */
+
+.ns-editor-shell-host {
+  min-height: 0;
+}
+
+.ns-editor-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 640px;
+  height: 100%;
+  min-width: 0;
+  color: inherit;
+  opacity: 1;
+  transition: opacity 120ms ease;
+}
+
+.ns-editor-shell--booting {
+  opacity: 0;
+}
+
+.ns-editor-shell * {
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+.ns-editor-shell__header,
+.ns-editor-shell__panel,
+.ns-editor-shell__side-card,
+.ns-editor-shell__picker {
+  background: var(--ns-surface-2, rgba(12, 18, 28, 0.92));
+  border: 1px solid var(--ns-border-color, rgba(255, 255, 255, 0.08));
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+}
+
+.ns-editor-shell__header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: start;
+  gap: 14px;
+  padding: 14px 16px;
+}
+
+.ns-editor-shell__headline,
+.ns-editor-shell__header-meta,
+.ns-editor-shell__header-actions {
+  min-width: 0;
+}
+
+.ns-editor-shell__eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.7;
+  margin-bottom: 4px;
+}
+
+.ns-editor-shell__title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ns-editor-shell__title-row h2 {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.ns-editor-shell__header-subtitle {
+  font-size: 13px;
+  color: rgba(200, 216, 245, 0.72);
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+.ns-editor-shell__badge,
+.ns-editor-shell__count,
+.ns-editor-shell__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: var(--ns-surface-3, rgba(255, 255, 255, 0.06));
+  border: 1px solid var(--ns-border-soft, rgba(255, 255, 255, 0.06));
+  font-size: 12px;
+  max-width: 100%;
+}
+
+.ns-editor-shell__count,
+.ns-editor-shell__badge {
+  white-space: nowrap;
+}
+
+.ns-editor-shell__status {
+  white-space: normal;
+  word-break: break-word;
+  line-height: 1.25;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+.ns-editor-shell__header-meta {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ns-editor-shell__header-actions {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ns-editor-shell__button {
+  appearance: none;
+  border: 1px solid var(--ns-border-color, rgba(255, 255, 255, 0.1));
+  background: var(--ns-surface-3, rgba(255, 255, 255, 0.05));
+  color: inherit;
+  border-radius: 12px;
+  min-height: 38px;
+  padding: 0 14px;
+  font: inherit;
+  cursor: pointer;
+  transition: transform 120ms ease, background 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
+  white-space: nowrap;
+  flex: 0 0 auto;
+}
+
+.ns-editor-shell__button:hover {
+  transform: translateY(-1px);
+  background: var(--ns-surface-4, rgba(255, 255, 255, 0.08));
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.16);
+}
+
+.ns-editor-shell__button--primary {
+  background: var(--ns-accent-soft, rgba(0, 140, 255, 0.18));
+  border-color: var(--ns-accent-border, rgba(0, 140, 255, 0.28));
+}
+
+.ns-editor-shell__button--danger {
+  background: rgba(220, 38, 38, 0.16);
+  border-color: rgba(220, 38, 38, 0.3);
+}
+
+.ns-editor-shell__button--danger:hover {
+  background: rgba(220, 38, 38, 0.24);
+  border-color: rgba(220, 38, 38, 0.38);
+}
+
+.ns-editor-shell__body {
+  display: grid;
+  grid-template-columns: minmax(220px, 270px) minmax(0, 1fr);
+  gap: 14px;
+  min-height: 0;
+  flex: 1;
+}
+
+.ns-editor-shell__side,
+.ns-editor-shell__main {
+  min-width: 0;
+  min-height: 0;
+}
+
+.ns-editor-shell__side {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.ns-editor-shell__side-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.ns-editor-shell__side-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--ns-border-soft, rgba(255, 255, 255, 0.06));
+}
+
+.ns-editor-shell__side-card-title {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.ns-editor-shell__side-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  min-height: 0;
+  overflow: auto;
+}
+
+.ns-editor-shell__main {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+}
+
+.ns-editor-shell__tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ns-editor-shell__tab {
+  appearance: none;
+  border: 1px solid var(--ns-border-color, rgba(255, 255, 255, 0.08));
+  background: var(--ns-surface-2, rgba(255, 255, 255, 0.04));
+  color: inherit;
+  border-radius: 12px;
+  min-height: 38px;
+  padding: 0 14px;
+  font: inherit;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease, transform 120ms ease;
+}
+
+.ns-editor-shell__tab:hover {
+  transform: translateY(-1px);
+}
+
+.ns-editor-shell__tab.is-active {
+  background: var(--ns-accent-soft, rgba(0, 140, 255, 0.18));
+  border-color: var(--ns-accent-border, rgba(0, 140, 255, 0.28));
+}
+
+.ns-editor-shell__panel {
+  min-height: 0;
+  flex: 1;
+  overflow: hidden;
+}
+
+.ns-editor-shell__tab-panels {
+  height: 100%;
+  min-height: 0;
+}
+
+.ns-editor-shell__tab-panel {
+  display: none;
+  height: 100%;
+  min-height: 0;
+  padding: 14px;
+  overflow: auto;
+}
+
+.ns-editor-shell__tab-panel.is-active {
+  display: block;
+}
+
+.ns-editor-shell__tab-panel--preview.is-active {
+  display: grid;
+  gap: 12px;
+  grid-template-rows: minmax(280px, 1fr) auto;
+}
+
+.ns-editor-shell__tab-panel--publish.is-active {
+  display: block;
+}
+
+.ns-editor-shell__content-mount,
+.ns-editor-shell__preview-live,
+.ns-editor-shell__preview-meta {
+  min-height: 0;
+}
+
+.ns-editor-shell__content-mount > *,
+.ns-editor-shell__preview-live > *,
+.ns-editor-shell__preview-meta > * {
+  width: 100%;
+  max-width: 100%;
+}
+
+.ns-editor-shell__preview-live,
+.ns-editor-shell__preview-meta {
+  border: 1px solid var(--ns-border-soft, rgba(255, 255, 255, 0.06));
+  border-radius: 14px;
+  background: var(--ns-surface-1, rgba(255, 255, 255, 0.02));
+  padding: 12px;
+  overflow: auto;
+}
+
+
+.ns-editor-shell__preview-live {
+  background:
+    radial-gradient(circle at top left, rgba(255, 228, 196, 0.28), transparent 34%),
+    radial-gradient(circle at right center, rgba(180, 150, 110, 0.12), transparent 28%),
+    linear-gradient(180deg, rgba(20, 16, 12, 0.12), rgba(17, 13, 10, 0.04)),
+    linear-gradient(180deg, #e9ddd1 0%, #dccaba 100%);
+}
+
+.ns-editor-preview-stage {
+  display: grid;
+  gap: 14px;
+}
+
+.ns-editor-preview-stage__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  min-height: 46px;
+  padding: 0 14px;
+  border: 1px solid rgba(98, 74, 52, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 248, 241, 0.78);
+  box-shadow: 0 10px 24px rgba(64, 43, 28, 0.08);
+}
+
+.ns-editor-preview-stage__bar-left {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.ns-editor-preview-stage__dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ns-editor-preview-stage__dots span {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(116, 82, 54, 0.24);
+}
+
+.ns-editor-preview-stage__label {
+  font-size: 13px;
+  color: rgba(72, 50, 34, 0.82);
+  letter-spacing: 0.02em;
+}
+
+.ns-editor-preview-stage__devices {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ns-editor-preview-stage__device {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(98, 74, 52, 0.10);
+  background: rgba(255,255,255,0.62);
+  color: rgba(92, 66, 46, 0.84);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.ns-editor-preview-stage__device.is-active {
+  background: linear-gradient(180deg, rgba(168, 122, 81, 0.98), rgba(114, 77, 49, 0.98));
+  border-color: rgba(98, 74, 52, 0.22);
+  color: #fff9f2;
+}
+
+.ns-editor-preview-stage__viewport {
+  min-height: 680px;
+  padding: 22px;
+  border-radius: 28px;
+  overflow: hidden;
+  border: 1px solid rgba(110, 84, 60, 0.12);
+  background: linear-gradient(180deg, rgba(255,248,241,0.72), rgba(243,231,218,0.92));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.52), 0 26px 70px rgba(54, 36, 24, 0.12);
+}
+
+.ns-editor-preview-stage__canvas {
+  display: grid;
+  gap: 0;
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  border-radius: 24px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.84);
+  border: 1px solid rgba(104, 78, 55, 0.10);
+  box-shadow: 0 34px 90px rgba(56, 38, 24, 0.18);
+}
+
+.ns-editor-preview-stage__canvas-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 52px;
+  padding: 10px 16px;
+  border-bottom: 1px solid rgba(110, 84, 60, 0.10);
+  background: linear-gradient(180deg, rgba(255, 251, 246, 0.98), rgba(244, 234, 224, 0.94));
+}
+
+.ns-editor-preview-stage__canvas-site,
+.ns-editor-preview-stage__canvas-url {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ns-editor-preview-stage__canvas-site {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(92, 66, 46, 0.86);
+}
+
+.ns-editor-preview-stage__canvas-url {
+  flex: 1 1 auto;
+  text-align: right;
+  font-size: 13px;
+  color: rgba(118, 94, 72, 0.84);
+}
+
+.ns-editor-preview-frame {
+  display: block;
+  width: 100%;
+  min-height: 700px;
+  height: 78vh;
+  border: 0;
+  background: #f5efe7;
+}
+
+.ns-editor-shell__preview-title {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.7;
+  margin-bottom: 8px;
+}
+
+.ns-editor-shell__placeholder {
+  display: grid;
+  place-items: center;
+  min-height: 200px;
+  padding: 24px;
+  text-align: center;
+  border: 1px dashed var(--ns-border-color, rgba(255, 255, 255, 0.12));
+  border-radius: 14px;
+  background: var(--ns-surface-1, rgba(255, 255, 255, 0.02));
+  opacity: 0.8;
+}
+
+.ns-editor-shell__placeholder strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 15px;
+}
+
+.ns-editor-shell__list-button {
+  appearance: none;
+  width: 100%;
+  text-align: left;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--ns-border-soft, rgba(255, 255, 255, 0.06));
+  background: var(--ns-surface-1, rgba(255, 255, 255, 0.03));
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
+}
+
+.ns-editor-shell__list-button:hover {
+  transform: translateY(-1px);
+  background: var(--ns-surface-3, rgba(255, 255, 255, 0.06));
+}
+
+.ns-editor-shell__list-button.is-active {
+  background: var(--ns-accent-soft, rgba(0, 140, 255, 0.14));
+  border-color: var(--ns-accent-border, rgba(0, 140, 255, 0.24));
+}
+
+.ns-editor-shell__list-title {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.ns-editor-shell__list-subtitle {
+  font-size: 13px;
+  opacity: 0.78;
+  line-height: 1.4;
+}
+
+.ns-editor-shell__mini-empty {
+  font-size: 13px;
+  opacity: 0.72;
+  padding: 4px 2px;
+}
+
+.ns-editor-shell__mini-source {
+  padding: 9px 10px;
+  border-radius: 10px;
+  background: var(--ns-surface-1, rgba(255, 255, 255, 0.03));
+  border: 1px solid var(--ns-border-soft, rgba(255, 255, 255, 0.05));
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.ns-editor-shell__context-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.ns-editor-shell__context-row {
+  display: grid;
+  gap: 4px;
+}
+
+.ns-editor-shell__context-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.64;
+}
+
+.ns-editor-shell__context-value {
+  font-size: 14px;
+  line-height: 1.35;
+  word-break: break-word;
+}
+
+.ns-editor-shell__picker-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 8, 14, 0.82);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 28px;
+  z-index: 9999;
+}
+
+.ns-editor-shell__picker-backdrop.is-open {
+  display: flex;
+}
+
+.ns-editor-shell__picker {
+  width: min(980px, 100%);
+  max-height: min(80vh, 760px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--ns-surface-2, rgba(12, 18, 28, 0.97));
+}
+
+.ns-editor-shell__picker-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--ns-border-soft, rgba(255, 255, 255, 0.06));
+}
+
+.ns-editor-shell__picker-title {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.ns-editor-shell__picker-subtitle {
+  font-size: 13px;
+  opacity: 0.8;
+  margin-top: 3px;
+}
+
+.ns-editor-shell__picker-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  padding: 14px;
+  overflow: auto;
+}
+
+.ns-editor-shell__picker-card {
+  appearance: none;
+  text-align: left;
+  border: 1px solid var(--ns-border-color, rgba(255, 255, 255, 0.08));
+  background: var(--ns-surface-1, rgba(15, 21, 31, 0.96));
+  border-radius: 14px;
+  padding: 14px;
+  color: inherit;
+  cursor: pointer;
+  display: grid;
+  gap: 8px;
+  min-height: 108px;
+  transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
+}
+
+.ns-editor-shell__picker-card:hover {
+  transform: translateY(-1px);
+  background: var(--ns-surface-3, rgba(255, 255, 255, 0.06));
+  border-color: var(--ns-accent-border, rgba(0, 140, 255, 0.22));
+}
+
+.ns-editor-shell__picker-card-title {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.ns-editor-shell__picker-card-desc {
+  font-size: 13px;
+  opacity: 0.76;
+  line-height: 1.4;
+}
+
+.ns-editor-shell__hidden,
+.ns-editor-shell__original-stash,
+.ns-editor-shell-hidden-original {
+  display: none !important;
+}
+
+/* ---------- form surfaces ---------- */
+
+.ns-editor-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.ns-editor-form-grid .full {
+  grid-column: 1 / -1;
+}
+
+.ns-editor-field {
+  display: grid;
+  gap: 6px;
+}
+
+.ns-editor-field label {
+  font-size: 13px;
+  opacity: 0.86;
+}
+
+.ns-editor-input,
+.ns-editor-textarea {
+  width: 100%;
+  border: 1px solid var(--ns-border-color, rgba(255, 255, 255, 0.08));
+  background: rgba(7, 15, 32, 0.92);
+  color: inherit;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font: inherit;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 120ms ease, box-shadow 120ms ease, background 120ms ease;
+}
+
+.ns-editor-input:focus,
+.ns-editor-textarea:focus {
+  border-color: rgba(0, 140, 255, 0.34);
+  box-shadow: 0 0 0 3px rgba(0, 140, 255, 0.12);
+}
+
+.ns-editor-textarea {
+  min-height: 120px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.ns-editor-textarea.body {
+  min-height: 270px;
+}
+
+/* ---------- polished starter editor surfaces ---------- */
+
+.ns-editor-shell__section-intro {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--ns-border-soft, rgba(255, 255, 255, 0.06));
+  background: var(--ns-surface-1, rgba(14, 20, 30, 0.88));
+}
+
+.ns-editor-shell__section-title {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.ns-editor-shell__section-text {
+  font-size: 13px;
+  line-height: 1.55;
+  opacity: 0.84;
+}
+
+.ns-editor-form-grid--workspace-light,
+.ns-editor-form-grid--cabinet {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.ns-editor-form-grid--workspace-light .full,
+.ns-editor-form-grid--cabinet .full {
+  grid-column: 1 / -1;
+}
+
+.ns-editor-shell__quick-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ns-editor-shell__surface-note {
+  font-size: 13px;
+  line-height: 1.55;
+  opacity: 0.9;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px dashed var(--ns-border-color, rgba(255, 255, 255, 0.12));
+  background: var(--ns-surface-1, rgba(13, 19, 29, 0.72));
+}
+
+/* ---------- write modes polish ---------- */
+
+.ns-editor-shell__mode-switch {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 6px;
+  border-radius: 14px;
+  background: rgba(7, 15, 32, 0.72);
+  border: 1px solid var(--ns-border-soft, rgba(255, 255, 255, 0.06));
+}
+
+.ns-editor-shell__mode-button {
+  appearance: none;
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease, transform 120ms ease;
+}
+
+.ns-editor-shell__mode-button:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.ns-editor-shell__mode-button.is-active {
+  background: var(--ns-accent-soft, rgba(0, 140, 255, 0.18));
+  border-color: var(--ns-accent-border, rgba(0, 140, 255, 0.28));
+}
+
+.ns-editor-shell__mode-panels {
+  display: grid;
+  gap: 12px;
+}
+
+.ns-editor-shell__mode-panel {
+  display: none;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 16px;
+  border: 1px solid var(--ns-border-soft, rgba(255, 255, 255, 0.06));
+  background: linear-gradient(180deg, rgba(10, 18, 32, 0.92), rgba(8, 14, 26, 0.96));
+}
+
+.ns-editor-shell__mode-panel.is-active {
+  display: grid;
+}
+
+.ns-editor-shell__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-bottom: 2px;
+}
+
+.ns-editor-shell__toolbar-button {
+  appearance: none;
+  border: 1px solid var(--ns-border-color, rgba(255, 255, 255, 0.08));
+  background: rgba(255, 255, 255, 0.04);
+  color: inherit;
+  border-radius: 10px;
+  min-height: 34px;
+  padding: 0 12px;
+  font: inherit;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease, transform 120ms ease;
+}
+
+.ns-editor-shell__toolbar-button:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(0, 140, 255, 0.2);
+}
+
+.ns-editor-shell__mode-panel .ns-editor-textarea.body {
+  min-height: 270px;
+  background: rgba(5, 12, 24, 0.95);
+}
+
+.ns-editor-shell__mode-panel[data-mode-panel="visual"] .ns-editor-textarea.body {
+  min-height: 270px;
+}
+
+.ns-editor-shell__mode-panel[data-mode-panel="markdown"] .ns-editor-textarea.body {
+  font-family: "DejaVu Sans Mono", "Consolas", monospace;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.ns-editor-shell__mode-panel[data-mode-panel="blocks"] .ns-editor-textarea.body {
+  font-family: "DejaVu Sans Mono", "Consolas", monospace;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+/* ---------- deploy polish ---------- */
+
+.ns-editor-shell__deploy-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.ns-editor-shell__deploy-card {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid var(--ns-border-soft, rgba(255, 255, 255, 0.06));
+  background: linear-gradient(180deg, rgba(10, 18, 32, 0.9), rgba(8, 14, 26, 0.96));
+}
+
+.ns-editor-shell__deploy-card-title {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.ns-editor-shell__deploy-card .ns-editor-shell__section-text {
+  margin: 0;
+}
+
+.ns-editor-shell__deploy-card .ns-editor-shell__mini-source {
+  background: rgba(255, 255, 255, 0.025);
+}
+
+/* ---------- preview article inside shell ---------- */
+
+.ns-page {
+  max-width: 860px;
+  margin: 0 auto;
+  background: rgba(10, 18, 32, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 18px;
+  padding: 22px;
+}
+
+.ns-page__kicker {
+  display: inline-block;
+  margin-bottom: 10px;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #7cb5ff;
+}
+
+.ns-page__title {
+  margin: 0 0 10px;
+  font-size: 28px;
+  line-height: 1.15;
+}
+
+.ns-page__meta {
+  margin-bottom: 18px;
+  color: rgba(255, 255, 255, 0.66);
+  font-size: 13px;
+}
+
+.ns-page__summary {
+  margin: 0 0 20px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 12px;
+  color: inherit;
+}
+
+.ns-page__body p,
+.ns-page__body blockquote,
+.ns-page__body ul,
+.ns-page__body h1,
+.ns-page__body h2,
+.ns-page__body h3,
+.ns-page__body h4 {
+  margin: 0 0 16px;
+  line-height: 1.75;
+}
+
+.ns-page__body blockquote {
+  padding: 12px 16px;
+  border-left: 3px solid #7cb5ff;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+}
+
+.ns-page__body ul {
+  padding-left: 22px;
+}
+
+.ns-page__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+.ns-page__tag {
+  padding: 6px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 12px;
+}
+
+/* ---------- json preview ---------- */
+
+.ns-editor-json {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(5, 11, 22, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  font-family: "DejaVu Sans Mono", "Consolas", monospace;
+  font-size: 13px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow: auto;
+}
+
+/* ---------- workspace surface ---------- */
+
+.ns-editor-shell--surface-workspace {
+  gap: 12px;
+}
+
+.ns-editor-shell--surface-workspace .ns-editor-shell__header {
+  grid-template-columns: 1fr;
+  gap: 10px;
+  padding: 12px;
+}
+
+.ns-editor-shell--surface-workspace .ns-editor-shell__header-meta,
+.ns-editor-shell--surface-workspace .ns-editor-shell__header-actions {
+  width: 100%;
+  justify-content: flex-start;
+  gap: 6px;
+}
+
+.ns-editor-shell--surface-workspace .ns-editor-shell__button {
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 10px;
+  font-size: 13px;
+}
+
+.ns-editor-shell--surface-workspace .ns-editor-shell__body {
+  grid-template-columns: minmax(220px, 250px) minmax(0, 1fr);
+  gap: 12px;
+}
+
+.ns-editor-shell--surface-workspace .ns-editor-shell__panel {
+  min-height: 360px;
+}
+
+.ns-editor-shell--surface-workspace .ns-editor-shell__tab-panel {
+  padding: 12px;
+}
+
+.ns-editor-shell--surface-workspace .ns-editor-shell__side--left .ns-editor-shell__side-card-body {
+  max-height: 240px;
+}
+
+.ns-editor-shell--surface-workspace .ns-editor-shell__preview-live,
+.ns-editor-shell--surface-workspace .ns-editor-shell__preview-meta {
+  background: var(--ns-surface-1, rgba(13, 19, 29, 0.9));
+}
+
+/* ---------- cabinet compact mode ---------- */
+
+.ns-editor-mount--cabinet,
+#nsEditorCabinetMount {
+  min-height: 0;
+}
+
+.ns-editor-shell--surface-cabinet {
+  min-height: 0;
+  gap: 12px;
+}
+
+.ns-editor-shell--surface-cabinet .ns-editor-shell__header {
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 12px;
+  padding: 14px 16px;
+  align-items: start;
+}
+
+.ns-editor-shell--surface-cabinet .ns-editor-shell__eyebrow {
+  font-size: 11px;
+  margin-bottom: 4px;
+}
+
+.ns-editor-shell--surface-cabinet .ns-editor-shell__title-row {
+  gap: 6px;
+}
+
+.ns-editor-shell--surface-cabinet .ns-editor-shell__title-row h2 {
+  font-size: 18px;
+  line-height: 1.15;
+}
+
+.ns-editor-shell--surface-cabinet .ns-editor-shell__header-subtitle {
+  font-size: 13px;
+}
+
+.ns-editor-shell--surface-cabinet .ns-editor-shell__badge,
+.ns-editor-shell--surface-cabinet .ns-editor-shell__count,
+.ns-editor-shell--surface-cabinet .ns-editor-shell__status {
+  min-height: 28px;
+  padding: 0 10px;
+  font-size: 13px;
+}
+
+.ns-editor-shell--surface-cabinet .ns-editor-shell__status {
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+.ns-editor-shell--surface-cabinet .ns-editor-shell__header-meta,
+.ns-editor-shell--surface-cabinet .ns-editor-shell__header-actions {
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.ns-editor-shell--surface-cabinet .ns-editor-shell__button {
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 10px;
+  font-size: 13px;
+}
+
+.ns-editor-shell--surface-cabinet .ns-editor-shell__body {
+  grid-template-columns: minmax(250px, 300px) minmax(0, 1fr) minmax(250px, 300px);
+  gap: 12px;
+  align-items: start;
+}
+
+.ns-editor-shell--surface-cabinet .ns-editor-shell__side {
+  gap: 12px;
+}
+
+.ns-editor-shell--surface-cabinet .ns-editor-shell__side-card-header {
+  padding: 10px 12px;
+}
+
+.ns-editor-shell--surface-cabinet .ns-editor-shell__side-card-body {
+  padding: 8px;
+  gap: 8px;
+}
+
+.ns-editor-shell--surface-cabinet .ns-editor-shell__side--left .ns-editor-shell__side-card-body {
+  max-height: 260px;
+}
+
+.ns-editor-shell--surface-cabinet .ns-editor-shell__list-button {
+  padding: 9px 10px;
+  border-radius: 10px;
+}
+
+.ns-editor-shell--surface-cabinet .ns-editor-shell__list-title {
+  font-size: 13px;
+}
+
+.ns-editor-shell--surface-cabinet .ns-editor-shell__list-subtitle {
+  font-size: 12px;
+}
+
+.ns-editor-shell--surface-cabinet .ns-editor-shell__tabs {
+  gap: 8px;
+  flex-wrap: wrap;
+  overflow: visible;
+  padding-bottom: 0;
+}
+
+.ns-editor-shell--surface-cabinet .ns-editor-shell__tab {
+  min-height: 36px;
+  padding: 0 14px;
+  white-space: nowrap;
+  border-radius: 10px;
+  flex: 0 0 auto;
+}
+
+.ns-editor-shell--surface-cabinet .ns-editor-shell__panel {
+  min-height: 560px;
+}
+
+.ns-editor-shell--surface-cabinet .ns-editor-shell__tab-panel {
+  padding: 12px;
+}
+
+.ns-editor-shell--surface-cabinet .ns-editor-shell__tab-panel--preview.is-active {
+  grid-template-rows: minmax(220px, 1fr) auto;
+  gap: 12px;
+}
+
+.ns-editor-shell--surface-cabinet .ns-editor-shell__preview-live,
+.ns-editor-shell--surface-cabinet .ns-editor-shell__preview-meta {
+  padding: 12px;
+  border-radius: 12px;
+}
+
+.ns-editor-shell--surface-cabinet .ns-editor-shell__preview-title {
+  font-size: 11px;
+  margin-bottom: 6px;
+}
+
+.ns-editor-shell--surface-cabinet .ns-editor-shell__context-grid {
+  gap: 8px;
+}
+
+.ns-editor-shell--surface-cabinet .ns-editor-shell__context-label {
+  font-size: 12px;
+}
+
+.ns-editor-shell--surface-cabinet .ns-editor-shell__context-value {
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+.ns-editor-shell--surface-cabinet .ns-editor-shell__placeholder {
+  min-height: 160px;
+  padding: 18px;
+}
+
+.ns-editor-shell--surface-cabinet .ns-editor-shell__mode-panel {
+  padding: 10px;
+}
+
+.ns-editor-shell--surface-cabinet .ns-editor-shell__mode-button,
+.ns-editor-shell--surface-cabinet .ns-editor-shell__toolbar-button {
+  min-height: 34px;
+  padding: 0 10px;
+  font-size: 13px;
+}
+
+.ns-editor-shell--surface-cabinet .ns-editor-shell__deploy-grid {
+  grid-template-columns: 1fr;
+}
+
+/* ---------- container-based responsive ---------- */
+
+.ns-editor-shell--compact .ns-editor-shell__header {
+  grid-template-columns: 1fr;
+  gap: 10px;
+  padding: 12px;
+}
+
+.ns-editor-shell--compact .ns-editor-shell__eyebrow {
+  font-size: 11px;
+  margin-bottom: 4px;
+}
+
+.ns-editor-shell--compact .ns-editor-shell__title-row {
+  gap: 6px;
+}
+
+.ns-editor-shell--compact .ns-editor-shell__title-row h2 {
+  font-size: 18px;
+  line-height: 1.15;
+}
+
+.ns-editor-shell--compact .ns-editor-shell__badge,
+.ns-editor-shell--compact .ns-editor-shell__count,
+.ns-editor-shell--compact .ns-editor-shell__status {
+  min-height: 24px;
+  padding: 0 8px;
+  font-size: 11px;
+}
+
+.ns-editor-shell--compact .ns-editor-shell__status {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.ns-editor-shell--compact .ns-editor-shell__header-meta,
+.ns-editor-shell--compact .ns-editor-shell__header-actions {
+  width: 100%;
+  justify-content: flex-start;
+  gap: 6px;
+}
+
+.ns-editor-shell--compact .ns-editor-shell__button {
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 10px;
+  font-size: 13px;
+}
+
+.ns-editor-shell--compact .ns-editor-shell__body {
+  grid-template-columns: minmax(220px, 260px) minmax(0, 1fr);
+}
+
+.ns-editor-shell--surface-cabinet.ns-editor-shell--compact .ns-editor-shell__body {
+  grid-template-columns: minmax(220px, 260px) minmax(0, 1fr);
+}
+
+.ns-editor-shell--surface-cabinet.ns-editor-shell--compact .ns-editor-shell__side--right {
+  grid-column: 1 / -1;
+}
+
+.ns-editor-shell--compact .ns-editor-shell__deploy-grid {
+  grid-template-columns: 1fr;
+}
+
+.ns-editor-shell--compact .ns-editor-form-grid,
+.ns-editor-shell--compact .ns-editor-form-grid--workspace-light,
+.ns-editor-shell--compact .ns-editor-form-grid--cabinet {
+  grid-template-columns: 1fr;
+}
+
+.ns-editor-shell--stacked .ns-editor-shell__body {
+  grid-template-columns: 1fr;
+}
+
+.ns-editor-shell--stacked .ns-editor-shell__picker-grid {
+  grid-template-columns: 1fr;
+}
+
+@media (max-width: 760px) {
+  .ns-editor-form-grid--workspace-light,
+  .ns-editor-form-grid--cabinet,
+  .ns-editor-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ns-editor-shell__deploy-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ns-editor-shell__picker-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .ns-editor-shell--surface-cabinet .ns-editor-shell__header,
+  .ns-editor-shell--compact .ns-editor-shell__header {
+    padding: 10px;
+  }
+
+  .ns-editor-shell--surface-cabinet .ns-editor-shell__title-row h2,
+  .ns-editor-shell--compact .ns-editor-shell__title-row h2 {
+    font-size: 15px;
+  }
+
+  .ns-editor-shell--surface-cabinet .ns-editor-shell__button,
+  .ns-editor-shell--compact .ns-editor-shell__button {
+    min-height: 32px;
+    padding: 0 10px;
+    font-size: 12px;
+  }
+
+  .ns-editor-shell--surface-cabinet .ns-editor-shell__panel {
+    min-height: 320px;
+  }
+
+  .ns-editor-shell--surface-cabinet .ns-editor-shell__side--left .ns-editor-shell__side-card-body {
+    max-height: 180px;
+  }
+
+  .ns-editor-shell__mode-switch {
+    width: 100%;
+  }
+
+  .ns-editor-shell__mode-button {
+    flex: 1 1 calc(50% - 8px);
+    justify-content: center;
+  }
+}
+
+/* --- v83 readability polish --- */
+.ns-editor-shell,
+.ns-editor-v1 {
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.ns-editor-shell .panel-title,
+.ns-editor-v1__panelTitle {
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.ns-editor-shell label,
+.ns-editor-v1__field label,
+.ns-editor-v1__label,
+.ns-editor-v1__miniCardTitle,
+.ns-editor-v1__status {
+  font-size: 13px;
+}
+
+.ns-editor-shell input,
+.ns-editor-shell textarea,
+.ns-editor-shell select,
+.ns-editor-shell button,
+.ns-editor-v1 input,
+.ns-editor-v1 textarea,
+.ns-editor-v1 select,
+.ns-editor-v1 button {
+  font-size: 14px;
+}
+
+.ns-editor-v1__visual {
+  font-size: 17px;
+  line-height: 1.8;
+}
+
+.ns-editor-v1__visual h1 {
+  font-size: 2.1rem;
+  line-height: 1.2;
+}
+
+.ns-editor-v1__visual h2 {
+  font-size: 1.5rem;
+  line-height: 1.3;
+}
+
+.ns-editor-v1__markdown,
+.ns-editor-v1__code {
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.ns-editor-v1__blockText {
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.ns-editor-v1__preview {
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+.ns-editor-v1__preview h1 {
+  font-size: 2.2rem;
+  line-height: 1.2;
+}
+
+.ns-editor-v1__preview h2 {
+  font-size: 1.55rem;
+  line-height: 1.3;
+}
+
+.ns-editor-v1__preview p,
+.ns-editor-v1__preview li,
+.ns-editor-v1__preview blockquote {
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+
+
+/* --- v82 shell-compatible write modes fix --- */
+
+.ns-editor-write-mode-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 18px 0 12px;
+}
+
+.ns-editor-write-mode-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(220, 230, 255, 0.88);
+}
+
+.ns-editor-write-modes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ns-editor-write-modes button {
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(110, 150, 255, 0.18);
+  background: rgba(16, 28, 56, 0.92);
+  color: #dfe9ff;
+  cursor: pointer;
+}
+
+.ns-editor-write-modes button.is-active {
+  background: rgba(38, 90, 190, 0.95);
+  border-color: rgba(120, 170, 255, 0.55);
+}
+
+.ns-editor-write-surfaces {
+  display: block;
+  margin-top: 12px;
+}
+
+.ns-editor-write-surface {
+  display: none;
+}
+
+.ns-editor-write-surface.is-active {
+  display: block;
+}
+
+.ns-editor-visual {
+  min-height: 340px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  border: 1px solid rgba(110, 150, 255, 0.14);
+  background: rgba(5, 14, 34, 0.92);
+  color: #eef4ff;
+  font-size: 16px;
+  line-height: 1.75;
+  outline: none;
+}
+
+.ns-editor-visual h1 {
+  font-size: 32px;
+  line-height: 1.2;
+  margin: 0 0 16px;
+}
+
+.ns-editor-visual h2 {
+  font-size: 24px;
+  line-height: 1.3;
+  margin: 24px 0 12px;
+}
+
+.ns-editor-textarea--mono {
+  min-height: 340px;
+  font-family: "Ubuntu Mono", "Consolas", monospace;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.ns-editor-blocks-header {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 12px;
+}
+
+.ns-editor-blocks {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ns-editor-block {
+  padding: 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(110, 150, 255, 0.12);
+  background: rgba(10, 20, 42, 0.9);
+}
+
+.ns-editor-block__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.ns-editor-block textarea {
+  min-height: 110px;
+}
+
+.ns-editor-preview-page {
+  padding: 18px;
+  border-radius: 16px;
+  border: 1px solid rgba(110, 150, 255, 0.12);
+  background: rgba(7, 16, 34, 0.92);
+}
+
+.ns-editor-preview-page h1 {
+  font-size: 32px;
+  line-height: 1.2;
+  margin: 0 0 14px;
+}
+
+.ns-editor-preview-summary {
+  font-size: 16px;
+  line-height: 1.7;
+  opacity: 0.92;
+}
+
+.ns-editor-preview-html p,
+.ns-editor-preview-html li,
+.ns-editor-preview-html blockquote {
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+.ns-editor-deploy-grid,
+.ns-editor-deploy-output-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.ns-editor-deploy-grid {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  margin-bottom: 16px;
+}
+
+.ns-editor-deploy-output-grid {
+  grid-template-columns: 1fr;
+}
+
+.ns-editor-field-label {
+  display: block;
+  margin: 10px 0 6px;
+  font-size: 13px;
+  color: rgba(220, 230, 255, 0.8);
+}
+
+
+.ns-editor-shell__mini-card {
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--ns-surface-1, rgba(255, 255, 255, 0.03));
+  border: 1px solid var(--ns-border-soft, rgba(255, 255, 255, 0.05));
+}
+
+.ns-editor-shell__mini-card-title {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.66;
+}
+
+.ns-editor-shell__mini-card-value {
+  font-size: 13px;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.ns-editor-relations-card {
+  display: grid;
+  gap: 12px;
+  padding: 12px;
+  margin-bottom: 14px;
+  border: 1px solid var(--ns-border-soft, rgba(255, 255, 255, 0.06));
+  border-radius: 14px;
+  background: var(--ns-surface-1, rgba(255, 255, 255, 0.02));
+}
+
+.ns-editor-relations-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.ns-editor-relations-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ns-editor-relations-actions--tight {
+  margin-top: 2px;
+}
+
+.ns-editor-form-grid--relations {
+  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+}
+
+.ns-editor-relations-lists {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.ns-editor-relations-group {
+  display: grid;
+  gap: 8px;
+  padding: 10px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--ns-border-soft, rgba(255,255,255,0.05));
+}
+
+.ns-editor-relations-title {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.72;
+}
+
+.ns-editor-relations-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255,255,255,0.04);
+}
+
+.ns-editor-relations-main {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.ns-editor-relations-main strong {
+  font-size: 13px;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.ns-editor-relations-main span {
+  font-size: 13px;
+  opacity: 0.78;
+  line-height: 1.4;
+}
+
+.ns-editor-relations-buttons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+@media (max-width: 1120px) {
+  .ns-editor-form-grid--relations,
+  .ns-editor-relations-lists {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+
+/* --- Editor writing theme toggle (dark / light) --- */
+
+.ns-editor-write-root {
+  --ns-write-panel: rgba(7, 15, 32, 0.92);
+  --ns-write-panel-2: rgba(10, 20, 42, 0.9);
+  --ns-write-panel-3: rgba(255, 255, 255, 0.02);
+  --ns-write-surface: rgba(5, 14, 34, 0.92);
+  --ns-write-border: rgba(255, 255, 255, 0.08);
+  --ns-write-border-soft: rgba(255, 255, 255, 0.05);
+  --ns-write-text: #eaf2ff;
+  --ns-write-muted: #94a8c8;
+  --ns-write-accent: rgba(0, 140, 255, 0.18);
+  --ns-write-accent-border: rgba(0, 140, 255, 0.28);
+  display: grid;
+  gap: 14px;
+}
+
+.ns-editor-write-theme--light {
+  --ns-write-panel: #ffffff;
+  --ns-write-panel-2: #f8fbff;
+  --ns-write-panel-3: #f4f7fb;
+  --ns-write-surface: #ffffff;
+  --ns-write-border: rgba(15, 23, 42, 0.14);
+  --ns-write-border-soft: rgba(15, 23, 42, 0.08);
+  --ns-write-text: #172334;
+  --ns-write-muted: #5f7089;
+  --ns-write-accent: rgba(37, 99, 235, 0.10);
+  --ns-write-accent-border: rgba(37, 99, 235, 0.22);
+}
+
+.ns-editor-write-toolbar {
+  display: grid;
+  gap: 10px;
+}
+
+.ns-editor-write-theme-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 4px;
+}
+
+.ns-editor-write-theme-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ns-write-muted);
+}
+
+.ns-editor-write-themes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ns-editor-write-themes button {
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--ns-write-border);
+  background: var(--ns-write-panel-2);
+  color: var(--ns-write-text);
+  cursor: pointer;
+}
+
+.ns-editor-write-themes button.is-active {
+  background: var(--ns-write-accent);
+  border-color: var(--ns-write-accent-border);
+}
+
+.ns-editor-write-root .ns-editor-field label,
+.ns-editor-write-root .ns-editor-write-mode-label {
+  color: var(--ns-write-muted);
+  opacity: 1;
+}
+
+.ns-editor-write-root .ns-editor-input,
+.ns-editor-write-root .ns-editor-textarea {
+  background: var(--ns-write-panel);
+  color: var(--ns-write-text);
+  border-color: var(--ns-write-border);
+}
+
+.ns-editor-write-root .ns-editor-input::placeholder,
+.ns-editor-write-root .ns-editor-textarea::placeholder {
+  color: var(--ns-write-muted);
+}
+
+.ns-editor-write-root .ns-editor-input:focus,
+.ns-editor-write-root .ns-editor-textarea:focus {
+  border-color: var(--ns-write-accent-border);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+}
+
+.ns-editor-write-root .ns-editor-relations-card,
+.ns-editor-write-root .ns-editor-relations-group,
+.ns-editor-write-root .ns-editor-relations-row,
+.ns-editor-write-root .ns-editor-shell__section-intro,
+.ns-editor-write-root .ns-editor-block {
+  background: var(--ns-write-panel-3);
+  color: var(--ns-write-text);
+  border-color: var(--ns-write-border-soft);
+}
+
+.ns-editor-write-root .ns-editor-relations-title,
+.ns-editor-write-root .ns-editor-relations-main span,
+.ns-editor-write-root .ns-editor-shell__mini-empty {
+  color: var(--ns-write-muted);
+  opacity: 1;
+}
+
+.ns-editor-write-root .ns-editor-write-modes button {
+  border-color: var(--ns-write-border);
+  background: var(--ns-write-panel-2);
+  color: var(--ns-write-text);
+}
+
+.ns-editor-write-root .ns-editor-write-modes button.is-active {
+  background: var(--ns-write-accent);
+  border-color: var(--ns-write-accent-border);
+}
+
+.ns-editor-write-root .ns-editor-visual {
+  background: var(--ns-write-surface);
+  color: var(--ns-write-text);
+  border-color: var(--ns-write-border);
+}
+
+.ns-editor-write-root .ns-editor-visual h1,
+.ns-editor-write-root .ns-editor-visual h2,
+.ns-editor-write-root .ns-editor-visual h3,
+.ns-editor-write-root .ns-editor-visual p,
+.ns-editor-write-root .ns-editor-visual li,
+.ns-editor-write-root .ns-editor-visual blockquote {
+  color: inherit;
+}
+
+.ns-editor-write-root .ns-editor-visual blockquote {
+  border-left: 3px solid var(--ns-write-accent-border);
+  background: var(--ns-write-panel-3);
+  padding: 10px 12px;
+  border-radius: 12px;
+}
+
+.ns-editor-write-root .ns-editor-shell__button {
+  border-color: var(--ns-write-border);
+}
+
+.ns-editor-write-theme--light .ns-editor-shell__button {
+  background: #eef4ff;
+  color: #1c2a3d;
+}
+
+.ns-editor-write-theme--light .ns-editor-shell__button:hover {
+  background: #e5eefc;
+}
+
+.ns-editor-write-theme--light .ns-editor-shell__button--primary {
+  background: #dbeafe;
+  border-color: rgba(37, 99, 235, 0.24);
+  color: #13398b;
+}
+
+.ns-editor-write-theme--light .ns-editor-shell__button--danger {
+  background: #fde8ec;
+  border-color: rgba(220, 38, 38, 0.22);
+  color: #9f1239;
+}
+
+
+
+/* pass7: draft cleanup controls + larger cabinet/editor text */
+.ns-editor-shell__side-card-header--stacked {
+  align-items: flex-start;
+}
+
+.ns-editor-shell__side-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.ns-editor-shell__list-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.ns-editor-shell__list-delete {
+  min-height: 100%;
+  padding: 0 12px;
+  border-radius: 10px;
+}
+
+.ns-editor-shell__side-card-title {
+  font-size: 15px;
+}
+
+.ns-editor-shell__count,
+.ns-editor-shell__status,
+.ns-editor-shell__list-subtitle,
+.ns-editor-shell__mini-empty,
+.ns-editor-shell__mini-source,
+.ns-editor-shell__context-label,
+.ns-editor-shell__picker-subtitle,
+.ns-editor-shell__picker-card-desc {
+  font-size: 13px;
+}
+
+.ns-editor-shell__context-value,
+.ns-editor-shell__list-title,
+.ns-editor-shell__picker-card-title {
+  font-size: 15px;
+}
+
+.ns-editor-shell__button {
+  font-size: 13px;
+}
+
+/* pass10: centered editor with drawer panels */
+.ns-editor-shell__body {
+  position: relative;
+  display: block;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.ns-editor-shell__main {
+  width: 100%;
+}
+
+.ns-editor-shell__drawer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 5;
+  width: min(400px, calc(100% - 24px));
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px;
+  background: rgba(8, 12, 20, 0.96);
+  border: 1px solid var(--ns-border-color, rgba(255,255,255,0.08));
+  border-radius: 18px;
+  box-shadow: 0 18px 48px rgba(0,0,0,0.28);
+  overflow: hidden;
+  transition: transform 180ms ease, opacity 180ms ease;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ns-editor-shell__drawer--left {
+  left: 0;
+  transform: translateX(-108%);
+}
+
+.ns-editor-shell__drawer--right {
+  right: 0;
+  transform: translateX(108%);
+}
+
+.ns-editor-shell--left-open .ns-editor-shell__drawer--left,
+.ns-editor-shell--right-open .ns-editor-shell__drawer--right {
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.ns-editor-shell__drawer-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--ns-border-soft, rgba(255,255,255,0.06));
+}
+
+.ns-editor-shell__drawer-head > div {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.ns-editor-shell__drawer-title {
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.ns-editor-shell__drawer-subtitle {
+  margin-top: 5px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(200,216,245,0.78);
+}
+
+.ns-editor-shell__drawer-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+  overflow: auto;
+  padding-right: 2px;
+}
+
+.ns-editor-shell__drawer-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  background: rgba(4, 8, 16, 0.32);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 160ms ease;
+}
+
+.ns-editor-shell--left-open .ns-editor-shell__drawer-scrim--left,
+.ns-editor-shell--right-open .ns-editor-shell__drawer-scrim--right {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.ns-editor-shell__side-card-body--settings {
+  gap: 12px;
+}
+
+.ns-editor-shell__side-card-body--settings .ns-editor-disclosure {
+  margin: 0;
+}
+
+.ns-editor-shell__side-card-body--settings .ns-editor-disclosure summary {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.ns-editor-shell__side-card-body--settings .ns-editor-field label,
+.ns-editor-shell__side-card-body--settings .ns-editor-field-label,
+.ns-editor-shell__side-card-body--settings .ns-editor-shell__mini-source {
+  font-size: 14px;
+}
+
+.ns-editor-shell__side-card-body--settings .ns-editor-input,
+.ns-editor-shell__side-card-body--settings .ns-editor-textarea,
+.ns-editor-shell__side-card-body--settings .ns-editor-relations-actions,
+.ns-editor-shell__side-card-body--settings .ns-editor-shell__button {
+  font-size: 15px;
+}
+
+.ns-editor-write-root {
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.ns-editor-writer-hero,
+.ns-editor-writer-stage {
+  box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+}
+
+.ns-editor-shell--focus-mode .ns-editor-shell__tabs,
+.ns-editor-shell--focus-mode .ns-editor-shell__header-meta {
+  opacity: 0.78;
+}
+
+@media (max-width: 980px) {
+  .ns-editor-shell__drawer {
+    width: calc(100% - 16px);
+    top: 8px;
+    bottom: 8px;
+  }
+}
+
+
+@media (max-width: 900px) {
+  .ns-editor-preview-stage__bar,
+  .ns-editor-preview-stage__canvas-head {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ns-editor-preview-stage__canvas-url {
+    text-align: left;
+  }
+
+  .ns-editor-preview-stage__viewport {
+    padding: 14px;
+  }
+}
+
+
+/* pass22 editor stabilization */
+.ns-editor-write-root {
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+.ns-editor-writer-stage {
+  order:1;
+}
+
+.ns-editor-writer-hero {
+  order:2;
+}
+
+.ns-editor-write-root.is-focus-mode .ns-editor-writer-hero {
+  display:none;
+}
+
+.ns-editor-shell__drawer-head .ns-editor-shell__button,
+.ns-editor-shell__header-actions .ns-editor-shell__button {
+  white-space:nowrap;
+}
+
+.ns-editor-shell__drawer-head,
+.ns-editor-shell__header-actions {
+  flex-wrap:wrap;
+}
+
+.ns-editor-write-root .ns-editor-field label,
+.ns-editor-write-root .ns-editor-field-label,
+.ns-editor-write-root .ns-editor-write-mode-label,
+.ns-editor-write-root .ns-editor-mode-intro span,
+.ns-editor-write-root .ns-editor-document-canvas__note,
+.ns-editor-write-root .ns-editor-input,
+.ns-editor-write-root .ns-editor-textarea,
+.ns-editor-write-root .ns-editor-visual {
+  font-size:15px;
+}
+
+.ns-editor-write-root .ns-editor-textarea--title { font-size:26px; }
+
+.ns-editor-shell--focus-mode .ns-editor-shell__drawer {
+  opacity:0 !important;
+  pointer-events:none !important;
+}
+
+.ns-editor-shell--focus-mode .ns-editor-shell__drawer-scrim {
+  display:none !important;
+}
+
+
+/* pass24 editor finish */
+.ns-editor-shell__drawer-head .ns-editor-shell__button {
+  flex: 0 0 auto;
+  max-width: 100%;
+}
+
+.ns-editor-write-root {
+  padding-top: 2px;
+}
+
+.ns-editor-writer-stage {
+  scroll-margin-top: 10px;
+}
+
+.ns-editor-writer-stage__head {
+  align-items: flex-start;
+}
+
+.ns-editor-writer-hero {
+  max-width: 860px;
+}
+
+.ns-editor-shell--focus-mode .ns-editor-writer-hero {
+  display: none;
+}
+
+.ns-editor-shell--focus-mode .ns-editor-shell__header-subtitle,
+.ns-editor-shell--focus-mode .ns-editor-shell__headline .ns-editor-shell__badge {
+  opacity: .55;
+}
+
+/* pass25 editor controls stabilization */
+.ns-editor-writer-stage {
+  order: 1;
+}
+
+.ns-editor-writer-hero {
+  order: 2;
+  padding: 14px 16px;
+}
+
+.ns-editor-writer-hero__copy {
+  margin-top: 4px;
+}
+
+.ns-editor-field--hero-title textarea {
+  min-height: 84px;
+}
+
+.ns-editor-write-mode-row .ns-editor-write-modes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ns-editor-write-root.is-focus-mode .ns-editor-writer-hero {
+  display: none;
+}
+
+
+/* pass26 editor stable core */
+.ns-editor-writer-stage__head--stable {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:14px;
+  margin-bottom:12px;
+}
+
+.ns-editor-writer-stage__intro {
+  display:grid;
+  gap:4px;
+  min-width:0;
+}
+
+.ns-editor-writer-stage__eyebrow {
+  font-size:12px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  opacity:.72;
+}
+
+.ns-editor-writer-stage__copy {
+  font-size:14px;
+  line-height:1.5;
+  opacity:.82;
+}
+
+.ns-editor-writer-stage__stable-actions {
+  display:flex;
+  gap:8px;
+  flex:0 0 auto;
+}
+
+.ns-editor-write-stable-row {
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin:6px 0 10px;
+}
+
+.ns-editor-write-stable-chip {
+  padding:8px 12px;
+  border-radius:999px;
+  border:1px solid rgba(120,170,255,0.18);
+  background:rgba(14,22,42,0.78);
+  font-size:13px;
+}
+
+.ns-editor-write-theme--light .ns-editor-write-stable-chip {
+  background:#eef4ff;
+  border-color:rgba(37,99,235,0.14);
+  color:#1c2a3d;
+}
+
+.ns-editor-field--stage-title textarea {
+  min-height:88px;
+}
+
+.ns-editor-field--stage-summary textarea {
+  min-height:90px;
+}
+
+.ns-editor-form-grid--writer-meta {
+  margin-bottom:6px;
+}
+
+.ns-editor-writer-hero {
+  display:none;
+}
+
+.ns-editor-shell--focus-mode .ns-editor-writer-stage__copy {
+  opacity:.55;
+}
+
+@media (max-width: 900px) {
+  .ns-editor-writer-stage__head--stable {
+    flex-direction:column;
+  }
+}
+
+
+/* pass27 editor layout polish */
+.ns-editor-shell__header {
+  padding: 12px 14px;
+  gap: 12px;
+}
+
+.ns-editor-shell__header-subtitle {
+  margin-top: 2px;
+  font-size: 12px;
+}
+
+.ns-editor-shell__tab-panel {
+  padding: 10px;
+}
+
+.ns-editor-shell__drawer {
+  top: 8px;
+  bottom: 8px;
+  padding: 12px;
+  width: min(340px, calc(100% - 24px));
+  border-radius: 16px;
+}
+
+.ns-editor-shell__drawer--right {
+  width: min(360px, calc(100% - 24px));
+}
+
+.ns-editor-shell__drawer-body {
+  gap: 10px;
+}
+
+.ns-editor-shell__drawer-title {
+  font-size: 16px;
+}
+
+.ns-editor-shell__drawer-subtitle {
+  margin-top: 4px;
+  font-size: 13px;
+  line-height: 1.42;
+}
+
+.ns-editor-shell__side-card {
+  border-radius: 14px;
+}
+
+.ns-editor-shell__side-card-body--settings .ns-editor-disclosure {
+  border-radius: 14px;
+}
+
+.ns-editor-write-root {
+  gap: 10px;
+  padding-top: 0;
+}
+
+.ns-editor-writer-stage__head--stable {
+  margin-bottom: 8px;
+  gap: 10px;
+}
+
+.ns-editor-writer-stage__copy {
+  font-size: 13px;
+}
+
+.ns-editor-field--stage-title textarea {
+  min-height: 72px;
+}
+
+.ns-editor-field--stage-summary textarea {
+  min-height: 72px;
+}
+
+.ns-editor-form-grid--writer-meta {
+  margin-bottom: 2px;
+}
+
+.ns-editor-write-stable-row {
+  margin: 2px 0 8px;
+}
+
+.ns-editor-write-stable-chip {
+  padding: 7px 11px;
+  font-size: 12px;
+}
+
+.ns-editor-toolbar {
+  gap: 8px;
+  padding: 10px 12px;
+}
+
+.ns-editor-document-canvas__bar {
+  padding: 10px 12px;
+}
+
+.ns-editor-document-canvas__viewport {
+  padding: 12px 14px 14px;
+}
+
+.ns-editor-write-root .ns-editor-textarea--title {
+  font-size: 22px;
+}
+
+.ns-editor-write-root .ns-editor-field label,
+.ns-editor-write-root .ns-editor-field-label,
+.ns-editor-write-root .ns-editor-document-canvas__note,
+.ns-editor-write-root .ns-editor-input,
+.ns-editor-write-root .ns-editor-textarea,
+.ns-editor-write-root .ns-editor-visual {
+  font-size: 14px;
+}
+
+.ns-editor-shell--focus-mode .ns-editor-shell__header {
+  padding-bottom: 8px;
+}
+
+@media (max-width: 980px) {
+  .ns-editor-shell__drawer,
+  .ns-editor-shell__drawer--right {
+    width: calc(100% - 16px);
+  }
+}
+
+
+/* pass28 editor v1 safe stabilization */
+.ns-editor-write-root {
+  max-width: min(1420px, 100%);
+}
+
+.ns-editor-shell__drawer {
+  width: min(320px, calc(100% - 24px));
+}
+
+.ns-editor-shell__drawer--right {
+  width: min(340px, calc(100% - 24px));
+}
+
+.ns-editor-document-canvas--site .ns-editor-visual,
+.ns-editor-document-canvas--editorial .ns-editor-visual,
+.ns-editor-document-canvas--article .ns-editor-visual,
+.ns-editor-document-canvas--analysis .ns-editor-visual {
+  overflow: visible;
+}
+
+.ns-editor-document-canvas .ns-editor-visual > :first-child {
+  margin-top: 0;
+}
+
+.ns-editor-document-canvas .ns-page-section,
+.ns-editor-document-canvas .ns-post {
+  margin: 0 0 20px;
+  padding: 24px;
+  border-radius: 24px;
+  border: 1px solid rgba(120, 92, 64, 0.12);
+  background: rgba(255, 252, 247, 0.92);
+  box-shadow: 0 14px 34px rgba(82, 56, 32, 0.08);
+}
+
+.ns-editor-document-canvas .ns-page-section:last-child,
+.ns-editor-document-canvas .ns-post:last-child {
+  margin-bottom: 0;
+}
+
+.ns-editor-document-canvas .ns-page-hero {
+  background: linear-gradient(180deg, rgba(255, 248, 239, 0.98), rgba(245, 233, 218, 0.96));
+}
+
+.ns-editor-document-canvas .ns-page-hero--split,
+.ns-editor-document-canvas .ns-page-grid--article {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.85fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.ns-editor-document-canvas .ns-page-section__head {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.ns-editor-document-canvas .ns-page-grid {
+  display: grid;
+  gap: 18px;
+}
+
+.ns-editor-document-canvas .ns-page-grid--two,
+.ns-editor-document-canvas .ns-page-grid--stats {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.ns-editor-document-canvas .ns-page-grid--three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.ns-editor-document-canvas .ns-page-card,
+.ns-editor-document-canvas .ns-page-panel,
+.ns-editor-document-canvas .ns-page-callout,
+.ns-editor-document-canvas .ns-page-prose,
+.ns-editor-document-canvas .ns-page-panel--sidebar {
+  display: grid;
+  gap: 10px;
+  padding: 18px;
+  border-radius: 20px;
+  border: 1px solid rgba(120, 92, 64, 0.10);
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.ns-editor-document-canvas .ns-page-callout {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  background: linear-gradient(180deg, rgba(255, 246, 235, 0.96), rgba(246, 234, 220, 0.98));
+}
+
+.ns-editor-document-canvas .ns-page-actions,
+.ns-editor-document-canvas .ns-page-meta-strip,
+.ns-editor-document-canvas .ns-page-list,
+.ns-editor-document-canvas .ns-page-panel__eyebrow,
+.ns-editor-document-canvas .ns-page-callout__eyebrow,
+.ns-editor-document-canvas .ns-page-kicker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.ns-editor-document-canvas .ns-page-kicker,
+.ns-editor-document-canvas .ns-page-panel__eyebrow,
+.ns-editor-document-canvas .ns-page-callout__eyebrow,
+.ns-editor-document-canvas .ns-page-meta-strip span,
+.ns-editor-document-canvas .ns-page-card > span {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(122, 84, 48, 0.78);
+}
+
+.ns-editor-document-canvas .ns-page-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(122, 84, 48, 0.12);
+  background: rgba(255, 255, 255, 0.82);
+  color: #6f4725 !important;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.ns-editor-document-canvas .ns-page-button--primary {
+  background: linear-gradient(180deg, #9f6d43, #7a4e29);
+  border-color: rgba(122, 84, 48, 0.24);
+  color: #fff8f1 !important;
+}
+
+.ns-editor-document-canvas .ns-page-lead {
+  font-size: 18px;
+  line-height: 1.75;
+  color: #4a3424;
+}
+
+.ns-editor-document-canvas .ns-page-prose > * + *,
+.ns-editor-document-canvas .ns-page-card > * + *,
+.ns-editor-document-canvas .ns-page-panel > * + * {
+  margin-top: 0;
+}
+
+.ns-editor-document-canvas .ns-page-prose blockquote,
+.ns-editor-document-canvas .ns-post blockquote {
+  margin: 8px 0;
+  padding: 16px 18px;
+  border-left: 4px solid rgba(122, 84, 48, 0.44);
+  border-radius: 16px;
+  background: rgba(245, 237, 227, 0.92);
+}
+
+.ns-editor-document-canvas .ns-page-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex-direction: column;
+}
+
+.ns-editor-document-canvas .ns-page-list li {
+  position: relative;
+  padding-left: 18px;
+}
+
+.ns-editor-document-canvas .ns-page-list li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: rgba(122, 84, 48, 0.78);
+}
+
+@media (max-width: 1120px) {
+  .ns-editor-document-canvas .ns-page-hero--split,
+  .ns-editor-document-canvas .ns-page-grid--article,
+  .ns-editor-document-canvas .ns-page-grid--three,
+  .ns-editor-document-canvas .ns-page-grid--two,
+  .ns-editor-document-canvas .ns-page-grid--stats,
+  .ns-editor-document-canvas .ns-page-callout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 980px) {
+  .ns-editor-write-root {
+    max-width: 100%;
+  }
+
+  .ns-editor-document-canvas .ns-page-section,
+  .ns-editor-document-canvas .ns-post {
+    padding: 18px;
+    border-radius: 20px;
+  }
+}
+
+
+/* pass29 editor cabinet + real editor foundation */
+.ns-editor-shell {
+  --ns-editor-shell-bg: #efe7dc;
+  --ns-editor-surface: rgba(255, 252, 247, 0.96);
+  --ns-editor-surface-2: rgba(248, 241, 232, 0.98);
+  --ns-editor-border-strong: rgba(122, 88, 58, 0.14);
+  --ns-editor-text-strong: #2f241c;
+  --ns-editor-text-soft: rgba(84, 61, 44, 0.78);
+  --ns-editor-toolbar-bg: rgba(250, 244, 236, 0.98);
+  --ns-editor-shadow: 0 18px 48px rgba(70, 48, 30, 0.10);
+  color: var(--ns-editor-text-strong);
+}
+
+.ns-editor-shell--editor-dark {
+  --ns-editor-shell-bg: #101724;
+  --ns-editor-surface: rgba(16, 24, 38, 0.96);
+  --ns-editor-surface-2: rgba(12, 20, 32, 0.98);
+  --ns-editor-border-strong: rgba(255, 255, 255, 0.08);
+  --ns-editor-text-strong: #eef4ff;
+  --ns-editor-text-soft: rgba(214, 225, 245, 0.76);
+  --ns-editor-toolbar-bg: rgba(15, 22, 36, 0.98);
+  --ns-editor-shadow: 0 20px 52px rgba(0, 0, 0, 0.28);
+  color: var(--ns-editor-text-strong);
+}
+
+.ns-editor-shell__header,
+.ns-editor-shell__panel,
+.ns-editor-shell__side-card,
+.ns-editor-shell__picker,
+.ns-editor-shell__preview-meta,
+.ns-editor-shell__preview-live,
+.ns-editor-preview-stage__canvas,
+.ns-editor-preview-stage__bar {
+  background: var(--ns-editor-surface);
+  border-color: var(--ns-editor-border-strong);
+  color: var(--ns-editor-text-strong);
+  box-shadow: var(--ns-editor-shadow);
+  backdrop-filter: none;
+}
+
+.ns-editor-shell__header-subtitle,
+.ns-editor-shell__drawer-subtitle,
+.ns-editor-shell__list-subtitle,
+.ns-editor-shell__mini-source,
+.ns-editor-shell__context-label,
+.ns-editor-writer-stage__copy,
+.ns-editor-document-canvas__note {
+  color: var(--ns-editor-text-soft);
+}
+
+.ns-editor-shell__badge,
+.ns-editor-shell__count,
+.ns-editor-shell__status,
+.ns-editor-shell__mini-source,
+.ns-editor-document-canvas__chip,
+.ns-editor-write-stable-chip {
+  background: color-mix(in srgb, var(--ns-editor-surface) 82%, transparent);
+  border-color: var(--ns-editor-border-strong);
+  color: var(--ns-editor-text-strong);
+}
+
+.ns-editor-shell__button,
+.ns-editor-shell__tab,
+.ns-editor-theme-button {
+  background: color-mix(in srgb, var(--ns-editor-surface) 86%, transparent);
+  border-color: var(--ns-editor-border-strong);
+  color: var(--ns-editor-text-strong);
+}
+
+.ns-editor-shell__button--primary,
+.ns-editor-shell__tab.is-active,
+.ns-editor-theme-button.is-active {
+  background: rgba(122, 78, 41, 0.14);
+  border-color: rgba(122, 78, 41, 0.28);
+  color: var(--ns-editor-text-strong);
+}
+
+.ns-editor-shell--editor-dark .ns-editor-shell__button--primary,
+.ns-editor-shell--editor-dark .ns-editor-shell__tab.is-active,
+.ns-editor-shell--editor-dark .ns-editor-theme-button.is-active {
+  background: rgba(103, 142, 255, 0.18);
+  border-color: rgba(103, 142, 255, 0.34);
+}
+
+.ns-editor-shell__body {
+  position: relative;
+  overflow: visible;
+}
+
+.ns-editor-shell__drawer-scrim {
+  display: none;
+}
+
+@media (min-width: 981px) {
+  .ns-editor-shell__body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+    align-items: start;
+  }
+
+  .ns-editor-shell__main {
+    grid-column: 1;
+    min-width: 0;
+  }
+
+  .ns-editor-shell__drawer {
+    position: relative;
+    inset: auto;
+    width: auto;
+    max-height: none;
+    transform: none !important;
+    opacity: 1;
+    pointer-events: auto;
+    display: none;
+    padding: 12px;
+    border-radius: 18px;
+    background: var(--ns-editor-surface-2);
+    border-color: var(--ns-editor-border-strong);
+    box-shadow: var(--ns-editor-shadow);
+  }
+
+  .ns-editor-shell--left-open .ns-editor-shell__body {
+    grid-template-columns: minmax(280px, 320px) minmax(0, 1fr);
+  }
+
+  .ns-editor-shell--left-open .ns-editor-shell__drawer--left {
+    display: flex;
+    grid-column: 1;
+  }
+
+  .ns-editor-shell--left-open .ns-editor-shell__main {
+    grid-column: 2;
+  }
+
+  .ns-editor-shell--right-open .ns-editor-shell__body {
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
+  }
+
+  .ns-editor-shell--right-open .ns-editor-shell__drawer--right {
+    display: flex;
+    grid-column: 2;
+  }
+
+  .ns-editor-shell--right-open .ns-editor-shell__main {
+    grid-column: 1;
+  }
+}
+
+@media (max-width: 980px) {
+  .ns-editor-shell__drawer-scrim {
+    display: block;
+  }
+
+  .ns-editor-shell__drawer {
+    background: var(--ns-editor-surface-2);
+    border-color: var(--ns-editor-border-strong);
+  }
+}
+
+.ns-editor-shell__panel,
+.ns-editor-shell__tab-panels,
+.ns-editor-shell__tab-panel,
+.ns-editor-shell__side-card,
+.ns-editor-shell__side-card-body {
+  min-height: 0;
+}
+
+.ns-editor-shell__tab-panel {
+  overflow: visible;
+}
+
+.ns-editor-shell__side-card-body {
+  overflow: auto;
+}
+
+.ns-editor-write-root--visual-only .ns-editor-write-surfaces {
+  display: grid;
+  gap: 12px;
+}
+
+.ns-editor-theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.ns-editor-theme-button {
+  appearance: none;
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid var(--ns-editor-border-strong);
+  cursor: pointer;
+  font: inherit;
+}
+
+.ns-editor-engine-banner {
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px dashed var(--ns-editor-border-strong);
+  background: color-mix(in srgb, var(--ns-editor-surface) 88%, transparent);
+  color: var(--ns-editor-text-soft);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.ns-editor-visual-engine-host.is-jodit .ns-editor-engine-banner {
+  margin-bottom: 10px;
+}
+
+.ns-editor-visual-source {
+  min-height: 520px;
+}
+
+.ns-editor-visual-engine-host.is-jodit [data-write-input="visual"] {
+  display: none;
+}
+
+.ns-editor-write-root .ns-editor-document-canvas__viewport {
+  background: linear-gradient(180deg, rgba(251,246,239,0.95), rgba(242,233,222,0.98));
+}
+
+.ns-editor-shell--editor-dark .ns-editor-write-root .ns-editor-document-canvas__viewport {
+  background: linear-gradient(180deg, rgba(22,30,43,0.98), rgba(17,24,37,1));
+}
+
+.ns-editor-shell--editor-dark .ns-editor-document-canvas .ns-editor-visual,
+.ns-editor-shell--editor-dark .ns-editor-document-canvas .ns-editor-textarea--writer,
+.ns-editor-shell--editor-dark .ns-editor-document-canvas .ns-editor-blocks {
+  background: rgba(15, 21, 34, 0.94) !important;
+  border-color: rgba(255,255,255,0.08) !important;
+  color: #eef4ff !important;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.28);
+}
+
+.ns-editor-shell--editor-dark .ns-editor-document-canvas .ns-page-section,
+.ns-editor-shell--editor-dark .ns-editor-document-canvas .ns-post,
+.ns-editor-shell--editor-dark .ns-editor-document-canvas .ns-page-card,
+.ns-editor-shell--editor-dark .ns-editor-document-canvas .ns-page-panel,
+.ns-editor-shell--editor-dark .ns-editor-document-canvas .ns-page-callout,
+.ns-editor-shell--editor-dark .ns-editor-document-canvas .ns-page-prose,
+.ns-editor-shell--editor-dark .ns-editor-document-canvas .ns-page-panel--sidebar {
+  background: rgba(18, 25, 39, 0.92);
+  border-color: rgba(255,255,255,0.08);
+  color: #eef4ff;
+}
+
+.ns-editor-shell--editor-dark .ns-editor-document-canvas .ns-page-button {
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(255,255,255,0.10);
+  color: #eef4ff !important;
+}
+
+.ns-editor-shell--editor-dark .ns-editor-document-canvas .ns-page-button--primary {
+  background: linear-gradient(180deg, #6280d8, #405ea8);
+  color: #ffffff !important;
+}
+
+.ns-editor-document-canvas .jodit-container,
+.ns-editor-document-canvas .jodit-container:not(.jodit_inline) {
+  border: 1px solid rgba(122, 88, 58, 0.12) !important;
+  border-radius: 24px;
+  overflow: hidden;
+  background: rgba(255, 252, 247, 0.96);
+  box-shadow: 0 18px 44px rgba(70, 48, 30, 0.10);
+}
+
+.ns-editor-shell--editor-dark .ns-editor-document-canvas .jodit-container,
+.ns-editor-shell--editor-dark .ns-editor-document-canvas .jodit-container:not(.jodit_inline) {
+  background: rgba(15, 21, 34, 0.96);
+  border-color: rgba(255,255,255,0.08) !important;
+  box-shadow: 0 22px 54px rgba(0,0,0,0.28);
+}
+
+.ns-editor-document-canvas .jodit-toolbar__box,
+.ns-editor-document-canvas .jodit-toolbar-button,
+.ns-editor-document-canvas .jodit-status-bar {
+  background: var(--ns-editor-toolbar-bg) !important;
+  border-color: var(--ns-editor-border-strong) !important;
+}
+
+.ns-editor-document-canvas .jodit-workplace {
+  min-height: 560px;
+  background: transparent !important;
+}
+
+.ns-editor-document-canvas .jodit-wysiwyg,
+.ns-editor-document-canvas .jodit-source {
+  padding: 30px 34px !important;
+  color: inherit !important;
+}
+
+.ns-editor-document-canvas .jodit-wysiwyg p,
+.ns-editor-document-canvas .jodit-wysiwyg li,
+.ns-editor-document-canvas .jodit-wysiwyg blockquote,
+.ns-editor-document-canvas .jodit-wysiwyg h1,
+.ns-editor-document-canvas .jodit-wysiwyg h2,
+.ns-editor-document-canvas .jodit-wysiwyg h3 {
+  color: inherit;
+}
+
+.ns-editor-document-canvas .jodit_theme_dark .jodit-workplace,
+.ns-editor-document-canvas .jodit_theme_dark .jodit-wysiwyg,
+.ns-editor-document-canvas .jodit_theme_dark .jodit-source {
+  background: rgba(15, 21, 34, 0.98) !important;
+  color: #eef4ff !important;
+}
+
+.ns-editor-preview-stage__viewport {
+  background: linear-gradient(180deg, #f4ece3 0%, #eadfce 100%);
+}
+
+.ns-editor-shell--editor-dark .ns-editor-preview-stage__viewport {
+  background: linear-gradient(180deg, #151c2a 0%, #0f1622 100%);
+}
+
+
+/* pass30 fix: compact legacy grid must not collapse the real editor into the first phantom column */
+@media (min-width: 981px) {
+  .ns-editor-shell--surface-cabinet.ns-editor-shell--compact .ns-editor-shell__body,
+  .ns-editor-shell--surface-cabinet .ns-editor-shell__body {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .ns-editor-shell--surface-cabinet.ns-editor-shell--compact .ns-editor-shell__main,
+  .ns-editor-shell--surface-cabinet .ns-editor-shell__main {
+    grid-column: 1;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .ns-editor-shell--surface-cabinet.ns-editor-shell--compact .ns-editor-shell__drawer,
+  .ns-editor-shell--surface-cabinet .ns-editor-shell__drawer {
+    display: none;
+  }
+
+  .ns-editor-shell--surface-cabinet.ns-editor-shell--compact.ns-editor-shell--left-open .ns-editor-shell__body,
+  .ns-editor-shell--surface-cabinet.ns-editor-shell--left-open .ns-editor-shell__body {
+    grid-template-columns: minmax(280px, 320px) minmax(0, 1fr);
+  }
+
+  .ns-editor-shell--surface-cabinet.ns-editor-shell--compact.ns-editor-shell--left-open .ns-editor-shell__drawer--left,
+  .ns-editor-shell--surface-cabinet.ns-editor-shell--left-open .ns-editor-shell__drawer--left {
+    display: flex;
+    grid-column: 1;
+  }
+
+  .ns-editor-shell--surface-cabinet.ns-editor-shell--compact.ns-editor-shell--left-open .ns-editor-shell__main,
+  .ns-editor-shell--surface-cabinet.ns-editor-shell--left-open .ns-editor-shell__main {
+    grid-column: 2;
+  }
+
+  .ns-editor-shell--surface-cabinet.ns-editor-shell--compact.ns-editor-shell--right-open .ns-editor-shell__body,
+  .ns-editor-shell--surface-cabinet.ns-editor-shell--right-open .ns-editor-shell__body {
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
+  }
+
+  .ns-editor-shell--surface-cabinet.ns-editor-shell--compact.ns-editor-shell--right-open .ns-editor-shell__drawer--right,
+  .ns-editor-shell--surface-cabinet.ns-editor-shell--right-open .ns-editor-shell__drawer--right {
+    display: flex;
+    grid-column: 2;
+  }
+
+  .ns-editor-shell--surface-cabinet.ns-editor-shell--compact.ns-editor-shell--right-open .ns-editor-shell__main,
+  .ns-editor-shell--surface-cabinet.ns-editor-shell--right-open .ns-editor-shell__main {
+    grid-column: 1;
+  }
+}
+
+
+/* =========================================================
+   pass33: editor usability + stronger contrast
+   ========================================================= */
+.ns-editor-shell--editor-light .ns-editor-shell__tab.is-active,
+.ns-editor-shell--editor-light .ns-editor-theme-button.is-active,
+.ns-editor-shell--editor-light .ns-editor-shell__button--primary {
+  background: #d9bf9e !important;
+  border-color: #9f7b58 !important;
+  color: #241913 !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.55), 0 8px 18px rgba(128, 94, 62, 0.10);
+}
+
+.ns-editor-shell--editor-dark .ns-editor-shell__tab.is-active,
+.ns-editor-shell--editor-dark .ns-editor-theme-button.is-active,
+.ns-editor-shell--editor-dark .ns-editor-shell__button--primary {
+  background: #2d4f96 !important;
+  border-color: #5f85d8 !important;
+  color: #f6f9ff !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.10), 0 10px 22px rgba(18, 44, 97, 0.24);
+}
+
+.ns-editor-shell--editor-light .ns-editor-shell__button--danger {
+  background: #8f2231 !important;
+  border-color: #b93447 !important;
+  color: #fff5f6 !important;
+}
+
+.ns-editor-shell--editor-light .ns-editor-shell__button--danger:hover {
+  background: #a12638 !important;
+  border-color: #c13a4d !important;
+}
+
+.ns-editor-shell--editor-dark .ns-editor-shell__button--danger {
+  background: #8f2231 !important;
+  border-color: #c04558 !important;
+  color: #fff5f6 !important;
+}
+
+.ns-editor-disclosure--document-meta {
+  margin-top: 4px;
+}
+
+.ns-editor-disclosure--document-meta > summary {
+  font-weight: 700;
+}
+
+.ns-editor-disclosure--document-meta .ns-editor-disclosure__body {
+  display: grid;
+  gap: 14px;
+}
+
+.ns-editor-shell__drawer-body,
+.ns-editor-shell__tab-panel,
+.ns-editor-shell__preview-live,
+.ns-editor-shell__preview-meta,
+.ns-editor-document-canvas__viewport,
+.ns-editor-engine-banner + .ns-editor-visual,
+.ns-editor-visual-engine-host .jodit-wysiwyg,
+.ns-editor-shell__picker-grid {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(146, 116, 86, 0.72) rgba(255,255,255,0.10);
+}
+
+.ns-editor-shell__drawer-body::-webkit-scrollbar,
+.ns-editor-shell__tab-panel::-webkit-scrollbar,
+.ns-editor-shell__preview-live::-webkit-scrollbar,
+.ns-editor-shell__preview-meta::-webkit-scrollbar,
+.ns-editor-document-canvas__viewport::-webkit-scrollbar,
+.ns-editor-visual-engine-host .jodit-wysiwyg::-webkit-scrollbar,
+.ns-editor-shell__picker-grid::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.ns-editor-shell__drawer-body::-webkit-scrollbar-thumb,
+.ns-editor-shell__tab-panel::-webkit-scrollbar-thumb,
+.ns-editor-shell__preview-live::-webkit-scrollbar-thumb,
+.ns-editor-shell__preview-meta::-webkit-scrollbar-thumb,
+.ns-editor-document-canvas__viewport::-webkit-scrollbar-thumb,
+.ns-editor-visual-engine-host .jodit-wysiwyg::-webkit-scrollbar-thumb,
+.ns-editor-shell__picker-grid::-webkit-scrollbar-thumb {
+  background: rgba(146, 116, 86, 0.72);
+  border-radius: 999px;
+  border: 2px solid rgba(255,255,255,0.10);
+}
+
+.ns-editor-shell__drawer-body::-webkit-scrollbar-track,
+.ns-editor-shell__tab-panel::-webkit-scrollbar-track,
+.ns-editor-shell__preview-live::-webkit-scrollbar-track,
+.ns-editor-shell__preview-meta::-webkit-scrollbar-track,
+.ns-editor-document-canvas__viewport::-webkit-scrollbar-track,
+.ns-editor-visual-engine-host .jodit-wysiwyg::-webkit-scrollbar-track,
+.ns-editor-shell__picker-grid::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.08);
+  border-radius: 999px;
+}
+
+@media (min-width: 981px) {
+  .ns-editor-shell__drawer {
+    position: sticky;
+    top: 0;
+    align-self: start;
+    max-height: calc(100vh - 220px);
+  }
+}
+
+/* =========================================================
+   foundation-pass-editor-host: one clean Cabinet Editor layout
+   ========================================================= */
+.ns-editor-mount--cabinet,
+.ns-editor-mount--cabinet .ns-editor-shell-host,
+.ns-editor-mount--cabinet .ns-editor-shell {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell__header {
+  flex: 0 0 auto;
+  padding: 12px 14px;
+  align-items: center;
+  grid-template-columns: minmax(220px, 1fr) auto auto;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell__title-row h2 {
+  font-size: 18px;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell__header-subtitle {
+  margin-top: 3px;
+  font-size: 12px;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  height: auto;
+  position: relative;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 12px;
+  overflow: hidden !important;
+  align-items: stretch;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell__main {
+  grid-column: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  width: 100%;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell__tabs {
+  flex: 0 0 auto;
+  padding: 0 0 2px;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell__panel,
+.ns-editor-mount--cabinet .ns-editor-shell__tab-panels {
+  flex: 1 1 auto;
+  min-height: 0;
+  height: auto;
+  overflow: hidden;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell__tab-panel {
+  height: 100%;
+  min-height: 0;
+  padding: 0;
+  overflow: auto;
+  scroll-padding-top: 10px;
+}
+
+@media (min-width: 981px) {
+  .ns-editor-mount--cabinet .ns-editor-shell__drawer-scrim {
+    display: none !important;
+  }
+
+  .ns-editor-mount--cabinet .ns-editor-shell__drawer {
+    position: relative !important;
+    inset: auto !important;
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+    transform: none !important;
+    display: none !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    width: auto !important;
+    max-width: none !important;
+    max-height: none !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    grid-row: 1;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    overflow: hidden;
+  }
+
+  .ns-editor-mount--cabinet .ns-editor-shell__drawer-head,
+  .ns-editor-mount--cabinet .ns-editor-shell__drawer-body {
+    background: var(--ns-editor-surface);
+    border: 1px solid var(--ns-editor-border-strong);
+  }
+
+  .ns-editor-mount--cabinet .ns-editor-shell__drawer-head {
+    border-radius: 18px 18px 0 0;
+    border-bottom: 0;
+    padding: 12px;
+  }
+
+  .ns-editor-mount--cabinet .ns-editor-shell__drawer-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    border-radius: 0 0 18px 18px;
+    padding: 10px;
+    overflow: auto;
+  }
+
+  .ns-editor-mount--cabinet .ns-editor-shell--left-open .ns-editor-shell__body,
+  .ns-editor-mount--cabinet .ns-editor-shell--left-open.ns-editor-shell--compact .ns-editor-shell__body {
+    grid-template-columns: minmax(280px, 320px) minmax(0, 1fr) !important;
+  }
+
+  .ns-editor-mount--cabinet .ns-editor-shell--left-open .ns-editor-shell__drawer--left,
+  .ns-editor-mount--cabinet .ns-editor-shell--left-open.ns-editor-shell--compact .ns-editor-shell__drawer--left {
+    display: flex !important;
+    grid-column: 1;
+  }
+
+  .ns-editor-mount--cabinet .ns-editor-shell--left-open .ns-editor-shell__main,
+  .ns-editor-mount--cabinet .ns-editor-shell--left-open.ns-editor-shell--compact .ns-editor-shell__main {
+    grid-column: 2;
+  }
+
+  .ns-editor-mount--cabinet .ns-editor-shell--right-open .ns-editor-shell__body,
+  .ns-editor-mount--cabinet .ns-editor-shell--right-open.ns-editor-shell--compact .ns-editor-shell__body {
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 360px) !important;
+  }
+
+  .ns-editor-mount--cabinet .ns-editor-shell--right-open .ns-editor-shell__drawer--right,
+  .ns-editor-mount--cabinet .ns-editor-shell--right-open.ns-editor-shell--compact .ns-editor-shell__drawer--right {
+    display: flex !important;
+    grid-column: 2;
+  }
+
+  .ns-editor-mount--cabinet .ns-editor-shell--right-open .ns-editor-shell__main,
+  .ns-editor-mount--cabinet .ns-editor-shell--right-open.ns-editor-shell--compact .ns-editor-shell__main {
+    grid-column: 1;
+  }
+}
+
+.ns-editor-mount--cabinet .ns-editor-write-root {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ns-editor-mount--cabinet .ns-editor-document-canvas__viewport {
+  padding: 18px;
+}
+
+.ns-editor-mount--cabinet .ns-editor-document-canvas .ns-editor-visual,
+.ns-editor-mount--cabinet .ns-editor-document-canvas .jodit-workplace,
+.ns-editor-mount--cabinet .ns-editor-document-canvas .jodit-wysiwyg {
+  min-height: 420px !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell__tab.is-active,
+.ns-editor-mount--cabinet .ns-editor-theme-button.is-active {
+  color: #23170f !important;
+  font-weight: 800;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__tab.is-active,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-theme-button.is-active {
+  color: #ffffff !important;
+}
+
+/* =========================================================
+   pass34 editor foundation polish: readable templates + publish
+   ========================================================= */
+.ns-editor-mount--cabinet .ns-editor-shell__picker-backdrop {
+  background: rgba(4, 8, 14, 0.58) !important;
+  backdrop-filter: blur(4px);
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell__picker {
+  background: #fffaf4 !important;
+  color: #2d241c !important;
+  border: 1px solid rgba(120, 88, 58, 0.18) !important;
+  box-shadow: 0 28px 80px rgba(18, 12, 8, 0.28) !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell__picker-header {
+  border-bottom-color: rgba(120, 88, 58, 0.14) !important;
+  background: linear-gradient(180deg, #fffdf9, #fbf4ec) !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell__picker-title {
+  color: #241a13 !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell__picker-subtitle {
+  color: rgba(65, 48, 35, 0.78) !important;
+  opacity: 1 !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell__picker-grid {
+  background: #fffaf4 !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell__picker-card {
+  background: linear-gradient(180deg, #ffffff, #fbf4ec) !important;
+  color: #2a2018 !important;
+  border: 1px solid rgba(120, 88, 58, 0.16) !important;
+  box-shadow: 0 12px 28px rgba(76, 50, 28, 0.08) !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell__picker-card:hover,
+.ns-editor-mount--cabinet .ns-editor-shell__picker-card:focus-visible {
+  background: #fff7ed !important;
+  border-color: rgba(159, 109, 67, 0.34) !important;
+  box-shadow: 0 16px 34px rgba(120, 78, 41, 0.14) !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell__picker-card-title {
+  color: #21170f !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell__picker-card-desc,
+.ns-editor-mount--cabinet .ns-editor-shell__picker-card .ns-editor-shell__list-subtitle {
+  color: rgba(59, 43, 31, 0.82) !important;
+  opacity: 1 !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell__tab-panel--publish {
+  background: #f7f0e7 !important;
+  color: #2d241c !important;
+  border-radius: 18px;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell__tab-panel--publish .ns-editor-deploy-actions {
+  background: linear-gradient(180deg, #e7dbcf, #d9c9b9) !important;
+  border: 1px solid rgba(120, 88, 58, 0.14) !important;
+  border-radius: 16px !important;
+  padding: 12px !important;
+  margin: 0 0 16px !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell__tab-panel--publish .ns-editor-shell__mini-card {
+  background: #fffaf4 !important;
+  color: #2a2018 !important;
+  border: 1px solid rgba(120, 88, 58, 0.14) !important;
+  box-shadow: 0 12px 26px rgba(76, 50, 28, 0.06) !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell__tab-panel--publish .ns-editor-shell__mini-card h3,
+.ns-editor-mount--cabinet .ns-editor-shell__tab-panel--publish .ns-editor-shell__mini-card-title {
+  color: #21170f !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell__tab-panel--publish .ns-editor-field-label,
+.ns-editor-mount--cabinet .ns-editor-shell__tab-panel--publish label {
+  color: rgba(62, 45, 32, 0.82) !important;
+  opacity: 1 !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell__tab-panel--publish .ns-editor-input {
+  background: #ffffff !important;
+  color: #172033 !important;
+  border: 1px solid rgba(120, 88, 58, 0.16) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.7) !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell__tab-panel--publish .ns-editor-input::placeholder {
+  color: rgba(54, 67, 89, 0.58) !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell__tab-panel--publish .ns-editor-textarea--mono {
+  background: #111a2a !important;
+  color: #ecf4ff !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  font-family: "DejaVu Sans Mono", "Consolas", monospace !important;
+  font-size: 13px !important;
+  line-height: 1.65 !important;
+  text-shadow: none !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell__tab-panel--publish .ns-editor-shell__mini-source {
+  background: #fffdf9 !important;
+  color: #2f241c !important;
+  border-color: rgba(120, 88, 58, 0.14) !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-visual-engine-host .jodit-container,
+.ns-editor-mount--cabinet .ns-editor-visual-engine-host .jodit-workplace,
+.ns-editor-mount--cabinet .ns-editor-visual-engine-host .jodit-wysiwyg {
+  background: #fffdf9 !important;
+  color: #172033 !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-visual-engine-host .jodit-wysiwyg {
+  font-weight: 400 !important;
+  line-height: 1.7 !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-visual-engine-host .jodit-wysiwyg strong,
+.ns-editor-mount--cabinet .ns-editor-visual-engine-host .jodit-wysiwyg b {
+  font-weight: 700 !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-visual-engine-host .jodit-wysiwyg .ns-page-section,
+.ns-editor-mount--cabinet .ns-editor-visual-engine-host .jodit-wysiwyg .ns-post {
+  display: block !important;
+  margin: 0 0 18px !important;
+  padding: 22px !important;
+  border-radius: 22px !important;
+  border: 1px solid rgba(120, 92, 64, 0.12) !important;
+  background: rgba(255, 252, 247, 0.96) !important;
+  box-shadow: 0 12px 28px rgba(82, 56, 32, 0.06) !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-visual-engine-host .jodit-wysiwyg .ns-page-hero--split,
+.ns-editor-mount--cabinet .ns-editor-visual-engine-host .jodit-wysiwyg .ns-page-grid--article {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.85fr) !important;
+  gap: 20px !important;
+  align-items: start !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-visual-engine-host .jodit-wysiwyg .ns-page-grid,
+.ns-editor-mount--cabinet .ns-editor-visual-engine-host .jodit-wysiwyg .ns-page-actions,
+.ns-editor-mount--cabinet .ns-editor-visual-engine-host .jodit-wysiwyg .ns-page-meta-strip {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 12px !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-visual-engine-host .jodit-wysiwyg .ns-page-grid--two,
+.ns-editor-mount--cabinet .ns-editor-visual-engine-host .jodit-wysiwyg .ns-page-grid--stats {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-visual-engine-host .jodit-wysiwyg .ns-page-grid--three {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-visual-engine-host .jodit-wysiwyg .ns-page-card,
+.ns-editor-mount--cabinet .ns-editor-visual-engine-host .jodit-wysiwyg .ns-page-panel,
+.ns-editor-mount--cabinet .ns-editor-visual-engine-host .jodit-wysiwyg .ns-page-callout,
+.ns-editor-mount--cabinet .ns-editor-visual-engine-host .jodit-wysiwyg .ns-page-prose {
+  display: block !important;
+  padding: 16px !important;
+  border-radius: 18px !important;
+  border: 1px solid rgba(120, 92, 64, 0.10) !important;
+  background: rgba(255,255,255,0.82) !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-visual-engine-host .jodit-wysiwyg h1,
+.ns-editor-mount--cabinet .ns-editor-visual-engine-host .jodit-wysiwyg h2,
+.ns-editor-mount--cabinet .ns-editor-visual-engine-host .jodit-wysiwyg h3 {
+  color: #1c2430 !important;
+  line-height: 1.18 !important;
+  margin: 0 0 12px !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-visual-engine-host .jodit-wysiwyg p,
+.ns-editor-mount--cabinet .ns-editor-visual-engine-host .jodit-wysiwyg li {
+  color: #263244 !important;
+  margin: 0 0 10px !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-visual-engine-host .jodit-wysiwyg a {
+  color: #7a4e29 !important;
+}
+
+/* =========================================================
+   pass36: targeted right-panel readability, scoped via JS class
+   - Do not touch draft state or global editor surfaces.
+   - Only disclosures moved into the right panel get this styling.
+   ========================================================= */
+.ns-editor-mount--cabinet .ns-editor-shell--editor-light .ns-editor-shell__drawer--right .ns-editor-shell__side-card-body--settings {
+  color: #2d241c;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-light .ns-editor-shell__drawer--right .ns-editor-disclosure--side-panel {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 16px;
+  border: 1px solid rgba(120, 88, 58, 0.16);
+  background: #fffaf4;
+  color: #2d241c;
+  box-shadow: 0 10px 24px rgba(76, 50, 28, 0.06);
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-light .ns-editor-shell__drawer--right .ns-editor-disclosure--side-panel > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 44px;
+  padding: 12px 14px;
+  color: #241a13;
+  background: linear-gradient(180deg, #fffdf9, #f8efe5);
+  border-bottom: 1px solid rgba(120, 88, 58, 0.12);
+  cursor: pointer;
+  opacity: 1;
+  text-shadow: none;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-light .ns-editor-shell__drawer--right .ns-editor-disclosure--side-panel .ns-editor-disclosure__body {
+  padding: 12px;
+  background: #fffaf4;
+  color: #2d241c;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-light .ns-editor-shell__drawer--right .ns-editor-disclosure--side-panel .ns-editor-field label,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-light .ns-editor-shell__drawer--right .ns-editor-disclosure--side-panel .ns-editor-field-label,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-light .ns-editor-shell__drawer--right .ns-editor-disclosure--side-panel .ns-editor-write-mode-label,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-light .ns-editor-shell__drawer--right .ns-editor-disclosure--side-panel .ns-editor-shell__mini-empty,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-light .ns-editor-shell__drawer--right .ns-editor-disclosure--side-panel .ns-editor-shell__mini-source {
+  color: rgba(66, 48, 35, 0.78);
+  opacity: 1;
+  text-shadow: none;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-light .ns-editor-shell__drawer--right .ns-editor-disclosure--side-panel .ns-editor-input,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-light .ns-editor-shell__drawer--right .ns-editor-disclosure--side-panel .ns-editor-textarea,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-light .ns-editor-shell__drawer--right .ns-editor-disclosure--side-panel select.ns-editor-input {
+  background: #ffffff;
+  color: #172033;
+  border: 1px solid rgba(120, 88, 58, 0.18);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.72);
+  text-shadow: none;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-light .ns-editor-shell__drawer--right .ns-editor-disclosure--side-panel .ns-editor-input::placeholder,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-light .ns-editor-shell__drawer--right .ns-editor-disclosure--side-panel .ns-editor-textarea::placeholder {
+  color: rgba(61, 74, 96, 0.56);
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-light .ns-editor-shell__drawer--right .ns-editor-disclosure--side-panel .ns-editor-relations-card,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-light .ns-editor-shell__drawer--right .ns-editor-disclosure--side-panel .ns-editor-relations-group,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-light .ns-editor-shell__drawer--right .ns-editor-disclosure--side-panel .ns-editor-relations-row,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-light .ns-editor-shell__drawer--right .ns-editor-disclosure--side-panel .ns-editor-site-identity__preview-card {
+  background: #fffdf9;
+  color: #2d241c;
+  border-color: rgba(120, 88, 58, 0.14);
+  box-shadow: none;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-light .ns-editor-shell__drawer--right .ns-editor-disclosure--side-panel .ns-editor-relations-title,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-light .ns-editor-shell__drawer--right .ns-editor-disclosure--side-panel .ns-editor-relations-main,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-light .ns-editor-shell__drawer--right .ns-editor-disclosure--side-panel .ns-editor-relations-main strong,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-light .ns-editor-shell__drawer--right .ns-editor-disclosure--side-panel .ns-editor-relations-main span,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-light .ns-editor-shell__drawer--right .ns-editor-disclosure--side-panel .ns-editor-site-identity__copy,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-light .ns-editor-shell__drawer--right .ns-editor-disclosure--side-panel .ns-editor-site-identity__copy strong,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-light .ns-editor-shell__drawer--right .ns-editor-disclosure--side-panel .ns-editor-site-identity__copy span {
+  color: #2d241c;
+  opacity: 1;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-light .ns-editor-shell__drawer--right .ns-editor-disclosure--side-panel .ns-editor-shell__button {
+  color: #2d241c;
+  background: #fffdf9;
+  border-color: rgba(120, 88, 58, 0.18);
+  text-shadow: none;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-light .ns-editor-shell__drawer--right .ns-editor-disclosure--side-panel .ns-editor-shell__button:hover {
+  background: #f3e8dc;
+  border-color: rgba(120, 88, 58, 0.28);
+}
+
+
+/* pass37: QA labels, chips are informational, not fake buttons */
+.ns-editor-document-canvas__chip--label {
+  cursor: default !important;
+  pointer-events: none;
+  user-select: none;
+  letter-spacing: 0.01em;
+  font-weight: 700;
+  opacity: 0.92;
+}
+
+.ns-editor-document-canvas__chip--label:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.ns-editor-shell__picker-card-title,
+.ns-editor-shell__list-title {
+  color: var(--editor-text, #1f2937);
+}
+
+.ns-editor-shell__picker-card-desc,
+.ns-editor-shell__list-subtitle {
+  line-height: 1.45;
+}
+
+.ns-editor-shell--editor-light .ns-editor-shell__picker-card-title,
+.ns-editor-shell--editor-light .ns-editor-shell__list-title {
+  color: #20170f !important;
+}
+
+.ns-editor-shell--editor-light .ns-editor-shell__picker-card-desc,
+.ns-editor-shell--editor-light .ns-editor-shell__list-subtitle {
+  color: rgba(49, 36, 25, 0.74) !important;
+}
+
+.ns-editor-shell--editor-light .ns-editor-document-canvas__chip--label {
+  background: rgba(255, 255, 255, 0.10);
+  border-color: rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.ns-editor-shell--editor-light .ns-editor-document-canvas__bar {
+  color: #f5efe8;
+}
+
+.ns-editor-shell--editor-light .ns-editor-document-canvas__note {
+  color: rgba(245, 239, 232, 0.68);
+}
+
+.ns-editor-shell--editor-light .ns-editor-site-identity__preview-card {
+  color: #20170f;
+}
+
+.ns-editor-shell--editor-light .ns-editor-site-identity__preview-card span {
+  color: rgba(49, 36, 25, 0.76);
+}
+
+/* pass38 stability guard: Jodit fullscreen/fullsize is disabled in the cabinet editor. */
+.ns-editor-shell .jodit-toolbar-button_fullsize,
+.ns-editor-shell .jodit-toolbar-button[aria-label*="Full"],
+.ns-editor-shell .jodit-toolbar-button[aria-label*="fullscreen"],
+.ns-editor-shell .jodit-toolbar-button[aria-label*="Fullscreen"],
+.ns-editor-shell .jodit-toolbar-button[aria-label*="Fullsize"],
+.ns-editor-shell .jodit-toolbar-button[title*="Full"],
+.ns-editor-shell .jodit-toolbar-button[title*="fullscreen"],
+.ns-editor-shell .jodit-toolbar-button[title*="Fullscreen"],
+.ns-editor-shell .jodit-toolbar-button[title*="Fullsize"] {
+  display: none !important;
+}
+
+/* =========================================================
+   pass39: Dark Editor Cabinet
+   - Dark theme only. Light theme and layout stay untouched.
+   - Overrides pass34 light publish/template rules when shell is dark.
+   ========================================================= */
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark {
+  --ns-editor-shell-bg: #0d1421;
+  --ns-editor-surface: #111a2a;
+  --ns-editor-surface-2: #0f1726;
+  --ns-editor-border-strong: rgba(174, 198, 255, 0.13);
+  --ns-editor-text-strong: #eef4ff;
+  --ns-editor-text-soft: rgba(210, 222, 244, 0.72);
+  --ns-editor-toolbar-bg: #121d2f;
+  --ns-editor-shadow: 0 22px 56px rgba(0, 0, 0, 0.34);
+  background: linear-gradient(180deg, #0d1421 0%, #0a101b 100%) !important;
+  color: var(--ns-editor-text-strong) !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__header,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__panel,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__side-card,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__drawer,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__drawer-head,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__drawer-body,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__preview-meta,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__preview-live {
+  background: #111a2a !important;
+  color: #eef4ff !important;
+  border-color: rgba(174, 198, 255, 0.12) !important;
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.28) !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__header-subtitle,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__drawer-subtitle,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__list-subtitle,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__mini-source,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__context-label,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-field label,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-field-label,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-write-mode-label {
+  color: rgba(210, 222, 244, 0.72) !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__title-row h2,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__drawer-title,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__side-card-title,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__mini-card-title,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__section-title,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-relations-title,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark summary {
+  color: #f5f8ff !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__button,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__tab,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-theme-button,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__list-button {
+  background: #151f32 !important;
+  color: #eaf1ff !important;
+  border-color: rgba(174, 198, 255, 0.13) !important;
+  text-shadow: none !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__button:hover,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__tab:hover,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-theme-button:hover,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__list-button:hover {
+  background: #1b2942 !important;
+  border-color: rgba(126, 162, 255, 0.28) !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__button--primary,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__tab.is-active,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-theme-button.is-active,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__list-button.is-active {
+  background: linear-gradient(180deg, rgba(80, 116, 225, 0.34), rgba(47, 74, 159, 0.32)) !important;
+  color: #ffffff !important;
+  border-color: rgba(126, 162, 255, 0.45) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06) !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__button--danger {
+  background: rgba(174, 42, 64, 0.26) !important;
+  border-color: rgba(255, 117, 137, 0.36) !important;
+  color: #ffe7ec !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-input,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-textarea,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark select.ns-editor-input {
+  background: #0c1321 !important;
+  color: #eef4ff !important;
+  border: 1px solid rgba(174, 198, 255, 0.14) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.025) !important;
+  text-shadow: none !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-input::placeholder,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-textarea::placeholder {
+  color: rgba(210, 222, 244, 0.46) !important;
+}
+
+/* Dark templates picker: overrides pass34 light picker rules only in dark shell. */
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__picker-backdrop {
+  background: rgba(2, 6, 14, 0.72) !important;
+  backdrop-filter: blur(5px) !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__picker {
+  background: #111a2a !important;
+  color: #eef4ff !important;
+  border: 1px solid rgba(174, 198, 255, 0.14) !important;
+  box-shadow: 0 32px 90px rgba(0,0,0,0.44) !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__picker-header,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__picker-grid {
+  background: #0f1726 !important;
+  border-color: rgba(174, 198, 255, 0.10) !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__picker-title,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__picker-card-title,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__list-title {
+  color: #f5f8ff !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__picker-subtitle,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__picker-card-desc,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__picker-card .ns-editor-shell__list-subtitle,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__list-subtitle {
+  color: rgba(210, 222, 244, 0.72) !important;
+  opacity: 1 !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__picker-card {
+  background: linear-gradient(180deg, #151f32, #101827) !important;
+  color: #eef4ff !important;
+  border: 1px solid rgba(174, 198, 255, 0.13) !important;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.22) !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__picker-card:hover,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__picker-card:focus-visible {
+  background: #1b2942 !important;
+  border-color: rgba(126, 162, 255, 0.34) !important;
+}
+
+/* Dark right panel settings: scoped to side-panel disclosures. */
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__drawer--right .ns-editor-disclosure--side-panel {
+  background: #121d2f !important;
+  color: #eef4ff !important;
+  border-color: rgba(174, 198, 255, 0.13) !important;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.22) !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__drawer--right .ns-editor-disclosure--side-panel > summary {
+  background: linear-gradient(180deg, #18243a, #121d2f) !important;
+  color: #f5f8ff !important;
+  border-bottom-color: rgba(174, 198, 255, 0.11) !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__drawer--right .ns-editor-disclosure--side-panel .ns-editor-disclosure__body {
+  background: #111a2a !important;
+  color: #eef4ff !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-relations-card,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-relations-group,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-relations-row,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-site-identity__preview-card,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__mini-card,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__mini-source {
+  background: #0f1726 !important;
+  color: #eef4ff !important;
+  border-color: rgba(174, 198, 255, 0.12) !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-relations-main,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-relations-main strong,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-relations-main span,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-site-identity__copy,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-site-identity__copy strong,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-site-identity__copy span {
+  color: #eef4ff !important;
+  opacity: 1 !important;
+}
+
+/* Dark publish surface: overrides pass34 light publish rules only in dark shell. */
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__tab-panel--publish {
+  background: #0f1726 !important;
+  color: #eef4ff !important;
+  border-radius: 18px !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__tab-panel--publish .ns-editor-deploy-actions {
+  background: linear-gradient(180deg, #162238, #111a2a) !important;
+  border: 1px solid rgba(174, 198, 255, 0.13) !important;
+  border-radius: 16px !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__tab-panel--publish .ns-editor-shell__mini-card {
+  background: #111a2a !important;
+  color: #eef4ff !important;
+  border-color: rgba(174, 198, 255, 0.13) !important;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.18) !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__tab-panel--publish .ns-editor-shell__mini-card h3,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__tab-panel--publish .ns-editor-shell__mini-card-title {
+  color: #f5f8ff !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__tab-panel--publish .ns-editor-field-label,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__tab-panel--publish label {
+  color: rgba(210, 222, 244, 0.72) !important;
+  opacity: 1 !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__tab-panel--publish .ns-editor-input {
+  background: #0c1321 !important;
+  color: #eef4ff !important;
+  border-color: rgba(174, 198, 255, 0.14) !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__tab-panel--publish .ns-editor-textarea--mono {
+  background: #070d17 !important;
+  color: #ecf4ff !important;
+  border-color: rgba(174, 198, 255, 0.12) !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-shell__tab-panel--publish .ns-editor-shell__mini-source {
+  background: #0f1726 !important;
+  color: #dfeaff !important;
+  border-color: rgba(174, 198, 255, 0.12) !important;
+}
+
+/* Dark Jodit/document canvas. */
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-document-canvas {
+  background: linear-gradient(180deg, rgba(22, 32, 50, 0.96), rgba(13, 20, 33, 0.98)) !important;
+  border-color: rgba(174, 198, 255, 0.10) !important;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.36) !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-document-canvas__bar {
+  background: #0d1421 !important;
+  border-bottom-color: rgba(174, 198, 255, 0.10) !important;
+  color: #f5f8ff !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-document-canvas__eyebrow,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-document-canvas__note {
+  color: rgba(210, 222, 244, 0.68) !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-document-canvas__title {
+  color: #f5f8ff !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-document-canvas__chip,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-document-canvas__chip--label {
+  background: rgba(255,255,255,0.055) !important;
+  border-color: rgba(174, 198, 255, 0.12) !important;
+  color: rgba(238, 244, 255, 0.86) !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-document-canvas__viewport {
+  background: linear-gradient(180deg, #121b2b 0%, #0c1320 100%) !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-document-canvas .jodit-container,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-document-canvas .jodit-container:not(.jodit_inline) {
+  background: #0f1726 !important;
+  color: #eef4ff !important;
+  border-color: rgba(174, 198, 255, 0.13) !important;
+  box-shadow: 0 22px 54px rgba(0,0,0,0.35) !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-document-canvas .jodit-toolbar__box,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-document-canvas .jodit-toolbar-button,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-document-canvas .jodit-status-bar {
+  background: #121d2f !important;
+  color: #eef4ff !important;
+  border-color: rgba(174, 198, 255, 0.11) !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-document-canvas .jodit-toolbar-button__button,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-document-canvas .jodit-ui-button,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-document-canvas .jodit-ui-button__text,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-document-canvas .jodit-icon {
+  color: #eef4ff !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-document-canvas .jodit-toolbar-button:hover,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-document-canvas .jodit-toolbar-button_active_true {
+  background: #1b2942 !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-document-canvas .jodit-workplace,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-document-canvas .jodit-wysiwyg,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-document-canvas .jodit-source {
+  background: #0f1726 !important;
+  color: #eef4ff !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-visual-engine-host .jodit-wysiwyg .ns-page-section,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-visual-engine-host .jodit-wysiwyg .ns-post {
+  background: #131e31 !important;
+  color: #eef4ff !important;
+  border-color: rgba(174, 198, 255, 0.12) !important;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.22) !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-visual-engine-host .jodit-wysiwyg .ns-page-card,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-visual-engine-host .jodit-wysiwyg .ns-page-panel,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-visual-engine-host .jodit-wysiwyg .ns-page-callout,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-visual-engine-host .jodit-wysiwyg .ns-page-prose,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-visual-engine-host .jodit-wysiwyg .ns-page-panel--sidebar {
+  background: #0f1726 !important;
+  color: #eef4ff !important;
+  border-color: rgba(174, 198, 255, 0.12) !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-visual-engine-host .jodit-wysiwyg h1,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-visual-engine-host .jodit-wysiwyg h2,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-visual-engine-host .jodit-wysiwyg h3,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-visual-engine-host .jodit-wysiwyg strong,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-visual-engine-host .jodit-wysiwyg b {
+  color: #f5f8ff !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-visual-engine-host .jodit-wysiwyg p,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-visual-engine-host .jodit-wysiwyg li,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-visual-engine-host .jodit-wysiwyg span,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-visual-engine-host .jodit-wysiwyg blockquote {
+  color: rgba(226, 235, 252, 0.86) !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-visual-engine-host .jodit-wysiwyg a {
+  color: #9cb7ff !important;
+}
+
+/* Dark preview stage chrome; iframe content keeps its generated page style. */
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-preview-stage__bar,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-preview-stage__canvas,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-preview-stage__canvas-head {
+  background: #111a2a !important;
+  color: #eef4ff !important;
+  border-color: rgba(174, 198, 255, 0.12) !important;
+  box-shadow: 0 16px 38px rgba(0,0,0,0.25) !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-preview-stage__label,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-preview-stage__canvas-site,
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-preview-stage__canvas-url {
+  color: rgba(226, 235, 252, 0.82) !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-preview-stage__device {
+  background: #151f32 !important;
+  color: #dfeaff !important;
+  border-color: rgba(174, 198, 255, 0.12) !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark .ns-editor-preview-stage__device.is-active {
+  background: linear-gradient(180deg, rgba(80, 116, 225, 0.86), rgba(47, 74, 159, 0.86)) !important;
+  color: #ffffff !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell--editor-dark ::-webkit-scrollbar-thumb {
+  background: rgba(126, 162, 255, 0.42) !important;
+}
+
+
+/* pass40: stable Light/Dark toggle activation guard */
+.ns-editor-theme-toggle,
+.ns-editor-theme-button {
+  position: relative !important;
+  z-index: 8 !important;
+  pointer-events: auto !important;
+}
+
+.ns-editor-theme-button {
+  cursor: pointer !important;
+  user-select: none !important;
+}
+
+.ns-editor-write-root[data-editor-write-theme="dark"] .ns-editor-theme-button[data-value="dark"],
+.ns-editor-shell[data-editor-theme="dark"] .ns-editor-theme-button[data-value="dark"] {
+  background: rgba(103, 142, 255, 0.22) !important;
+  border-color: rgba(134, 166, 255, 0.46) !important;
+  color: #f8fbff !important;
+}
+
+.ns-editor-write-root[data-editor-write-theme="light"] .ns-editor-theme-button[data-value="light"],
+.ns-editor-shell[data-editor-theme="light"] .ns-editor-theme-button[data-value="light"] {
+  background: rgba(122, 78, 41, 0.18) !important;
+  border-color: rgba(122, 78, 41, 0.32) !important;
+  color: #2b2119 !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell[data-editor-theme="dark"] {
+  background:
+    radial-gradient(circle at top left, rgba(77, 112, 255, 0.16), transparent 32%),
+    linear-gradient(180deg, #101827 0%, #0a101c 100%) !important;
+  color: #eaf2ff !important;
+}
+
+
+/* pass41: root-driven dark theme application guard
+   The Light/Dark state now lives on the editor root as ns-editor-theme-dark/light.
+   These rules intentionally target only the isolated editor cabinet mount. */
+.ns-editor-mount--cabinet.ns-editor-theme-dark,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-shell-host,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-shell,
+.ns-editor-mount--cabinet[data-editor-theme="dark"] .ns-editor-shell {
+  background:
+    radial-gradient(circle at top left, rgba(72, 110, 255, 0.18), transparent 34%),
+    linear-gradient(180deg, #0d1422 0%, #080e18 100%) !important;
+  color: #edf4ff !important;
+}
+
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-shell__header,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-shell__panel,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-shell__drawer,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-shell__drawer-head,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-shell__drawer-body,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-shell__side-card,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-writer-stage,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-disclosure,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-shell__preview-live,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-shell__preview-meta {
+  background: #111a2a !important;
+  color: #edf4ff !important;
+  border-color: rgba(178, 203, 255, 0.13) !important;
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.28) !important;
+}
+
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-shell__drawer-subtitle,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-shell__header-subtitle,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-writer-stage__copy,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-document-canvas__note,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-field label,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-field-label,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-shell__list-subtitle,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-shell__mini-source {
+  color: rgba(218, 229, 250, 0.74) !important;
+  opacity: 1 !important;
+}
+
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-shell__title-row h2,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-shell__drawer-title,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-shell__side-card-title,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-document-canvas__title,
+.ns-editor-mount--cabinet.ns-editor-theme-dark summary,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-shell__list-title {
+  color: #f7faff !important;
+  opacity: 1 !important;
+}
+
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-shell__button,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-shell__tab,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-theme-button,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-shell__list-button,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-document-canvas__chip,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-write-stable-chip {
+  background: #151f32 !important;
+  color: #eaf2ff !important;
+  border-color: rgba(178, 203, 255, 0.14) !important;
+}
+
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-shell__tab.is-active,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-theme-button.is-active,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-shell__button--primary,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-shell__list-button.is-active {
+  background: linear-gradient(180deg, rgba(83, 120, 230, 0.40), rgba(47, 74, 159, 0.34)) !important;
+  color: #ffffff !important;
+  border-color: rgba(139, 170, 255, 0.48) !important;
+}
+
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-input,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-textarea,
+.ns-editor-mount--cabinet.ns-editor-theme-dark select.ns-editor-input {
+  background: #0b1322 !important;
+  color: #edf4ff !important;
+  border-color: rgba(178, 203, 255, 0.14) !important;
+}
+
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-document-canvas {
+  background: linear-gradient(180deg, rgba(21, 32, 52, 0.98), rgba(12, 19, 32, 0.98)) !important;
+  border-color: rgba(178, 203, 255, 0.12) !important;
+}
+
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-document-canvas__bar {
+  background: #0d1422 !important;
+  color: #edf4ff !important;
+  border-bottom-color: rgba(178, 203, 255, 0.10) !important;
+}
+
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-document-canvas__viewport,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-document-canvas--site .ns-editor-document-canvas__viewport,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-document-canvas--article .ns-editor-document-canvas__viewport,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-document-canvas--editorial .ns-editor-document-canvas__viewport,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-document-canvas--analysis .ns-editor-document-canvas__viewport {
+  background: linear-gradient(180deg, #101a2b 0%, #0a101d 100%) !important;
+}
+
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-document-canvas .jodit-container,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-document-canvas .jodit-container:not(.jodit_inline),
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-document-canvas .jodit-workplace,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-document-canvas .jodit-wysiwyg,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-document-canvas .jodit-source {
+  background: #0f1726 !important;
+  color: #edf4ff !important;
+  border-color: rgba(178, 203, 255, 0.13) !important;
+}
+
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-document-canvas .jodit-toolbar__box,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-document-canvas .jodit-toolbar-button,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-document-canvas .jodit-status-bar {
+  background: #121d2f !important;
+  color: #edf4ff !important;
+  border-color: rgba(178, 203, 255, 0.11) !important;
+}
+
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-document-canvas .jodit-toolbar-button__button,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-document-canvas .jodit-ui-button,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-document-canvas .jodit-ui-button__text,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-document-canvas .jodit-icon {
+  color: #edf4ff !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-visual-engine-host .jodit-wysiwyg .ns-page-section,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-visual-engine-host .jodit-wysiwyg .ns-post,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-visual-engine-host .jodit-wysiwyg .ns-page-card,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-visual-engine-host .jodit-wysiwyg .ns-page-panel,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-visual-engine-host .jodit-wysiwyg .ns-page-callout,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-visual-engine-host .jodit-wysiwyg .ns-page-prose {
+  background: #111a2a !important;
+  color: #edf4ff !important;
+  border-color: rgba(178, 203, 255, 0.12) !important;
+}
+
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-visual-engine-host .jodit-wysiwyg h1,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-visual-engine-host .jodit-wysiwyg h2,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-visual-engine-host .jodit-wysiwyg h3,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-visual-engine-host .jodit-wysiwyg strong,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-visual-engine-host .jodit-wysiwyg b {
+  color: #f8fbff !important;
+}
+
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-visual-engine-host .jodit-wysiwyg p,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-visual-engine-host .jodit-wysiwyg li,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-visual-engine-host .jodit-wysiwyg span,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-visual-engine-host .jodit-wysiwyg blockquote {
+  color: rgba(226, 235, 252, 0.88) !important;
+}
+
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-shell__picker,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-shell__picker-header,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-shell__picker-grid,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-shell__picker-card {
+  background: #111a2a !important;
+  color: #edf4ff !important;
+  border-color: rgba(178, 203, 255, 0.13) !important;
+}
+
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-shell__tab-panel--publish,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-shell__tab-panel--publish .ns-editor-shell__mini-card,
+.ns-editor-mount--cabinet.ns-editor-theme-dark .ns-editor-deploy-actions {
+  background: #0f1726 !important;
+  color: #edf4ff !important;
+  border-color: rgba(178, 203, 255, 0.13) !important;
+}
+
+.ns-editor-mount--cabinet.ns-editor-theme-light,
+.ns-editor-mount--cabinet.ns-editor-theme-light .ns-editor-shell-host,
+.ns-editor-mount--cabinet.ns-editor-theme-light .ns-editor-shell {
+  color: #2f241c;
+}
+
+/* pass42: theme rebuild guard. Keep dark rules tied to shell class/data attr too. */
+.ns-editor-mount--cabinet .ns-editor-shell.ns-editor-shell--editor-dark,
+.ns-editor-mount--cabinet .ns-editor-shell[data-editor-theme="dark"] {
+  background:
+    radial-gradient(circle at top left, rgba(72, 110, 255, 0.18), transparent 34%),
+    linear-gradient(180deg, #0d1422 0%, #080e18 100%) !important;
+  color: #edf4ff !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell.ns-editor-shell--editor-dark .ns-editor-writer-stage,
+.ns-editor-mount--cabinet .ns-editor-shell[data-editor-theme="dark"] .ns-editor-writer-stage,
+.ns-editor-mount--cabinet .ns-editor-shell.ns-editor-shell--editor-dark .ns-editor-shell__panel,
+.ns-editor-mount--cabinet .ns-editor-shell[data-editor-theme="dark"] .ns-editor-shell__panel,
+.ns-editor-mount--cabinet .ns-editor-shell.ns-editor-shell--editor-dark .ns-editor-shell__drawer,
+.ns-editor-mount--cabinet .ns-editor-shell[data-editor-theme="dark"] .ns-editor-shell__drawer,
+.ns-editor-mount--cabinet .ns-editor-shell.ns-editor-shell--editor-dark .ns-editor-shell__side-card,
+.ns-editor-mount--cabinet .ns-editor-shell[data-editor-theme="dark"] .ns-editor-shell__side-card {
+  background: #111a2a !important;
+  color: #edf4ff !important;
+  border-color: rgba(178, 203, 255, 0.13) !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell.ns-editor-shell--editor-dark .ns-editor-document-canvas__viewport,
+.ns-editor-mount--cabinet .ns-editor-shell[data-editor-theme="dark"] .ns-editor-document-canvas__viewport {
+  background: linear-gradient(180deg, #101a2b 0%, #0a101d 100%) !important;
+}
+
+.ns-editor-mount--cabinet .ns-editor-shell.ns-editor-shell--editor-dark .jodit-container,
+.ns-editor-mount--cabinet .ns-editor-shell[data-editor-theme="dark"] .jodit-container,
+.ns-editor-mount--cabinet .ns-editor-shell.ns-editor-shell--editor-dark .jodit-workplace,
+.ns-editor-mount--cabinet .ns-editor-shell[data-editor-theme="dark"] .jodit-workplace,
+.ns-editor-mount--cabinet .ns-editor-shell.ns-editor-shell--editor-dark .jodit-wysiwyg,
+.ns-editor-mount--cabinet .ns-editor-shell[data-editor-theme="dark"] .jodit-wysiwyg,
+.ns-editor-mount--cabinet .ns-editor-shell.ns-editor-shell--editor-dark .jodit-toolbar__box,
+.ns-editor-mount--cabinet .ns-editor-shell[data-editor-theme="dark"] .jodit-toolbar__box {
+  background: #0f1726 !important;
+  color: #edf4ff !important;
+  border-color: rgba(178, 203, 255, 0.13) !important;
+}
+
+
+/* pass44: final v1 polish — preview mode is static + burgundy delete */
+.ns-editor-preview-stage__devices--static {
+  pointer-events: none;
+}
+
+.ns-editor-preview-stage__devices--static .ns-editor-preview-stage__device {
+  cursor: default;
+  box-shadow: none;
+}
+
+.ns-editor-shell .ns-editor-shell__button--danger,
+.ns-editor-mount--cabinet .ns-editor-shell .ns-editor-shell__button--danger,
+.ns-editor-shell--editor-light .ns-editor-shell__button--danger,
+.ns-editor-theme-light .ns-editor-shell__button--danger {
+  color: #fff7f7 !important;
+  background: linear-gradient(180deg, #9f2638 0%, #741827 100%) !important;
+  border-color: rgba(139, 38, 54, 0.72) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.16),
+    0 10px 24px rgba(116, 24, 39, 0.22) !important;
+}
+
+.ns-editor-shell .ns-editor-shell__button--danger:hover,
+.ns-editor-mount--cabinet .ns-editor-shell .ns-editor-shell__button--danger:hover,
+.ns-editor-shell--editor-light .ns-editor-shell__button--danger:hover,
+.ns-editor-theme-light .ns-editor-shell__button--danger:hover {
+  color: #ffffff !important;
+  background: linear-gradient(180deg, #b22d43 0%, #841d2d 100%) !important;
+  border-color: rgba(165, 48, 68, 0.82) !important;
+}
+
+.ns-editor-shell--editor-dark .ns-editor-shell__button--danger,
+.ns-editor-theme-dark .ns-editor-shell__button--danger {
+  color: #fff7f7 !important;
+  background: linear-gradient(180deg, #a52a3e 0%, #751827 100%) !important;
+  border-color: rgba(255, 112, 132, 0.34) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.12),
+    0 10px 26px rgba(0, 0, 0, 0.28) !important;
+}
+
+.ns-editor-shell--editor-dark .ns-editor-shell__button--danger:hover,
+.ns-editor-theme-dark .ns-editor-shell__button--danger:hover {
+  background: linear-gradient(180deg, #bd334a 0%, #8b2031 100%) !important;
+  border-color: rgba(255, 126, 146, 0.46) !important;
+}
+
+
+/* release polish: one-page website starter navigation */
+.ns-page-site-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 12px;
+  margin: 0 0 18px;
+  border: 1px solid rgba(120, 92, 58, 0.14);
+  border-radius: 18px;
+  background: rgba(255, 250, 244, 0.88);
+}
+
+.ns-page-site-nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  color: #2b2119;
+  text-decoration: none;
+  background: rgba(255,255,255,0.72);
+  border: 1px solid rgba(120, 92, 58, 0.14);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.ns-page-site-nav a:hover {
+  background: #f2e6d9;
+}
+
+.ns-page-prose--medium {
+  max-width: 780px;
+  margin: 0 auto;
+}
+
+.ns-page-prose--medium p {
+  font-size: 18px;
+  line-height: 1.78;
+}
+
+.ns-page-prose--medium blockquote {
+  margin: 26px 0;
+  padding: 18px 22px;
+  border-left: 4px solid #7b5cff;
+  border-radius: 14px;
+  background: rgba(123, 92, 255, 0.08);
+}
