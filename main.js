@@ -1,11 +1,13 @@
+process.env.ELECTRON_DISABLE_SANDBOX = '1';
 const { app, BrowserWindow, Menu, ipcMain, shell } = require('electron');
+app.commandLine.appendSwitch('no-sandbox');
 const { spawn, spawnSync } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 const fsp = fs.promises;
 const { pathToFileURL } = require('url');
 
-const DATA_DIR = path.join(__dirname, 'data');
+const DATA_DIR = app.isPackaged ? path.join(app.getPath('userData'), 'data') : path.join(__dirname, 'data');
 const PAGES_DIR = path.join(DATA_DIR, 'pages');
 const TEMPLATES_DIR = path.join(__dirname, 'templates');
 const INDEX_FILE = path.join(__dirname, 'index.html');
