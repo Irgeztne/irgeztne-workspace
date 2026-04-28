@@ -75,7 +75,7 @@ The current preview has been tested mainly on Linux. Windows and macOS installer
 
 Current status:
 
-- Source code repository is being prepared
+- Source code repository: https://github.com/Irgeztne/irgeztne-workspace
 - Public preview package is not published yet
 
 Planned:
