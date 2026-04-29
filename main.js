@@ -1,6 +1,5 @@
 process.env.ELECTRON_DISABLE_SANDBOX = '1';
 const { app, BrowserWindow, Menu, ipcMain, shell } = require('electron');
-app.commandLine.appendSwitch('no-sandbox');
 const { spawn, spawnSync } = require('child_process');
 const path = require('path');
 const fs = require('fs');
@@ -388,7 +387,7 @@ function createWindow() {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false,
       contextIsolation: true,
-      sandbox: true,
+      sandbox: false,
       webSecurity: true,
       webviewTag: true,
       allowRunningInsecureContent: false,
@@ -404,7 +403,6 @@ function createWindow() {
   win.webContents.once('did-finish-load', () => {
     console.log('IRGEZTNE Workspace: page loaded');
     if (!app.isPackaged) {
-      win.webContents.openDevTools({ mode: 'right' });
     }
   });
 
@@ -538,7 +536,7 @@ app.whenReady().then(() => {
 
       webPreferences.nodeIntegration = false;
       webPreferences.contextIsolation = true;
-      webPreferences.sandbox = true;
+      webPreferences.sandbox = false;
       webPreferences.webSecurity = true;
       webPreferences.allowRunningInsecureContent = false;
       webPreferences.experimentalFeatures = false;

@@ -9,7 +9,7 @@
   },
   "license": "MIT",
   "scripts": {
-    "start": "electron . --no-sandbox",
+    "start": "electron .",
     "pack": "electron-builder --dir",
     "dist": "electron-builder",
     "dist:appimage": "electron-builder --linux AppImage",

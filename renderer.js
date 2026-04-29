@@ -1533,7 +1533,7 @@
     webview.className = "browser-webview";
     webview.dataset.tabId = tab.id;
     webview.setAttribute("src", tab.url);
-    webview.setAttribute("allowpopups", "false");
+    webview.removeAttribute("allowpopups");
     webview.setAttribute("webpreferences", "contextIsolation=yes");
 
     const fallback = document.createElement("div");
