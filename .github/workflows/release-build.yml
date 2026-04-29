@@ -6,15 +6,12 @@ on:
     tags:
       - "v*"
 
-permissions:
-  contents: read
-
 jobs:
   build-linux:
     name: Build Linux installers
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup Node.js
@@ -27,20 +24,25 @@ jobs:
         run: npm ci
 
       - name: Build Linux .deb and AppImage
-        run: npm run dist -- --linux deb AppImage
+        run: npx electron-builder --linux deb AppImage --publish never
 
       - name: Upload Linux artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: irgeztne-linux-builds
-          path: dist/*
-          if-no-files-found: error
+          name: linux-builds
+          path: |
+            dist/*.deb
+            dist/*.AppImage
+            dist/latest-linux.yml
+            dist/builder-effective-config.yaml
 
   build-windows:
     name: Build Windows installer
     runs-on: windows-latest
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: false
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup Node.js
@@ -53,20 +55,24 @@ jobs:
         run: npm ci
 
       - name: Build Windows .exe
-        run: npm run dist -- --win nsis
+        run: npx electron-builder --win nsis --publish never
 
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: irgeztne-windows-builds
-          path: dist/*
-          if-no-files-found: error
+          name: windows-builds
+          path: |
+            dist/*.exe
+            dist/latest.yml
+            dist/builder-effective-config.yaml
 
   build-macos:
     name: Build macOS DMG
     runs-on: macos-latest
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: false
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup Node.js
@@ -78,27 +84,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Create macOS .icns from build/icon.png
-        run: |
-          mkdir -p build/icon.iconset
-          sips -z 16 16     build/icon.png --out build/icon.iconset/icon_16x16.png
-          sips -z 32 32     build/icon.png --out build/icon.iconset/icon_16x16@2x.png
-          sips -z 32 32     build/icon.png --out build/icon.iconset/icon_32x32.png
-          sips -z 64 64     build/icon.png --out build/icon.iconset/icon_32x32@2x.png
-          sips -z 128 128   build/icon.png --out build/icon.iconset/icon_128x128.png
-          sips -z 256 256   build/icon.png --out build/icon.iconset/icon_128x128@2x.png
-          sips -z 256 256   build/icon.png --out build/icon.iconset/icon_256x256.png
-          sips -z 512 512   build/icon.png --out build/icon.iconset/icon_256x256@2x.png
-          sips -z 512 512   build/icon.png --out build/icon.iconset/icon_512x512.png
-          cp build/icon.png build/icon.iconset/icon_512x512@2x.png
-          iconutil -c icns build/icon.iconset -o build/icon.icns
-
       - name: Build macOS .dmg
-        run: npm run dist -- --mac dmg
+        run: npx electron-builder --mac dmg --publish never
 
       - name: Upload macOS artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: irgeztne-macos-builds
-          path: dist/*
-          if-no-files-found: error
+          name: macos-builds
+          path: |
+            dist/*.dmg
+            dist/latest-mac.yml
+            dist/builder-effective-config.yaml

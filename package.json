@@ -11,9 +11,12 @@
   "scripts": {
     "start": "electron . --no-sandbox",
     "pack": "electron-builder --dir",
-    "dist": "electron-builder --linux AppImage deb",
+    "dist": "electron-builder",
     "dist:appimage": "electron-builder --linux AppImage",
-    "dist:deb": "electron-builder --linux deb"
+    "dist:deb": "electron-builder --linux deb",
+    "dist:linux": "electron-builder --linux deb AppImage --publish never",
+    "dist:win": "electron-builder --win nsis --publish never",
+    "dist:mac": "electron-builder --mac dmg --publish never"
   },
   "dependencies": {
     "jodit": "^4.12.2"
