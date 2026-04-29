@@ -52,7 +52,7 @@
       ],
       "category": "Utility",
       "maintainer": "Irgeztne <irgeztne@gmail.com>",
-      "icon": "build/icon.png"
+      "icon": "build/icons"
     },
     "win": {
       "target": [
