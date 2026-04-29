@@ -9,13 +9,13 @@ The project is focused on browsing, writing, editing, organizing files/source co
 Current version:
 
 ```txt
-v1.0.0-preview.1
+v1.0.0-preview.2
 
 ```
 
 Release page:
 
-https://github.com/Irgeztne/irgeztne-workspace/releases/tag/v1.0.0-preview.1
+https://github.com/Irgeztne/irgeztne-workspace/releases/tag/v1.0.0-preview.2
 
 ## Downloads
 
@@ -23,13 +23,13 @@ Early preview builds. Not code-signed yet.
 
 Recommended downloads:
 
-- Linux: `IRGEZTNE-Workspace-1.0.0-preview.1.deb`
-- Windows: `IRGEZTNE-Workspace-1.0.0-preview.1.exe`
-- macOS: `IRGEZTNE-Workspace-1.0.0-preview.1.dmg`
+- Linux: `IRGEZTNE-Workspace-1.0.0-preview.2.deb`
+- Windows: `IRGEZTNE-Workspace-1.0.0-preview.2.exe`
+- macOS: `IRGEZTNE-Workspace-1.0.0-preview.2.dmg`
 
 Additional build:
 
-- Linux AppImage: `IRGEZTNE-Workspace-1.0.0-preview.1.AppImage`
+- Linux AppImage: `IRGEZTNE-Workspace-1.0.0-preview.2.AppImage`
 
 ## Linux note
 
