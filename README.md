@@ -1,114 +1,103 @@
-# IRGEZTNE Workspace v1 Preview
+# IRGEZTNE Workspace
 
-IRGEZTNE Workspace is an open-source desktop-first local workspace for writing, files, notes, projects, catalog, tools, and browser-based research.
+IRGEZTNE Workspace is an early preview desktop workspace built with Electron.
 
-This is an early public preview build. The project is focused on a local-first workflow where the main work stays on the user's device.
+The project is focused on browsing, writing, editing, organizing files/source content, and preparing web projects for future publishing.
 
-## Status
+## Current preview release
 
-Version: `1.0.0-preview.1`
+Current version:
 
-Status: Early public preview
+```txt
+v1.0.0-preview.1
 
-This is not a final stable release yet. The repository and public preview package are being prepared.
+```
+
+Release page:
+
+https://github.com/Irgeztne/irgeztne-workspace/releases/tag/v1.0.0-preview.1
+
+## Downloads
+
+Early preview builds. Not code-signed yet.
+
+Recommended downloads:
+
+- Linux: `IRGEZTNE-Workspace-1.0.0-preview.1.deb`
+- Windows: `IRGEZTNE-Workspace-1.0.0-preview.1.exe`
+- macOS: `IRGEZTNE-Workspace-1.0.0-preview.1.dmg`
+
+Additional build:
+
+- Linux AppImage: `IRGEZTNE-Workspace-1.0.0-preview.1.AppImage`
+
+## Linux note
+
+The `.deb` installer is the recommended Linux download.
+
+The AppImage is included as an experimental Linux build and may require `--no-sandbox` on some systems in this preview.
+
+## Project status
+
+- Electron: `41.3.0`
+- npm audit: `0 vulnerabilities`
+- Linux `.deb` builds and installs successfully
+- Windows `.exe` is generated with GitHub Actions
+- macOS `.dmg` is generated with GitHub Actions
+- Multi-platform release builds are generated with GitHub Actions
+- This is an early public preview, not a final stable release
 
 ## Main modules
 
-Current v1 Preview modules:
+Current preview includes the early desktop workspace shell and core sections such as:
 
-- Workspace / Cabinet
-- Editor with drafts and templates
-- Files / Source Library
-- Notes
-- Projects
-- Tools
-- Catalog
+- browser/workspace shell
+- editor
+- files/source library
+- notes
+- projects
+- tools
+- catalog
 - CodeHub
-- Showcase / Vitrina
+- Showcase/Vitrina modules
 
-Planned later modules:
+Some modules are still experimental and will be improved step by step.
 
-- Video & Chat
-- Digital Store
-- Digital Wallet
-- Analytics
-- Publishing improvements
-- Multi-page website templates
+## Planned next steps
 
-## Editor
+Planned improvements include:
 
-The editor is the main writing tool of IRGEZTNE Workspace.
-
-Current editor features:
-
-- Drafts
-- Stable v1 templates
-- Light and dark editor cabinet modes
-- Preview flow
-- Publish/export panel
-- Rich text editing
-- Site identity and document settings panel
-
-## Install and run
-
-Install dependencies:
-
-```bash
-npm install
-```
-
-Start the app:
-
-```bash
-npm start
-```
-
-## Requirements
-
-- Node.js
-- npm
-- Electron
-
-The current preview has been tested mainly on Linux. Windows and macOS installers are planned after additional packaging and testing.
-
-## Distribution status
-
-Current status:
-
-- Source code repository: https://github.com/Irgeztne/irgeztne-workspace
-- Public preview source package: https://github.com/Irgeztne/irgeztne-workspace/releases/tag/v1.0.0-preview.1
-
-Planned:
-
-- Source preview package
-- Linux build
-- Windows build
-- macOS build
+- public website/showcase page for downloads
+- documentation pages
+- quick start guide
+- publishing guide
+- improved app icon and branding
+- code signing in a future release
+- template library
+- publishing workflow for web projects
+- future IPFS/temp-domain publishing experiments
 
 ## Security note
 
 This project uses Electron.
 
-Do not run unknown modified builds. Do not place personal data, tokens, secrets, or private keys inside the project folder before publishing.
-
-Current dependency audit status:
-
-```text
-npm audit: 0 vulnerabilities
-```
+Do not place private data, tokens, secrets, API keys, or closed credentials inside the project folder before publishing.
 
 ## Known limitations
 
-- Early preview, not final stable release
-- Platform installers are not finalized yet
-- Publishing flow is still early
-- Some catalog items are planned for later versions
-- Documentation is still being written
+- This is a preview release, not a final stable release.
+- Builds are not code-signed yet.
+- AppImage may require `--no-sandbox` on some Linux systems.
+- Documentation is still being written.
+- Some modules are placeholders or early implementations.
+- More templates and publishing tools will be added gradually.
+
+## License
+
+This project is released under the MIT License.
+
+See the `LICENSE` file.
 
 ## Contact
 
 Email: irgeztne@gmail.com
-
-## License
-
-License to be decided.
