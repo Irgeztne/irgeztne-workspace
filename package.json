@@ -1,6 +1,6 @@
 {
   "name": "irgeztne-workspace",
-  "version": "1.0.0-preview.1",
+  "version": "1.0.0-preview.2",
   "description": "IRGEZTNE Workspace is an early preview desktop workspace for browsing, writing, editing, and preparing web projects for future publishing.",
   "main": "main.js",
   "author": {
@@ -52,7 +52,14 @@
       ],
       "category": "Utility",
       "maintainer": "Irgeztne <irgeztne@gmail.com>",
-      "icon": "build/icons"
+      "icon": "build/icons",
+      "desktop": {
+        "entry": {
+          "GenericName": "Desktop workspace",
+          "Keywords": "IRGEZTNE;Workspace;Browser;Editor;Publishing;Notes;Files;",
+          "Comment": "IRGEZTNE Workspace is an early preview desktop workspace for browsing, writing, editing, and preparing web projects for future publishing."
+        }
+      }
     },
     "win": {
       "target": [
@@ -69,7 +76,11 @@
     },
     "deb": {
       "afterInstall": "build/linux/after-install.sh",
-      "afterRemove": "build/linux/after-remove.sh"
+      "afterRemove": "build/linux/after-remove.sh",
+      "fpm": [
+        "build/linux/com.irgeztne.workspace.metainfo.xml=/usr/share/metainfo/com.irgeztne.workspace.metainfo.xml",
+        "build/linux/copyright=/usr/share/doc/irgeztne-workspace/copyright"
+      ]
     }
   },
   "productName": "IRGEZTNE Workspace",

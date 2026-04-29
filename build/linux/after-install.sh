@@ -25,6 +25,7 @@ cat > "$META" <<'XML'
   <id>com.irgeztne.workspace</id>
   <launchable type="desktop-id">irgeztne-workspace.desktop</launchable>
   <name>IRGEZTNE Workspace</name>
+  <icon type="stock">irgeztne-workspace</icon>
   <summary>Desktop workspace for browsing, writing, editing, and publishing preparation</summary>
   <metadata_license>MIT</metadata_license>
   <project_license>MIT</project_license>
@@ -43,7 +44,7 @@ cat > "$META" <<'XML'
     <category>Office</category>
   </categories>
   <releases>
-    <release version="1.0.0-preview.1" date="2026-04-29"/>
+    <release version="1.0.0-preview.2" date="2026-04-29"/>
   </releases>
   <content_rating type="oars-1.1"/>
 </component>
