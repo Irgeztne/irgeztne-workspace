@@ -66,6 +66,10 @@
       ],
       "icon": "build/icon.icns",
       "category": "public.app-category.developer-tools"
+    },
+    "deb": {
+      "afterInstall": "build/linux/after-install.sh",
+      "afterRemove": "build/linux/after-remove.sh"
     }
   },
   "productName": "IRGEZTNE Workspace",
