@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 set -e
 
+
+SANDBOX="/opt/IRGEZTNE Workspace/chrome-sandbox"
+if [ -f "$SANDBOX" ]; then
+  chown root:root "$SANDBOX" || true
+  chmod 4755 "$SANDBOX" || true
+fi
+
 DESKTOP="/usr/share/applications/irgeztne-workspace.desktop"
 META_DIR="/usr/share/metainfo"
 META="$META_DIR/com.irgeztne.workspace.metainfo.xml"
