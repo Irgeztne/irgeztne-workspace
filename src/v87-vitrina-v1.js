@@ -42,6 +42,19 @@
     'folder-editorial-brief'
   ]);
 
+
+  function isProjectLandingCatalogItem(item) {
+    const id = String(item && (item.id || item.itemId || item.catalogItemId || '') || '').toLowerCase();
+    const templateId = String(item && item.templateId || '').toLowerCase();
+    const title = String(item && (item.title || item.name || '') || '').toLowerCase();
+
+    return id === 'template-project-landing'
+      || id === 'catalog-template-project-landing'
+      || id === 'project-landing'
+      || templateId === 'project-landing'
+      || title === 'project landing';
+  }
+
   function isHiddenV1CatalogItem(item) {
     if (!item) return false;
     const id = String(item.id || item.itemId || '');
@@ -54,7 +67,7 @@
 
   function filterPublicV1CatalogItems(items) {
     return (Array.isArray(items) ? items : []).filter(function (item) {
-      return !isHiddenV1CatalogItem(item);
+      return !isHiddenV1CatalogItem(item) && isProjectLandingCatalogItem(item);
     });
   }
 

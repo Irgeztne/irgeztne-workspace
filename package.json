@@ -16,7 +16,8 @@
     "dist:deb": "electron-builder --linux deb",
     "dist:linux": "electron-builder --linux deb AppImage --publish never",
     "dist:win": "electron-builder --win nsis --publish never",
-    "dist:mac": "electron-builder --mac dmg --publish never"
+    "dist:mac": "electron-builder --mac dmg --publish never",
+    "fix:sandbox": "sudo chown root:root node_modules/electron/dist/chrome-sandbox && sudo chmod 4755 node_modules/electron/dist/chrome-sandbox"
   },
   "dependencies": {
     "jodit": "^4.12.2"

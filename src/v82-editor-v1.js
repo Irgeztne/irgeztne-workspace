@@ -593,6 +593,127 @@
       .ns-editor-write-root.ns-editor-write-theme--dark .ns-editor-document-canvas__bar {
         background: rgba(8, 14, 24, 0.84);
       }
+
+      .ns-editor-write-root .ns-editor-visual:has(.irgeztne-project-landing),
+      .ns-editor-write-root .ns-editor-jodit-content:has(.irgeztne-project-landing),
+      .ns-editor-write-root .jodit-wysiwyg:has(.irgeztne-project-landing) {
+        width: 100% !important;
+        max-width: none !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+      }
+
+      .ns-editor-write-root .ns-editor-visual .irgeztne-project-landing,
+      .ns-editor-write-root .ns-editor-jodit-content .irgeztne-project-landing,
+      .ns-editor-write-root .jodit-wysiwyg .irgeztne-project-landing {
+        width: 100% !important;
+        max-width: none !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        opacity: 1 !important;
+        filter: none !important;
+        mix-blend-mode: normal !important;
+      }
+
+      .ns-editor-write-root .irgeztne-project-landing,
+      .ns-editor-write-root .irgeztne-project-landing h1,
+      .ns-editor-write-root .irgeztne-project-landing h2,
+      .ns-editor-write-root .irgeztne-project-landing h3,
+      .ns-editor-write-root .irgeztne-project-landing strong,
+      .ns-editor-write-root .irgeztne-project-landing .pl-title,
+      .ns-editor-write-root .irgeztne-project-landing .pl-title *,
+      .ns-editor-write-root .irgeztne-project-landing .pl-brand strong,
+      .ns-editor-write-root .irgeztne-project-landing .pl-card-head strong,
+      .ns-editor-write-root .irgeztne-project-landing .pl-feature strong,
+      .ns-editor-write-root .irgeztne-project-landing .pl-work strong,
+      .ns-editor-write-root .irgeztne-project-landing .pl-step strong,
+      .ns-editor-write-root .irgeztne-project-landing .pl-metric strong,
+      .ns-editor-write-root .irgeztne-project-landing .pl-float strong,
+      .ns-editor-write-root .irgeztne-project-landing .pl-nav a,
+      .ns-editor-write-root .irgeztne-project-landing .pl-pill,
+      .ns-editor-write-root .irgeztne-project-landing .pl-button {
+        color: var(--pl-text) !important;
+        -webkit-text-fill-color: var(--pl-text) !important;
+        opacity: 1 !important;
+        filter: none !important;
+        mix-blend-mode: normal !important;
+      }
+
+      .ns-editor-write-root .irgeztne-project-landing p,
+      .ns-editor-write-root .irgeztne-project-landing span,
+      .ns-editor-write-root .irgeztne-project-landing .pl-lead,
+      .ns-editor-write-root .irgeztne-project-landing .pl-brand span,
+      .ns-editor-write-root .irgeztne-project-landing .pl-card-head span,
+      .ns-editor-write-root .irgeztne-project-landing .pl-feature p,
+      .ns-editor-write-root .irgeztne-project-landing .pl-work p,
+      .ns-editor-write-root .irgeztne-project-landing .pl-step p,
+      .ns-editor-write-root .irgeztne-project-landing .pl-metric span,
+      .ns-editor-write-root .irgeztne-project-landing .pl-float span,
+      .ns-editor-write-root .irgeztne-project-landing .pl-section-head p,
+      .ns-editor-write-root .irgeztne-project-landing .pl-footer,
+      .ns-editor-write-root .irgeztne-project-landing .pl-footer * {
+        color: var(--pl-muted) !important;
+        -webkit-text-fill-color: var(--pl-muted) !important;
+        opacity: 1 !important;
+        filter: none !important;
+        mix-blend-mode: normal !important;
+      }
+
+      .ns-editor-write-root .irgeztne-project-landing .pl-kicker,
+      .ns-editor-write-root .irgeztne-project-landing .pl-eyebrow,
+      .ns-editor-write-root .irgeztne-project-landing .pl-icon,
+      .ns-editor-write-root .irgeztne-project-landing .pl-chip {
+        color: var(--pl-orange-2) !important;
+        -webkit-text-fill-color: var(--pl-orange-2) !important;
+      }
+
+      .ns-editor-write-root .irgeztne-project-landing .pl-button--primary,
+      .ns-editor-write-root .irgeztne-project-landing .pl-button--primary * {
+        color: #fff !important;
+        -webkit-text-fill-color: #fff !important;
+      }
+
+      .ns-editor-write-root .irgeztne-project-landing .pl-logo,
+      .ns-editor-write-root .irgeztne-project-landing .pl-logo * {
+        background: var(--pl-text) !important;
+        color: var(--pl-bg) !important;
+        -webkit-text-fill-color: var(--pl-bg) !important;
+      }
+
+      .ns-editor-write-root .irgeztne-project-landing .pl-status {
+        color: #259957 !important;
+        -webkit-text-fill-color: #259957 !important;
+      }
+
+      .ns-editor-write-root .irgeztne-project-landing .pl-number,
+      .ns-editor-write-root .irgeztne-project-landing .pl-number * {
+        background: var(--pl-text) !important;
+        color: var(--pl-bg) !important;
+        -webkit-text-fill-color: var(--pl-bg) !important;
+      }
+
+      .ns-editor-write-root .irgeztne-project-landing:not([data-theme="night"]) .pl-note,
+      .ns-editor-write-root .irgeztne-project-landing:not([data-theme="night"]) .pl-note h2,
+      .ns-editor-write-root .irgeztne-project-landing:not([data-theme="night"]) .pl-note p,
+      .ns-editor-write-root .irgeztne-project-landing:not([data-theme="night"]) .pl-note .pl-eyebrow {
+        color: #fff8ef !important;
+        -webkit-text-fill-color: #fff8ef !important;
+      }
+
+      .ns-editor-write-root .irgeztne-project-landing[data-theme="night"] .pl-note,
+      .ns-editor-write-root .irgeztne-project-landing[data-theme="night"] .pl-note h2,
+      .ns-editor-write-root .irgeztne-project-landing[data-theme="night"] .pl-note p,
+      .ns-editor-write-root .irgeztne-project-landing[data-theme="night"] .pl-note .pl-eyebrow {
+        color: #17131a !important;
+        -webkit-text-fill-color: #17131a !important;
+      }
+
+      .ns-editor-write-root .irgeztne-project-landing .pl-note .pl-button--primary,
+      .ns-editor-write-root .irgeztne-project-landing .pl-note .pl-button--primary * {
+        color: #fff !important;
+        -webkit-text-fill-color: #fff !important;
+      }
+
       @media (max-width: 980px) {
         .ns-editor-document-canvas__bar { flex-direction: column; align-items: stretch; }
         .ns-editor-document-canvas__viewport { padding: 18px; }
@@ -2200,6 +2321,70 @@ body.ns-preview-theme--folder-blog-post {
   --page-shadow: 0 12px 34px rgba(94, 59, 36, 0.08);
   background: linear-gradient(180deg, #fffdfa 0%, #f4ebe2 100%);
 }
+
+/* Project Landing preview: no old preview header, full-width layout. */
+body.ns-preview-theme--project-landing {
+  background:
+    radial-gradient(circle at 12% 8%, rgba(242,153,74,0.12), transparent 32%),
+    radial-gradient(circle at 88% 10%, rgba(94,116,255,0.10), transparent 34%),
+    linear-gradient(180deg, #fffaf2 0%, #f4ede4 100%);
+}
+
+body.ns-preview-theme--project-landing {
+  overflow-x: hidden;
+}
+
+body.ns-preview-theme--project-landing .ns-preview-shell {
+  width: 100%;
+  max-width: none;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+body.ns-preview-theme--project-landing .ns-preview-topbar,
+body.ns-preview-theme--project-landing .ns-preview-hero {
+  display: none !important;
+}
+
+body.ns-preview-theme--project-landing .ns-preview-main,
+body.ns-preview-theme--project-landing .ns-preview-main--site {
+  margin: 0;
+  padding: 0;
+}
+
+body.ns-preview-theme--project-landing .ns-preview-page,
+body.ns-preview-theme--project-landing .ns-preview-page--site {
+  width: 100%;
+  max-width: none;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+body.ns-preview-theme--project-landing .irgeztne-project-landing {
+  width: 100%;
+  max-width: none;
+  min-height: 100vh;
+  margin: 0;
+  border-radius: 0;
+  border-left: 0;
+  border-right: 0;
+}
+
+body.ns-preview-theme--project-landing .ns-preview-footer,
+body.ns-preview-theme--project-landing .ns-preview-footer *,
+body.ns-preview-theme--project-landing .ns-preview-tags,
+body.ns-preview-theme--project-landing .ns-preview-meta,
+body.ns-preview-theme--project-landing .ns-preview-built,
+body.ns-preview-theme--project-landing .ns-preview-contact,
+body.ns-preview-theme--project-landing .ns-page__tags,
+body.ns-preview-theme--project-landing .ns-page__tag,
+body.ns-preview-theme--project-landing .ns-preview-footer__link {
+  display: none !important;
+}
+
 body.ns-preview--blog .ns-preview-shell,
 body.ns-preview-theme--blog-post .ns-preview-shell,
 body.ns-preview-theme--folder-blog-post .ns-preview-shell {
@@ -4644,7 +4829,7 @@ body.ns-preview-theme--vitrina-news-analysis .ns-page-card {
         this.refs.deployMount.innerHTML = `
           <div class="ns-editor-shell__empty-state">
             <div class="ns-editor-shell__empty-title">${t("Publishing panel v1","Панель публикации v1")}</div>
-            <div class="ns-editor-shell__empty-copy">${t("Open a draft to review manual export, SFTP, GitHub Pages, Netlify, and Vercel settings.","Откройте черновик, чтобы посмотреть настройки ручного экспорта, SFTP, GitHub Pages, Netlify и Vercel.")}</div>
+            <div class="ns-editor-shell__empty-copy">${t("Open a draft to export a ZIP now. SFTP, GitHub Pages, Netlify, and Vercel are planned next.","Откройте черновик, чтобы экспортировать ZIP сейчас. SFTP, GitHub Pages, Netlify и Vercel запланированы дальше.")}</div>
           </div>
         `;
       }
@@ -4742,14 +4927,14 @@ body.ns-preview-theme--vitrina-news-analysis .ns-page-card {
 
         <div class="ns-editor-deploy-grid">
           <section class="ns-editor-shell__mini-card">
-            <h3>${t("Manual export","Ручной экспорт")}</h3>
+            <h3>${t("Manual export","Ручной экспорт")} <span style="display:inline-flex;margin-left:8px;padding:4px 8px;border-radius:999px;background:#e8f5df;color:#2f7d32;font-size:11px;font-weight:800;vertical-align:middle;">${t("Ready now","Готово сейчас")}</span></h3>
             <label class="ns-editor-field-label">${t("File name","Имя файла")}</label>
             <input class="ns-editor-input" data-deploy-field="manual.fileName" value="${escapeHtml(draft.deploy.manual.fileName)}" />
             <div class="ns-editor-shell__mini-source">${t("Files","Файлы")}: ${OUTPUT_FILES.join(", ")}</div>
           </section>
 
           <section class="ns-editor-shell__mini-card">
-            <h3>SFTP</h3>
+            <h3>SFTP <span style="display:inline-flex;margin-left:8px;padding:4px 8px;border-radius:999px;background:#f1e4cf;color:#8a5a2c;font-size:11px;font-weight:800;vertical-align:middle;">${t("Next","Далее")}</span></h3>
             <label class="ns-editor-field-label">${t("Host","Хост")}</label>
             <input class="ns-editor-input" data-deploy-field="sftp.host" value="${escapeHtml(draft.deploy.sftp.host)}" />
             <label class="ns-editor-field-label">${t("Port","Порт")}</label>
@@ -4761,7 +4946,7 @@ body.ns-preview-theme--vitrina-news-analysis .ns-page-card {
           </section>
 
           <section class="ns-editor-shell__mini-card">
-            <h3>GitHub Pages</h3>
+            <h3>GitHub Pages <span style="display:inline-flex;margin-left:8px;padding:4px 8px;border-radius:999px;background:#f1e4cf;color:#8a5a2c;font-size:11px;font-weight:800;vertical-align:middle;">${t("Next","Далее")}</span></h3>
             <label class="ns-editor-field-label">${t("Repository","Репозиторий")}</label>
             <input class="ns-editor-input" data-deploy-field="github.repo" value="${escapeHtml(draft.deploy.github.repo)}" />
             <label class="ns-editor-field-label">${t("Branch","Ветка")}</label>
@@ -4773,7 +4958,7 @@ body.ns-preview-theme--vitrina-news-analysis .ns-page-card {
           </section>
 
           <section class="ns-editor-shell__mini-card">
-            <h3>Netlify</h3>
+            <h3>Netlify <span style="display:inline-flex;margin-left:8px;padding:4px 8px;border-radius:999px;background:#f1e4cf;color:#8a5a2c;font-size:11px;font-weight:800;vertical-align:middle;">${t("Next","Далее")}</span></h3>
             <label class="ns-editor-field-label">${t("Site","Сайт")}</label>
             <input class="ns-editor-input" data-deploy-field="netlify.siteName" value="${escapeHtml(draft.deploy.netlify.siteName)}" />
             <label class="ns-editor-field-label">${t("Publish directory","Папка публикации")}</label>
@@ -4783,7 +4968,7 @@ body.ns-preview-theme--vitrina-news-analysis .ns-page-card {
           </section>
 
           <section class="ns-editor-shell__mini-card">
-            <h3>Vercel</h3>
+            <h3>Vercel <span style="display:inline-flex;margin-left:8px;padding:4px 8px;border-radius:999px;background:#f1e4cf;color:#8a5a2c;font-size:11px;font-weight:800;vertical-align:middle;">${t("Next","Далее")}</span></h3>
             <label class="ns-editor-field-label">${t("Project","Проект")}</label>
             <input class="ns-editor-input" data-deploy-field="vercel.projectName" value="${escapeHtml(draft.deploy.vercel.projectName)}" />
             <label class="ns-editor-field-label">${t("Output directory","Папка вывода")}</label>
@@ -5166,7 +5351,7 @@ body.ns-preview-theme--vitrina-news-analysis .ns-page-card {
             </div>
             <div class="ns-editor-shell__mini-card">
               <div class="ns-editor-shell__mini-card-title" >${t("Publishing panel v1","Панель публикации v1")}</div>
-              <div class="ns-editor-shell__mini-card-value" >${t("Manual export / SFTP / GitHub Pages / Netlify / Vercel","Ручной экспорт / SFTP / GitHub Pages / Netlify / Vercel")}</div>
+              <div class="ns-editor-shell__mini-card-value" >${t("Manual ZIP export now / deploy integrations next","Ручной ZIP-экспорт сейчас / деплой-интеграции дальше")}</div>
             </div>
           `;
         }

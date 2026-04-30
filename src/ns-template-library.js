@@ -1,797 +1,1245 @@
 (function (root) {
-  const TEMPLATE_DEFS = [
-    {
-      itemId: 'template-website-starter',
-      templateId: 'website-starter',
-      name: 'Website Starter',
-      description: 'Чистый one-page сайт: Главная, О проекте, Работа, Контакт — все ссылки работают как якоря.',
-      version: '0.3.0',
-      installed: true,
-      trust: 'built-in',
-      template: {
-        id: 'website-starter',
-        name: 'Website Starter',
-        category: 'website',
-        description: 'Одностраничный стартовый сайт с рабочими якорями: Главная, О проекте, Работа и Контакт.',
-        defaults: {
-          kicker: 'One-page Website Starter',
-          title: 'Веб-сайт без названия',
-          author: 'IRGEZTNE Studio',
-          summary: 'Чистый одностраничный сайт для v1: верхнее меню ведёт к реальным секциям, а не к пустым страницам.',
-          excerpt: 'Одностраничный стартовый сайт, подготовленный в IRGEZTNE Workspace.',
-          seoTitle: 'Веб-сайт без названия',
-          seoDescription: 'Одностраничный стартовый сайт, подготовленный в IRGEZTNE Workspace.',
-          keywords: ['website', 'starter', 'one-page', 'landing', 'portfolio', 'irgeztne workspace'],
-          visualHtml: `<section class="ns-page-section ns-page-hero ns-page-hero--split" id="home">
-  <div class="ns-page-hero__content">
-    <div class="ns-page-kicker">One-page Website Starter</div>
-    <h1>Соберите ясный одностраничный сайт</h1>
-    <p class="ns-page-lead">Простой стартовый сайт для проекта, автора, студии или небольшой публикации. Верхнее меню ведёт к реальным секциям: Главная, О проекте, Работа и Контакт.</p>
-    <div class="ns-page-actions">
-      <a class="ns-page-button ns-page-button--primary" href="#contact">Связаться</a>
-      <a class="ns-page-button" href="#work">Посмотреть работу</a>
-    </div>
-  </div>
-  <aside class="ns-page-panel ns-page-panel--feature">
-    <div class="ns-page-panel__eyebrow">Структура v1</div>
-    <strong>Одна страница, рабочие якоря</strong>
-    <p>Для первого релиза шаблон специально оставлен простым. Multi-page website-шаблоны можно добавить позже.</p>
-  </aside>
-</section>
-<section class="ns-page-section" id="about">
-  <div class="ns-page-section__head">
-    <h2>О проекте</h2>
-    <p>Объясните, кто вы, что делает проект и почему это важно.</p>
-  </div>
-  <div class="ns-page-grid ns-page-grid--two">
-    <div class="ns-page-card">
-      <span>Задача</span>
-      <strong>Понятное первое впечатление</strong>
-      <p>Дайте посетителю короткое и прямое объяснение проекта или услуги.</p>
-    </div>
-    <div class="ns-page-card">
-      <span>Формат</span>
-      <strong>Простая публичная страница</strong>
-      <p>Сохраните страницу читаемой и лёгкой для адаптации до появления сложной публикации.</p>
-    </div>
-  </div>
-</section>
-<section class="ns-page-section" id="work">
-  <div class="ns-page-section__head">
-    <h2>Работа</h2>
-    <p>Покажите самые важные направления, услуги, проекты или материалы.</p>
-  </div>
-  <div class="ns-page-grid ns-page-grid--three">
-    <div class="ns-page-card">
-      <span>01</span>
-      <strong>Направление</strong>
-      <p>Опишите основную работу или услугу одним коротким абзацем.</p>
-    </div>
-    <div class="ns-page-card">
-      <span>02</span>
-      <strong>Проект</strong>
-      <p>Добавьте пример, публикацию, кейс или продуктовую ветку.</p>
-    </div>
-    <div class="ns-page-card">
-      <span>03</span>
-      <strong>Следующий шаг</strong>
-      <p>Скажите посетителю, что делать дальше: написать, скачать, следить или открыть проект.</p>
-    </div>
-  </div>
-</section>
-<section class="ns-page-section" id="contact">
-  <div class="ns-page-callout">
-    <div>
-      <div class="ns-page-callout__eyebrow">Контакт</div>
-      <h2>Добавьте реальный путь связи</h2>
-      <p>Замените этот placeholder на настоящий email, ссылку или короткое контактное сообщение.</p>
-    </div>
-    <a class="ns-page-button ns-page-button--primary" href="mailto:hello@example.com">Написать</a>
-  </div>
-</section>`,
-          markdown: `# Соберите ясный одностраничный сайт
+  const PROJECT_LANDING_TEMPLATE = {
+    itemId: 'template-project-landing',
+    templateId: 'project-landing',
+    name: 'Project Landing',
+    description: 'Широкий чистый one-page шаблон для проекта, услуги, портфолио, студии или малого бизнеса.',
+    version: '0.5.0',
+    installed: true,
+    trust: 'built-in',
+    template: {
+      id: 'project-landing',
+      name: 'Project Landing',
+      category: 'website',
+      description: 'Jadoo-style project landing without external images or external assets. Includes RU/EN and Day/Night controls.',
+      defaults: {
+        theme: 'light',
+        kicker: 'Стартовый сайт',
+        title: 'Ясная страница проекта',
+        author: 'IRGEZTNE Studio',
+        summary: 'Широкий чистый landing для проекта, услуги, портфолио, студии или малого бизнеса.',
+        excerpt: 'Project Landing template prepared in IRGEZTNE Workspace.',
+        seoTitle: 'Ясная страница проекта',
+        seoDescription: 'Широкий чистый landing для проекта, услуги, портфолио, студии или малого бизнеса.',
+        keywords: ['project', 'landing', 'website', 'portfolio', 'service', 'studio', 'business', 'irgeztne workspace'],
+        tags: ['project', 'landing', 'website', 'ru-en', 'day-night'],
+        visualHtml: `<style>
+  .irgeztne-project-landing {
+    --pl-bg: #fff8ef;
+    --pl-cream: #fff1dc;
+    --pl-card: #ffffff;
+    --pl-card-soft: rgba(255,255,255,0.76);
+    --pl-text: #181411;
+    --pl-muted: #72685f;
+    --pl-line: rgba(24,20,17,0.12);
+    --pl-orange: #f2994a;
+    --pl-orange-2: #df6951;
+    --pl-blue: #5e74ff;
+    --pl-yellow: #ffd166;
+    --pl-shadow: 0 28px 80px rgba(68, 42, 18, 0.14);
+    width: 100%;
+    min-height: 760px;
+    color: var(--pl-text);
+    background:
+      radial-gradient(circle at 80% 8%, rgba(94,116,255,0.12), transparent 30%),
+      radial-gradient(circle at 16% 18%, rgba(242,153,74,0.18), transparent 32%),
+      linear-gradient(180deg, #fffaf2 0%, var(--pl-bg) 48%, #fff 100%);
+    border: 1px solid var(--pl-line);
+    border-radius: 34px;
+    overflow: hidden;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
 
-Простой стартовый сайт для проекта, автора, студии или небольшой публикации.
+  .irgeztne-project-landing[data-theme="night"] {
+    --pl-bg: #111014;
+    --pl-cream: #1c1821;
+    --pl-card: #1f1b22;
+    --pl-card-soft: rgba(31,27,34,0.78);
+    --pl-text: #fff6ea;
+    --pl-muted: #c8b9a9;
+    --pl-line: rgba(255,246,234,0.14);
+    --pl-orange: #ffac63;
+    --pl-orange-2: #ff7f5c;
+    --pl-blue: #8795ff;
+    --pl-yellow: #ffd978;
+    --pl-shadow: 0 28px 90px rgba(0, 0, 0, 0.36);
+    background:
+      radial-gradient(circle at 80% 8%, rgba(135,149,255,0.16), transparent 30%),
+      radial-gradient(circle at 16% 18%, rgba(255,172,99,0.16), transparent 32%),
+      linear-gradient(180deg, #17131a 0%, var(--pl-bg) 54%, #0d0c10 100%);
+  }
 
-## О проекте
+  .irgeztne-project-landing * { box-sizing: border-box; }
 
-Объясните, кто вы, что делает проект и почему это важно.
+  .irgeztne-project-landing,
+  .irgeztne-project-landing h1,
+  .irgeztne-project-landing h2,
+  .irgeztne-project-landing h3,
+  .irgeztne-project-landing strong,
+  .irgeztne-project-landing a,
+  .irgeztne-project-landing button,
+  .irgeztne-project-landing .pl-title,
+  .irgeztne-project-landing .pl-title *,
+  .irgeztne-project-landing .pl-brand strong,
+  .irgeztne-project-landing .pl-card-head strong,
+  .irgeztne-project-landing .pl-feature strong,
+  .irgeztne-project-landing .pl-work strong,
+  .irgeztne-project-landing .pl-step strong,
+  .irgeztne-project-landing .pl-metric strong,
+  .irgeztne-project-landing .pl-float strong,
+  .irgeztne-project-landing .pl-nav a,
+  .irgeztne-project-landing .pl-pill,
+  .irgeztne-project-landing .pl-button {
+    color: var(--pl-text) !important;
+  }
+
+  .irgeztne-project-landing p,
+  .irgeztne-project-landing span,
+  .irgeztne-project-landing .pl-lead,
+  .irgeztne-project-landing .pl-brand span,
+  .irgeztne-project-landing .pl-card-head span,
+  .irgeztne-project-landing .pl-feature p,
+  .irgeztne-project-landing .pl-work p,
+  .irgeztne-project-landing .pl-step p,
+  .irgeztne-project-landing .pl-metric span,
+  .irgeztne-project-landing .pl-float span,
+  .irgeztne-project-landing .pl-section-head p,
+  .irgeztne-project-landing .pl-footer,
+  .irgeztne-project-landing .pl-footer * {
+    color: var(--pl-muted) !important;
+  }
+
+  .irgeztne-project-landing .pl-kicker,
+  .irgeztne-project-landing .pl-eyebrow,
+  .irgeztne-project-landing .pl-icon,
+  .irgeztne-project-landing .pl-chip {
+    color: var(--pl-orange-2) !important;
+  }
+
+  .irgeztne-project-landing .pl-logo,
+  .irgeztne-project-landing .pl-logo * {
+    background: var(--pl-text) !important;
+    color: var(--pl-bg) !important;
+  }
+
+  .irgeztne-project-landing .pl-button--primary,
+  .irgeztne-project-landing .pl-button--primary * {
+    color: #fff !important;
+  }
+
+  .irgeztne-project-landing .pl-status {
+    color: #259957 !important;
+  }
+
+  .irgeztne-project-landing .pl-note,
+  .irgeztne-project-landing .pl-note h2,
+  .irgeztne-project-landing .pl-note p,
+  .irgeztne-project-landing .pl-note .pl-eyebrow {
+    color: #fff8ef !important;
+  }
+
+  .irgeztne-project-landing[data-theme="night"] .pl-note,
+  .irgeztne-project-landing[data-theme="night"] .pl-note h2,
+  .irgeztne-project-landing[data-theme="night"] .pl-note p,
+  .irgeztne-project-landing[data-theme="night"] .pl-note .pl-eyebrow {
+    color: #17131a !important;
+  }
+
+
+  /* Keep the template readable inside the editor even when the app/editor is in dark mode. */
+  .irgeztne-project-landing,
+  .irgeztne-project-landing .pl-title,
+  .irgeztne-project-landing .pl-title *,
+  .irgeztne-project-landing .pl-card-head strong,
+  .irgeztne-project-landing .pl-feature strong,
+  .irgeztne-project-landing .pl-work strong,
+  .irgeztne-project-landing .pl-step strong,
+  .irgeztne-project-landing .pl-metric strong,
+  .irgeztne-project-landing .pl-float strong,
+  .irgeztne-project-landing .pl-brand strong,
+  .irgeztne-project-landing .pl-nav a,
+  .irgeztne-project-landing .pl-pill,
+  .irgeztne-project-landing .pl-button {
+    color: var(--pl-text) !important;
+  }
+
+  .irgeztne-project-landing .pl-lead,
+  .irgeztne-project-landing .pl-lead *,
+  .irgeztne-project-landing .pl-brand span,
+  .irgeztne-project-landing .pl-card-head span,
+  .irgeztne-project-landing .pl-feature p,
+  .irgeztne-project-landing .pl-work p,
+  .irgeztne-project-landing .pl-step p,
+  .irgeztne-project-landing .pl-metric span,
+  .irgeztne-project-landing .pl-float span,
+  .irgeztne-project-landing .pl-section-head p,
+  .irgeztne-project-landing .pl-footer,
+  .irgeztne-project-landing .pl-footer * {
+    color: var(--pl-muted) !important;
+  }
+
+  .irgeztne-project-landing .pl-kicker,
+  .irgeztne-project-landing .pl-eyebrow,
+  .irgeztne-project-landing .pl-icon,
+  .irgeztne-project-landing .pl-chip {
+    color: var(--pl-orange-2) !important;
+  }
+
+  .irgeztne-project-landing .pl-logo {
+    background: var(--pl-text) !important;
+    color: var(--pl-bg) !important;
+    font-size: 13px;
+    line-height: 1;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .irgeztne-project-landing .pl-button--primary {
+    color: #fff !important;
+  }
+
+  .irgeztne-project-landing .pl-status {
+    color: #259957 !important;
+  }
+
+  .irgeztne-project-landing .pl-note,
+  .irgeztne-project-landing .pl-note h2,
+  .irgeztne-project-landing .pl-note p,
+  .irgeztne-project-landing .pl-note .pl-eyebrow {
+    color: #fff8ef !important;
+  }
+
+  .irgeztne-project-landing[data-theme="night"] .pl-note,
+  .irgeztne-project-landing[data-theme="night"] .pl-note h2,
+  .irgeztne-project-landing[data-theme="night"] .pl-note p,
+  .irgeztne-project-landing[data-theme="night"] .pl-note .pl-eyebrow {
+    color: #17131a !important;
+  }
+
+
+  .pl-shell {
+    width: 100%;
+    padding: clamp(24px, 3vw, 42px);
+  }
+
+  .pl-navrow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 22px;
+  }
+
+  .pl-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 230px;
+  }
+
+  .pl-logo {
+    width: 46px;
+    height: 46px;
+    border-radius: 16px;
+    display: grid;
+    place-items: center;
+    background: var(--pl-text);
+    color: var(--pl-bg);
+    font-weight: 950;
+    font-size: 17px;
+    line-height: 1;
+    letter-spacing: -0.08em;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.14);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Project logo is a clean CSS mark for preview. Logo/favicons generator comes next. */
+
+  .pl-logo::after {
+    content: "";
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    right: -4px;
+    bottom: -4px;
+    border-radius: 8px;
+    background: var(--pl-orange);
+    opacity: 0.95;
+  }
+
+  .pl-brand strong {
+    display: block;
+    font-size: 15px;
+    line-height: 1.1;
+  }
+
+  .pl-brand span {
+    display: block;
+    color: var(--pl-muted);
+    font-size: 12px;
+    margin-top: 3px;
+  }
+
+  .pl-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(14px, 2vw, 28px);
+    flex: 1;
+  }
+
+  .pl-nav a {
+    color: var(--pl-muted);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+
+  .pl-nav a:hover { color: var(--pl-orange-2); }
+
+  .pl-controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-end;
+    min-width: 190px;
+  }
+
+  .pl-pill {
+    border: 1px solid var(--pl-line);
+    background: var(--pl-card-soft);
+    color: var(--pl-text);
+    min-height: 38px;
+    padding: 0 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 10px 28px rgba(0,0,0,0.06);
+  }
+
+  .pl-pill:hover {
+    border-color: rgba(242,153,74,0.55);
+    transform: translateY(-1px);
+  }
+
+  .pl-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.06fr) minmax(420px, 0.94fr);
+    gap: clamp(34px, 5vw, 76px);
+    align-items: center;
+    padding: clamp(54px, 7vw, 92px) 0 clamp(42px, 6vw, 80px);
+  }
+
+  .pl-copy { min-width: 0; }
+
+  .pl-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    color: var(--pl-orange-2);
+    font-weight: 950;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 13px;
+    margin-bottom: 20px;
+  }
+
+  .pl-kicker:before {
+    content: "";
+    width: 34px;
+    height: 3px;
+    border-radius: 99px;
+    background: var(--pl-orange-2);
+  }
+
+  .pl-title {
+    margin: 0;
+    max-width: 830px;
+    font-size: clamp(52px, 6.8vw, 96px);
+    line-height: 0.94;
+    letter-spacing: -0.075em;
+  }
+
+  .pl-lead {
+    max-width: 680px;
+    margin: 24px 0 0;
+    color: var(--pl-muted);
+    font-size: clamp(17px, 1.7vw, 21px);
+    line-height: 1.72;
+  }
+
+  .pl-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 32px;
+  }
+
+  .pl-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 50px;
+    padding: 0 22px;
+    border-radius: 14px;
+    border: 1px solid var(--pl-line);
+    text-decoration: none;
+    color: var(--pl-text);
+    background: var(--pl-card);
+    font-size: 14px;
+    font-weight: 950;
+    box-shadow: 0 16px 42px rgba(0,0,0,0.08);
+  }
+
+  .pl-button--primary {
+    border-color: transparent;
+    color: #fff;
+    background: linear-gradient(135deg, var(--pl-orange), var(--pl-orange-2));
+    box-shadow: 0 20px 48px rgba(223,105,81,0.28);
+  }
+
+  .pl-mini-note {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 28px;
+  }
+
+  .pl-mini-note span {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--pl-muted);
+    background: var(--pl-card-soft);
+    border: 1px solid var(--pl-line);
+    border-radius: 999px;
+    padding: 8px 11px;
+    font-size: 12px;
+    font-weight: 800;
+  }
+
+  .pl-mini-note span:before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--pl-orange);
+  }
+
+  .pl-visual {
+    position: relative;
+    min-height: 560px;
+  }
+
+  .pl-blob {
+    position: absolute;
+    inset: 0 0 0 8%;
+    border-radius: 42% 58% 52% 48% / 46% 36% 64% 54%;
+    background: linear-gradient(145deg, rgba(255,209,102,0.42), rgba(242,153,74,0.20) 42%, rgba(94,116,255,0.18));
+  }
+
+  .pl-blob:after {
+    content: "";
+    position: absolute;
+    inset: 9%;
+    border-radius: inherit;
+    border: 1px solid var(--pl-line);
+    background: rgba(255,255,255,0.18);
+  }
+
+  .pl-main-card {
+    position: absolute;
+    left: 3%;
+    right: 5%;
+    top: 12%;
+    min-height: 410px;
+    border-radius: 34px;
+    background: var(--pl-card-soft);
+    border: 1px solid var(--pl-line);
+    box-shadow: var(--pl-shadow);
+    padding: 24px;
+    backdrop-filter: blur(14px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .pl-card-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    align-items: flex-start;
+  }
+
+  .pl-card-head strong {
+    display: block;
+    font-size: 20px;
+    letter-spacing: -0.03em;
+  }
+
+  .pl-card-head span {
+    color: var(--pl-muted);
+    font-size: 12px;
+    font-weight: 800;
+  }
+
+  .pl-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    border-radius: 999px;
+    background: rgba(79, 195, 126, 0.12);
+    color: #259957;
+    padding: 7px 10px;
+    font-size: 12px;
+    font-weight: 950;
+    white-space: nowrap;
+  }
+
+  .pl-status:before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    background: #38c172;
+    border-radius: 50%;
+  }
+
+  .pl-bars {
+    display: grid;
+    gap: 12px;
+    margin: 30px 0;
+  }
+
+  .pl-bar {
+    height: 13px;
+    border-radius: 999px;
+    background: rgba(114,104,95,0.16);
+    overflow: hidden;
+  }
+
+  .pl-bar i {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--pl-orange), var(--pl-yellow));
+  }
+
+  .pl-bar:nth-child(1) i { width: 82%; }
+  .pl-bar:nth-child(2) i { width: 66%; background: linear-gradient(90deg, var(--pl-blue), var(--pl-orange)); }
+  .pl-bar:nth-child(3) i { width: 74%; }
+
+  .pl-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .pl-metric {
+    border: 1px solid var(--pl-line);
+    background: var(--pl-card);
+    border-radius: 22px;
+    padding: 15px;
+  }
+
+  .pl-metric strong {
+    display: block;
+    font-size: 24px;
+    letter-spacing: -0.05em;
+  }
+
+  .pl-metric span {
+    display: block;
+    color: var(--pl-muted);
+    font-size: 11px;
+    font-weight: 850;
+    margin-top: 3px;
+  }
+
+  .pl-float {
+    position: absolute;
+    border: 1px solid var(--pl-line);
+    background: var(--pl-card);
+    border-radius: 22px;
+    box-shadow: var(--pl-shadow);
+    padding: 15px 17px;
+    max-width: 210px;
+  }
+
+  .pl-float strong {
+    display: block;
+    font-size: 14px;
+  }
+
+  .pl-float span {
+    display: block;
+    color: var(--pl-muted);
+    font-size: 12px;
+    line-height: 1.45;
+    margin-top: 4px;
+  }
+
+  .pl-float--one { left: -2%; top: 6%; }
+  .pl-float--two { right: -1%; bottom: 9%; }
+
+  .pl-section {
+    padding: clamp(42px, 5vw, 74px) 0;
+    border-top: 1px solid var(--pl-line);
+  }
+
+  .pl-section-head {
+    display: grid;
+    grid-template-columns: minmax(280px, 0.9fr) minmax(0, 1.1fr);
+    gap: 32px;
+    align-items: end;
+    margin-bottom: 28px;
+  }
+
+  .pl-eyebrow {
+    color: var(--pl-orange-2);
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 950;
+    margin-bottom: 10px;
+  }
+
+  .pl-section h2 {
+    margin: 0;
+    font-size: clamp(34px, 4.2vw, 58px);
+    line-height: 0.98;
+    letter-spacing: -0.06em;
+  }
+
+  .pl-section-head p {
+    color: var(--pl-muted);
+    font-size: 16px;
+    line-height: 1.72;
+    margin: 0;
+    max-width: 660px;
+  }
+
+  .pl-grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .pl-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .pl-feature,
+  .pl-work,
+  .pl-step {
+    background: var(--pl-card-soft);
+    border: 1px solid var(--pl-line);
+    border-radius: 28px;
+    padding: 22px;
+    box-shadow: 0 18px 44px rgba(0,0,0,0.06);
+  }
+
+  .pl-feature { min-height: 245px; }
+
+  .pl-icon {
+    width: 54px;
+    height: 54px;
+    border-radius: 18px;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(135deg, rgba(242,153,74,0.2), rgba(94,116,255,0.13));
+    color: var(--pl-orange-2);
+    font-weight: 950;
+    margin-bottom: 28px;
+  }
+
+  .pl-feature strong,
+  .pl-work strong,
+  .pl-step strong {
+    display: block;
+    font-size: 21px;
+    line-height: 1.12;
+    letter-spacing: -0.035em;
+  }
+
+  .pl-feature p,
+  .pl-work p,
+  .pl-step p {
+    color: var(--pl-muted);
+    line-height: 1.65;
+    margin: 12px 0 0;
+    font-size: 14px;
+  }
+
+  .pl-work {
+    min-height: 285px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .pl-work-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .pl-chip {
+    display: inline-flex;
+    border-radius: 999px;
+    background: rgba(242,153,74,0.14);
+    color: var(--pl-orange-2);
+    padding: 7px 10px;
+    font-size: 12px;
+    font-weight: 950;
+  }
+
+  .pl-step {
+    display: grid;
+    grid-template-columns: 64px minmax(0, 1fr);
+    gap: 18px;
+    align-items: start;
+  }
+
+  .pl-number {
+    width: 64px;
+    height: 64px;
+    border-radius: 22px;
+    display: grid;
+    place-items: center;
+    background: var(--pl-text);
+    color: var(--pl-bg);
+    font-size: 22px;
+    font-weight: 950;
+  }
+
+  .pl-note {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 26px;
+    align-items: center;
+    background: linear-gradient(135deg, var(--pl-text), #3b2c22);
+    color: #fff8ef;
+    border-radius: 34px;
+    padding: clamp(26px, 4vw, 44px);
+    box-shadow: var(--pl-shadow);
+  }
+
+  .irgeztne-project-landing[data-theme="night"] .pl-note {
+    background: linear-gradient(135deg, #fff6ea, #ead7c4);
+    color: #17131a;
+  }
+
+  .pl-note h2 { color: inherit; }
+
+  .pl-note p {
+    color: currentColor;
+    opacity: 0.78;
+    max-width: 680px;
+    line-height: 1.7;
+    margin: 14px 0 0;
+  }
+
+  .pl-note .pl-button { box-shadow: none; }
+
+  .pl-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    color: var(--pl-muted);
+    border-top: 1px solid var(--pl-line);
+    padding: 26px 0 4px;
+    font-size: 13px;
+    font-weight: 750;
+  }
+
+  @media (max-width: 1120px) {
+    .pl-hero { grid-template-columns: 1fr; }
+    .pl-visual { min-height: 500px; }
+    .pl-grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  @media (max-width: 820px) {
+    .pl-shell { padding: 20px; }
+    .pl-navrow { align-items: flex-start; flex-direction: column; }
+    .pl-nav { justify-content: flex-start; flex-wrap: wrap; }
+    .pl-controls { min-width: 0; }
+    .pl-section-head,
+    .pl-grid-3,
+    .pl-note { grid-template-columns: 1fr; }
+    .pl-grid-4 { grid-template-columns: 1fr; }
+    .pl-title { font-size: clamp(42px, 14vw, 68px); }
+    .pl-main-card { left: 0; right: 0; }
+    .pl-float {
+      position: relative;
+      inset: auto;
+      margin-top: 12px;
+      max-width: none;
+    }
+  }
+  /* Final color lock: app/editor dark themes must not wash out the template. */
+  .irgeztne-project-landing,
+  .irgeztne-project-landing * {
+    opacity: 1 !important;
+    filter: none !important;
+    mix-blend-mode: normal !important;
+  }
+
+  .irgeztne-project-landing p,
+  .irgeztne-project-landing .pl-lead,
+  .irgeztne-project-landing .pl-lead *,
+  .irgeztne-project-landing .pl-brand span,
+  .irgeztne-project-landing .pl-card-head span,
+  .irgeztne-project-landing .pl-feature p,
+  .irgeztne-project-landing .pl-work p,
+  .irgeztne-project-landing .pl-step p,
+  .irgeztne-project-landing .pl-metric span,
+  .irgeztne-project-landing .pl-float span,
+  .irgeztne-project-landing .pl-section-head p,
+  .irgeztne-project-landing .pl-footer,
+  .irgeztne-project-landing .pl-footer * {
+    color: var(--pl-muted) !important;
+  }
+
+  .irgeztne-project-landing,
+  .irgeztne-project-landing h1,
+  .irgeztne-project-landing h2,
+  .irgeztne-project-landing h3,
+  .irgeztne-project-landing strong,
+  .irgeztne-project-landing .pl-title,
+  .irgeztne-project-landing .pl-title *,
+  .irgeztne-project-landing .pl-brand strong,
+  .irgeztne-project-landing .pl-card-head strong,
+  .irgeztne-project-landing .pl-feature strong,
+  .irgeztne-project-landing .pl-work strong,
+  .irgeztne-project-landing .pl-step strong,
+  .irgeztne-project-landing .pl-metric strong,
+  .irgeztne-project-landing .pl-float strong,
+  .irgeztne-project-landing .pl-nav a,
+  .irgeztne-project-landing .pl-pill,
+  .irgeztne-project-landing .pl-button {
+    color: var(--pl-text) !important;
+  }
+
+  .irgeztne-project-landing .pl-kicker,
+  .irgeztne-project-landing .pl-eyebrow,
+  .irgeztne-project-landing .pl-icon,
+  .irgeztne-project-landing .pl-chip {
+    color: var(--pl-orange-2) !important;
+  }
+
+  .irgeztne-project-landing .pl-logo,
+  .irgeztne-project-landing .pl-logo * {
+    background: var(--pl-text) !important;
+    color: var(--pl-bg) !important;
+  }
+
+  .irgeztne-project-landing .pl-button--primary,
+  .irgeztne-project-landing .pl-button--primary * {
+    color: #fff !important;
+  }
+
+  .irgeztne-project-landing .pl-status {
+    color: #259957 !important;
+  }
+
+  .irgeztne-project-landing .pl-note,
+  .irgeztne-project-landing .pl-note h2,
+  .irgeztne-project-landing .pl-note p,
+  .irgeztne-project-landing .pl-note .pl-eyebrow {
+    color: #fff8ef !important;
+  }
+
+  .irgeztne-project-landing[data-theme="night"] .pl-note,
+  .irgeztne-project-landing[data-theme="night"] .pl-note h2,
+  .irgeztne-project-landing[data-theme="night"] .pl-note p,
+  .irgeztne-project-landing[data-theme="night"] .pl-note .pl-eyebrow {
+    color: #17131a !important;
+  }
+  /* Project Landing final template fixes. */
+  .irgeztne-project-landing .pl-number,
+  .irgeztne-project-landing .pl-number * {
+    background: var(--pl-text) !important;
+    color: var(--pl-bg) !important;
+    -webkit-text-fill-color: var(--pl-bg) !important;
+  }
+
+  .irgeztne-project-landing:not([data-theme="night"]) .pl-note,
+  .irgeztne-project-landing:not([data-theme="night"]) .pl-note h2,
+  .irgeztne-project-landing:not([data-theme="night"]) .pl-note p,
+  .irgeztne-project-landing:not([data-theme="night"]) .pl-note .pl-eyebrow {
+    color: #fff8ef !important;
+    -webkit-text-fill-color: #fff8ef !important;
+  }
+
+  .irgeztne-project-landing[data-theme="night"] .pl-note,
+  .irgeztne-project-landing[data-theme="night"] .pl-note h2,
+  .irgeztne-project-landing[data-theme="night"] .pl-note p,
+  .irgeztne-project-landing[data-theme="night"] .pl-note .pl-eyebrow {
+    color: #17131a !important;
+    -webkit-text-fill-color: #17131a !important;
+  }
+
+  .irgeztne-project-landing .pl-note .pl-button--primary,
+  .irgeztne-project-landing .pl-note .pl-button--primary * {
+    color: #fff !important;
+    -webkit-text-fill-color: #fff !important;
+  }
+</style>
+
+<div class="irgeztne-project-landing" data-theme="day" data-lang="ru">
+  <div class="pl-shell">
+    <header class="pl-navrow">
+      <a class="pl-brand" href="#home" aria-label="Project Landing home" style="text-decoration:none;color:inherit;">
+        <span class="pl-logo" aria-hidden="true">IR</span>
+        <span>
+          <strong>IRGEZTNE Project</strong>
+          <span data-i18n data-ru="Проект / услуга / студия" data-en="Project / service / studio">Проект / услуга / студия</span>
+        </span>
+      </a>
+
+      <nav class="pl-nav" aria-label="Project navigation">
+        <a href="#service" data-i18n data-ru="Возможности" data-en="Services">Возможности</a>
+        <a href="#work" data-i18n data-ru="Работа" data-en="Work">Работа</a>
+        <a href="#process" data-i18n data-ru="Процесс" data-en="Process">Процесс</a>
+        <a href="#contact" data-i18n data-ru="Контакт" data-en="Contact">Контакт</a>
+      </nav>
+
+      <div class="pl-controls">
+        <button class="pl-pill" type="button" onclick="var r=this.closest('.irgeztne-project-landing');var l=r.getAttribute('data-lang')==='ru'?'en':'ru';r.setAttribute('data-lang',l);r.querySelectorAll('[data-i18n]').forEach(function(e){e.textContent=e.getAttribute('data-'+l)||e.textContent;});this.textContent=l==='ru'?'RU / EN':'EN / RU';">RU / EN</button>
+        <button class="pl-pill" type="button" onclick="var r=this.closest('.irgeztne-project-landing');var n=r.getAttribute('data-theme')==='night'?'day':'night';r.setAttribute('data-theme',n);this.textContent=n==='night'?'Day':'Night';">Day / Night</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="pl-hero" id="home">
+        <div class="pl-copy">
+          <div class="pl-kicker" data-i18n data-ru="Готовый старт для публикации" data-en="Launch-ready project starter">Готовый старт для публикации</div>
+          <h1 class="pl-title"><span data-i18n data-ru="Создайте страницу, которая сразу объясняет проект." data-en="Create a page that explains the project at first glance.">Создайте страницу, которая сразу объясняет проект.</span></h1>
+          <p class="pl-lead" data-i18n data-ru="Широкий чистый landing для проекта, услуги, портфолио, студии или малого бизнеса. Без лишних картинок, внешних зависимостей и случайных footer-ссылок." data-en="A clean wide landing page for a project, service, portfolio, studio, or small business. No extra images, no external dependencies, and no unwanted footer links.">Широкий чистый landing для проекта, услуги, портфолио, студии или малого бизнеса. Без лишних картинок, внешних зависимостей и случайных footer-ссылок.</p>
+
+          <div class="pl-actions">
+            <a class="pl-button pl-button--primary" href="#contact" data-i18n data-ru="Начать разговор" data-en="Start a conversation">Начать разговор</a>
+            <a class="pl-button" href="#work" data-i18n data-ru="Посмотреть структуру" data-en="View the structure">Посмотреть структуру</a>
+          </div>
+
+          <div class="pl-mini-note">
+            <span data-i18n data-ru="RU / EN" data-en="RU / EN">RU / EN</span>
+            <span data-i18n data-ru="Day / Night" data-en="Day / Night">Day / Night</span>
+            <span data-i18n data-ru="Export ZIP" data-en="Export ZIP">Export ZIP</span>
+          </div>
+        </div>
+
+        <aside class="pl-visual" aria-label="Project preview illustration">
+          <div class="pl-blob"></div>
+
+          <div class="pl-main-card">
+            <div class="pl-card-head">
+              <div>
+                <strong data-i18n data-ru="Панель проекта" data-en="Project board">Панель проекта</strong>
+                <span data-i18n data-ru="Структура будущего сайта" data-en="Structure for the future site">Структура будущего сайта</span>
+              </div>
+              <span class="pl-status" data-i18n data-ru="Готово" data-en="Ready">Готово</span>
+            </div>
+
+            <div class="pl-bars">
+              <div class="pl-bar"><i></i></div>
+              <div class="pl-bar"><i></i></div>
+              <div class="pl-bar"><i></i></div>
+            </div>
+
+            <div class="pl-metrics">
+              <div class="pl-metric"><strong>01</strong><span data-i18n data-ru="Первый экран" data-en="Hero">Первый экран</span></div>
+              <div class="pl-metric"><strong>04</strong><span data-i18n data-ru="Секции" data-en="Sections">Секции</span></div>
+              <div class="pl-metric"><strong>ZIP</strong><span data-i18n data-ru="Экспорт" data-en="Export">Экспорт</span></div>
+            </div>
+          </div>
+
+          <div class="pl-float pl-float--one">
+            <strong data-i18n data-ru="Без картинок" data-en="No images">Без картинок</strong>
+            <span data-i18n data-ru="Чистый CSS-блок, который легко заменить своим фото или иллюстрацией." data-en="A clean CSS block that can be replaced with your own photo or illustration.">Чистый CSS-блок, который легко заменить своим фото или иллюстрацией.</span>
+          </div>
+
+          <div class="pl-float pl-float--two">
+            <strong data-i18n data-ru="Локально сначала" data-en="Local first">Локально сначала</strong>
+            <span data-i18n data-ru="Соберите, проверьте preview и экспортируйте ZIP." data-en="Build, preview, and export a ZIP package.">Соберите, проверьте preview и экспортируйте ZIP.</span>
+          </div>
+        </aside>
+      </section>
+
+      <section class="pl-section" id="service">
+        <div class="pl-section-head">
+          <div>
+            <div class="pl-eyebrow" data-i18n data-ru="Возможности" data-en="Services">Возможности</div>
+            <h2 data-i18n data-ru="Покажите ценность без шума." data-en="Show the value without noise.">Покажите ценность без шума.</h2>
+          </div>
+          <p data-i18n data-ru="Эти карточки можно заменить на услуги, функции продукта, направления студии, преимущества портфолио или разделы локального бизнеса." data-en="Replace these cards with services, product features, studio directions, portfolio strengths, or local business sections.">Эти карточки можно заменить на услуги, функции продукта, направления студии, преимущества портфолио или разделы локального бизнеса.</p>
+        </div>
+
+        <div class="pl-grid-4">
+          <article class="pl-feature">
+            <div class="pl-icon">01</div>
+            <strong data-i18n data-ru="Ясное предложение" data-en="Clear offer">Ясное предложение</strong>
+            <p data-i18n data-ru="Скажите, что делает проект и какую проблему он решает." data-en="Say what the project does and which problem it solves.">Скажите, что делает проект и какую проблему он решает.</p>
+          </article>
+
+          <article class="pl-feature">
+            <div class="pl-icon">02</div>
+            <strong data-i18n data-ru="Доверие" data-en="Trust">Доверие</strong>
+            <p data-i18n data-ru="Добавьте результат, факт, отзыв, кейс или короткое доказательство." data-en="Add a result, fact, testimonial, case, or proof point.">Добавьте результат, факт, отзыв, кейс или короткое доказательство.</p>
+          </article>
+
+          <article class="pl-feature">
+            <div class="pl-icon">03</div>
+            <strong data-i18n data-ru="Гибкая структура" data-en="Flexible structure">Гибкая структура</strong>
+            <p data-i18n data-ru="Одна база подходит для проекта, студии, портфолио или услуги." data-en="One base works for a project, studio, portfolio, or service.">Одна база подходит для проекта, студии, портфолио или услуги.</p>
+          </article>
+
+          <article class="pl-feature">
+            <div class="pl-icon">04</div>
+            <strong data-i18n data-ru="Чистый экспорт" data-en="Clean export">Чистый экспорт</strong>
+            <p data-i18n data-ru="Страница не зависит от внешних картинок и готова к ZIP-export." data-en="The page does not depend on external images and is ready for ZIP export.">Страница не зависит от внешних картинок и готова к ZIP-export.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="pl-section" id="work">
+        <div class="pl-section-head">
+          <div>
+            <div class="pl-eyebrow" data-i18n data-ru="Работа" data-en="Work">Работа</div>
+            <h2 data-i18n data-ru="Замените карточки своим содержанием." data-en="Replace the cards with your content.">Замените карточки своим содержанием.</h2>
+          </div>
+          <p data-i18n data-ru="Покажите три ключевых направления: продукт, услугу, публикацию, проект, кейс или следующий шаг для посетителя." data-en="Show three key directions: product, service, publication, project, case, or the next step for a visitor.">Покажите три ключевых направления: продукт, услугу, публикацию, проект, кейс или следующий шаг для посетителя.</p>
+        </div>
+
+        <div class="pl-grid-3">
+          <article class="pl-work">
+            <div class="pl-work-top">
+              <span class="pl-chip">A</span>
+              <span class="pl-chip" data-i18n data-ru="Главное" data-en="Core">Главное</span>
+            </div>
+            <div>
+              <strong data-i18n data-ru="Направление проекта" data-en="Project direction">Направление проекта</strong>
+              <p data-i18n data-ru="Опишите основную ветку проекта или продукта простым языком." data-en="Describe the main project or product direction in plain language.">Опишите основную ветку проекта или продукта простым языком.</p>
+            </div>
+          </article>
+
+          <article class="pl-work">
+            <div class="pl-work-top">
+              <span class="pl-chip">B</span>
+              <span class="pl-chip" data-i18n data-ru="Услуга" data-en="Service">Услуга</span>
+            </div>
+            <div>
+              <strong data-i18n data-ru="Что можно заказать" data-en="What people can order">Что можно заказать</strong>
+              <p data-i18n data-ru="Скажите, что пользователь может получить, скачать, прочитать или заказать." data-en="Say what a user can get, download, read, or order.">Скажите, что пользователь может получить, скачать, прочитать или заказать.</p>
+            </div>
+          </article>
+
+          <article class="pl-work">
+            <div class="pl-work-top">
+              <span class="pl-chip">C</span>
+              <span class="pl-chip" data-i18n data-ru="Рост" data-en="Growth">Рост</span>
+            </div>
+            <div>
+              <strong data-i18n data-ru="Следующий шаг" data-en="Next step">Следующий шаг</strong>
+              <p data-i18n data-ru="Дайте посетителю одно понятное действие вместо лишнего шума." data-en="Give the visitor one clear action instead of unnecessary noise.">Дайте посетителю одно понятное действие вместо лишнего шума.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="pl-section" id="process">
+        <div class="pl-section-head">
+          <div>
+            <div class="pl-eyebrow" data-i18n data-ru="Процесс" data-en="Process">Процесс</div>
+            <h2 data-i18n data-ru="От черновика до ZIP." data-en="From draft to ZIP.">От черновика до ZIP.</h2>
+          </div>
+          <p data-i18n data-ru="Минимальный publishing flow: собрать статический сайт, открыть preview, экспортировать ZIP и открыть папку результата." data-en="Minimal publishing flow: build a static site, open preview, export ZIP, and open the output folder.">Минимальный publishing flow: собрать статический сайт, открыть preview, экспортировать ZIP и открыть папку результата.</p>
+        </div>
+
+        <div class="pl-grid-3">
+          <article class="pl-step">
+            <div class="pl-number">1</div>
+            <div>
+              <strong data-i18n data-ru="Соберите" data-en="Build">Соберите</strong>
+              <p data-i18n data-ru="Подготовьте статическую страницу из текущего шаблона." data-en="Prepare a static page from the current template.">Подготовьте статическую страницу из текущего шаблона.</p>
+            </div>
+          </article>
+
+          <article class="pl-step">
+            <div class="pl-number">2</div>
+            <div>
+              <strong data-i18n data-ru="Проверьте" data-en="Preview">Проверьте</strong>
+              <p data-i18n data-ru="Откройте сайт локально и проверьте текст, кнопки и секции." data-en="Open the site locally and check text, buttons, and sections.">Откройте сайт локально и проверьте текст, кнопки и секции.</p>
+            </div>
+          </article>
+
+          <article class="pl-step">
+            <div class="pl-number">3</div>
+            <div>
+              <strong data-i18n data-ru="Экспортируйте" data-en="Export">Экспортируйте</strong>
+              <p data-i18n data-ru="Сохраните готовый сайт как ZIP для будущей публикации." data-en="Save the finished site as a ZIP for future publishing.">Сохраните готовый сайт как ZIP для будущей публикации.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="pl-section" id="contact">
+        <div class="pl-note">
+          <div>
+            <div class="pl-eyebrow" data-i18n data-ru="Контакт" data-en="Contact">Контакт</div>
+            <h2 data-i18n data-ru="Оставьте один сильный финальный призыв." data-en="Leave one strong final call to action.">Оставьте один сильный финальный призыв.</h2>
+            <p data-i18n data-ru="Замените этот блок на email, форму, ссылку на проект, download-кнопку или короткое сообщение для клиента." data-en="Replace this block with an email, form, project link, download button, or short message for a client.">Замените этот блок на email, форму, ссылку на проект, download-кнопку или короткое сообщение для клиента.</p>
+          </div>
+          <a class="pl-button pl-button--primary" href="#home" data-i18n data-ru="Вернуться наверх" data-en="Back to top">Вернуться наверх</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="pl-footer">
+      <span>© Project Landing</span>
+      <span data-i18n data-ru="Чистый footer без лишних внешних credit-ссылок." data-en="Clean footer without unwanted external credit links.">Чистый footer без лишних внешних credit-ссылок.</span>
+    </footer>
+  </div>
+</div>`,
+        markdown: `# Ясная страница проекта
+
+Широкий чистый landing для проекта, услуги, портфолио, студии или малого бизнеса.
+
+## Возможности
+
+Покажите ценность без шума: предложение, доверие, структура, экспорт.
 
 ## Работа
 
-Покажите самые важные направления, услуги, проекты или материалы.
+Замените карточки на свои услуги, проекты, публикации или продуктовые направления.
+
+## Процесс
+
+Соберите статический сайт, проверьте preview, экспортируйте ZIP и откройте папку результата.
 
 ## Контакт
 
-Добавьте реальный путь связи.`,
-          blocks: [
-            { type: 'heading-1', text: 'Соберите ясный одностраничный сайт' },
-            { type: 'paragraph', text: 'Простой стартовый сайт для проекта, автора, студии или небольшой публикации.' },
-            { type: 'heading-2', text: 'О проекте' },
-            { type: 'paragraph', text: 'Объясните, кто вы, что делает проект и почему это важно.' },
-            { type: 'heading-2', text: 'Работа' },
-            { type: 'paragraph', text: 'Покажите самые важные направления, услуги, проекты или материалы.' },
-            { type: 'heading-2', text: 'Контакт' },
-            { type: 'paragraph', text: 'Добавьте реальный путь связи.' }
-          ],
-          tags: ['website', 'starter', 'landing', 'light-dark', 'friendly']
-        }
-      }
-    },
-    {
-      itemId: 'template-blog-post',
-      templateId: 'blog-post',
-      name: 'Medium-style Article',
-      description: 'Чистый длинный article-шаблон: headline, lead, body, quote, conclusion.',
-      version: '0.1.0',
-      installed: true,
-      trust: 'built-in',
-      template: {
-        id: 'blog-post',
-        name: 'Medium-style Article',
-        category: 'article',
-        description: 'Чистый длинный article-шаблон в духе longform/Medium: lead, sections, quote, conclusion.',
-        defaults: {
-          kicker: 'Medium-style Article',
-          title: 'Статья без названия',
-          author: 'IRGEZTNE Author',
-          summary: 'Чистая длинная статья с сильным заголовком, лидом, основной мыслью, цитатой и выводом.',
-          excerpt: 'Более сильный шаблон длинной публикации, подготовленный в IRGEZTNE Workspace.',
-          seoTitle: 'Статья без названия',
-          seoDescription: 'A stronger blog post starter prepared in IRGEZTNE Workspace.',
-          keywords: ['article', 'medium-style', 'longform', 'post'],
-          visualHtml: `<article class="ns-page-section ns-post">
-  <div class="ns-page-prose ns-page-prose--medium">
-    <div class="ns-page-kicker">Medium-style Article</div>
-    <h1>Заголовок вашей длинной статьи</h1>
-    <p class="ns-page-lead">Начните с сильного лида: одна ясная мысль, которая объясняет, почему читателю стоит продолжить.</p>
-    <div class="ns-page-meta-strip">
-      <span>7 мин чтения</span>
-      <span>Автор</span>
-      <span>Дата</span>
-    </div>
-    <p>Первый абзац должен сразу дать контекст. Не перегружайте его деталями: объясните проблему, ситуацию или наблюдение, вокруг которого строится материал.</p>
-    <h2>Главная мысль</h2>
-    <p>Разверните тезис спокойным ритмом. Используйте короткие абзацы, чтобы текст было удобно читать как в редакторе, так и в публичном preview.</p>
-    <blockquote>Выделите одну важную мысль или цитату, чтобы добавить паузу и акцент внутри длинного текста.</blockquote>
-    <h2>Почему это важно</h2>
-    <p>Добавьте последствия, примеры, детали или личный опыт. Этот блок помогает статье стать не просто заметкой, а полноценным материалом.</p>
-    <h2>Вывод</h2>
-    <p>Завершите текст ясным выводом или следующим шагом. Хорошая статья оставляет читателю не только информацию, но и направление.</p>
-  </div>
-</article>`,
-          markdown: `# Заголовок вашей длинной статьи
-
-Начните с сильного лида: одна ясная мысль, которая объясняет, почему читателю стоит продолжить.
-
-Первый абзац должен сразу дать контекст. Не перегружайте его деталями: объясните проблему, ситуацию или наблюдение, вокруг которого строится материал.
-
-## Главная мысль
-
-Разверните тезис спокойным ритмом. Используйте короткие абзацы.
-
-> Выделите одну важную мысль или цитату, чтобы добавить паузу и акцент.
-
-## Почему это важно
-
-Добавьте последствия, примеры, детали или личный опыт.
-
-## Вывод
-
-Завершите текст ясным выводом или следующим шагом.`,
-          blocks: [
-            { type: 'heading-1', text: 'Заголовок вашей длинной статьи' },
-            { type: 'paragraph', text: 'Начните с сильного лида: одна ясная мысль, которая объясняет, почему читателю стоит продолжить.' },
-            { type: 'paragraph', text: 'Первый абзац должен сразу дать контекст.' },
-            { type: 'heading-2', text: 'Главная мысль' },
-            { type: 'paragraph', text: 'Разверните тезис спокойным ритмом.' },
-            { type: 'quote', text: 'Выделите одну важную мысль или цитату, чтобы добавить паузу и акцент.' },
-            { type: 'heading-2', text: 'Почему это важно' },
-            { type: 'paragraph', text: 'Добавьте последствия, примеры, детали или личный опыт.' },
-            { type: 'heading-2', text: 'Вывод' },
-            { type: 'paragraph', text: 'Завершите текст ясным выводом или следующим шагом.' }
-          ],
-          tags: ['blog', 'post']
-        }
-      }
-    },
-    {
-      itemId: 'vitrina-template-editorial-brief',
-      templateId: 'vitrina-editorial-brief',
-      name: 'Editorial Brief',
-      description: 'Более сильный newsroom-шаблон с лидом, ключевыми фактами, таймлайном и следующими углами освещения.',
-      version: '0.2.0',
-      installed: true,
-      trust: 'built-in',
-      template: {
-        id: 'vitrina-editorial-brief',
-        name: 'Editorial Brief',
-        category: 'article',
-        description: 'Редакционный шаблон статьи с лидом, ключевыми фактами, таймлайном и следующим освещением.',
-        defaults: {
-          kicker: 'Editorial Brief',
-          title: 'Редакционный бриф без названия',
-          author: 'IRGEZTNE Desk',
-          summary: 'Более сильная редакционная сводка с ключевыми фактами, таймлайном и структурой «почему это важно».',
-          excerpt: 'Более сильный редакционный шаблон, подготовленный в IRGEZTNE Workspace.',
-          seoTitle: 'Редакционный бриф без названия',
-          seoDescription: 'Более сильный редакционный шаблон, подготовленный в IRGEZTNE Workspace.',
-          keywords: ['editorial', 'brief', 'article', 'newsroom'],
-          visualHtml: `<article class="ns-page-section ns-post">
-  <div class="ns-page-kicker">Editorial Brief</div>
-  <h1>Главный заголовок материала</h1>
-  <p class="ns-page-lead"><strong>Лид:</strong> Start with the strongest confirmed fact, then tell the reader why this story matters now.</p>
-  <div class="ns-page-meta-strip">
-    <span>Лид</span>
-    <span>Ключевые факты</span>
-    <span>Следующее освещение</span>
-  </div>
-</article>
-<section class="ns-page-section">
-  <div class="ns-page-grid ns-page-grid--article">
-    <div class="ns-page-prose">
-      <h2>Что произошло</h2>
-      <p>Разложите основное событие в ясный хронологический блок, чтобы читатель быстро схватил главную линию.</p>
-      <h2>Ключевые факты</h2>
-      <p>Выделите три-пять подтверждённых пунктов, которые важнее всего для брифа.</p>
-      <blockquote>Используйте одну короткую редакторскую заметку, цитату или формулировку, чтобы зафиксировать угол материала.</blockquote>
-      <h2>Почему это важно</h2>
-      <p>Объясните, что изменилось, кого это затрагивает и за чем редакции следить дальше.</p>
-    </div>
-    <aside class="ns-page-panel ns-page-panel--sidebar">
-      <div class="ns-page-panel__eyebrow">Покрытие map</div>
-      <strong>Перед публикацией</strong>
-      <ul class="ns-page-list">
-        <li>Проверьте главный факт лида</li>
-        <li>Проверьте имена и даты</li>
-        <li>Добавьте следующий угол освещения</li>
-      </ul>
-    </aside>
-  </div>
-</section>
-<section class="ns-page-section">
-  <div class="ns-page-grid ns-page-grid--two">
-    <div class="ns-page-card"><strong>Timeline</strong><p>Add a short sequence of the important updates, decisions, or developments.</p></div>
-    <div class="ns-page-card"><strong>Next angle</strong><p>Note the follow-up question, missing evidence, or next reporting target.</p></div>
-  </div>
-</section>`,
-          markdown: `# Главный заголовок материала
-
-**Лид:** Start with the strongest confirmed fact, then tell the reader why this story matters now.
-
-## Что произошло
-
-Разложите основное событие в ясный хронологический блок, чтобы читатель быстро схватил главную линию.
-
-## Ключевые факты
-
-Выделите три-пять подтверждённых пунктов, которые важнее всего для брифа.
-
-## Почему это важно
-
-Объясните, что изменилось, кого это затрагивает и за чем редакции следить дальше.
-
-## Next angle
-
-Note the follow-up question, missing evidence, or next reporting target.`,
-          blocks: [
-            { type: 'heading-1', text: 'Главный заголовок материала' },
-            { type: 'paragraph', text: 'Лид: Start with the strongest confirmed fact, then tell the reader why this story matters now.' },
-            { type: 'heading-2', text: 'Что произошло' },
-            { type: 'paragraph', text: 'Разложите основное событие в ясный хронологический блок, чтобы читатель быстро схватил главную линию.' },
-            { type: 'heading-2', text: 'Ключевые факты' },
-            { type: 'paragraph', text: 'Выделите три-пять подтверждённых пунктов, которые важнее всего для брифа.' },
-            { type: 'heading-2', text: 'Почему это важно' },
-            { type: 'paragraph', text: 'Объясните, что изменилось, кого это затрагивает и за чем редакции следить дальше.' },
-            { type: 'heading-2', text: 'Next angle' },
-            { type: 'paragraph', text: 'Note the follow-up question, missing evidence, or next reporting target.' }
-          ],
-          tags: ['editorial', 'brief', 'newsroom']
-        }
-      }
-    },
-    {
-      itemId: 'vitrina-template-news-analysis',
-      templateId: 'vitrina-news-analysis',
-      name: 'News Анализ',
-      description: 'Более длинный шаблон разбора для контекста, фактов и спокойного вывода.',
-      version: '0.1.0',
-      installed: false,
-      trust: 'built-in',
-      template: {
-        id: 'vitrina-news-analysis',
-        name: 'News Анализ',
-        category: 'analysis',
-        description: 'Контекст-first analysis template for explainers and long reads.',
-        defaults: {
-          kicker: 'News Анализ',
-          title: 'Новостной разбор без названия',
-          author: 'NS Analyst',
-          summary: 'Short analysis summary for cards and previews.',
-          excerpt: 'Стартовый шаблон анализа с упором на контекст, подготовленный в IRGEZTNE Workspace.',
-          seoTitle: 'Новостной разбор без названия',
-          seoDescription: 'Стартовый шаблон анализа с упором на контекст, подготовленный в IRGEZTNE Workspace.',
-          keywords: ['analysis', 'news', 'context'],
-          visualHtml: `<article class="ns-page-section ns-post">
-  <div class="ns-page-kicker">News Анализ</div>
-  <h1>Контекстный заголовок</h1>
-  <p><strong>Лид:</strong> Frame the issue and explain why readers should care.</p>
-  <h2>Background</h2>
-  <p>Add history, context, and the relevant timeline.</p>
-  <h2>Signals</h2>
-  <p>Pull out the strongest facts, patterns, or contradictions.</p>
-  <h2>Вывод</h2>
-  <p>Close with a calm conclusion and the next thing to watch.</p>
-</article>`,
-          markdown: `# Контекстный заголовок
-
-**Лид:** Frame the issue and explain why readers should care.
-
-## Background
-
-Add history, context, and the relevant timeline.
-
-## Signals
-
-Pull out the strongest facts, patterns, or contradictions.
-
-## Вывод
-
-Close with a calm conclusion and the next thing to watch.`,
-          blocks: [
-            { type: 'heading-1', text: 'Контекстный заголовок' },
-            { type: 'paragraph', text: 'Лид: Frame the issue and explain why readers should care.' },
-            { type: 'heading-2', text: 'Background' },
-            { type: 'paragraph', text: 'Add history, context, and the relevant timeline.' },
-            { type: 'heading-2', text: 'Signals' },
-            { type: 'paragraph', text: 'Pull out the strongest facts, patterns, or contradictions.' },
-            { type: 'heading-2', text: 'Вывод' },
-            { type: 'paragraph', text: 'Close with a calm conclusion and the next thing to watch.' }
-          ],
-          tags: ['analysis', 'context']
-        }
-      }
-    },
-    {
-      itemId: 'vitrina-template-landing-press',
-      templateId: 'vitrina-press-landing',
-      name: 'Press Landing',
-      description: 'Более сильный стартовый лендинг для newsroom, студии, профиля или главной страницы проекта.',
-      version: '0.2.0',
-      installed: false,
-      trust: 'built-in',
-      template: {
-        id: 'vitrina-press-landing',
-        name: 'Press Landing',
-        category: 'website',
-        description: 'Более сильный стартовый лендинг для newsroom, студии или профиля.',
-        defaults: {
-          kicker: 'Press Landing',
-          title: 'Пресс-лендинг без названия',
-          author: 'IRGEZTNE Studio',
-          summary: 'A stronger landing summary with headline, coverage, highlights, and contact path.',
-          excerpt: 'A stronger landing page starter prepared in IRGEZTNE Workspace.',
-          seoTitle: 'Пресс-лендинг без названия',
-          seoDescription: 'A stronger landing page starter prepared in IRGEZTNE Workspace.',
-          keywords: ['landing', 'press', 'site', 'newsroom'],
-          visualHtml: `<section class="ns-page-section ns-page-hero ns-page-hero--split" id="overview">
-  <div class="ns-page-hero__content">
-    <div class="ns-page-kicker">Press Landing</div>
-    <h1>Название проекта или редакции</h1>
-    <p>Используйте эту страницу как вход для небольшой редакции, студии, кампании или издания, которому нужен один чистый публичный лендинг.</p>
-    <div class="ns-page-actions">
-      <a class="ns-page-button ns-page-button--primary" href="#contact">Контакт</a>
-      <a class="ns-page-button" href="#coverage">Покрытие</a>
-    </div>
-  </div>
-  <aside class="ns-page-panel ns-page-panel--feature">
-    <div class="ns-page-panel__eyebrow">Front page</div>
-    <strong>Ready public landing</strong>
-    <p>Headline, coverage, highlights, publication links, and final contact are already prepared so the page feels like a real public-facing site.</p>
-    <ul class="ns-page-list">
-      <li>Headline with actions</li>
-      <li>Покрытие and highlights</li>
-      <li>Контакт and public links</li>
-    </ul>
-  </aside>
-</section>
-<section class="ns-page-section" id="coverage">
-  <div class="ns-page-section__head">
-    <h2>Покрытие</h2>
-    <p>Describe the beat, publication focus, campaign direction, or product coverage in three clear cards.</p>
-  </div>
-  <div class="ns-page-grid ns-page-grid--three">
-    <div class="ns-page-card"><span>Beat</span><strong>Главная тема</strong><p>Explain the main topic, focus area, or reporting direction.</p></div>
-    <div class="ns-page-card"><span>Format</span><strong>Что вы публикуете</strong><p>Say whether this is articles, releases, explainers, interviews, or project updates.</p></div>
-    <div class="ns-page-card"><span>Audience</span><strong>Для кого это</strong><p>Show who should read, contact, or follow this work.</p></div>
-  </div>
-</section>
-<section class="ns-page-section" id="highlights">
-  <div class="ns-page-section__head">
-    <h2>Главное</h2>
-    <p>Use this section for featured releases, recent stories, key links, or press materials.</p>
-  </div>
-  <div class="ns-page-grid ns-page-grid--two">
-    <div class="ns-page-card"><strong>Recent release or story</strong><p>Add the latest important update or featured publication here.</p></div>
-    <div class="ns-page-card"><strong>Press kit or key link</strong><p>Use this card for media contacts, download links, or a core project document.</p></div>
-  </div>
-</section>
-<section class="ns-page-section" id="contact">
-  <div class="ns-page-callout">
-    <div>
-      <div class="ns-page-callout__eyebrow">Контакт</div>
-      <h2>Ready to point people to the right place?</h2>
-      <p>Добавьте здесь почту редакции, пресс-контакт, канал проекта или путь записи.</p>
-    </div>
-    <a class="ns-page-button ns-page-button--primary" href="mailto:hello@example.com">Контакт</a>
-  </div>
-</section>`,
-          markdown: `# Название проекта или редакции
-
-Используйте эту страницу как вход для небольшой редакции, студии, кампании или издания, которому нужен один чистый публичный лендинг.
-
-## Покрытие
-
-- Главная тема
-- Что вы публикуете
-- Для кого это
-
-## Главное
-
-Добавьте главные релизы, недавние материалы или пресс-материалы.
-
-## Контакт
-
-Добавьте здесь почту редакции, пресс-контакт, канал проекта или путь записи.`,
-          blocks: [
-            { type: 'heading-1', text: 'Название проекта или редакции' },
-            { type: 'paragraph', text: 'Используйте эту страницу как вход для небольшой редакции, студии, кампании или издания, которому нужен один чистый публичный лендинг.' },
-            { type: 'heading-2', text: 'Покрытие' },
-            { type: 'list', text: `Главная тема
-Что вы публикуете
-Для кого это` },
-            { type: 'heading-2', text: 'Главное' },
-            { type: 'paragraph', text: 'Добавьте главные релизы, недавние материалы или пресс-материалы.' },
-            { type: 'heading-2', text: 'Контакт' },
-            { type: 'paragraph', text: 'Добавьте здесь почту редакции, пресс-контакт, канал проекта или путь записи.' }
-          ],
-          tags: ['landing', 'press', 'website']
-        }
+Замените финальный блок на email, форму, ссылку на проект или download-кнопку.`,
+        blocks: [
+          { type: 'heading-1', text: 'Ясная страница проекта' },
+          { type: 'paragraph', text: 'Широкий чистый landing для проекта, услуги, портфолио, студии или малого бизнеса.' },
+          { type: 'heading-2', text: 'Возможности' },
+          { type: 'paragraph', text: 'Покажите ценность без шума: предложение, доверие, структура, экспорт.' },
+          { type: 'heading-2', text: 'Работа' },
+          { type: 'paragraph', text: 'Замените карточки на свои услуги, проекты, публикации или продуктовые направления.' },
+          { type: 'heading-2', text: 'Процесс' },
+          { type: 'paragraph', text: 'Соберите статический сайт, проверьте preview, экспортируйте ZIP и откройте папку результата.' },
+          { type: 'heading-2', text: 'Контакт' },
+          { type: 'paragraph', text: 'Замените финальный блок на email, форму, ссылку на проект или download-кнопку.' }
+        ]
       }
     }
-  ];
+  };
 
-  const NON_TEMPLATE_BUILTINS = [
-    {
-      id: 'vitrina-theme-light-editorial',
-      type: 'theme',
-      category: 'Themes',
-      name: 'Светлая Editorial',
-      version: '0.1.0',
-      description: 'Светлая редакционная тема, подготовленная для статейного вывода.',
-      trust: 'built-in',
-      installed: true
-    },
-    {
-      id: 'vitrina-theme-dark-desk',
-      type: 'theme',
-      category: 'Themes',
-      name: 'Тёмная Desk',
-      version: '0.1.0',
-      description: 'Тёмная редакционная тема с более сильным контрастом для поздних рабочих сессий.',
-      trust: 'built-in',
-      installed: false
-    },
-    {
-      id: 'vitrina-pack-seo-helper',
-      type: 'pack',
-      category: 'Packs',
-      name: 'SEO Helper Pack',
-      version: '0.1.0',
-      description: 'Небольшой вспомогательный пак для заголовка, описания, ключевых слов и аккуратной подготовки публикации.',
-      trust: 'built-in',
-      installed: true
-    },
-    {
-      id: 'vitrina-plugin-quote-callout',
-      type: 'plugin',
-      category: 'Plugins',
-      name: 'Quote Callout',
-      version: '0.1.0',
-      description: 'Безопасный блок контента для врезок и выделенных ссылок.',
-      trust: 'built-in',
-      installed: false
-    }
-  ];
-
-  const EXTERNAL_STORAGE_KEY = 'ns.browser.v8.template-library.external';
+  const TEMPLATE_DEFS = [PROJECT_LANDING_TEMPLATE];
 
   function clone(value) {
     return JSON.parse(JSON.stringify(value));
   }
 
-  function normalizeTemplateDef(def) {
-    const source = def || {};
-    const template = source.template || {};
-    const defaults = template.defaults || {};
-
-    return {
-      itemId: String(source.itemId || ('template-' + String(template.id || source.templateId || 'untitled'))),
-      templateId: String(source.templateId || template.id || ''),
-      name: String(source.name || template.name || 'Untitled Template'),
-      category: String(template.category || 'website'),
-      description: String(source.description || template.description || ''),
-      version: String(source.version || '0.1.0'),
-      installed: source.installed !== false,
-      trust: String(source.trust || 'built-in'),
-      defaults: clone({
-        kicker: String(defaults.kicker || source.name || template.name || 'Template'),
-        title: String(defaults.title || ('Untitled ' + (template.name || source.name || 'Template'))),
-        author: String(defaults.author || 'IRGEZTNE Desk'),
-        summary: String(defaults.summary || source.description || ''),
-        excerpt: String(defaults.excerpt || defaults.summary || source.description || ''),
-        seoTitle: String(defaults.seoTitle || defaults.title || ('Untitled ' + (template.name || source.name || 'Template'))),
-        seoDescription: String(defaults.seoDescription || defaults.summary || source.description || ''),
-        keywords: Array.isArray(defaults.keywords) ? defaults.keywords.slice() : [],
-        visualHtml: String(defaults.visualHtml || ''),
-        markdown: String(defaults.markdown || ''),
-        blocks: Array.isArray(defaults.blocks) ? defaults.blocks.slice() : [],
-        tags: Array.isArray(defaults.tags) ? defaults.tags.slice() : []
-      })
-    };
+  function getTemplateItems() {
+    return clone(TEMPLATE_DEFS);
   }
 
-  function normalizeExternalTemplate(raw, fallbackTrust) {
-    const source = raw || {};
-    const template = source.template && source.template.defaults ? source.template : source;
-    if (!template || !template.id || !template.defaults) return null;
-
-    const defaults = template.defaults || {};
-    return {
-      itemId: String(source.catalogItemId || source.itemId || ('catalog-template-' + template.id)),
-      templateId: String(source.templateId || template.id),
-      name: String(source.name || template.name || template.id),
-      category: String(template.category || 'website'),
-      description: String(source.description || template.description || ''),
-      version: String(source.version || '0.1.0'),
-      installed: source.installed !== false,
-      trust: String(source.trust || fallbackTrust || 'local'),
-      defaults: clone({
-        kicker: String(defaults.kicker || template.name || source.name || 'Template'),
-        title: String(defaults.title || ('Untitled ' + (template.name || source.name || 'Template'))),
-        author: String(defaults.author || 'IRGEZTNE Desk'),
-        summary: String(defaults.summary || source.description || ''),
-        excerpt: String(defaults.excerpt || defaults.summary || source.description || ''),
-        seoTitle: String(defaults.seoTitle || defaults.title || ('Untitled ' + (template.name || source.name || 'Template'))),
-        seoDescription: String(defaults.seoDescription || defaults.summary || source.description || ''),
-        keywords: Array.isArray(defaults.keywords) ? defaults.keywords.slice() : [],
-        visualHtml: String(defaults.visualHtml || ''),
-        markdown: String(defaults.markdown || ''),
-        blocks: Array.isArray(defaults.blocks) ? defaults.blocks.slice() : [],
-        tags: Array.isArray(defaults.tags) ? defaults.tags.slice() : []
-      })
-    };
+  function getTemplates() {
+    return TEMPLATE_DEFS.map((item) => clone(item.template));
   }
 
-  function toEditorTemplate(def) {
-    return {
-      id: def.templateId,
-      name: def.name,
-      category: def.category,
-      description: def.description,
-      defaults: clone(def.defaults)
-    };
+  function getTemplate(templateId) {
+    const id = String(templateId || '').trim();
+    const found = TEMPLATE_DEFS.find((item) => item.templateId === id || item.itemId === id || item.template.id === id);
+    return clone((found || TEMPLATE_DEFS[0]).template);
+  }
+
+  function getItem(itemId) {
+    const id = String(itemId || '').trim();
+    const found = TEMPLATE_DEFS.find((item) => item.itemId === id || item.templateId === id || item.template.id === id);
+    return clone(found || TEMPLATE_DEFS[0]);
+  }
+
+  function getTemplateDefs() {
+    return clone(TEMPLATE_DEFS);
   }
 
   function toCatalogTemplateItem(def) {
+    const template = def && def.template ? def.template : {};
+    const defaults = template.defaults || {};
+    const catalogId = String(def.itemId || ('catalog-template-' + (template.id || def.templateId || 'project-landing')));
+
     return {
-      id: def.itemId,
+      id: catalogId,
+      itemId: catalogId,
+      catalogItemId: catalogId,
+      templateId: def.templateId || template.id || 'project-landing',
       type: 'template',
-      category: 'Templates',
-      name: def.name,
-      version: def.version,
-      description: def.description,
-      trust: def.trust,
-      installed: def.installed,
-      template: {
-        id: def.templateId,
-        name: def.name,
-        category: def.category,
-        description: def.description,
-        defaults: clone(def.defaults)
-      },
+      title: def.name || template.name || 'Project Landing',
+      name: def.name || template.name || 'Project Landing',
+      description: def.description || template.description || defaults.summary || '',
+      version: def.version || '0.1.0',
+      installed: def.installed !== false,
+      enabled: true,
+      trust: def.trust || 'built-in',
+      category: template.category || 'website',
+      tags: Array.isArray(defaults.tags) ? defaults.tags.slice() : [],
       preview: {
-        cover: '',
-        gallery: [],
-        note: def.description,
-        surface: 'editor'
+        title: def.name || template.name || 'Project Landing',
+        note: def.description || template.description || defaults.summary || '',
+        tone: 'website',
+        cta: 'Open in Editor'
       },
-      author: { name: def.defaults.author || 'IRGEZTNE Desk', id: '', source: def.trust || 'built-in' },
       compatibility: {
         nsBrowser: '8.x',
         moduleTarget: ['editor', 'catalog'],
         surface: ['workspace', 'cabinet'],
         minAppVersion: '8.0.0'
-      },
-      tags: Array.isArray(def.defaults.tags) ? def.defaults.tags.slice(0, 6) : [],
-      status: 'ready',
-      source: def.trust === 'built-in' ? 'built-in' : 'local'
+      }
     };
   }
 
-  function safeReadExternalTemplates() {
-    try {
-      const raw = root.localStorage.getItem(EXTERNAL_STORAGE_KEY);
-      return raw ? JSON.parse(raw) : [];
-    } catch (error) {
-      return [];
-    }
-  }
-
-  function safeWriteExternalTemplates(value) {
-    try {
-      root.localStorage.setItem(EXTERNAL_STORAGE_KEY, JSON.stringify(Array.isArray(value) ? value : []));
-    } catch (error) {
-      console.warn('[NSTemplateLibrary] external template write failed:', error);
-    }
-  }
-
-  function safeReadFolderTemplates() {
-    // v1 public release guard:
-    // keep folder-based experimental templates out of the public template registry.
-    // The files can stay in /templates for future v1.1 work, but Catalog/Editor v1
-    // should expose only the stable core templates.
-    return [];
-  }
-
-  function mergeTemplateDefs() {
-    const byTemplateId = new Map();
-
-    TEMPLATE_DEFS.map(normalizeTemplateDef).forEach(function (item) {
-      byTemplateId.set(String(item.templateId), item);
-    });
-
-    safeReadFolderTemplates()
-      .map(function (item) { return normalizeExternalTemplate(item, 'local-file'); })
-      .filter(Boolean)
-      .forEach(function (item) {
-        byTemplateId.set(String(item.templateId), item);
-      });
-
-    safeReadExternalTemplates()
-      .map(function (item) { return normalizeExternalTemplate(item, 'local'); })
-      .filter(Boolean)
-      .forEach(function (item) {
-        byTemplateId.set(String(item.templateId), item);
-      });
-
-    return Array.from(byTemplateId.values());
-  }
-
-  function getTemplateDefs() {
-    return mergeTemplateDefs();
-  }
-
-  function getTemplates() {
-    return getTemplateDefs().map(toEditorTemplate);
-  }
-
-  function getTemplate(templateId) {
-    const found = getTemplateDefs().find(function (entry) {
-      return entry.templateId === String(templateId || '');
-    });
-    return found ? toEditorTemplate(found) : null;
-  }
-
-  function getDefaultTemplateId() {
-    const all = getTemplateDefs();
-    return all[0] ? all[0].templateId : '';
-  }
-
   function listCatalogBuiltins() {
-    const templates = getTemplateDefs().map(toCatalogTemplateItem);
-    const extra = clone(NON_TEMPLATE_BUILTINS).map(function (item) {
-      const next = clone(item);
-      next.preview = next.preview || { cover: '', gallery: [], note: next.description || '', surface: 'editor' };
-      next.tags = Array.isArray(next.tags) ? next.tags.slice(0, 6) : [];
-      next.source = next.trust === 'built-in' ? 'built-in' : 'local';
-      return next;
-    });
-
-    const byId = new Map();
-    templates.concat(extra).forEach(function (item) {
-      if (item && item.id) {
-        byId.set(String(item.id), item);
-      }
-    });
-    return Array.from(byId.values());
+    return TEMPLATE_DEFS.map(toCatalogTemplateItem);
   }
 
   function getCatalogItem(itemId) {
-    const found = listCatalogBuiltins().find(function (item) {
-      return String(item.id) === String(itemId || '');
-    });
-    return found ? clone(found) : null;
+    const id = String(itemId || '').trim();
+    return listCatalogBuiltins().find(function (item) {
+      return item.id === id || item.itemId === id || item.catalogItemId === id || item.templateId === id;
+    }) || listCatalogBuiltins()[0];
   }
 
   function getTemplateByCatalogItemId(itemId) {
-    const found = getTemplateDefs().find(function (entry) {
-      return entry.itemId === String(itemId || '');
-    });
-    return found ? toEditorTemplate(found) : null;
-  }
+    const id = String(itemId || '').trim();
+    const found = TEMPLATE_DEFS.find(function (item) {
+      const template = item.template || {};
+      return item.itemId === id || item.templateId === id || template.id === id || ('catalog-template-' + template.id) === id;
+    }) || TEMPLATE_DEFS[0];
 
-  function upsertInstalledTemplates(incoming) {
-    const baseIds = new Set(TEMPLATE_DEFS.map(normalizeTemplateDef).map(function (item) { return String(item.templateId); }));
-    const folderIds = new Set(
-      safeReadFolderTemplates()
-        .map(function (item) { return normalizeExternalTemplate(item, 'local-file'); })
-        .filter(Boolean)
-        .map(function (item) { return String(item.templateId); })
-    );
-
-    const existing = safeReadExternalTemplates()
-      .map(function (item) { return normalizeExternalTemplate(item, 'local'); })
-      .filter(Boolean);
-
-    const byId = new Map(existing.map(function (item) {
-      return [String(item.templateId), {
-        itemId: item.itemId,
-        templateId: item.templateId,
-        name: item.name,
-        description: item.description,
-        version: item.version,
-        installed: item.installed,
-        trust: item.trust,
-        template: {
-          id: item.templateId,
-          name: item.name,
-          category: item.category,
-          description: item.description,
-          defaults: clone(item.defaults)
-        }
-      }];
-    }));
-
-    (Array.isArray(incoming) ? incoming : []).forEach(function (item) {
-      const normalized = normalizeExternalTemplate(item, 'local');
-      if (!normalized) return;
-      if (baseIds.has(String(normalized.templateId))) return;
-      if (folderIds.has(String(normalized.templateId))) return;
-
-      byId.set(String(normalized.templateId), {
-        itemId: normalized.itemId,
-        templateId: normalized.templateId,
-        name: normalized.name,
-        description: normalized.description,
-        version: normalized.version,
-        installed: normalized.installed,
-        trust: normalized.trust,
-        template: {
-          id: normalized.templateId,
-          name: normalized.name,
-          category: normalized.category,
-          description: normalized.description,
-          defaults: clone(normalized.defaults)
-        }
-      });
-    });
-
-    safeWriteExternalTemplates(Array.from(byId.values()));
-    root.dispatchEvent(new CustomEvent('ns-template-library:changed'));
+    const template = clone(found.template);
+    template.catalogItemId = found.itemId || ('catalog-template-' + template.id);
+    return template;
   }
 
   root.NSTemplateLibrary = {
-    getTemplates: getTemplates,
-    getTemplate: getTemplate,
-    getDefaultTemplateId: getDefaultTemplateId,
-    listCatalogBuiltins: listCatalogBuiltins,
-    getCatalogItem: getCatalogItem,
-    getTemplateByCatalogItemId: getTemplateByCatalogItemId,
-    upsertInstalledTemplates: upsertInstalledTemplates,
-    refreshFromFiles: function () {
-      root.dispatchEvent(new CustomEvent('ns-template-library:changed'));
-      return getTemplates();
-    }
+    getTemplateDefs,
+    getTemplateItems,
+    getCatalogItems: getTemplateItems,
+    getItems: getTemplateItems,
+    getTemplates,
+    getTemplate,
+    getItem,
+    listCatalogBuiltins,
+    getCatalogItem,
+    getTemplateByCatalogItemId
   };
 })(window);
