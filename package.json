@@ -28,7 +28,7 @@
   },
   "build": {
     "appId": "com.irgeztne.workspace",
-    "productName": "IRGEZTNE Workspace",
+    "productName": "IRGEZTNE-Workspace",
     "artifactName": "IRGEZTNE-Workspace-${version}.${ext}",
     "directories": {
       "output": "dist"
@@ -58,7 +58,9 @@
         "entry": {
           "GenericName": "Desktop workspace",
           "Keywords": "IRGEZTNE;Workspace;Browser;Editor;Publishing;Notes;Files;",
-          "Comment": "IRGEZTNE Workspace is an early preview desktop workspace for browsing, writing, editing, and preparing web projects for future publishing."
+          "Comment": "IRGEZTNE Workspace is an early preview desktop workspace for browsing, writing, editing, and preparing web projects for future publishing.",
+          "Name": "IRGEZTNE Workspace",
+          "StartupWMClass": "irgeztne-workspace"
         }
       }
     },
@@ -82,9 +84,10 @@
         "build/linux/com.irgeztne.workspace.metainfo.xml=/usr/share/metainfo/com.irgeztne.workspace.metainfo.xml",
         "build/linux/copyright=/usr/share/doc/irgeztne-workspace/copyright"
       ]
-    }
+    },
+    "executableName": "irgeztne-workspace"
   },
-  "productName": "IRGEZTNE Workspace",
+  "productName": "IRGEZTNE-Workspace",
   "homepage": "https://github.com/Irgeztne/irgeztne-workspace",
   "repository": {
     "type": "git",

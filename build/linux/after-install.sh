@@ -2,7 +2,7 @@
 set -e
 
 
-SANDBOX="/opt/IRGEZTNE Workspace/chrome-sandbox"
+SANDBOX="/opt/IRGEZTNE-Workspace/chrome-sandbox"
 if [ -f "$SANDBOX" ]; then
   chown root:root "$SANDBOX" || true
   chmod 4755 "$SANDBOX" || true
