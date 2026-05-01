@@ -101,3 +101,17 @@ See the `LICENSE` file.
 ## Contact
 
 Email: irgeztne@gmail.com
+Description:
+IRGEZTNE Workspace is an early preview desktop workspace for browsing, writing, editing, notes, projects, and publishing preparation.
+
+Website:
+https://irgeztne.com
+
+Topics:
+electron
+desktop
+workspace
+browser
+editor
+publishing
+local-first
