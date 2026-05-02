@@ -1,6 +1,6 @@
 {
   "name": "irgeztne-workspace",
-  "version": "1.0.0-preview.2",
+  "version": "1.0.0-preview.3",
   "description": "IRGEZTNE Workspace is an early preview desktop workspace for browsing, writing, editing, and preparing web projects for future publishing.",
   "main": "main.js",
   "author": {
