@@ -385,7 +385,9 @@
 
   function isCurrentTemplateItem(item) {
     if (!item || item.type !== 'template' || !item.template || !item.template.id) return false;
-    return String(item.template.id) === getCurrentDraftTemplateId();
+    const activeTemplateId = getCurrentDraftTemplateId();
+    if (String(item.template.id) === activeTemplateId) return true;
+    return Boolean(runtime && runtime.lastOpenedTemplateItemId && String(runtime.lastOpenedTemplateItemId) === String(item.id));
   }
 
 
@@ -730,7 +732,7 @@
     const isCurrent = isCurrentTemplateItem(item);
     const actions = [
       '<button type="button" class="ns-vitrina-v1__btn" data-vitrina-action="preview" data-vitrina-id="' + escapeHtml(item.id) + '">' + escapeHtml(tr('Превью', 'Preview')) + '</button>',
-      '<button type="button" class="ns-vitrina-v1__btn ns-vitrina-v1__btn--primary" data-vitrina-action="' + (isCurrent ? 'open-editor' : 'use-template') + '" data-vitrina-id="' + escapeHtml(item.id) + '">' + escapeHtml(isCurrent ? tr('Открыть в редакторе', 'Open in Editor') : tr('Использовать шаблон', 'Use Template')) + '</button>',
+      '<button type="button" class="ns-vitrina-v1__btn ns-vitrina-v1__btn--primary' + (isCurrent ? ' is-active' : '') + '" data-vitrina-action="' + (isCurrent ? 'open-editor' : 'use-template') + '" data-vitrina-id="' + escapeHtml(item.id) + '">' + escapeHtml(isCurrent ? tr('Открыть в редакторе', 'Open in Editor') : tr('Добавить и открыть', 'Add and Open')) + '</button>',
       '<button type="button" class="ns-vitrina-v1__btn" data-vitrina-action="open-template-preview" data-vitrina-id="' + escapeHtml(item.id) + '">' + escapeHtml(tr('Открыть превью', 'Open Preview')) + '</button>'
     ];
 
@@ -826,7 +828,8 @@
     registry: defaultRegistry(),
     filters: Object.create(null),
     notice: '',
-    previewItemId: ''
+    previewItemId: '',
+    lastOpenedTemplateItemId: ''
   };
 
   function emitTemplatesChanged() {
@@ -865,7 +868,7 @@
     const isCurrentTemplate = isCurrentTemplateItem(item);
     const actionInstall = '';
     const actionOpen = isReadyV1TemplateItem(item)
-      ? '<button type="button" class="ns-vitrina-v1__btn ns-vitrina-v1__btn--primary" data-vitrina-action="' + (isCurrentTemplate ? 'open-editor' : 'use-template') + '" data-vitrina-id="' + escapeHtml(item.id) + '">' + escapeHtml(isCurrentTemplate ? tr('Открыть в редакторе', 'Open in Editor') : tr('Использовать шаблон', 'Use Template')) + '</button>'
+      ? '<button type="button" class="ns-vitrina-v1__btn ns-vitrina-v1__btn--primary' + (isCurrentTemplate ? ' is-active' : '') + '" data-vitrina-action="' + (isCurrentTemplate ? 'open-editor' : 'use-template') + '" data-vitrina-id="' + escapeHtml(item.id) + '">' + escapeHtml(isCurrentTemplate ? tr('Открыть в редакторе', 'Open in Editor') : tr('Добавить и открыть', 'Add and Open')) + '</button>'
       : '<button type="button" class="ns-vitrina-v1__btn ns-vitrina-v1__btn--muted" disabled>' + escapeHtml(tr('Запланировано v1.1', 'Planned v1.1')) + '</button>';
     const actionOpenPreview = isReadyV1TemplateItem(item)
       ? '<button type="button" class="ns-vitrina-v1__btn" data-vitrina-action="open-template-preview" data-vitrina-id="' + escapeHtml(item.id) + '">' + escapeHtml(tr('Открыть превью', 'Open Preview')) + '</button>'
@@ -986,6 +989,37 @@
     rerenderAll();
   }
 
+  function openEditorSurfaceFromCatalog(surface) {
+    const targetSurface = surface === 'cabinet' ? 'cabinet' : 'workspace';
+    const shell = root.NSWorkspaceShell || null;
+
+    if (shell) {
+      if (targetSurface === 'cabinet' && typeof shell.openCabinetSection === 'function') {
+        shell.openCabinetSection('editor');
+        return targetSurface;
+      }
+      if (typeof shell.openWorkspaceSection === 'function') {
+        shell.openWorkspaceSection('editor', { enable: true, mode: 'split' });
+        return targetSurface;
+      }
+    }
+
+    const selector = targetSurface === 'cabinet'
+      ? '.cabinet-inner-nav-btn[data-section="editor"], [data-open-section="editor"], [data-workspace-editor-open-cabinet="editor"]'
+      : '.workspace-nav-btn[data-section="editor"], [data-workspace-editor-open="editor"], [data-open-section="editor"]';
+
+    const button = document.querySelector(selector);
+    if (button && typeof button.click === 'function') {
+      button.click();
+      return targetSurface;
+    }
+
+    document.dispatchEvent(new CustomEvent('ns-vitrina:open-editor-request', {
+      detail: { surface: targetSurface }
+    }));
+    return targetSurface;
+  }
+
   async function openTemplateInEditor(itemId, surface, options) {
   const library = getTemplateLibrary();
   const editorTemplate = library && typeof library.getTemplateByCatalogItemId === 'function'
@@ -995,6 +1029,7 @@
   if (!meta || meta.type !== 'template' || !editorTemplate) return;
 
   runtime.previewItemId = '';
+  runtime.lastOpenedTemplateItemId = itemId;
   runtime.notice = (meta.name || 'Шаблон') + ' открывается в редакторе…';
   rerenderAll();
 
@@ -1013,14 +1048,7 @@
   const targetSurface = surface === 'cabinet' ? 'cabinet' : 'workspace';
   const targetTab = options && options.initialTab ? options.initialTab : (surface === 'cabinet' ? 'write' : 'draft');
   const draft = editorApi.createDraftFromTemplate(editorTemplate.id, { initialTab: targetTab, surfaceType: targetSurface });
-  const shell = root.NSWorkspaceShell || null;
-  if (shell) {
-    if (surface === 'cabinet' && typeof shell.openCabinetSection === 'function') {
-      shell.openCabinetSection('editor');
-    } else if (typeof shell.openWorkspaceSection === 'function') {
-      shell.openWorkspaceSection('editor', { enable: true, mode: 'split' });
-    }
-  }
+  openEditorSurfaceFromCatalog(surface);
 
   if (draft && draft.id) {
     if (root.NSEditorV1 && typeof root.NSEditorV1.openDraftById === 'function') {
@@ -1030,6 +1058,8 @@
     }
   }
 
+  runtime.lastOpenedTemplateItemId = itemId;
+  runtime.notice = (meta.name || 'Template') + ' · ' + tr('шаблон добавлен. Перехожу в редактор…', 'template added. Opening the editor…');
   runtime.previewItemId = '';
   rerenderAll();
 }

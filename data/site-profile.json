@@ -1,15 +1,25 @@
 {
-  "siteName": "IRGEZTNE Studio",
+  "siteName": "Project Studio",
   "tagline": "Local-first publishing workspace",
-  "logoPath": "../../../assets/branding/wordmark.svg",
-  "logoAlt": "IRGEZTNE",
-  "faviconPath": "../../../assets/branding/favicon.svg",
+  "logoPath": "",
+  "logoAlt": "Project Studio",
+  "faviconPath": "",
   "contactEmail": "hello@example.com",
-  "footerText": "Built with IRGEZTNE",
-  "navItems": ["Overview", "Stories", "Contact"],
+  "footerText": "Сделано в IRGEZTNE",
+  "navItems": [
+    "Обзор",
+    "Истории",
+    "Контакт"
+  ],
   "socialLinks": [
-    { "label": "Email", "url": "mailto:hello@example.com" },
-    { "label": "Contact", "url": "#contact" }
+    {
+      "label": "Почта",
+      "url": "mailto:hello@example.com"
+    },
+    {
+      "label": "Контакт",
+      "url": "#contact"
+    }
   ],
   "primaryColor": "#9a6b40",
   "accentColor": "#724729"

@@ -258,6 +258,62 @@
     return parts.map((part) => part.charAt(0).toUpperCase()).join("") || "NS";
   }
 
+
+  function sanitizeFaviconLetters(value, fallback) {
+    const source = String(value || fallback || "")
+      .trim()
+      .replace(/\s+/g, "")
+      .slice(0, 3);
+    return (source || "NS").toUpperCase();
+  }
+
+  function sanitizeHexColor(value, fallback) {
+    const raw = String(value || "").trim();
+    if (/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(raw)) return raw;
+    return fallback;
+  }
+
+  function getFaviconShapeRadius(shape) {
+    const next = String(shape || "rounded").toLowerCase();
+    if (next === "circle") return "128";
+    if (next === "square") return "0";
+    return "56";
+  }
+
+  function buildLetterFaviconSvg(options = {}) {
+    const letters = sanitizeFaviconLetters(options.letters, "NS");
+    const background = sanitizeHexColor(options.background, "#111827");
+    const foreground = sanitizeHexColor(options.foreground, "#ffffff");
+    const radius = getFaviconShapeRadius(options.shape);
+    const fontSize = letters.length > 2 ? 92 : letters.length > 1 ? 108 : 128;
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" rx="${radius}" fill="${background}"/><text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="${fontSize}" font-weight="800" letter-spacing="-8" fill="${foreground}">${escapeHtml(letters)}</text></svg>`;
+  }
+
+  function svgToDataUrl(svg) {
+    return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(String(svg || ""))}`;
+  }
+
+  function buildGeneratedFaviconDataUrl(options = {}) {
+    return svgToDataUrl(buildLetterFaviconSvg(options));
+  }
+
+  function getFaviconLinkType(value) {
+    const raw = String(value || "").trim();
+    if (!raw) return "";
+    if (/\.svg(\?|#|$)/i.test(raw) || /^data:image\/svg\+xml/i.test(raw)) return 'type="image/svg+xml"';
+    if (/\.ico(\?|#|$)/i.test(raw) || /^data:image\/(x-icon|vnd\.microsoft\.icon)/i.test(raw)) return 'sizes="any"';
+    if (/\.png(\?|#|$)/i.test(raw) || /^data:image\/png/i.test(raw)) return 'type="image/png"';
+    return "";
+  }
+
+  function buildFaviconLinkMarkup(value) {
+    const raw = String(value || "").trim();
+    if (!raw) return "";
+    const href = escapeHtml(normalizeAppAssetPath(raw));
+    const typeAttr = getFaviconLinkType(raw);
+    return `<link rel="icon" href="${href}"${typeAttr ? ` ${typeAttr}` : ""} />`;
+  }
+
   function translateWriteModeLabel(value) {
     const map = {
       visual: t("Visual", "Визуально"),
@@ -373,16 +429,20 @@
 
   function renderSiteIdentityPreview(profile) {
     const next = normalizeSiteProfile(profile);
+    const initials = getInitials(next.siteName);
     const logoMarkup = next.logoPath
-      ? `<img class="ns-editor-site-identity__logo" src="${escapeHtml(normalizeAppAssetPath(next.logoPath))}" alt="${escapeHtml(next.logoAlt || next.siteName)}" />`
-      : `<div class="ns-editor-site-identity__fallback">${escapeHtml(getInitials(next.siteName))}</div>`;
+      ? `<div class="ns-editor-site-identity__media"><img class="ns-editor-site-identity__logo" src="${escapeHtml(normalizeAppAssetPath(next.logoPath))}" alt="${escapeHtml(next.logoAlt || next.siteName)}" /></div>`
+      : "";
+    const faviconMarkup = next.faviconPath
+      ? `<img class="ns-editor-site-identity__favicon" src="${escapeHtml(normalizeAppAssetPath(next.faviconPath))}" alt="${escapeHtml(t('Favicon preview','Предпросмотр favicon'))}" />`
+      : `<div class="ns-editor-site-identity__favicon ns-editor-site-identity__favicon--fallback" aria-hidden="true">${escapeHtml(initials.slice(0, 2))}</div>`;
     const navMarkup = (Array.isArray(next.navItems) ? next.navItems : []).slice(0, 4)
       .map((item) => `<span class="ns-editor-site-identity__chip">${escapeHtml(item)}</span>`)
       .join("");
 
     return `
       <div class="ns-editor-site-identity__preview-card">
-        <div class="ns-editor-site-identity__media">${logoMarkup}</div>
+        ${logoMarkup}
         <div class="ns-editor-site-identity__copy">
           <strong>${escapeHtml(next.siteName)}</strong>
           <span>${escapeHtml(next.tagline || t("Add a short site tagline.", "Добавьте короткий слоган сайта."))}</span>
@@ -391,6 +451,10 @@
             <span>${escapeHtml(next.footerText || t("Add footer text", "Добавьте текст подвала"))}</span>
           </div>
           <div class="ns-editor-site-identity__chips">${navMarkup || `<span class="ns-editor-site-identity__chip">${t('Overview','Обзор')}</span>`}</div>
+        </div>
+        <div class="ns-editor-site-identity__favicon-wrap">
+          <span>${escapeHtml(t('Tab icon','Иконка вкладки'))}</span>
+          ${faviconMarkup}
         </div>
       </div>
     `;
@@ -1675,6 +1739,44 @@ Add the newsroom email, press contact, project channel, or subscription path her
     };
   }
 
+  function buildProjectLandingBrandMarkup(siteProfile, siteHeaderName, siteHeaderMeta) {
+    const name = String(siteHeaderName || siteProfile.siteName || DEFAULT_SITE_PROFILE.siteName || "Project Studio").trim();
+    const meta = String(siteHeaderMeta || siteProfile.tagline || DEFAULT_SITE_PROFILE.tagline || "").trim();
+    const logoMarkup = siteProfile.logoPath
+      ? `<span class="pl-logo pl-logo--image" aria-hidden="true"><img src="${escapeHtml(normalizeAppAssetPath(siteProfile.logoPath))}" alt="" /></span>`
+      : "";
+    return `<a class="pl-brand${logoMarkup ? "" : " pl-brand--text-only"}" href="#home" aria-label="${escapeHtml(name)} home" style="text-decoration:none;color:inherit;">
+        ${logoMarkup}
+        <span>
+          <strong>${escapeHtml(name)}</strong>
+          <span>${escapeHtml(meta)}</span>
+        </span>
+      </a>`;
+  }
+
+  function buildProjectLandingNavMarkup(navItems) {
+    const anchors = ["#home", "#service", "#work", "#contact"];
+    const items = (Array.isArray(navItems) && navItems.length ? navItems : DEFAULT_SITE_PROFILE.navItems)
+      .map((item) => String(item || "").trim())
+      .filter(Boolean)
+      .slice(0, 4);
+    return `<nav class="pl-nav" aria-label="Project navigation">
+        ${items.map((item, index) => `<a href="${escapeHtml(anchors[index] || "#")}">${escapeHtml(item)}</a>`).join("\n        ")}
+      </nav>`;
+  }
+
+  function applySiteIdentityToProjectLanding(html, siteProfile, siteHeaderName, siteHeaderMeta) {
+    const source = String(html || "");
+    if (!source || !source.includes("irgeztne-project-landing")) return source;
+    const profile = normalizeSiteProfile(siteProfile);
+    let next = source;
+    const brandMarkup = buildProjectLandingBrandMarkup(profile, siteHeaderName, siteHeaderMeta);
+    next = next.replace(/<a class="pl-brand[^"]*"[\s\S]*?<\/a>\s*(?=<nav class="pl-nav")/i, `${brandMarkup}\n\n      `);
+    const navMarkup = buildProjectLandingNavMarkup(profile.navItems);
+    next = next.replace(/<nav class="pl-nav"[\s\S]*?<\/nav>/i, navMarkup);
+    return next;
+  }
+
   function buildIndexHtml(draft) {
     const previewHtml = buildPreviewHtmlFromWrite(draft.write);
     const categoryClass = slugify(draft.meta.category || "page") || "page";
@@ -1716,16 +1818,22 @@ Add the newsroom email, press contact, project channel, or subscription path her
       : navItems.map(() => "#");
     const siteContactEmail = String(siteProfile.contactEmail || DEFAULT_SITE_PROFILE.contactEmail || "hello@example.com").trim();
     const siteFooterText = String(siteProfile.footerText || DEFAULT_SITE_PROFILE.footerText || "Сделано в IRGEZTNE").trim();
-    const siteFaviconPath = String(siteProfile.faviconPath || DEFAULT_SITE_PROFILE.faviconPath || "").trim();
+    const siteFaviconPath = String(siteProfile.faviconPath || DEFAULT_SITE_PROFILE.faviconPath || "").trim() || (isSitePreview
+      ? buildGeneratedFaviconDataUrl({
+          letters: getInitials(siteHeaderName),
+          background: siteProfile.primaryColor || DEFAULT_SITE_PROFILE.primaryColor,
+          foreground: "#ffffff",
+          shape: "rounded"
+        })
+      : "");
     const previewHtmlResolved = isSitePreview
-      ? previewHtml
+      ? applySiteIdentityToProjectLanding(previewHtml, siteProfile, siteHeaderName, siteHeaderMeta)
           .replace(/mailto:hello@example\.com/gi, `mailto:${siteContactEmail}`)
           .replace(/hello@example\.com/gi, siteContactEmail)
       : previewHtml;
-    const brandInitials = getInitials(siteHeaderName);
     const brandMedia = isSitePreview && siteProfile.logoPath
       ? `<img class="ns-preview-site-brand__logo" src="${escapeHtml(normalizeAppAssetPath(siteProfile.logoPath))}" alt="${escapeHtml(siteProfile.logoAlt || siteHeaderName)}" />`
-      : `<div class="ns-preview-site-brand__mark" aria-hidden="true">${escapeHtml(brandInitials)}</div>`;
+      : "";
     const brandMarkup = isSitePreview
       ? `<div class="ns-preview-site-brand">
         ${brandMedia}
@@ -1756,7 +1864,7 @@ Add the newsroom email, press contact, project channel, or subscription path her
   <title>${escapeHtml(draft.meta.seoTitle || siteTitle || siteHeaderName || "Черновик без названия")}</title>
   <meta name="description" content="${escapeHtml(draft.meta.seoDescription || draft.meta.summary || siteHeaderMeta || "")}" />
   <meta name="keywords" content="${escapeHtml(tagsToString(draft.meta.keywords || []))}" />
-  ${siteFaviconPath ? `<link rel="icon" href="${escapeHtml(siteFaviconPath)}" />` : ""}
+  ${buildFaviconLinkMarkup(siteFaviconPath)}
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body class="ns-preview ns-preview--${escapeHtml(categoryClass)} ns-preview-theme--${escapeHtml(templateClass)}" style="--page-accent:${escapeHtml(siteProfile.primaryColor || DEFAULT_SITE_PROFILE.primaryColor)};--page-accent-strong:${escapeHtml(siteProfile.accentColor || DEFAULT_SITE_PROFILE.accentColor)};">
@@ -2557,11 +2665,11 @@ body.ns-preview-theme--vitrina-news-analysis .ns-page-card {
   }
 
   const DEFAULT_SITE_PROFILE = {
-    siteName: "IRGEZTNE Studio",
+    siteName: "Project Studio",
     tagline: "Local-first publishing workspace",
-    logoPath: "../../../assets/branding/wordmark.svg",
-    logoAlt: "IRGEZTNE",
-    faviconPath: "../../../assets/branding/favicon.svg",
+    logoPath: "",
+    logoAlt: "Project Studio",
+    faviconPath: "",
     contactEmail: "hello@example.com",
     footerText: "Сделано в IRGEZTNE",
     navItems: ["Обзор", "Истории", "Контакт"],
@@ -2573,17 +2681,35 @@ body.ns-preview-theme--vitrina-news-analysis .ns-page-card {
     accentColor: "#724729"
   };
 
+  function cleanLegacyBrandPath(value) {
+    const raw = String(value || "").trim();
+    if (!raw) return "";
+    const normalized = raw.replace(/\\/g, "/").toLowerCase();
+    if (
+      normalized.includes("assets/branding/wordmark") ||
+      normalized.includes("assets/branding/favicon")
+    ) {
+      return "";
+    }
+    return raw;
+  }
+
+  function cleanLegacyText(value, legacyValue, fallback) {
+    const raw = String(value || "").trim();
+    return raw === legacyValue ? fallback : raw;
+  }
+
   function normalizeSiteProfile(input) {
     const source = input && typeof input === "object" ? input : {};
     const navItems = Array.isArray(source.navItems)
       ? source.navItems.map((item) => String(item || "").trim()).filter(Boolean)
       : [];
     return {
-      siteName: String(source.siteName || DEFAULT_SITE_PROFILE.siteName),
+      siteName: cleanLegacyText(source.siteName || DEFAULT_SITE_PROFILE.siteName, "IRGEZTNE Studio", DEFAULT_SITE_PROFILE.siteName),
       tagline: String(source.tagline || DEFAULT_SITE_PROFILE.tagline),
-      logoPath: String(source.logoPath || DEFAULT_SITE_PROFILE.logoPath),
-      logoAlt: String(source.logoAlt || source.siteName || DEFAULT_SITE_PROFILE.logoAlt),
-      faviconPath: String(source.faviconPath || DEFAULT_SITE_PROFILE.faviconPath),
+      logoPath: cleanLegacyBrandPath(source.logoPath === "" ? "" : String(source.logoPath || DEFAULT_SITE_PROFILE.logoPath)),
+      logoAlt: cleanLegacyText(source.logoAlt || source.siteName || DEFAULT_SITE_PROFILE.logoAlt, "IRGEZTNE", DEFAULT_SITE_PROFILE.logoAlt),
+      faviconPath: cleanLegacyBrandPath(source.faviconPath === "" ? "" : String(source.faviconPath || DEFAULT_SITE_PROFILE.faviconPath)),
       contactEmail: String(source.contactEmail || DEFAULT_SITE_PROFILE.contactEmail),
       footerText: String(source.footerText || DEFAULT_SITE_PROFILE.footerText),
       navItems: navItems.length ? navItems : [...DEFAULT_SITE_PROFILE.navItems],
@@ -2695,6 +2821,8 @@ body.ns-preview-theme--vitrina-news-analysis .ns-page-card {
       this.leftPanelOpen = false;
       this.rightPanelOpen = false;
       this.lastSavedAt = "";
+      this.lastCreatedTemplateId = "";
+      this.siteIdentityPanelOpen = false;
       this.handleTemplateLibraryChanged = () => {
         if (!this.refs) return;
         this.renderPickerGrid();
@@ -2709,6 +2837,8 @@ body.ns-preview-theme--vitrina-news-analysis .ns-page-card {
       this.storeUpdateHandler = null;
       this.previewShellOpening = false;
       this.previewExternalOpening = false;
+      this.exportZipBusy = false;
+      this.lastExportZipPath = "";
       window.addEventListener("ns-vitrina:templates-changed", this.handleTemplateLibraryChanged);
       window.addEventListener("ns-template-library:changed", this.handleTemplateLibraryChanged);
       window.addEventListener("ns-site-profile:changed", this.handleSiteProfileChanged);
@@ -3048,9 +3178,31 @@ body.ns-preview-theme--vitrina-news-analysis .ns-page-card {
 
           if (action === "clear-site-logo") {
             event.preventDefault();
-            this.updateSiteIdentityFields({ logoPath: "" });
+            const profile = this.updateSiteIdentityFields({ ...getSiteProfile(), logoPath: "" });
+            const nextProfile = this.syncSiteProfileFromForm();
+            this.refreshSiteIdentityEverywhere({ ...nextProfile, logoPath: "" }, {
+              remountWrite: true,
+              keepIdentityOpen: true,
+              message: t("Logo cleared.", "Логотип очищен.")
+            });
+            return;
+          }
+
+          if (action === "clear-site-favicon") {
+            event.preventDefault();
+            const nextProfile = this.updateSiteIdentityFields({ ...getSiteProfile(), faviconPath: "" });
             this.syncSiteProfileFromForm();
-            this.renderDynamicPanels(this.readForm());
+            this.refreshSiteIdentityEverywhere({ ...nextProfile, faviconPath: "" }, {
+              remountWrite: false,
+              keepIdentityOpen: true,
+              message: t("Favicon cleared.", "Favicon очищен.")
+            });
+            return;
+          }
+
+          if (action === "generate-site-favicon") {
+            event.preventDefault();
+            this.generateSiteFaviconFromForm();
             return;
           }
 
@@ -3058,7 +3210,11 @@ body.ns-preview-theme--vitrina-news-analysis .ns-page-card {
             event.preventDefault();
             const profile = resetSiteProfile();
             this.updateSiteIdentityFields(profile);
-            this.renderDynamicPanels(this.readForm());
+            this.refreshSiteIdentityEverywhere(profile, {
+              remountWrite: true,
+              keepIdentityOpen: true,
+              message: t("Site identity reset.", "Идентичность сайта сброшена.")
+            });
             return;
           }
 
@@ -3151,6 +3307,48 @@ body.ns-preview-theme--vitrina-news-analysis .ns-page-card {
         if (actionEl && !isInsideWriteMount) {
           const action = actionEl.dataset.action;
 
+          if (action === "clear-site-logo") {
+            event.preventDefault();
+            const profile = this.updateSiteIdentityFields({ ...getSiteProfile(), logoPath: "" });
+            const nextProfile = this.syncSiteProfileFromForm();
+            this.refreshSiteIdentityEverywhere({ ...nextProfile, logoPath: "" }, {
+              remountWrite: true,
+              keepIdentityOpen: true,
+              message: t("Logo cleared.", "Логотип очищен.")
+            });
+            return;
+          }
+
+          if (action === "clear-site-favicon") {
+            event.preventDefault();
+            const nextProfile = this.updateSiteIdentityFields({ ...getSiteProfile(), faviconPath: "" });
+            this.syncSiteProfileFromForm();
+            this.refreshSiteIdentityEverywhere({ ...nextProfile, faviconPath: "" }, {
+              remountWrite: false,
+              keepIdentityOpen: true,
+              message: t("Favicon cleared.", "Favicon очищен.")
+            });
+            return;
+          }
+
+          if (action === "generate-site-favicon") {
+            event.preventDefault();
+            this.generateSiteFaviconFromForm();
+            return;
+          }
+
+          if (action === "reset-site-identity") {
+            event.preventDefault();
+            const profile = resetSiteProfile();
+            this.updateSiteIdentityFields(profile);
+            this.refreshSiteIdentityEverywhere(profile, {
+              remountWrite: true,
+              keepIdentityOpen: true,
+              message: t("Site identity reset.", "Идентичность сайта сброшена.")
+            });
+            return;
+          }
+
           if (action === "open-picker") {
             this.openPicker();
             return;
@@ -3237,6 +3435,11 @@ body.ns-preview-theme--vitrina-news-analysis .ns-page-card {
             return;
           }
 
+          if (action === "export-site-zip") {
+            this.exportCurrentZip();
+            return;
+          }
+
           if (action === "open-current-project") {
             this.openCurrentProject();
             return;
@@ -3306,6 +3509,13 @@ body.ns-preview-theme--vitrina-news-analysis .ns-page-card {
         }
       };
 
+      this.siteIdentityToggleHandler = (event) => {
+        const target = event.target;
+        if (target && target.matches && target.matches('[data-editor-section="site-identity"]')) {
+          this.siteIdentityPanelOpen = Boolean(target.open);
+        }
+      };
+
       this.storeUpdateHandler = (event) => {
         if (event.detail?.source === this.instanceId) {
           return;
@@ -3339,6 +3549,7 @@ body.ns-preview-theme--vitrina-news-analysis .ns-page-card {
       };
 
       this.root.addEventListener("click", this.rootClickHandler);
+      this.root.addEventListener("toggle", this.siteIdentityToggleHandler, true);
       window.addEventListener("ns-editor-store-updated", this.storeUpdateHandler);
       this.boundRootEvents = true;
     }
@@ -3410,6 +3621,28 @@ body.ns-preview-theme--vitrina-news-analysis .ns-page-card {
         current = current.parentElement;
       }
       return null;
+    }
+
+    captureScrollState() {
+      const shell = this.refs?.shell || this.root;
+      const host = shell ? this.getScrollHost(shell) : null;
+      return {
+        host,
+        top: host ? host.scrollTop : (typeof window !== "undefined" ? window.scrollY : 0)
+      };
+    }
+
+    restoreScrollState(state) {
+      if (!state) return;
+      requestAnimationFrame(() => {
+        try {
+          if (state.host) {
+            state.host.scrollTop = state.top;
+          } else if (typeof window !== "undefined" && typeof window.scrollTo === "function") {
+            window.scrollTo({ top: state.top, behavior: "auto" });
+          }
+        } catch (error) {}
+      });
     }
 
     scrollShellTopIntoView() {
@@ -3512,7 +3745,10 @@ body.ns-preview-theme--vitrina-news-analysis .ns-page-card {
       this.currentDraft = deepClone(saved);
       this.lastSavedAt = saved.updatedAt || this.lastSavedAt || "";
 
+      this.lastCreatedTemplateId = saved.templateId || templateId || "";
       this.renderDraftList();
+      this.renderPickerGrid();
+      this.renderLeftTemplates();
       this.mountWriteSurface(this.currentDraft);
       this.renderDynamicPanels(this.currentDraft);
       this.renderContextRail();
@@ -3523,6 +3759,7 @@ body.ns-preview-theme--vitrina-news-analysis .ns-page-card {
       this.toggleLeftPanel(false);
       this.updateResponsiveState();
       this.scrollPrimaryIntoView();
+      this.flashStatus(t("Template added and opened.", "Шаблон добавлен и открыт."));
       this.broadcast();
     }
 
@@ -3532,11 +3769,16 @@ body.ns-preview-theme--vitrina-news-analysis .ns-page-card {
       const templates = getCurrentTemplates();
       this.refs.pickerGrid.innerHTML = templates.map((template) => {
         const meta = getTemplateUiMeta(template);
+        const isActiveTemplate = Boolean(this.currentDraft && String(this.currentDraft.templateId) === String(template.id));
+        const stateText = isActiveTemplate
+          ? t("Added · opened", "Добавлен · открыт")
+          : t("Click to add and open", "Нажмите, чтобы добавить и открыть");
         return `
-          <button class="ns-editor-shell__picker-card" type="button" data-template-id="${escapeHtml(template.id)}">
+          <button class="ns-editor-shell__picker-card ${isActiveTemplate ? "is-active" : ""}" type="button" data-template-id="${escapeHtml(template.id)}" aria-pressed="${isActiveTemplate ? "true" : "false"}">
             <div class="ns-editor-shell__picker-card-title">${escapeHtml(meta.name)}</div>
             <div class="ns-editor-shell__picker-card-desc">${escapeHtml(meta.description)}</div>
             <div class="ns-editor-shell__list-subtitle">${escapeHtml(translateTemplateCategory(template.category))}</div>
+            <div class="ns-editor-shell__template-state">${escapeHtml(stateText)}</div>
           </button>
         `;
       }).join("");
@@ -3548,10 +3790,12 @@ body.ns-preview-theme--vitrina-news-analysis .ns-page-card {
       const templates = getCurrentTemplates();
       this.refs.leftTemplates.innerHTML = templates.map((template) => {
         const meta = getTemplateUiMeta(template);
+        const isActiveTemplate = Boolean(this.currentDraft && String(this.currentDraft.templateId) === String(template.id));
         return `
-          <button class="ns-editor-shell__list-button" type="button" data-template-id="${escapeHtml(template.id)}">
+          <button class="ns-editor-shell__list-button ${isActiveTemplate ? "is-active" : ""}" type="button" data-template-id="${escapeHtml(template.id)}" aria-pressed="${isActiveTemplate ? "true" : "false"}">
             <span class="ns-editor-shell__list-title">${escapeHtml(meta.name)}</span>
             <span class="ns-editor-shell__list-subtitle">${escapeHtml(meta.description)}</span>
+            <span class="ns-editor-shell__template-state">${escapeHtml(isActiveTemplate ? t("Added · opened", "Добавлен · открыт") : t("Add and open", "Добавить и открыть"))}</span>
           </button>
         `;
       }).join("");
@@ -3791,7 +4035,7 @@ body.ns-preview-theme--vitrina-news-analysis .ns-page-card {
             </details>
           </section>
 
-          <details class="ns-editor-disclosure">
+          <details class="ns-editor-disclosure ns-editor-disclosure--site-identity" data-editor-section="site-identity"${this.siteIdentityPanelOpen ? " open" : ""}>
             <summary>${t("Site identity","Идентичность сайта")}</summary>
             <div class="ns-editor-disclosure__body">
               <div class="ns-editor-form-grid ns-editor-form-grid--meta-compact">
@@ -3811,8 +4055,9 @@ body.ns-preview-theme--vitrina-news-analysis .ns-page-card {
                 </div>
 
                 <div class="ns-editor-field full">
-                  <label>${t("Favicon path","Путь к favicon")}</label>
-                  <input class="ns-editor-input" name="siteProfileFaviconPath" value="${escapeHtml(siteProfile.faviconPath)}" placeholder="${t('assets/branding/favicon.svg or Data URL','assets/branding/favicon.svg или data URL')}" />
+                  <label>${t("Favicon / site icon","Favicon / иконка сайта")}</label>
+                  <input class="ns-editor-input" name="siteProfileFaviconPath" value="${escapeHtml(siteProfile.faviconPath)}" placeholder="${t('favicon.ico, favicon.svg, PNG, or pasted Data URL','favicon.ico, favicon.svg, PNG или вставленный Data URL')}" />
+                  <p class="ns-editor-field-hint">${t("Use ICO for compatibility, SVG for sharp modern browsers and search services. You can upload an icon or generate one from letters below.", "ICO нужен для совместимости, SVG — для чёткого отображения в современных браузерах и поисковых сервисах. Ниже можно загрузить иконку или создать её из букв.")}</p>
                 </div>
 
                 <div class="ns-editor-field">
@@ -3832,11 +4077,35 @@ body.ns-preview-theme--vitrina-news-analysis .ns-page-card {
 
                 <div class="ns-editor-field full">
                   <label>${t("Logo upload","Загрузка логотипа")}</label>
-                  <div class="ns-editor-relations-actions">
+                  <div class="ns-editor-relations-actions ns-editor-branding-actions">
                     <input class="ns-editor-input" type="file" accept="image/*" data-role="site-logo-file" />
                     <button class="ns-editor-shell__button" type="button" data-action="clear-site-logo">${t("Clear logo","Очистить логотип")}</button>
                     <button class="ns-editor-shell__button" type="button" data-action="reset-site-identity">${t("Reset identity","Сбросить идентичность")}</button>
                   </div>
+                </div>
+
+                <div class="ns-editor-field full">
+                  <label>${t("Favicon upload","Загрузка favicon")}</label>
+                  <div class="ns-editor-relations-actions ns-editor-branding-actions">
+                    <input class="ns-editor-input" type="file" accept=".ico,.svg,.png,.jpg,.jpeg,image/x-icon,image/vnd.microsoft.icon,image/svg+xml,image/png,image/jpeg,image/*" data-role="site-favicon-file" />
+                    <button class="ns-editor-shell__button" type="button" data-action="clear-site-favicon">${t("Clear favicon","Очистить favicon")}</button>
+                  </div>
+                </div>
+
+                <div class="ns-editor-field full ns-editor-favicon-generator">
+                  <label>${t("Generate favicon from letters","Создать favicon из букв")}</label>
+                  <div class="ns-editor-favicon-generator__row">
+                    <input class="ns-editor-input ns-editor-favicon-generator__letters" name="siteFaviconLetters" maxlength="3" value="${escapeHtml(getInitials(siteProfile.siteName))}" aria-label="${t('Favicon letters','Буквы favicon')}" />
+                    <input class="ns-editor-input ns-editor-favicon-generator__color" name="siteFaviconBackground" type="color" value="${escapeHtml(siteProfile.primaryColor || DEFAULT_SITE_PROFILE.primaryColor)}" aria-label="${t('Favicon background','Фон favicon')}" />
+                    <input class="ns-editor-input ns-editor-favicon-generator__color" name="siteFaviconForeground" type="color" value="#ffffff" aria-label="${t('Favicon text color','Цвет букв favicon')}" />
+                    <select class="ns-editor-input ns-editor-favicon-generator__shape" name="siteFaviconShape" aria-label="${t('Favicon shape','Форма favicon')}">
+                      <option value="rounded" selected>${t("Round","Скругл.")}</option>
+                      <option value="square">${t("Square","Квадрат")}</option>
+                      <option value="circle">${t("Circle","Круг")}</option>
+                    </select>
+                    <button class="ns-editor-shell__button ns-editor-shell__button--primary" type="button" data-action="generate-site-favicon">${t("Generate","Создать")}</button>
+                  </div>
+                  <p class="ns-editor-field-hint">${t("The first version stores the generated icon as an SVG Data URL, so it travels with the draft preview/export without extra files.", "Первая версия сохраняет созданную иконку как SVG Data URL, поэтому она работает в предпросмотре/экспорте без отдельного файла.")}</p>
                 </div>
 
                 <div class="ns-editor-field full">
@@ -4008,7 +4277,7 @@ body.ns-preview-theme--vitrina-news-analysis .ns-page-card {
       };
 
       this.formChangeHandler = (event) => {
-        if (event && event.target && event.target.matches('[data-role="site-logo-file"]')) {
+        if (event && event.target && event.target.matches('[data-role="site-logo-file"], [data-role="site-favicon-file"]')) {
           return;
         }
         this.syncSiteProfileFromForm(event && event.target ? event.target : null);
@@ -4039,6 +4308,15 @@ body.ns-preview-theme--vitrina-news-analysis .ns-page-card {
           if (file) {
             event.preventDefault();
             this.handleSiteLogoFile(file);
+          }
+          return;
+        }
+
+        if (event.target.matches('[data-role="site-favicon-file"]')) {
+          const file = event.target.files && event.target.files[0] ? event.target.files[0] : null;
+          if (file) {
+            event.preventDefault();
+            this.handleSiteFaviconFile(file);
           }
           return;
         }
@@ -4276,6 +4554,78 @@ body.ns-preview-theme--vitrina-news-analysis .ns-page-card {
       return profile;
     }
 
+    refreshSiteIdentityEverywhere(profile, options = {}) {
+      const scrollState = this.captureScrollState ? this.captureScrollState() : null;
+      if (options.keepIdentityOpen !== false) {
+        this.siteIdentityPanelOpen = true;
+      }
+      const nextProfile = normalizeSiteProfile(profile || getSiteProfile());
+      this.updateSiteIdentityPreview(nextProfile);
+
+      if (!this.currentDraft) {
+        this.renderDynamicPanels(null);
+        if (options.keepIdentityOpen !== false) {
+          this.setSiteIdentityOpen(true, { sticky: true });
+        }
+        this.restoreScrollState?.(scrollState);
+        return;
+      }
+
+      const shouldRemount = options.remountWrite !== false;
+      const draft = this.readForm() || deepClone(this.currentDraft);
+      draft.write = draft.write || {};
+      draft.write.visualHtml = applySiteIdentityToProjectLanding(
+        draft.write.visualHtml,
+        nextProfile,
+        nextProfile.siteName,
+        nextProfile.tagline
+      );
+      draft.content = draft.content || {};
+      draft.content.body = buildBodyFromWrite(draft.write);
+
+      const saved = this.store.saveDraft(draft);
+      this.currentDraft = deepClone(saved);
+      this.lastSavedAt = saved.updatedAt || this.lastSavedAt || "";
+
+      if (shouldRemount) {
+        this.mountWriteSurface(this.currentDraft);
+      }
+
+      this.renderDynamicPanels(this.currentDraft);
+      this.renderContextRail();
+      this.syncHeaderState();
+      this.updateResponsiveState();
+      if (options.keepIdentityOpen !== false) {
+        this.setSiteIdentityOpen(true, { sticky: true });
+      }
+      this.restoreScrollState?.(scrollState);
+
+      if (options.message) {
+        this.flashStatus(options.message);
+      }
+    }
+
+    setSiteIdentityOpen(open, options = {}) {
+      const value = Boolean(open);
+      this.siteIdentityPanelOpen = value;
+
+      const apply = () => {
+        const nodes = Array.from(this.root?.querySelectorAll('[data-editor-section="site-identity"]') || []);
+        nodes.forEach((node) => {
+          node.open = value;
+        });
+      };
+
+      apply();
+
+      if (options.sticky !== false) {
+        requestAnimationFrame(apply);
+        setTimeout(apply, 60);
+        setTimeout(apply, 180);
+        setTimeout(apply, 360);
+      }
+    }
+
     updateSiteIdentityPreview(profile) {
       const mount = this.root;
       if (!mount) return;
@@ -4297,6 +4647,8 @@ body.ns-preview-theme--vitrina-news-analysis .ns-page-card {
       const footerInput = mount.querySelector('[name="siteProfileFooterText"]');
       const navInput = mount.querySelector('[name="siteProfileNavItems"]');
       const fileInput = mount.querySelector('[data-role="site-logo-file"]');
+      const faviconFileInput = mount.querySelector('[data-role="site-favicon-file"]');
+      const faviconLettersInput = mount.querySelector('[name="siteFaviconLetters"]');
       if (nameInput) nameInput.value = next.siteName;
       if (taglineInput) taglineInput.value = next.tagline;
       if (logoInput) logoInput.value = next.logoPath;
@@ -4305,25 +4657,73 @@ body.ns-preview-theme--vitrina-news-analysis .ns-page-card {
       if (footerInput) footerInput.value = next.footerText;
       if (navInput) navInput.value = Array.isArray(next.navItems) ? next.navItems.join(', ') : '';
       if (fileInput) fileInput.value = "";
+      if (faviconFileInput) faviconFileInput.value = "";
+      if (faviconLettersInput && !faviconLettersInput.value.trim()) faviconLettersInput.value = getInitials(next.siteName);
       this.updateSiteIdentityPreview(next);
       return next;
     }
 
     handleSiteLogoFile(file) {
       if (!file) return;
+      this.siteIdentityPanelOpen = true;
       const reader = new FileReader();
       reader.onload = () => {
         const result = typeof reader.result === "string" ? reader.result : "";
-        this.updateSiteIdentityFields({ ...getSiteProfile(), logoPath: result });
-        this.syncSiteProfileFromForm();
-        if (this.currentDraft) {
-          this.renderDynamicPanels(this.readForm());
-        }
+        const profile = this.updateSiteIdentityFields({ ...getSiteProfile(), logoPath: result, logoAlt: file.name || getSiteProfile().siteName });
+        const nextProfile = this.syncSiteProfileFromForm();
+        this.refreshSiteIdentityEverywhere({ ...nextProfile, logoPath: result, logoAlt: file.name || nextProfile.logoAlt }, {
+          remountWrite: true,
+          keepIdentityOpen: true,
+          message: t("Logo added to the template.", "Логотип добавлен в шаблон.")
+        });
       };
       reader.onerror = () => {
         this.flashStatus(t("Could not load logo","Не удалось загрузить логотип"));
       };
       reader.readAsDataURL(file);
+    }
+
+    handleSiteFaviconFile(file) {
+      if (!file) return;
+      this.siteIdentityPanelOpen = true;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = typeof reader.result === "string" ? reader.result : "";
+        const profile = this.updateSiteIdentityFields({ ...getSiteProfile(), faviconPath: result });
+        this.syncSiteProfileFromForm();
+        this.refreshSiteIdentityEverywhere({ ...profile, faviconPath: result }, {
+          remountWrite: false,
+          keepIdentityOpen: true,
+          message: t("Favicon added. It appears in the browser tab and exported HTML.", "Favicon добавлен. Он появится во вкладке браузера и в экспортированном HTML.")
+        });
+      };
+      reader.onerror = () => {
+        this.flashStatus(t("Could not load favicon", "Не удалось загрузить favicon"));
+      };
+      reader.readAsDataURL(file);
+    }
+
+    generateSiteFaviconFromForm() {
+      const mount = this.root;
+      if (!mount) return;
+      const profile = getSiteProfile();
+      const lettersInput = mount.querySelector('[name="siteFaviconLetters"]');
+      const backgroundInput = mount.querySelector('[name="siteFaviconBackground"]');
+      const foregroundInput = mount.querySelector('[name="siteFaviconForeground"]');
+      const shapeInput = mount.querySelector('[name="siteFaviconShape"]');
+      const dataUrl = buildGeneratedFaviconDataUrl({
+        letters: lettersInput?.value || getInitials(profile.siteName),
+        background: backgroundInput?.value || profile.primaryColor || DEFAULT_SITE_PROFILE.primaryColor,
+        foreground: foregroundInput?.value || "#ffffff",
+        shape: shapeInput?.value || "rounded"
+      });
+      const nextProfile = this.updateSiteIdentityFields({ ...profile, faviconPath: dataUrl });
+      this.syncSiteProfileFromForm();
+      this.refreshSiteIdentityEverywhere({ ...nextProfile, faviconPath: dataUrl }, {
+        remountWrite: false,
+        keepIdentityOpen: true,
+        message: t("Favicon generated from letters.", "Favicon создан из букв.")
+      });
     }
 
     readForm() {
@@ -4402,6 +4802,7 @@ body.ns-preview-theme--vitrina-news-analysis .ns-page-card {
       if (!this.currentDraft) return;
       const nextTheme = normalizeWriteTheme(theme);
       const activeTab = this.activeTab;
+      const scrollState = this.captureScrollState();
       const keepLeftPanel = this.leftPanelOpen;
       const keepRightPanel = this.rightPanelOpen;
       const keepFocusMode = this.focusMode;
@@ -4425,6 +4826,7 @@ body.ns-preview-theme--vitrina-news-analysis .ns-page-card {
       this.applyEditorThemeState(nextTheme);
       this.syncDrawerState();
       this.updateResponsiveState();
+      this.restoreScrollState(scrollState);
       this.broadcast();
       this.flashStatus(nextTheme === 'dark' ? t('Dark editor theme enabled','Включена тёмная тема редактора') : t('Light editor theme enabled','Включена светлая тема редактора'));
     }
@@ -4930,7 +5332,11 @@ body.ns-preview-theme--vitrina-news-analysis .ns-page-card {
             <h3>${t("Manual export","Ручной экспорт")} <span style="display:inline-flex;margin-left:8px;padding:4px 8px;border-radius:999px;background:#e8f5df;color:#2f7d32;font-size:11px;font-weight:800;vertical-align:middle;">${t("Ready now","Готово сейчас")}</span></h3>
             <label class="ns-editor-field-label">${t("File name","Имя файла")}</label>
             <input class="ns-editor-input" data-deploy-field="manual.fileName" value="${escapeHtml(draft.deploy.manual.fileName)}" />
+            <div class="ns-editor-deploy-actions ns-editor-deploy-actions--compact ns-editor-deploy-actions--export">
+              <button class="ns-editor-shell__button ns-editor-shell__button--primary" type="button" data-action="export-site-zip">${t("Export ZIP","Экспорт ZIP")}</button>
+            </div>
             <div class="ns-editor-shell__mini-source">${t("Files","Файлы")}: ${OUTPUT_FILES.join(", ")}</div>
+            ${this.lastExportZipPath ? `<div class="ns-editor-shell__mini-source">${t("Last export","Последний экспорт")}: ${escapeHtml(this.lastExportZipPath)}</div><div class="ns-editor-shell__mini-source">${t("If the file manager opened, the ZIP was saved there.","Если открылся файловый менеджер, ZIP сохранён там.")}</div>` : ""}
           </section>
 
           <section class="ns-editor-shell__mini-card">
@@ -5096,6 +5502,53 @@ body.ns-preview-theme--vitrina-news-analysis .ns-page-card {
       return null;
     }
 
+    async exportCurrentZip() {
+      if (this.exportZipBusy) return;
+      if (!this.currentDraft) {
+        this.flashStatus(t('Open a draft first','Сначала откройте черновик'));
+        return;
+      }
+
+      const bridge = getPreviewBridge();
+      if (!bridge || typeof bridge.exportSiteZip !== 'function') {
+        this.flashStatus(t('ZIP export bridge unavailable','Мост ZIP-экспорта недоступен'));
+        return;
+      }
+
+      this.exportZipBusy = true;
+      try {
+        const draft = this.readForm();
+        const output = buildOutputPackage(draft);
+        const result = await bridge.exportSiteZip({
+          title: draft.meta.title,
+          slug: draft.meta.slug,
+          fileName: draft.deploy.manual.fileName,
+          package: output
+        });
+
+        if (result && result.canceled) {
+          this.flashStatus(t('ZIP export canceled','ZIP-экспорт отменён'));
+          return;
+        }
+
+        if (result && result.ok) {
+          this.currentDraft = draft;
+          this.lastExportZipPath = result.zipPath || "";
+          this.store.saveDraft(this.currentDraft);
+          this.flashStatus(t('ZIP exported. The folder was opened.','ZIP экспортирован. Папка открыта.'));
+          this.renderDynamicPanels(this.currentDraft);
+          return;
+        }
+
+        this.flashStatus(t('ZIP export failed','ZIP-экспорт не удался'));
+      } catch (error) {
+        console.warn('[NSEditorV1] ZIP export failed:', error);
+        this.flashStatus(t('ZIP export failed','ZIP-экспорт не удался'));
+      } finally {
+        this.exportZipBusy = false;
+      }
+    }
+
     async openPreviewInBrowserShell() {
       if (this.previewShellOpening) return;
       this.previewShellOpening = true;
@@ -5138,6 +5591,8 @@ body.ns-preview-theme--vitrina-news-analysis .ns-page-card {
         this.flashStatus(t('External preview failed','Не удалось открыть внешний предпросмотр'));
       } finally {
         this.previewExternalOpening = false;
+      this.exportZipBusy = false;
+      this.lastExportZipPath = "";
       }
     }
 

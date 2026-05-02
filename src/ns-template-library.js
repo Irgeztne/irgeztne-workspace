@@ -267,6 +267,24 @@
     opacity: 0.95;
   }
 
+  .pl-logo--image {
+    background: transparent !important;
+    color: inherit !important;
+    padding: 0;
+  }
+
+  .pl-logo--image::after {
+    display: none;
+  }
+
+  .pl-logo--image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: inherit;
+  }
+
   .pl-brand strong {
     display: block;
     font-size: 15px;
@@ -896,10 +914,9 @@
   <div class="pl-shell">
     <header class="pl-navrow">
       <a class="pl-brand" href="#home" aria-label="Project Landing home" style="text-decoration:none;color:inherit;">
-        <span class="pl-logo" aria-hidden="true">IR</span>
         <span>
-          <strong>IRGEZTNE Project</strong>
-          <span data-i18n data-ru="Проект / услуга / студия" data-en="Project / service / studio">Проект / услуга / студия</span>
+          <strong data-i18n data-ru="Project Studio" data-en="Project Studio">Project Studio</strong>
+          <span data-i18n data-ru="Local-first publishing workspace" data-en="Local-first publishing workspace">Local-first publishing workspace</span>
         </span>
       </a>
 

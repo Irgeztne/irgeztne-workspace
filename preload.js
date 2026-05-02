@@ -17,6 +17,7 @@ contextBridge.exposeInMainWorld('nsAPI', {
   },
   saveTemplateFile: (payload) => ipcRenderer.invoke('ns:templates:save', payload),
   materializeSitePreview: (payload) => ipcRenderer.invoke('ns:preview:materialize', payload),
+  exportSiteZip: (payload) => ipcRenderer.invoke('ns:export:zip', payload),
   openSitePreviewExternal: (payload) => ipcRenderer.invoke('ns:preview:openExternal', payload),
   publishPage: (payload) => ipcRenderer.invoke('ns:publish:page', payload),
   loadVitrinaRegistry: () => ipcRenderer.invoke('ns:vitrina:load'),

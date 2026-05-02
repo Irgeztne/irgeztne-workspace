@@ -4339,3 +4339,38 @@
   border-radius: 14px;
   background: rgba(123, 92, 255, 0.08);
 }
+
+
+/* pass44: keep editor navigation visible and reduce scroll jumps */
+.ns-editor-shell {
+  overflow: visible;
+}
+
+.ns-editor-shell__header {
+  position: sticky;
+  top: 8px;
+  z-index: 90;
+}
+
+.ns-editor-writer-stage,
+.ns-editor-shell__main,
+.ns-editor-shell__panel {
+  scroll-margin-top: 118px;
+}
+
+.ns-editor-shell__picker-card.is-active,
+.ns-editor-shell__list-button.is-active {
+  border-color: rgba(47, 116, 255, 0.5);
+}
+
+.ns-editor-shell__template-state {
+  display: inline-flex;
+  width: fit-content;
+  margin-top: 4px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(47, 116, 255, 0.24);
+  background: rgba(47, 116, 255, 0.12);
+  font-size: 12px;
+  font-weight: 800;
+}

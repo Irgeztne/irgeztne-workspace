@@ -1,5 +1,5 @@
 process.env.ELECTRON_DISABLE_SANDBOX = '1';
-const { app, BrowserWindow, Menu, ipcMain, shell } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain, shell, dialog } = require('electron');
 const { spawn, spawnSync } = require('child_process');
 const path = require('path');
 const fs = require('fs');
@@ -66,6 +66,10 @@ function getVitrinaRegistryPath() {
 
 function getPreviewsDir() {
   return path.join(DATA_DIR, 'previews');
+}
+
+function getExportsDir() {
+  return path.join(DATA_DIR, 'exports');
 }
 
 function getTemplatesDir() {
@@ -205,6 +209,165 @@ async function saveTemplateFileToDisk(payload) {
     itemId: normalized.itemId
   };
 }
+
+
+const CRC32_TABLE = (() => {
+  const table = new Uint32Array(256);
+  for (let i = 0; i < 256; i += 1) {
+    let c = i;
+    for (let k = 0; k < 8; k += 1) {
+      c = (c & 1) ? (0xedb88320 ^ (c >>> 1)) : (c >>> 1);
+    }
+    table[i] = c >>> 0;
+  }
+  return table;
+})();
+
+function crc32(buffer) {
+  let crc = 0xffffffff;
+  for (const byte of buffer) {
+    crc = CRC32_TABLE[(crc ^ byte) & 0xff] ^ (crc >>> 8);
+  }
+  return (crc ^ 0xffffffff) >>> 0;
+}
+
+function getDosDateTime(date = new Date()) {
+  const year = Math.max(1980, date.getFullYear());
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  const dosTime = ((date.getHours() & 0x1f) << 11) |
+    ((date.getMinutes() & 0x3f) << 5) |
+    (Math.floor(date.getSeconds() / 2) & 0x1f);
+  const dosDate = (((year - 1980) & 0x7f) << 9) |
+    ((month & 0x0f) << 5) |
+    (day & 0x1f);
+  return { dosDate, dosTime };
+}
+
+function normalizeZipEntryName(value) {
+  return String(value || '')
+    .replace(/\\/g, '/')
+    .replace(/^\/+/, '')
+    .replace(/\.\.(\/|$)/g, '')
+    .trim();
+}
+
+function createStoredZipBuffer(entries) {
+  const localParts = [];
+  const centralParts = [];
+  const now = new Date();
+  const { dosDate, dosTime } = getDosDateTime(now);
+  let offset = 0;
+
+  const safeEntries = Array.isArray(entries) ? entries : [];
+  for (const entry of safeEntries) {
+    const name = normalizeZipEntryName(entry && entry.name);
+    if (!name) continue;
+
+    const fileName = Buffer.from(name, 'utf8');
+    const content = Buffer.from(String(entry.content ?? ''), 'utf8');
+    const crc = crc32(content);
+
+    const localHeader = Buffer.alloc(30);
+    localHeader.writeUInt32LE(0x04034b50, 0);
+    localHeader.writeUInt16LE(20, 4);
+    localHeader.writeUInt16LE(0x0800, 6);
+    localHeader.writeUInt16LE(0, 8);
+    localHeader.writeUInt16LE(dosTime, 10);
+    localHeader.writeUInt16LE(dosDate, 12);
+    localHeader.writeUInt32LE(crc, 14);
+    localHeader.writeUInt32LE(content.length, 18);
+    localHeader.writeUInt32LE(content.length, 22);
+    localHeader.writeUInt16LE(fileName.length, 26);
+    localHeader.writeUInt16LE(0, 28);
+
+    localParts.push(localHeader, fileName, content);
+
+    const centralHeader = Buffer.alloc(46);
+    centralHeader.writeUInt32LE(0x02014b50, 0);
+    centralHeader.writeUInt16LE(20, 4);
+    centralHeader.writeUInt16LE(20, 6);
+    centralHeader.writeUInt16LE(0x0800, 8);
+    centralHeader.writeUInt16LE(0, 10);
+    centralHeader.writeUInt16LE(dosTime, 12);
+    centralHeader.writeUInt16LE(dosDate, 14);
+    centralHeader.writeUInt32LE(crc, 16);
+    centralHeader.writeUInt32LE(content.length, 20);
+    centralHeader.writeUInt32LE(content.length, 24);
+    centralHeader.writeUInt16LE(fileName.length, 28);
+    centralHeader.writeUInt16LE(0, 30);
+    centralHeader.writeUInt16LE(0, 32);
+    centralHeader.writeUInt16LE(0, 34);
+    centralHeader.writeUInt16LE(0, 36);
+    centralHeader.writeUInt32LE(0, 38);
+    centralHeader.writeUInt32LE(offset, 42);
+
+    centralParts.push(centralHeader, fileName);
+
+    offset += localHeader.length + fileName.length + content.length;
+  }
+
+  const centralOffset = offset;
+  const centralSize = centralParts.reduce((sum, part) => sum + part.length, 0);
+  const entryCount = centralParts.length / 2;
+
+  const end = Buffer.alloc(22);
+  end.writeUInt32LE(0x06054b50, 0);
+  end.writeUInt16LE(0, 4);
+  end.writeUInt16LE(0, 6);
+  end.writeUInt16LE(entryCount, 8);
+  end.writeUInt16LE(entryCount, 10);
+  end.writeUInt32LE(centralSize, 12);
+  end.writeUInt32LE(centralOffset, 16);
+  end.writeUInt16LE(0, 20);
+
+  return Buffer.concat([...localParts, ...centralParts, end]);
+}
+
+function getExportZipDefaultPath(payload) {
+  const baseName = sanitizeFileName(
+    payload?.fileName || payload?.slug || payload?.title || 'site-export',
+    'site-export'
+  ).replace(/\.zip$/i, '') || 'site-export';
+
+  const downloadsDir = app.getPath('downloads') || getExportsDir();
+  return path.join(downloadsDir, `${baseName}.zip`);
+}
+
+async function writeExportZipPackage(payload, targetPath) {
+  const packageFiles = payload && payload.package && typeof payload.package === 'object' ? payload.package : {};
+  const zipPath = targetPath && String(targetPath).trim()
+    ? String(targetPath)
+    : getExportZipDefaultPath(payload);
+  const finalZipPath = /\.zip$/i.test(zipPath) ? zipPath : `${zipPath}.zip`;
+
+  const entries = [
+    { name: 'index.html', content: packageFiles['index.html'] || '<!doctype html><html><body><h1>Empty export</h1></body></html>' },
+    { name: 'styles.css', content: packageFiles['styles.css'] || '' },
+    { name: 'content/page.json', content: packageFiles['content/page.json'] || '{}' },
+    { name: 'meta.json', content: packageFiles['meta.json'] || '{}' }
+  ];
+
+  ensureDir(path.dirname(finalZipPath));
+  const zipBuffer = createStoredZipBuffer(entries);
+  await fsp.writeFile(finalZipPath, zipBuffer);
+
+  try {
+    shell.showItemInFolder(finalZipPath);
+  } catch (error) {
+    console.warn('Could not reveal exported ZIP:', error);
+  }
+
+  return {
+    ok: true,
+    zipPath: finalZipPath,
+    fileName: path.basename(finalZipPath),
+    fileSize: zipBuffer.length,
+    files: entries.map((entry) => entry.name),
+    exportedAt: new Date().toISOString()
+  };
+}
+
 
 async function writePreviewPackage(payload) {
   const packageFiles = payload && payload.package && typeof payload.package === 'object' ? payload.package : {};
@@ -479,6 +642,25 @@ function registerIpcHandlers() {
   ipcMain.handle('ns:preview:materialize', async (event, payload) => {
     assertTrustedSender(event);
     return writePreviewPackage(payload);
+  });
+
+  ipcMain.handle('ns:export:zip', async (event, payload) => {
+    assertTrustedSender(event);
+    const owner = BrowserWindow.fromWebContents(event.sender);
+    const defaultPath = getExportZipDefaultPath(payload);
+    ensureDir(path.dirname(defaultPath));
+
+    const result = await dialog.showSaveDialog(owner || undefined, {
+      title: 'Export ZIP',
+      defaultPath,
+      filters: [{ name: 'ZIP archive', extensions: ['zip'] }]
+    });
+
+    if (result.canceled || !result.filePath) {
+      return { ok: false, canceled: true };
+    }
+
+    return writeExportZipPackage(payload, result.filePath);
   });
 
   ipcMain.handle('ns:preview:openExternal', async (event, payload) => {

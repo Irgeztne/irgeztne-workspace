@@ -2,11 +2,11 @@
   const STORAGE_KEY = "ns.browser.v8.site-profile.v1";
 
   const DEFAULT_PROFILE = {
-    siteName: "IRGEZTNE Studio",
+    siteName: "Project Studio",
     tagline: "Local-first publishing workspace",
-    logoPath: "../../../assets/branding/wordmark.svg",
-    logoAlt: "IRGEZTNE",
-    faviconPath: "../../../assets/branding/favicon.svg",
+    logoPath: "",
+    logoAlt: "Project Studio",
+    faviconPath: "",
     contactEmail: "hello@example.com",
     footerText: "Built with IRGEZTNE",
     navItems: ["Overview", "Stories", "Contact"],
@@ -45,14 +45,32 @@
     return list.length ? list : clone(DEFAULT_PROFILE.navItems);
   }
 
+  function cleanLegacyBrandPath(value) {
+    const raw = String(value || "").trim();
+    if (!raw) return "";
+    const normalized = raw.replace(/\\/g, "/").toLowerCase();
+    if (
+      normalized.includes("assets/branding/wordmark") ||
+      normalized.includes("assets/branding/favicon")
+    ) {
+      return "";
+    }
+    return raw;
+  }
+
+  function cleanLegacyText(value, legacyValue, fallback) {
+    const raw = String(value || "").trim();
+    return raw === legacyValue ? fallback : raw;
+  }
+
   function normalizeProfile(input) {
     const source = input && typeof input === "object" ? input : {};
     return {
-      siteName: String(source.siteName || DEFAULT_PROFILE.siteName),
+      siteName: cleanLegacyText(source.siteName || DEFAULT_PROFILE.siteName, "IRGEZTNE Studio", DEFAULT_PROFILE.siteName),
       tagline: String(source.tagline || DEFAULT_PROFILE.tagline),
-      logoPath: String(source.logoPath || DEFAULT_PROFILE.logoPath),
-      logoAlt: String(source.logoAlt || DEFAULT_PROFILE.logoAlt),
-      faviconPath: String(source.faviconPath || DEFAULT_PROFILE.faviconPath),
+      logoPath: cleanLegacyBrandPath(source.logoPath === "" ? "" : String(source.logoPath || DEFAULT_PROFILE.logoPath)),
+      logoAlt: cleanLegacyText(source.logoAlt || DEFAULT_PROFILE.logoAlt, "IRGEZTNE", DEFAULT_PROFILE.logoAlt),
+      faviconPath: cleanLegacyBrandPath(source.faviconPath === "" ? "" : String(source.faviconPath || DEFAULT_PROFILE.faviconPath)),
       contactEmail: String(source.contactEmail || DEFAULT_PROFILE.contactEmail),
       footerText: String(source.footerText || DEFAULT_PROFILE.footerText),
       navItems: normalizeNavItems(source.navItems),
