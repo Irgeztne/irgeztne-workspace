@@ -6350,7 +6350,7 @@ body[data-theme="dark"] .ir-template-preview-shell-v070a,
 
 .ir-site-studio-v5-template-lab-grid-v083h {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(430px, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
   min-width: 0;
 }
@@ -6405,10 +6405,10 @@ body[data-theme="dark"] .ir-template-preview-shell-v070a,
 }
 
 .ir-site-studio-v5-template-lab-frame-v083h iframe {
-  width: 1440px;
-  height: 920px;
+  width: 250%;
+  height: 250%;
   border: 0;
-  transform: scale(.36);
+  transform: scale(.4);
   transform-origin: 0 0;
   pointer-events: none;
   background: #fff;
@@ -6552,4 +6552,47 @@ body[data-theme="dark"] .ir-template-preview-shell-v070a,
 /* IRGEZTNE_V084D_EDITOR_WORKBENCH_COMFORT_PARENT_CSS */
 .ir-site-studio-v5-editor-workbench-frame-v084b {
   min-height: 820px;
+}
+
+
+/* TEMPLATE_PREVIEW_CLOSE_SYSTEM_BLUE_V1
+   Existing working close action, visual override only. */
+button.ir-site-studio-v5-btn--danger[
+  data-v5-action="template-lab-preview-close-v083i"
+] {
+  display: inline-grid !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  place-items: center !important;
+  flex: 0 0 38px !important;
+  width: 38px !important;
+  min-width: 38px !important;
+  height: 38px !important;
+  padding: 0 !important;
+  border: 1px solid rgba(125, 179, 255, .42) !important;
+  border-radius: 12px !important;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(36, 74, 136, .98),
+      rgba(18, 42, 82, .98)
+    ) !important;
+  color: #ffffff !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.08),
+    0 8px 20px rgba(0,0,0,.20) !important;
+  font-size: 18px !important;
+  line-height: 1 !important;
+}
+
+button.ir-site-studio-v5-btn--danger[
+  data-v5-action="template-lab-preview-close-v083i"
+]:hover {
+  border-color: rgba(125, 179, 255, .68) !important;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(47, 94, 171, .98),
+      rgba(22, 51, 99, .98)
+    ) !important;
 }

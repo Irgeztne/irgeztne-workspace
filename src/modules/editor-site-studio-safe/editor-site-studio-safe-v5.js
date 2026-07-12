@@ -4848,7 +4848,7 @@
       '<div class="ir-site-studio-v5-template-preview-shell-v083i">' +
       '  <header class="ir-site-studio-v5-template-preview-head-v083i">' +
       '    <div>' +
-      '      <div class="ir-site-studio-v5-kicker">TEMPLATE PREVIEW</div>' +
+      '      <div class="ir-site-studio-v5-kicker">' + escapeHtml(t('Template preview', 'Превью шаблона')) + '</div>' +
       '      <strong>' + escapeHtml(title || t('Template preview', 'Превью шаблона')) + '</strong>' +
       '      <span>' + escapeHtml(path) + '</span>' +
       '    </div>' +
@@ -4937,7 +4937,7 @@
         '<article class="ir-site-studio-v5-template-lab-card-v083h" data-template-id="' + escapeHtml(item.id) + '">' +
         '  <div class="ir-site-studio-v5-template-lab-card-head-v083h">' +
         '    <div>' +
-        '      <div class="ir-site-studio-v5-template-lab-kicker-v083h">REAL PREVIEW</div>' +
+        '      <div class="ir-site-studio-v5-template-lab-kicker-v083h">' + escapeHtml(t('Real preview', 'Реальное превью')) + '</div>' +
         '      <h4>' + escapeHtml(title) + '</h4>' +
         '    </div>' +
         '    <span>' + escapeHtml(kind) + '</span>' +
@@ -4957,7 +4957,7 @@
       '<section class="ir-site-studio-v5-templates-real-v083h">' +
       '  <div class="ir-site-studio-v5-templates-real-head-v083h">' +
       '    <div>' +
-      '      <div class="ir-site-studio-v5-kicker">TEMPLATES</div>' +
+      '      <div class="ir-site-studio-v5-kicker">' + escapeHtml(t('Templates', 'Шаблоны')) + '</div>' +
       '      <h3>' + escapeHtml(t('Official templates', 'Официальные шаблоны')) + '</h3>' +
       '      <p>' + escapeHtml(t('The Web Studio template tab now shows real Template Lab pages, not simplified mockups. Open a preview to inspect the actual HTML template.', 'Вкладка шаблонов Web Studio теперь показывает реальные страницы Template Lab, а не упрощённые муляжи. Откройте превью, чтобы посмотреть настоящий HTML-шаблон.')) + '</p>' +
       '    </div>' +
