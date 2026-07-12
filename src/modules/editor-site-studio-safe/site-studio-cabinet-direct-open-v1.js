@@ -1,55 +1,104 @@
 (function () {
-  if (window.__IRGEZTNE_SITE_STUDIO_CABINET_DIRECT_OPEN_V1__) return;
-  window.__IRGEZTNE_SITE_STUDIO_CABINET_DIRECT_OPEN_V1__ = true;
+  'use strict';
 
-  function openSiteStudioV5() {
+  if (window.__IRGEZTNE_SITE_STUDIO_CABINET_DIRECT_OPEN_V2__) {
+    return;
+  }
+
+  window.__IRGEZTNE_SITE_STUDIO_CABINET_DIRECT_OPEN_V2__ = true;
+
+  var SITE_SELECTOR = [
+    '[data-open-section="site-pages"]',
+    '[data-home-open="site-pages"]',
+    '[data-home-open-cabinet="site-pages"]',
+    '[data-section="site-pages"]'
+  ].join(', ');
+
+  var TEMPLATE_SELECTOR = [
+    '[data-open-section="marketplace"]',
+    '[data-home-open="marketplace"]',
+    '[data-home-open-cabinet="marketplace"]',
+    '[data-section="marketplace"]'
+  ].join(', ');
+
+  function openSiteStudio(tabId) {
     var tries = 0;
 
     function attempt() {
       tries += 1;
 
-      if (window.IRGEZTNESiteStudioSafeV5 && typeof window.IRGEZTNESiteStudioSafeV5.open === 'function') {
-        window.IRGEZTNESiteStudioSafeV5.open();
-        return true;
+      var api = window.IRGEZTNESiteStudioSafeV5;
+
+      if (
+        tabId &&
+        api &&
+        typeof api.openTab === 'function'
+      ) {
+        api.openTab(tabId);
+        return;
+      }
+
+      if (
+        !tabId &&
+        api &&
+        typeof api.open === 'function'
+      ) {
+        api.open();
+        return;
       }
 
       if (tries < 30) {
         setTimeout(attempt, 100);
-        return false;
+        return;
       }
 
-      console.warn('[IRGEZTNE] Site Studio open function was not found.');
-      return false;
+      console.warn(
+        '[IRGEZTNE] Web Studio API was not found:',
+        tabId || 'default'
+      );
     }
 
-    return attempt();
-  }
-
-  function isSiteStudioTrigger(target) {
-    return target && target.closest && target.closest(
-      '[data-open-section="site-pages"], ' +
-      '[data-home-open="site-pages"], ' +
-      '[data-home-open-cabinet="site-pages"], ' +
-      '[data-section="site-pages"]'
-    );
+    attempt();
   }
 
   document.addEventListener('click', function (event) {
-    var trigger = isSiteStudioTrigger(event.target);
-    if (!trigger) return;
+    var target = event.target;
+
+    if (!target || !target.closest) return;
+
+    var templateTrigger = target.closest(
+      TEMPLATE_SELECTOR
+    );
+
+    var siteTrigger = target.closest(
+      SITE_SELECTOR
+    );
+
+    if (!templateTrigger && !siteTrigger) return;
 
     event.preventDefault();
     event.stopPropagation();
-    if (event.stopImmediatePropagation) event.stopImmediatePropagation();
 
-    openSiteStudioV5();
+    if (event.stopImmediatePropagation) {
+      event.stopImmediatePropagation();
+    }
+
+    openSiteStudio(
+      templateTrigger ? 'templates' : ''
+    );
   }, true);
 
-  window.addEventListener('irgeztne:open-site-studio-safe-v5', function () {
-    openSiteStudioV5();
-  });
+  window.addEventListener(
+    'irgeztne:open-site-studio-safe-v5',
+    function () {
+      openSiteStudio('');
+    }
+  );
 
-  document.addEventListener('irgeztne:open-site-studio-safe-v5', function () {
-    openSiteStudioV5();
-  });
+  document.addEventListener(
+    'irgeztne:open-site-studio-safe-v5',
+    function () {
+      openSiteStudio('');
+    }
+  );
 })();

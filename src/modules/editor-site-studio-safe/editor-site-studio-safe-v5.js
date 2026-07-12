@@ -5363,6 +5363,18 @@
     renderStudio();
   }
 
+  function openStudioTab(tabId) {
+    activeTab = normalizeStudioTabId(tabId, 'page');
+
+    if (activeTab === 'page') {
+      collapsedRight = false;
+    } else if (!isPageSettingsRelevant(activeTab)) {
+      collapsedRight = true;
+    }
+
+    openStudio();
+  }
+
   function closeStudio() { destroySiteJodit(); if (overlay) overlay.classList.remove('is-open'); }
 
   function activeMenuGroup(state) {
@@ -8637,7 +8649,13 @@
     setInterval(ensureLauncher, 1000);
     var observer = new MutationObserver(function () { ensureLauncher(); });
     observer.observe(document.documentElement || document.body, { childList: true, subtree: true });
-    window.IRGEZTNESiteStudioSafeV5 = { open: openStudio, readState: readState, reset: resetTestСтраницы, version: VERSION };
+    window.IRGEZTNESiteStudioSafeV5 = {
+      open: openStudio,
+      openTab: openStudioTab,
+      readState: readState,
+      reset: resetTestСтраницы,
+      version: VERSION
+    };
     log('loaded');
   }
 
