@@ -1,0 +1,175 @@
+:root {
+  color-scheme: dark;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #08111f;
+  color: #eaf3ff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(47, 123, 230, .28), transparent 34rem),
+    linear-gradient(135deg, #08111f, #101827);
+}
+
+button {
+  font: inherit;
+}
+
+.ir-editor-shell {
+  width: min(1280px, calc(100vw - 32px));
+  margin: 0 auto;
+  padding: 28px 0;
+}
+
+.ir-editor-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.ir-editor-head h1 {
+  margin: 0 0 6px;
+  font-size: 28px;
+}
+
+.ir-editor-head p {
+  margin: 0;
+  color: #9fb5d1;
+}
+
+.ir-editor-head button,
+.ir-editor-toolbar button {
+  border: 1px solid rgba(127, 193, 255, .26);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, .06);
+  color: #eaf3ff;
+  padding: 9px 12px;
+  cursor: pointer;
+}
+
+.ir-editor-head button:hover,
+.ir-editor-toolbar button:hover {
+  background: rgba(70, 150, 255, .18);
+  border-color: rgba(127, 193, 255, .5);
+}
+
+.ir-editor-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(340px, .85fr);
+  gap: 18px;
+}
+
+.ir-editor-panel,
+.ir-preview-panel {
+  border: 1px solid rgba(127, 193, 255, .18);
+  border-radius: 22px;
+  background: rgba(5, 14, 28, .72);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, .28);
+}
+
+.ir-editor-panel {
+  overflow: hidden;
+}
+
+.ir-editor-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 14px;
+  border-bottom: 1px solid rgba(127, 193, 255, .14);
+  background: rgba(255, 255, 255, .035);
+}
+
+.ir-editor-surface {
+  min-height: 460px;
+  padding: 24px;
+  outline: none;
+  font-size: 17px;
+  line-height: 1.72;
+  caret-color: #79c9ff;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.ir-editor-surface:empty::before {
+  content: attr(data-placeholder);
+  color: #6f849f;
+}
+
+.ir-editor-surface:focus {
+  background: rgba(255, 255, 255, .025);
+}
+
+.ir-editor-surface h2,
+.ir-editor-surface h3,
+.ir-preview h2,
+.ir-preview h3 {
+  line-height: 1.25;
+  margin: 1.1em 0 .45em;
+}
+
+.ir-editor-surface p,
+.ir-preview p {
+  margin: .65em 0;
+}
+
+.ir-editor-surface blockquote,
+.ir-preview blockquote {
+  margin: 1em 0;
+  padding: 12px 16px;
+  border-left: 3px solid #79c9ff;
+  background: rgba(121, 201, 255, .08);
+  border-radius: 12px;
+}
+
+.ir-editor-status {
+  padding: 10px 14px;
+  border-top: 1px solid rgba(127, 193, 255, .12);
+  color: #9fb5d1;
+  font-size: 13px;
+}
+
+.ir-preview-panel {
+  padding: 18px;
+}
+
+.ir-preview-panel h2 {
+  margin: 0 0 10px;
+  font-size: 16px;
+  color: #bcd7f6;
+}
+
+.ir-preview {
+  min-height: 220px;
+  padding: 16px;
+  border: 1px solid rgba(127, 193, 255, .14);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, .04);
+  margin-bottom: 18px;
+}
+
+#htmlSource {
+  width: 100%;
+  min-height: 220px;
+  resize: vertical;
+  border: 1px solid rgba(127, 193, 255, .14);
+  border-radius: 16px;
+  background: rgba(0, 0, 0, .2);
+  color: #cfe8ff;
+  padding: 14px;
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+}
+
+@media (max-width: 900px) {
+  .ir-editor-layout {
+    grid-template-columns: 1fr;
+  }
+}

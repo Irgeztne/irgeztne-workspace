@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>IRGEZTNE Editor Core API Demo</title>
+  <link rel="stylesheet" href="./irgeztne-editor-core.css">
+</head>
+<body>
+  <main class="ir-editor-shell">
+    <header class="ir-editor-head">
+      <div>
+        <h1>IRGEZTNE Editor Core API Demo</h1>
+        <p>v063b-small: API-слой отдельно от рабочей demo-версии.</p>
+      </div>
+      <button id="clearBtn" type="button">Очистить</button>
+    </header>
+
+    <section class="ir-editor-layout">
+      <div class="ir-editor-panel">
+        <div
+          id="apiEditor"
+          class="ir-editor-surface"
+          contenteditable="true"
+          spellcheck="true"
+          role="textbox"
+          aria-multiline="true"
+          data-placeholder="Напишите текст..."
+        ></div>
+        <div class="ir-editor-status" id="status">Готово</div>
+      </div>
+
+      <aside class="ir-preview-panel">
+        <h2>Preview</h2>
+        <article id="preview" class="ir-preview"></article>
+        <h2>HTML</h2>
+        <textarea id="htmlSource" readonly></textarea>
+      </aside>
+    </section>
+  </main>
+
+  <script src="./irgeztne-editor-core-api.js"></script>
+  <script src="./api-demo.js"></script>
+</body>
+</html>

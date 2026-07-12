@@ -1,0 +1,242 @@
+
+(function () {
+  'use strict';
+
+  const NOTE_KEY = 'irgeztne.workspace.quickNote.v0';
+
+  function getLang() {
+    const visible = [
+      document.querySelector('.workspace-toggle-text')?.textContent || '',
+      document.querySelector('.workspace-home-title')?.textContent || '',
+      document.querySelector('.workspace-start-rail')?.textContent || '',
+      document.querySelector('.app-sidebar')?.textContent || '',
+      document.body?.textContent?.slice(0, 1400) || ''
+    ].join(' ').toLowerCase();
+
+    if (visible.includes('пространство') || visible.includes('главная') || visible.includes('рабочее пространство')) return 'ru';
+    if (visible.includes('workspace') || visible.includes('web studio')) return 'en';
+
+    const htmlLang = (document.documentElement.getAttribute('lang') || '').toLowerCase();
+    const bodyLang = (document.body && document.body.getAttribute('data-lang') || '').toLowerCase();
+    const stored = (localStorage.getItem('irgeztne.lang') || localStorage.getItem('language') || '').toLowerCase();
+    const value = htmlLang || bodyLang || stored || 'ru';
+
+    return value.startsWith('en') ? 'en' : 'ru';
+  }
+
+  function t(en, ru) {
+    return getLang() === 'en' ? en : ru;
+  }
+
+  function esc(value) {
+    return String(value || '').replace(/[&<>"']/g, function (ch) {
+      return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' })[ch];
+    });
+  }
+
+  function setStatus(message) {
+    const status = document.querySelector('[data-ir-wc-status]');
+    if (status) status.textContent = message || '';
+  }
+
+  function monthTitle(date) {
+    const lang = getLang() === 'en' ? 'en-US' : 'ru-RU';
+    return date.toLocaleDateString(lang, { month: 'long', year: 'numeric' });
+  }
+
+  function getMonthMatrix(date) {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const first = new Date(year, month, 1);
+    const last = new Date(year, month + 1, 0);
+    const startOffset = (first.getDay() + 6) % 7;
+    const days = [];
+
+    for (let i = 0; i < startOffset; i += 1) days.push('');
+    for (let day = 1; day <= last.getDate(); day += 1) days.push(String(day));
+    while (days.length % 7 !== 0) days.push('');
+
+    return days;
+  }
+
+  function renderCalendar(date) {
+    const week = getLang() === 'en'
+      ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+      : ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+
+    const today = new Date();
+
+    const days = getMonthMatrix(date).map(function (day) {
+      const isToday =
+        day &&
+        Number(day) === today.getDate() &&
+        date.getMonth() === today.getMonth() &&
+        date.getFullYear() === today.getFullYear();
+
+      return '<span class="ir-wc-day ' + (isToday ? 'is-today' : '') + '">' + esc(day) + '</span>';
+    }).join('');
+
+    return [
+      '<div class="ir-wc-week">' + week.map(function (d) { return '<span>' + esc(d) + '</span>'; }).join('') + '</div>',
+      '<div class="ir-wc-days">' + days + '</div>'
+    ].join('');
+  }
+
+  function render() {
+    const panel = document.querySelector('.workspace-shell .workspace-panel[data-panel="workspace"]');
+    if (!panel) return;
+
+    const note = localStorage.getItem(NOTE_KEY) || '';
+    const now = new Date();
+
+    panel.innerHTML = [
+      '<div class="ir-wc-v0 ir-wc-v07">',
+
+      '  <section class="ir-wc-topline">',
+      '    <div class="ir-wc-timebox">',
+      '      <span class="ir-wc-dot"></span>',
+      '      <div>',
+      '        <strong data-ir-wc-time>--:--</strong>',
+      '        <small data-ir-wc-date>—</small>',
+      '      </div>',
+      '    </div>',
+
+      '    <button type="button" class="ir-wc-calendar-toggle" data-ir-wc-calendar-toggle aria-expanded="false">',
+      '      <span>' + esc(t('Calendar', 'Календарь')) + '</span>',
+      '      <strong>' + esc(monthTitle(now)) + '</strong>',
+      '      <em>▾</em>',
+      '    </button>',
+
+      '    <div class="ir-wc-calendar-wide" data-ir-wc-calendar-body hidden>',
+      renderCalendar(now),
+      '    </div>',
+      '  </section>',
+
+      '  <section class="ir-wc-grid">',
+
+      '    <article class="ir-wc-card ir-wc-note">',
+      '      <div class="ir-wc-card-head"><span>✎</span><strong>' + esc(t('Quick note', 'Быстрая заметка')) + '</strong></div>',
+      '      <textarea data-ir-wc-note placeholder="' + esc(t('Write a quick workspace note...', 'Быстрая заметка пространства...')) + '">' + esc(note) + '</textarea>',
+      '    </article>',
+
+      '    <article class="ir-wc-card ir-wc-tools">',
+      '      <div class="ir-wc-card-head"><span>⚒</span><strong>' + esc(t('Tools', 'Инструменты')) + '</strong></div>',
+      '      <p>' + esc(t('Compact local utilities will live here.', 'Здесь будут компактные локальные утилиты.')) + '</p>',
+      '      <div class="ir-wc-actions">',
+      '        <button type="button" data-ir-wc-placeholder="' + esc(t('Converters will open here later: images, icons, documents and web assets.', 'Здесь позже откроются конвертеры: изображения, иконки, документы и веб-ассеты.')) + '">' + esc(t('Converter', 'Конвертер')) + '</button>',
+      '      </div>',
+      '    </article>',
+
+      '    <article class="ir-wc-card ir-wc-context">',
+      '      <div class="ir-wc-card-head"><span>☰</span><strong>' + esc(t('Current work', 'Текущая работа')) + '</strong></div>',
+      '      <p>' + esc(t('Current project, selected file and active site context will live here.', 'Здесь будет текущий проект, выбранный файл и контекст активного сайта.')) + '</p>',
+      '      <div class="ir-wc-actions">',
+      '        <button type="button" data-ir-wc-placeholder="' + esc(t('Current project context will appear here.', 'Контекст текущего проекта появится здесь.')) + '">' + esc(t('Project', 'Проект')) + '</button>',
+      '        <button type="button" data-ir-wc-placeholder="' + esc(t('Selected file context will appear here.', 'Контекст выбранного файла появится здесь.')) + '">' + esc(t('File', 'Файл')) + '</button>',
+      '      </div>',
+      '    </article>',
+
+      '    <article class="ir-wc-card ir-wc-rooms">',
+      '      <div class="ir-wc-card-head"><span>◌</span><strong>' + esc(t('Rooms', 'Комнаты')) + '</strong></div>',
+      '      <p>' + esc(t('Work chat and compact calls will be added here later.', 'Рабочий чат и компактные звонки появятся здесь позже.')) + '</p>',
+      '      <button type="button" data-ir-wc-placeholder="' + esc(t('Rooms will be a compact work communication widget.', 'Комнаты будут компактным рабочим виджетом связи.')) + '">' + esc(t('Rooms later', 'Комнаты позже')) + '</button>',
+      '    </article>',
+
+      '  </section>',
+      '  <div class="ir-wc-status-line" data-ir-wc-status>' + esc(t('Cabinet v0: compact local widgets first.', 'Кабинет v0: сначала компактные локальные виджеты.')) + '</div>',
+      '</div>'
+    ].join('');
+
+    document.body.classList.add('ir-wc-v0-ready');
+    bind(panel);
+    updateClock();
+  }
+
+  function bind(panel) {
+    const calendarToggle = panel.querySelector('[data-ir-wc-calendar-toggle]');
+    const calendarBody = panel.querySelector('[data-ir-wc-calendar-body]');
+
+    if (calendarToggle && calendarBody) {
+      calendarToggle.addEventListener('click', function () {
+        const isOpen = calendarToggle.getAttribute('aria-expanded') === 'true';
+        calendarToggle.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+        calendarToggle.classList.toggle('is-open', !isOpen);
+        calendarBody.hidden = isOpen;
+      });
+    }
+
+    panel.querySelectorAll('[data-ir-wc-placeholder]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        setStatus(btn.getAttribute('data-ir-wc-placeholder') || '');
+      });
+    });
+
+    const note = panel.querySelector('[data-ir-wc-note]');
+    if (note) {
+      note.addEventListener('input', function () {
+        localStorage.setItem(NOTE_KEY, note.value || '');
+      });
+    }
+  }
+
+  function updateClock() {
+    const now = new Date();
+    const lang = getLang() === 'en' ? 'en-US' : 'ru-RU';
+    const timeEl = document.querySelector('[data-ir-wc-time]');
+    const dateEl = document.querySelector('[data-ir-wc-date]');
+
+    if (timeEl) {
+      timeEl.textContent = now.toLocaleTimeString(lang, {
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+
+    if (dateEl) {
+      dateEl.textContent = now.toLocaleDateString(lang, {
+        weekday: 'long',
+        day: '2-digit',
+        month: 'long'
+      });
+    }
+  }
+
+  function bindWorkspaceToggleReturnHome() {
+    const btn = document.getElementById('workspaceToggle');
+    if (!btn || btn.dataset.irWcReturnBound === '1') return;
+    btn.dataset.irWcReturnBound = '1';
+
+    btn.addEventListener('click', function (event) {
+      const active = document.querySelector('.workspace-shell .workspace-panel.active');
+      const activePanel = active ? String(active.getAttribute('data-panel') || '') : '';
+
+      if (activePanel && activePanel !== 'workspace') {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+
+        const api = window.NSWorkspaceShell || null;
+        if (api && typeof api.setWorkspaceEnabled === 'function') api.setWorkspaceEnabled(true);
+        if (api && typeof api.setWorkspaceMode === 'function') api.setWorkspaceMode('split');
+        if (api && typeof api.setWorkspaceSection === 'function') api.setWorkspaceSection('workspace');
+
+        setTimeout(render, 30);
+        return false;
+      }
+
+      setTimeout(render, 80);
+    }, true);
+  }
+
+  function init() {
+    render();
+    bindWorkspaceToggleReturnHome();
+    setTimeout(render, 300);
+    setInterval(updateClock, 1000 * 20);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();

@@ -1,0 +1,37 @@
+{
+  "itemId": "catalog-template-folder-blog-post",
+  "templateId": "folder-blog-post",
+  "name": "Folder Blog Post",
+  "description": "Файловый шаблон блога из папки templates: headline, lead, body, takeaway.",
+  "version": "0.1.0",
+  "installed": true,
+  "trust": "local-file",
+  "template": {
+    "id": "folder-blog-post",
+    "name": "Folder Blog Post",
+    "category": "blog",
+    "description": "Файловый шаблон блога из папки templates.",
+    "defaults": {
+      "kicker": "Folder Blog Post",
+      "title": "Untitled Folder Blog Post",
+      "author": "IRGEZTNE Author",
+      "summary": "Локальный файловый шаблон статьи, загруженный из папки templates.",
+      "excerpt": "A blog post starter that now lives as a real JSON file.",
+      "seoTitle": "Untitled Folder Blog Post",
+      "seoDescription": "Локальный файловый шаблон блога, загруженный из папки templates.",
+      "keywords": ["blog", "folder", "template"],
+      "visualHtml": "<article class=\"ns-page-section ns-post\"><div class=\"ns-page-kicker\">Folder Blog Post</div><h1>Ваш заголовок из папки templates</h1><p class=\"ns-page-lead\"><strong>Лид:</strong> Начните с самой сильной строки и держите вступление собранным.</p><h2>Главная мысль</h2><p>Стройте основной текст на ясном ритме, фактах и аккуратном переходе.</p><blockquote>Use one compact quote or highlighted insight.</blockquote><h2>Вывод</h2><p>Завершите полезным финалом, выводом или следующим шагом.</p></article>",
+      "markdown": "# Ваш заголовок из папки templates\n\n**Лид:** Начните с самой сильной строки и держите вступление собранным.\n\n## Главная мысль\n\nСтройте основной текст на ясном ритме, фактах и аккуратном переходе.\n\n> Use one compact quote or highlighted insight.\n\n## Вывод\n\nЗавершите полезным финалом, выводом или следующим шагом.",
+      "blocks": [
+        { "type": "heading-1", "text": "Ваш заголовок из папки templates" },
+        { "type": "paragraph", "text": "Лид: Начните с самой сильной строки и держите вступление собранным." },
+        { "type": "heading-2", "text": "Главная мысль" },
+        { "type": "paragraph", "text": "Стройте основной текст на ясном ритме, фактах и аккуратном переходе." },
+        { "type": "quote", "text": "Use one compact quote or highlighted insight." },
+        { "type": "heading-2", "text": "Вывод" },
+        { "type": "paragraph", "text": "Завершите полезным финалом, выводом или следующим шагом." }
+      ],
+      "tags": ["blog", "folder", "local-file"]
+    }
+  }
+}

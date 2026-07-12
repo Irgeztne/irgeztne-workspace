@@ -1,0 +1,839 @@
+/* =========================================================
+   IRGEZTNE v040 - Files base CSS restore
+   Module-owned base styles for src/modules/files/files-v0.css.
+   Restores the full .ns-library-* visual foundation so Files
+   does not depend on hidden/shared panel CSS.
+   ========================================================= */
+
+[data-source-library-root],
+.ns-library-shell {
+  box-sizing: border-box;
+  min-width: 0;
+  width: 100%;
+}
+
+.ns-library-shell,
+[data-source-library-root] .ns-library-shell {
+  display: grid;
+  gap: 14px;
+  padding: 14px;
+  border: 1px solid rgba(126, 184, 255, 0.18);
+  border-radius: 20px;
+  background:
+    radial-gradient(circle at 0 0, rgba(59, 130, 246, 0.12), transparent 34%),
+    linear-gradient(180deg, rgba(13, 28, 54, 0.94), rgba(6, 14, 28, 0.96));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 16px 34px rgba(0,0,0,0.14);
+  color: rgba(232, 242, 255, 0.94);
+}
+
+.ns-library-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+}
+
+.ns-library-toolbar-left,
+.ns-library-toolbar-right {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+}
+
+.ns-library-toolbar-left {
+  flex: 1 1 auto;
+}
+
+.ns-library-toolbar-right {
+  justify-content: flex-end;
+}
+
+.ns-library-upload,
+.ns-library-search,
+.ns-library-select,
+.ns-library-shell input,
+.ns-library-shell select,
+.ns-library-shell textarea,
+.ns-library-shell button {
+  box-sizing: border-box;
+  font: inherit;
+}
+
+.ns-library-upload,
+.ns-library-search,
+.ns-library-select,
+.ns-library-shell input[type="text"],
+.ns-library-shell input[type="search"],
+.ns-library-shell input[type="number"],
+.ns-library-shell select,
+.ns-library-shell textarea {
+  min-height: 38px;
+  border-radius: 12px;
+  border: 1px solid rgba(126, 184, 255, 0.22);
+  background: rgba(5, 14, 29, 0.62);
+  color: rgba(238, 246, 255, 0.96);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+  outline: none;
+}
+
+.ns-library-search,
+.ns-library-select,
+.ns-library-shell input[type="text"],
+.ns-library-shell input[type="search"],
+.ns-library-shell input[type="number"],
+.ns-library-shell select,
+.ns-library-shell textarea {
+  padding: 9px 11px;
+}
+
+.ns-library-search::placeholder,
+.ns-library-shell textarea::placeholder {
+  color: rgba(190, 211, 239, 0.54);
+}
+
+.ns-library-upload {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 12px;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.ns-library-upload:hover,
+.ns-library-search:hover,
+.ns-library-select:hover,
+.ns-library-shell input:hover,
+.ns-library-shell select:hover,
+.ns-library-shell textarea:hover {
+  border-color: rgba(153, 207, 255, 0.42);
+  background: rgba(8, 20, 42, 0.72);
+}
+
+.ns-library-search:focus,
+.ns-library-select:focus,
+.ns-library-shell input:focus,
+.ns-library-shell select:focus,
+.ns-library-shell textarea:focus {
+  border-color: rgba(122, 190, 255, 0.66);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.16), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+.ns-library-count {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 6px 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(126, 184, 255, 0.14);
+  background: rgba(255,255,255,0.045);
+  color: rgba(203, 224, 250, 0.82);
+  font-size: 12px;
+  line-height: 1.25;
+  white-space: normal;
+}
+
+.ns-library-dropzone {
+  display: grid;
+  place-items: center;
+  min-height: 88px;
+  padding: 16px;
+  border: 1px dashed rgba(122, 190, 255, 0.34);
+  border-radius: 18px;
+  background: radial-gradient(circle at center, rgba(59, 130, 246, 0.13), transparent 62%), rgba(255,255,255,0.035);
+  color: rgba(214, 232, 255, 0.84);
+  text-align: center;
+  transition: border-color .16s ease, background .16s ease, transform .16s ease;
+}
+
+.ns-library-dropzone:hover,
+.ns-library-dropzone.is-dragover,
+.ns-library-dropzone.dragover {
+  border-color: rgba(153, 207, 255, 0.72);
+  background: radial-gradient(circle at center, rgba(59, 130, 246, 0.22), transparent 62%), rgba(59, 130, 246, 0.08);
+  transform: translateY(-1px);
+}
+
+.ns-library-main {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.92fr) minmax(320px, 1.18fr);
+  gap: 14px;
+  align-items: start;
+  min-width: 0;
+}
+
+.ns-library-list,
+.ns-library-preview {
+  min-width: 0;
+  width: 100%;
+}
+
+.ns-library-list {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+  max-height: min(62vh, 680px);
+  overflow: auto;
+  padding-right: 2px;
+}
+
+.ns-library-card {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+  padding: 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(126, 184, 255, 0.16);
+  background: linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.025));
+  color: rgba(232, 242, 255, 0.92);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .16s ease, background .16s ease, transform .16s ease, box-shadow .16s ease;
+}
+
+.ns-library-card:hover,
+.ns-library-card.is-active {
+  border-color: rgba(122, 190, 255, 0.48);
+  background: radial-gradient(circle at 0 0, rgba(59, 130, 246, 0.12), transparent 40%), linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.035));
+  box-shadow: 0 12px 28px rgba(0,0,0,0.16);
+  transform: translateY(-1px);
+}
+
+.ns-library-card-top {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+}
+
+.ns-library-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 11px;
+  background: rgba(59, 130, 246, 0.15);
+  color: #dbeafe;
+}
+
+.ns-library-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: rgba(242, 248, 255, 0.98);
+  font-weight: 760;
+}
+
+.ns-library-knowledge,
+.ns-library-tag {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(126, 184, 255, 0.16);
+  background: rgba(59, 130, 246, 0.12);
+  color: rgba(219, 234, 254, 0.92);
+  font-size: 11px;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.ns-library-meta {
+  color: rgba(190, 211, 239, 0.68);
+  font-size: 12px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.ns-library-tags,
+.ns-library-actions-inline,
+.ns-library-preview-actions,
+.ns-library-pack-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+}
+
+.ns-library-shell button,
+.ns-library-actions-inline button,
+.ns-library-preview-actions button,
+.ns-library-pack-actions button,
+.ns-library-image-tools__primary,
+.ns-library-image-tools__secondary {
+  appearance: none;
+  min-height: 36px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(126, 184, 255, 0.30);
+  background: linear-gradient(180deg, rgba(45, 94, 182, 0.96), rgba(23, 56, 122, 0.96));
+  color: #eef6ff;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.10), 0 8px 18px rgba(8, 24, 60, 0.18);
+  cursor: pointer;
+  transition: border-color .16s ease, background .16s ease, transform .16s ease, box-shadow .16s ease;
+}
+
+.ns-library-shell button:hover,
+.ns-library-actions-inline button:hover,
+.ns-library-preview-actions button:hover,
+.ns-library-pack-actions button:hover,
+.ns-library-image-tools__primary:hover,
+.ns-library-image-tools__secondary:hover {
+  border-color: rgba(153, 207, 255, 0.62);
+  background: linear-gradient(180deg, rgba(58, 116, 211, 0.98), rgba(28, 70, 148, 0.98));
+  transform: translateY(-1px);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.14), 0 10px 22px rgba(12, 34, 82, 0.26);
+}
+
+.ns-library-shell button.ns-danger-action,
+.ns-library-shell button[data-library-remove],
+.ns-library-preview-actions button.ns-danger-action,
+.ns-library-preview-actions button[data-library-remove],
+.ns-library-actions-inline button.ns-danger-action,
+.ns-library-actions-inline button[data-library-remove] {
+  background: linear-gradient(180deg, rgba(91, 26, 38, 0.98), rgba(56, 16, 25, 0.98));
+  border-color: rgba(244, 114, 182, 0.28);
+  color: #ffe0e6;
+}
+
+.ns-library-preview {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(126, 184, 255, 0.16);
+  background: rgba(3, 10, 22, 0.34);
+  min-height: 220px;
+  overflow: hidden;
+}
+
+.ns-library-preview-head,
+.ns-library-preview-body {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.ns-library-preview-title {
+  color: rgba(242, 248, 255, 0.98);
+  font-size: 16px;
+  line-height: 1.25;
+  font-weight: 790;
+  overflow-wrap: anywhere;
+}
+
+.ns-library-preview-subtitle {
+  color: rgba(190, 211, 239, 0.70);
+  font-size: 12px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.ns-library-preview-image {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  max-height: min(46vh, 420px);
+  object-fit: contain;
+  margin-inline: auto;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.035);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+}
+
+.ns-library-preview-text {
+  max-height: 360px;
+  overflow: auto;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(126, 184, 255, 0.14);
+  background: rgba(0,0,0,0.22);
+  color: rgba(232, 242, 255, 0.88);
+  white-space: pre-wrap;
+}
+
+.ns-library-preview-placeholder,
+.ns-library-empty {
+  display: grid;
+  place-items: center;
+  min-height: 90px;
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px dashed rgba(126, 184, 255, 0.18);
+  background: rgba(255,255,255,0.03);
+  color: rgba(190, 211, 239, 0.68);
+  text-align: center;
+}
+
+.ns-library-inspector,
+.ns-library-image-tools {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  width: 100%;
+  padding: 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(126, 184, 255, 0.14);
+  background: rgba(255,255,255,0.04);
+  color: rgba(214, 232, 255, 0.82);
+}
+
+.ns-library-image-tools__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+}
+
+.ns-library-image-tools__head strong {
+  color: rgba(242, 248, 255, 0.98);
+}
+
+.ns-library-image-tools__head span,
+.ns-library-image-tools__status {
+  color: rgba(190, 211, 239, 0.70);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.ns-library-image-tools__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px;
+  min-width: 0;
+}
+
+.ns-library-image-tools__grid label,
+.ns-library-image-tools__quality {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  color: rgba(190, 211, 239, 0.75);
+  font-size: 12px;
+}
+
+.ns-library-image-tools__grid select,
+.ns-library-image-tools__grid input[type="number"],
+.ns-library-image-tools__quality input[type="range"] {
+  width: 100%;
+  min-width: 0;
+}
+
+.ns-library-image-tools__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ns-library-image-tools__actions button {
+  flex: 1 1 160px;
+  min-width: 0;
+}
+
+@media (max-width: 1080px) {
+  .ns-library-main {
+    grid-template-columns: 1fr;
+  }
+
+  .ns-library-preview-image {
+    max-height: 360px;
+  }
+
+  .ns-library-image-tools__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 620px) {
+  .ns-library-shell {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .ns-library-toolbar,
+  .ns-library-toolbar-left,
+  .ns-library-toolbar-right {
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+
+  .ns-library-upload,
+  .ns-library-search,
+  .ns-library-select,
+  .ns-library-toolbar-left button,
+  .ns-library-toolbar-right button {
+    width: 100%;
+  }
+
+  .ns-library-preview {
+    padding: 12px;
+  }
+
+  .ns-library-preview-image {
+    max-height: 220px;
+  }
+
+  .ns-library-card-top {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .ns-library-knowledge {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+}
+
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-preview-image {
+  max-height: 180px;
+}
+
+/*
+  IRGEZTNE Files v0 compact polish
+  Keeps the shared v81 panel CSS in place, but normalizes the Files module
+  inside the narrow Workspace panel so Image Tools does not collapse sideways.
+*/
+
+.workspace-shell .workspace-panel[data-panel="files"] [data-source-library-root] {
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-shell {
+  min-width: 0;
+  width: 100%;
+}
+
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-toolbar,
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-toolbar-left,
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-toolbar-right {
+  min-width: 0;
+  width: 100%;
+}
+
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-toolbar {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-toolbar-left {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-upload,
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-search,
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-select,
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-toolbar-left button {
+  width: 100%;
+  min-width: 0;
+}
+
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  min-width: 0;
+}
+
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-list,
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-preview,
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-card,
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-preview-head,
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-preview-body,
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-inspector,
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-preview-actions {
+  min-width: 0;
+  width: 100%;
+}
+
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-preview-image {
+  display: block;
+  max-width: 100%;
+  max-height: 180px;
+  object-fit: contain;
+  margin-inline: auto;
+}
+
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-image-tools {
+  min-width: 0;
+  width: 100%;
+  overflow: hidden;
+}
+
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-image-tools__head,
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-image-tools__head > div {
+  min-width: 0;
+}
+
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-image-tools__head span,
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-image-tools__status,
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-preview-subtitle,
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-meta,
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-count {
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-image-tools__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+}
+
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-image-tools__grid label,
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-image-tools__quality {
+  min-width: 0;
+  width: 100%;
+}
+
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-image-tools__grid select,
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-image-tools__grid input[type="number"],
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-image-tools__quality input[type="range"] {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-image-tools__actions,
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-preview-actions,
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-actions-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-image-tools__actions button {
+  flex: 1 1 140px;
+  min-width: 0;
+}
+
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-preview-actions button {
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: normal;
+}
+
+@media (max-width: 920px) {
+  .workspace-shell .workspace-panel[data-panel="files"] .ns-library-image-tools__actions button,
+  .workspace-shell .workspace-panel[data-panel="files"] .ns-library-preview-actions button {
+    flex-basis: 100%;
+  }
+}
+
+/* =========================================================
+   IRGEZTNE Files · action buttons polish
+   Keep destructive Delete actions red, but make ordinary Files actions
+   feel like primary IRGEZTNE actions instead of flat gray buttons.
+   ========================================================= */
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-preview-actions button:not(.ns-danger-action):not([data-library-remove]),
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-actions-inline button:not(.ns-danger-action):not([data-library-remove]),
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-pack-actions button:not(.ns-danger-action):not([data-library-remove]) {
+  appearance: none;
+  color: #eef6ff;
+  background: linear-gradient(180deg, rgba(45, 94, 182, 0.96), rgba(23, 56, 122, 0.96));
+  border: 1px solid rgba(126, 184, 255, 0.38);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.10), 0 8px 18px rgba(8, 24, 60, 0.20);
+  text-shadow: none;
+}
+
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-preview-actions button:not(.ns-danger-action):not([data-library-remove]):hover,
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-actions-inline button:not(.ns-danger-action):not([data-library-remove]):hover,
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-pack-actions button:not(.ns-danger-action):not([data-library-remove]):hover {
+  color: #ffffff;
+  background: linear-gradient(180deg, rgba(58, 116, 211, 0.98), rgba(28, 70, 148, 0.98));
+  border-color: rgba(153, 207, 255, 0.62);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.14), 0 10px 22px rgba(12, 34, 82, 0.28);
+}
+
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-preview-actions button:not(.ns-danger-action):not([data-library-remove]):focus-visible,
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-actions-inline button:not(.ns-danger-action):not([data-library-remove]):focus-visible,
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-pack-actions button:not(.ns-danger-action):not([data-library-remove]):focus-visible {
+  outline: 2px solid rgba(126, 190, 255, 0.68);
+  outline-offset: 2px;
+}
+
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-preview-actions button.ns-danger-action,
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-preview-actions button[data-library-remove],
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-actions-inline button.ns-danger-action,
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-actions-inline button[data-library-remove],
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-pack-actions button.ns-danger-action,
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-pack-actions button[data-library-remove] {
+  background: linear-gradient(180deg, rgba(91, 26, 38, 0.98), rgba(56, 16, 25, 0.98));
+  border-color: rgba(244, 114, 182, 0.28);
+  color: #ffe0e6;
+}
+
+/* =========================================================
+   IRGEZTNE Files · all surfaces button polish
+   Applies the blue Files action style to both compact Workspace Files
+   and the larger Source Library surface. Delete/danger stays red.
+   ========================================================= */
+.ns-library-shell .ns-library-preview-actions button:not(.ns-danger-action):not([data-library-remove]),
+.ns-library-shell .ns-library-actions-inline button:not(.ns-danger-action):not([data-library-remove]),
+.ns-library-shell .ns-library-pack-actions button:not(.ns-danger-action):not([data-library-remove]) {
+  appearance: none;
+  color: #eef6ff;
+  background: linear-gradient(180deg, rgba(45, 94, 182, 0.96), rgba(23, 56, 122, 0.96));
+  border: 1px solid rgba(126, 184, 255, 0.38);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.10), 0 8px 18px rgba(8, 24, 60, 0.20);
+  text-shadow: none;
+}
+
+.ns-library-shell .ns-library-preview-actions button:not(.ns-danger-action):not([data-library-remove]):hover,
+.ns-library-shell .ns-library-actions-inline button:not(.ns-danger-action):not([data-library-remove]):hover,
+.ns-library-shell .ns-library-pack-actions button:not(.ns-danger-action):not([data-library-remove]):hover {
+  color: #ffffff;
+  background: linear-gradient(180deg, rgba(58, 116, 211, 0.98), rgba(28, 70, 148, 0.98));
+  border-color: rgba(153, 207, 255, 0.62);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.14), 0 10px 22px rgba(12, 34, 82, 0.28);
+}
+
+.ns-library-shell .ns-library-preview-actions button:not(.ns-danger-action):not([data-library-remove]):focus-visible,
+.ns-library-shell .ns-library-actions-inline button:not(.ns-danger-action):not([data-library-remove]):focus-visible,
+.ns-library-shell .ns-library-pack-actions button:not(.ns-danger-action):not([data-library-remove]):focus-visible {
+  outline: 2px solid rgba(126, 190, 255, 0.68);
+  outline-offset: 2px;
+}
+
+.ns-library-shell .ns-library-preview-actions button.ns-danger-action,
+.ns-library-shell .ns-library-preview-actions button[data-library-remove],
+.ns-library-shell .ns-library-actions-inline button.ns-danger-action,
+.ns-library-shell .ns-library-actions-inline button[data-library-remove],
+.ns-library-shell .ns-library-pack-actions button.ns-danger-action,
+.ns-library-shell .ns-library-pack-actions button[data-library-remove] {
+  background: linear-gradient(180deg, rgba(91, 26, 38, 0.98), rgba(56, 16, 25, 0.98));
+  border-color: rgba(244, 114, 182, 0.28);
+  color: #ffe0e6;
+}
+
+/* IRGEZTNE Files cleanup: hide old category filter/actions until Files is fully redesigned */
+.workspace-shell .workspace-panel[data-panel="files"] [data-library-category],
+.workspace-shell .workspace-panel[data-panel="files"] [data-library-set-category] {
+  display: none !important;
+}
+
+/* Keep Files focused on clear actions: open, tag, description, download, delete */
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-preview-actions {
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* IRGEZTNE Files cleanup: old knowledge graph sections are hidden until Relations becomes a real panel */
+.workspace-shell .workspace-panel[data-panel="files"] .ns-source-links,
+.workspace-shell .workspace-panel[data-panel="files"] .ns-source-graph,
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-pack-actions {
+  display: none !important;
+}
+
+/* IRGEZTNE Files cleanup:
+   Hide old knowledge/relation graph blocks from Files UI.
+   They can return later as a proper Relations panel. */
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-preview-body > *:has(.ns-source-links-head),
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-preview-body > *:has(.ns-source-graph-head),
+.workspace-shell .workspace-panel[data-panel="files"] .ns-source-links,
+.workspace-shell .workspace-panel[data-panel="files"] .ns-source-graph,
+.workspace-shell .workspace-panel[data-panel="files"] .ns-source-links-head,
+.workspace-shell .workspace-panel[data-panel="files"] .ns-source-graph-head {
+  display: none !important;
+}
+
+/* IRGEZTNE Files cleanup:
+   Hide old knowledge/source graph blocks globally.
+   The logic stays in code, but the old UI blocks are not shown in Files. */
+.ns-source-links,
+.ns-source-graph,
+.ns-source-links-head,
+.ns-source-graph-head {
+  display: none !important;
+}
+
+/* IRGEZTNE Files cleanup:
+   Hide old knowledge/source relation blocks in Files preview.
+   Logic stays for future Relations, but old UI is not shown now. */
+.ns-source-links-block,
+.ns-source-graph-block,
+.ns-source-links-list,
+.ns-source-graph-list,
+.ns-source-links-empty,
+.ns-source-graph-meta {
+  display: none !important;
+}
+
+/* =========================================================
+   IRGEZTNE v040b - Files layout polish
+   Small size/balance polish after v040 Files CSS restore.
+   Keeps Files module CSS owned by src/modules/files/files-v0.css.
+   Logic is untouched.
+   ========================================================= */
+
+.ns-library-main {
+  align-items: start;
+  grid-template-columns: minmax(250px, 0.82fr) minmax(360px, 1.18fr);
+}
+
+.ns-library-list {
+  align-self: start;
+  min-height: 0;
+  max-height: min(48vh, 520px);
+}
+
+.ns-library-preview {
+  align-self: start;
+  min-height: 0;
+}
+
+.ns-library-preview-image {
+  max-width: min(100%, 620px);
+  max-height: min(38vh, 340px);
+}
+
+/* Keep the preview area compact when there is only one/few files. */
+.ns-library-list:has(.ns-library-card:only-child) {
+  max-height: none;
+}
+
+/* Image Tools should stay readable but not feel oversized in the big Files view. */
+.ns-library-image-tools {
+  max-width: 100%;
+}
+
+.ns-library-image-tools__grid {
+  align-items: end;
+}
+
+@media (min-width: 1081px) {
+  .ns-library-preview {
+    max-width: 100%;
+  }
+
+  .ns-library-preview-body {
+    justify-items: stretch;
+  }
+}
+
+/* Compact right Workspace panel: keep image readable and not too tiny. */
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-main {
+  grid-template-columns: 1fr;
+}
+
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-list {
+  max-height: none;
+}
+
+.workspace-shell .workspace-panel[data-panel="files"] .ns-library-preview-image {
+  max-width: min(100%, 280px);
+  max-height: 190px;
+}

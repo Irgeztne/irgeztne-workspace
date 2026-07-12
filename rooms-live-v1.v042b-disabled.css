@@ -1,0 +1,11 @@
+/* IRGEZTNE v042b
+   Legacy Live room CSS is disabled.
+   User-facing Chat / Чат styles live in rooms-v0.css.
+*/
+
+[data-live-rooms-panel],
+.rooms-live-v1,
+.rooms-live-v039d,
+.rooms-live-v039e {
+  display: none !important;
+}

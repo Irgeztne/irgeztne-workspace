@@ -1,0 +1,98 @@
+/* IRGEZTNE_V005_WORKSPACE_SECTION_RAIL
+   Возвращает удобное горизонтальное меню внутри рабочих поверхностей. */
+
+.irg-workspace-section-rail-v005 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  max-width: 100%;
+  margin: 0 0 12px;
+  padding: 10px;
+  border: 1px solid rgba(83, 142, 255, .22);
+  border-radius: 18px;
+  background:
+    linear-gradient(135deg, rgba(19, 49, 93, .72), rgba(8, 17, 34, .86)),
+    rgba(8, 17, 34, .78);
+  box-shadow: 0 18px 46px rgba(0, 0, 0, .22);
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(83, 142, 255, .55) rgba(6, 13, 25, .6);
+}
+
+.irg-workspace-section-rail-v005::-webkit-scrollbar {
+  height: 8px;
+}
+
+.irg-workspace-section-rail-v005::-webkit-scrollbar-track {
+  background: rgba(6, 13, 25, .55);
+  border-radius: 999px;
+}
+
+.irg-workspace-section-rail-v005::-webkit-scrollbar-thumb {
+  background: rgba(83, 142, 255, .65);
+  border-radius: 999px;
+}
+
+.irg-workspace-section-rail-v005__label {
+  flex: 0 0 auto;
+  padding: 0 4px 0 2px;
+  color: rgba(177, 202, 232, .82);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.irg-workspace-section-rail-v005__btn {
+  flex: 0 0 auto;
+  min-height: 34px;
+  padding: 8px 12px;
+  border: 1px solid rgba(123, 169, 255, .24);
+  border-radius: 13px;
+  background: rgba(10, 25, 51, .72);
+  color: rgba(226, 239, 255, .9);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 750;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform .16s ease, border-color .16s ease, background .16s ease, color .16s ease;
+}
+
+.irg-workspace-section-rail-v005__btn:hover {
+  transform: translateY(-1px);
+  border-color: rgba(118, 180, 255, .52);
+  background: rgba(33, 80, 151, .45);
+  color: #fff;
+}
+
+.irg-workspace-section-rail-v005__btn.is-active {
+  border-color: rgba(118, 180, 255, .78);
+  background: linear-gradient(135deg, rgba(47, 123, 230, .86), rgba(107, 80, 234, .76));
+  color: #fff;
+}
+
+.workspace-shell > .irg-workspace-section-rail-v005,
+.cabinet-expanded-body > .irg-workspace-section-rail-v005,
+#cabinetExpandedBody > .irg-workspace-section-rail-v005 {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+}
+
+@media (max-width: 900px) {
+  .irg-workspace-section-rail-v005 {
+    padding: 8px;
+  }
+
+  .irg-workspace-section-rail-v005__label {
+    display: none;
+  }
+
+  .irg-workspace-section-rail-v005__btn {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+}

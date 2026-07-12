@@ -1,0 +1,459 @@
+/* IRGEZTNE ecosystem v0 shells: Rooms, Fili Store, Fili Safe, Analytics
+   Local-first direction cards only: no finance, no server, no P2P/video runtime. */
+
+.workspace-home-future-block--ecosystem,
+.cabinet-group--ecosystem,
+.cabinet-home-future-card {
+  position: relative;
+}
+
+.workspace-home-future-block--ecosystem {
+  margin-top: 14px;
+}
+
+.ecosystem-v0-card-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.ecosystem-v0-card {
+  cursor: pointer;
+  min-height: 92px;
+  text-align: left;
+  overflow: hidden;
+}
+
+.ecosystem-v0-card:hover,
+.ecosystem-v0-card:focus-visible {
+  transform: translateY(-1px);
+}
+
+.ecosystem-v0-card .cabinet-tile-title,
+.ecosystem-v0-card strong {
+  display: block;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.ecosystem-v0-card .cabinet-tile-text,
+.ecosystem-v0-card span:not(.cabinet-tile-title) {
+  white-space: normal;
+  line-height: 1.45;
+}
+
+.cabinet-group--ecosystem .ecosystem-v0-card-grid {
+  grid-template-columns: repeat(4, minmax(130px, 1fr));
+}
+
+.cabinet-home-future-card .ecosystem-v0-card-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.ecosystem-v0-shell {
+  min-height: 220px;
+}
+
+.module-stage.is-v0 {
+  border-color: rgba(125, 211, 252, 0.35);
+  background: rgba(14, 165, 233, 0.10);
+  color: #bae6fd;
+}
+
+.module-shell-card--rooms,
+.module-shell-card--fili-store,
+.module-shell-card--fili-safe,
+.module-shell-card--analytics {
+  overflow: hidden;
+}
+
+.ecosystem-v0-grid .cabinet-panel-card p,
+.ecosystem-v0-shell .module-block-text {
+  line-height: 1.55;
+}
+
+.ecosystem-v0-shell .module-checklist span,
+.ecosystem-v0-grid .module-checklist span {
+  white-space: normal;
+}
+
+@media (max-width: 1180px) {
+  .ecosystem-v0-card-grid,
+  .cabinet-group--ecosystem .ecosystem-v0-card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 860px) {
+  .ecosystem-v0-shell .module-block-grid.two-up,
+  .ecosystem-v0-grid,
+  .ecosystem-v0-card-grid,
+  .cabinet-home-future-card .ecosystem-v0-card-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ecosystem v0 useful modules + compact workspace panel polish */
+.ecosystem-v0-module,
+.ecosystem-v0-module * {
+  box-sizing: border-box;
+}
+
+.ecosystem-v0-module {
+  width: 100%;
+  min-width: 0;
+  color: var(--text-1, #eaf2ff);
+}
+
+.ecosystem-v0-head,
+.ecosystem-v0-card {
+  border: 1px solid rgba(104, 164, 255, 0.18);
+  background: linear-gradient(180deg, rgba(13, 31, 58, 0.96), rgba(8, 21, 42, 0.96));
+  border-radius: 18px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.035);
+}
+
+.ecosystem-v0-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px;
+  margin-bottom: 14px;
+}
+
+.ecosystem-v0-kicker {
+  color: rgba(148, 190, 255, 0.78);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.ecosystem-v0-head h3,
+.ecosystem-v0-card h4 {
+  margin: 0;
+  color: #f3f8ff;
+}
+
+.ecosystem-v0-head h3 {
+  font-size: clamp(18px, 2vw, 26px);
+  line-height: 1.08;
+}
+
+.ecosystem-v0-head p,
+.ecosystem-v0-muted,
+.ecosystem-v0-empty,
+.ecosystem-v0-card p,
+.ecosystem-v0-field span {
+  color: rgba(217, 229, 255, 0.72);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.ecosystem-v0-head p {
+  margin: 8px 0 0;
+  max-width: 760px;
+}
+
+.ecosystem-v0-headchips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  justify-content: flex-end;
+}
+
+.ecosystem-v0-chip {
+  border: 1px solid rgba(124, 183, 255, 0.2);
+  border-radius: 999px;
+  padding: 6px 9px;
+  color: rgba(226, 238, 255, 0.82);
+  background: rgba(255,255,255,0.045);
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.ecosystem-v0-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 0.9fr) minmax(0, 1.15fr);
+  gap: 12px;
+}
+
+.ecosystem-v0-layout--store,
+.ecosystem-v0-layout--safe,
+.ecosystem-v0-layout--analytics {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.ecosystem-v0-card {
+  min-width: 0;
+  padding: 14px;
+}
+
+.ecosystem-v0-card h4 {
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.ecosystem-v0-input,
+.ecosystem-v0-textarea,
+.ecosystem-v0-btn {
+  width: 100%;
+  min-width: 0;
+  font: inherit;
+}
+
+.ecosystem-v0-input,
+.ecosystem-v0-textarea {
+  border: 1px solid rgba(117, 175, 255, 0.18);
+  background: rgba(4, 13, 27, 0.72);
+  color: #edf5ff;
+  border-radius: 12px;
+  padding: 10px 11px;
+  outline: none;
+  font-size: 12px;
+}
+
+.ecosystem-v0-textarea {
+  min-height: 86px;
+  resize: vertical;
+  line-height: 1.45;
+}
+
+.ecosystem-v0-field,
+.ecosystem-v0-card--form {
+  display: grid;
+  gap: 9px;
+}
+
+.ecosystem-v0-btn {
+  appearance: none;
+  border: 1px solid rgba(126, 184, 255, 0.25);
+  border-radius: 12px;
+  min-height: 36px;
+  padding: 0 12px;
+  color: #edf5ff;
+  background: linear-gradient(180deg, rgba(31, 61, 113, 0.98), rgba(16, 38, 76, 0.98));
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.ecosystem-v0-btn:hover,
+.ecosystem-v0-list-row:hover,
+.ecosystem-v0-list-row.is-active {
+  border-color: rgba(126, 184, 255, 0.45);
+  background: linear-gradient(180deg, rgba(44, 91, 167, 0.92), rgba(18, 44, 86, 0.98));
+}
+
+.ecosystem-v0-btn--primary {
+  border-color: rgba(96, 159, 255, 0.62);
+  background: linear-gradient(180deg, #4c8dff, #1767df);
+}
+
+.ecosystem-v0-list,
+.ecosystem-v0-items,
+.ecosystem-v0-messages {
+  display: grid;
+  gap: 8px;
+}
+
+.ecosystem-v0-list-row,
+.ecosystem-v0-message,
+.ecosystem-v0-item,
+.ecosystem-v0-category,
+.ecosystem-v0-metric,
+.ecosystem-v0-empty {
+  border: 1px solid rgba(120, 180, 255, 0.13);
+  background: rgba(255,255,255,0.04);
+  border-radius: 13px;
+  padding: 10px;
+  min-width: 0;
+}
+
+.ecosystem-v0-list-row {
+  appearance: none;
+  width: 100%;
+  text-align: left;
+  color: #edf5ff;
+  cursor: pointer;
+}
+
+.ecosystem-v0-list-row strong,
+.ecosystem-v0-item strong,
+.ecosystem-v0-message strong,
+.ecosystem-v0-category strong {
+  display: block;
+  color: #f4f8ff;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.ecosystem-v0-list-row span,
+.ecosystem-v0-item span,
+.ecosystem-v0-message span,
+.ecosystem-v0-category span,
+.ecosystem-v0-metric span,
+.ecosystem-v0-metric em {
+  display: block;
+  color: rgba(217, 229, 255, 0.66);
+  font-size: 11px;
+  line-height: 1.4;
+  font-style: normal;
+}
+
+.ecosystem-v0-message p,
+.ecosystem-v0-item p {
+  margin: 5px 0;
+  color: rgba(217, 229, 255, 0.74);
+  font-size: 12px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.ecosystem-v0-category-grid,
+.ecosystem-v0-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.ecosystem-v0-metric strong {
+  display: block;
+  margin-top: 5px;
+  color: #fff;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.ecosystem-v0-big-number {
+  margin: 8px 0;
+  color: #fff;
+  font-size: clamp(34px, 6vw, 58px);
+  line-height: 1;
+  font-weight: 900;
+}
+
+.ecosystem-v0-card-grid--home .ecosystem-v0-card,
+.cabinet-group--ecosystem .ecosystem-v0-card {
+  min-height: 104px;
+}
+
+.workspace-shell .ecosystem-v0-head,
+.workspace-shell .ecosystem-v0-layout,
+.workspace-shell .ecosystem-v0-layout--store,
+.workspace-shell .ecosystem-v0-layout--safe,
+.workspace-shell .ecosystem-v0-layout--analytics,
+.workspace-shell .ecosystem-v0-category-grid,
+.workspace-shell .ecosystem-v0-metric-grid {
+  grid-template-columns: 1fr;
+}
+
+.workspace-shell .ecosystem-v0-head {
+  display: grid;
+  gap: 10px;
+  padding: 13px;
+}
+
+.workspace-shell .ecosystem-v0-headchips {
+  justify-content: flex-start;
+}
+
+.workspace-shell .ecosystem-v0-card {
+  padding: 12px;
+}
+
+.workspace-shell .ecosystem-v0-head h3 {
+  font-size: 18px;
+}
+
+.workspace-shell .ecosystem-v0-textarea {
+  min-height: 72px;
+}
+
+@media (max-width: 1100px) {
+  .ecosystem-v0-layout,
+  .ecosystem-v0-layout--store,
+  .ecosystem-v0-layout--safe,
+  .ecosystem-v0-layout--analytics {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Keep big modules usable inside the narrow Workspace sidebar. */
+.workspace-shell [data-map-root] .ns-map-v1__head,
+.workspace-shell [data-map-root] .ns-map-v1__layout,
+.workspace-shell .ns-map-v1__head,
+.workspace-shell .ns-map-v1__layout {
+  display: grid;
+  grid-template-columns: 1fr !important;
+  gap: 12px;
+}
+
+.workspace-shell [data-map-root] .ns-map-v1__head,
+.workspace-shell .ns-map-v1__head {
+  padding: 13px;
+}
+
+.workspace-shell [data-map-root] .ns-map-v1__title,
+.workspace-shell .ns-map-v1__title {
+  font-size: 18px;
+}
+
+.workspace-shell [data-map-root] .ns-map-v1__copy,
+.workspace-shell .ns-map-v1__copy {
+  font-size: 12px;
+}
+
+.workspace-shell [data-map-root] .ns-map-v1__stage,
+.workspace-shell [data-map-root] .ns-map-v1__canvas,
+.workspace-shell .ns-map-v1__stage,
+.workspace-shell .ns-map-v1__canvas {
+  min-height: 260px;
+}
+
+.workspace-shell [data-map-root] .ns-map-v1__mini-grid,
+.workspace-shell .ns-map-v1__mini-grid {
+  grid-template-columns: 1fr;
+}
+
+.workspace-shell [data-documents-root] .ns-documents-v1,
+.workspace-shell .ns-documents-v1 {
+  min-height: auto;
+}
+
+.workspace-shell [data-documents-root] .ns-documents-v1__hero,
+.workspace-shell [data-documents-root] .ns-documents-v1__future-card,
+.workspace-shell .ns-documents-v1__hero,
+.workspace-shell .ns-documents-v1__future-card {
+  display: grid;
+  grid-template-columns: 1fr !important;
+  align-items: stretch;
+  gap: 12px;
+}
+
+.workspace-shell [data-documents-root] .ns-documents-v1__layout,
+.workspace-shell [data-documents-root] .ns-documents-v1__form-grid,
+.workspace-shell [data-documents-root] .ns-documents-v1__meta-grid,
+.workspace-shell .ns-documents-v1__layout,
+.workspace-shell .ns-documents-v1__form-grid,
+.workspace-shell .ns-documents-v1__meta-grid {
+  grid-template-columns: 1fr !important;
+}
+
+.workspace-shell [data-documents-root] .ns-documents-v1__title,
+.workspace-shell .ns-documents-v1__title {
+  font-size: 22px;
+}
+
+.workspace-shell [data-documents-root] .ns-documents-v1__textarea,
+.workspace-shell .ns-documents-v1__textarea {
+  min-height: 220px;
+}
+
+.workspace-shell [data-documents-root] .ns-documents-v1__list,
+.workspace-shell .ns-documents-v1__list {
+  max-height: 260px;
+}

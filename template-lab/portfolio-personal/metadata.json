@@ -1,0 +1,20 @@
+{
+  "id": "portfolio-personal",
+  "version": "0.1.0",
+  "status": "template-lab",
+  "name": { "en": "Portfolio / Personal", "ru": "Портфолио / Персональный сайт" },
+  "description": {
+    "en": "A wide visual portfolio template with selected works, case hierarchy, about section, process and contact CTA.",
+    "ru": "Широкий визуальный шаблон портфолио: выбранные работы, иерархия кейсов, блок о себе, процесс и контактный CTA."
+  },
+  "category": "portfolio",
+  "recommendedFor": ["portfolio", "personal site", "creator", "designer", "writer", "photographer", "developer", "consultant"],
+  "features": { "themes": ["light", "dark"], "locales": ["en", "ru"], "rss": false, "stickyHeader": true, "wideLayout": true, "responsive": true, "visualProjects": true },
+  "slots": { "brand": { "logoFallback": "brand.logoFallback", "title": "brand.title", "subtitle": "brand.subtitle" }, "visuals": ["hero.visual", "works.featured.image", "works.second.image", "works.third.image"] },
+  "imageGuidelines": {
+    "sourceRule": "../template-image-rules.json",
+    "recommendedImages": ["work samples", "case visuals", "project screenshots", "artwork", "product screenshots"],
+    "people": "Only if the portfolio owner chooses their own images. Demo images should not make a random person the identity of the template.",
+    "demoImageRule": { "status": "demo-only", "mustReplaceBeforePublishing": true, "message": { "en": "Demo visuals are placeholders. Replace them with your own works before publishing.", "ru": "Демо-визуалы — это заглушки. Перед публикацией замените их своими работами." } }
+  }
+}

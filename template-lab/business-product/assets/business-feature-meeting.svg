@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 760">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#15110d"/>
+      <stop offset=".48" stop-color="#4b2c1c"/>
+      <stop offset="1" stop-color="#d8945b"/>
+    </linearGradient>
+    <radialGradient id="lamp" cx=".28" cy=".22" r=".48">
+      <stop offset="0" stop-color="#ffe7c8" stop-opacity=".52"/>
+      <stop offset=".34" stop-color="#ffffff" stop-opacity=".15"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1400" height="760" fill="url(#bg)"/>
+  <rect width="1400" height="760" fill="url(#lamp)"/>
+
+  <rect x="150" y="390" width="860" height="160" rx="40" fill="#17120f" opacity=".48"/>
+  <rect x="250" y="300" width="430" height="230" rx="28" fill="#0e131b" opacity=".72"/>
+  <rect x="300" y="350" width="320" height="120" rx="16" fill="#1b2630"/>
+  <path d="M330 385h210M330 420h250M330 455h170" stroke="#8fd0ff" stroke-width="10" stroke-linecap="round" opacity=".55"/>
+
+  <circle cx="850" cy="365" r="54" fill="#f5d4b0" opacity=".82"/>
+  <rect x="800" y="430" width="120" height="120" rx="58" fill="#101614" opacity=".68"/>
+  <circle cx="1060" cy="350" r="42" fill="#f5d4b0" opacity=".72"/>
+  <rect x="1020" y="405" width="95" height="105" rx="46" fill="#101614" opacity=".52"/>
+
+  <path d="M0 620 C240 510 430 590 660 480 C920 355 1120 430 1400 310 L1400 760 L0 760Z" fill="#0b0908" opacity=".28"/>
+</svg>

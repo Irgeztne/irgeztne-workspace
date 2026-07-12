@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>IRGEZTNE Editor Core Toolbar API Demo</title>
+  <link rel="stylesheet" href="./irgeztne-editor-core.css">
+</head>
+<body>
+  <main class="ir-editor-shell">
+    <header class="ir-editor-head">
+      <div>
+        <h1>IRGEZTNE Editor Core Toolbar API Demo</h1>
+        <p>v064j: API contract polish + toolbar internal history undo/redo.</p>
+      </div>
+      <button id="clearBtn" type="button">Очистить</button>
+    </header>
+
+    <section class="ir-editor-layout">
+      <div class="ir-editor-panel">
+        <div id="toolbar" class="ir-editor-toolbar ir-editor-toolbar--v064" data-ir-toolbar-version="v064i">
+          <!-- IRGEZTNE_EDITOR_CORE_TOOLBAR_DEMO_V064A -->
+          <div class="ir-editor-toolbar-group">
+            <button data-inline="strong" type="button" title="Жирный"><b>B</b></button>
+            <button data-inline="em" type="button" title="Курсив"><i>I</i></button>
+            <button data-inline="u" type="button" title="Подчёркивание"><u>U</u></button>
+            <button data-inline="s" type="button" title="Зачёркивание"><s>S</s></button>
+            <button data-inline="code" type="button" title="Code">{ }</button>
+          </div>
+
+          <div class="ir-editor-toolbar-group">
+            <select data-block-select title="Стиль блока">
+              <option value="p">Paragraph</option>
+              <option value="h2">Heading 2</option>
+              <option value="h3">Heading 3</option>
+              <option value="blockquote">Quote</option>
+            </select>
+          </div>
+
+          <div class="ir-editor-toolbar-group">
+            <button data-action="link" type="button" title="Ссылка">Link</button>
+            <button data-action="unlink" type="button" title="Убрать ссылки">Unlink</button>
+            <button data-action="line" type="button" title="Линия">Line</button>
+            <button data-action="symbols" type="button" title="Символы">☺</button>
+          </div>
+
+          <div class="ir-editor-toolbar-group">
+            <button data-command="justifyLeft" type="button" title="По левому краю">≡</button>
+            <button data-command="justifyCenter" type="button" title="По центру">≣</button>
+            <button data-command="justifyRight" type="button" title="По правому краю">≡</button>
+            <button data-command="insertUnorderedList" type="button" title="Маркированный список">• List</button>
+            <button data-command="insertOrderedList" type="button" title="Нумерованный список">1. List</button>
+          </div>
+
+          <div class="ir-editor-toolbar-group">
+            <button data-command="undo" type="button" title="Отменить">↶</button>
+            <button data-command="redo" type="button" title="Повторить">↷</button>
+            <button data-command="removeFormat" type="button" title="Очистить формат">Clear</button>
+            <button data-action="paste-mode" type="button" title="Режим вставки" aria-pressed="false">Paste: Rich</button>
+            <button data-action="html" type="button" title="HTML source">&lt;&gt; HTML</button>
+          </div>
+        </div>
+
+        <div id="apiEditor" class="ir-editor-surface" contenteditable="true" spellcheck="true" role="textbox" aria-multiline="true" data-placeholder="Напишите текст..."></div>
+        <div class="ir-editor-status" id="status">Готово</div>
+      </div>
+
+      <aside class="ir-preview-panel">
+        <h2>Preview</h2>
+        <article id="preview" class="ir-preview"></article>
+        <h2>HTML</h2>
+        <textarea id="htmlSource" readonly></textarea>
+      </aside>
+    </section>
+  </main>
+
+  <script src="./irgeztne-editor-core-api.js"></script>
+  <script src="./irgeztne-editor-core-toolbar.js"></script>
+  <script src="./toolbar-api-demo.js"></script>
+</body>
+</html>

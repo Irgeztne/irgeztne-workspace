@@ -1,0 +1,76 @@
+    createSitePageDraft() {
+      const locale = normalizeLocale(getUiLanguage());
+      const baseTitle = t("New site page", "Новая страница сайта");
+      const state = readEditorSitePagesState();
+      const nextNumber = (state.pages || []).filter((page) => String(page.type || "") === "page").length + 1;
+      const title = nextNumber > 1 ? baseTitle + " " + nextNumber : baseTitle;
+      const slug = uniqueEditorSitePageSlug(state.pages, slugify(title) || "site-page");
+      const time = nowIso();
+      const page = normalizeEditorSitePage({
+        id: uid("page"),
+        title,
+        slug,
+        status: "draft",
+        type: "page",
+        menu: true,
+        summary: t("Write this page in Editor, then manage slug/menu/status in the site structure.", "Напишите эту страницу в Editor, а slug/меню/статус управляйте в структуре сайта."),
+        createdAt: time,
+        updatedAt: time
+      }, state.pages.length);
+
+      const draft = createDraft(DEFAULT_TEMPLATE_ID, { locale });
+      const visualHtml = '<section class="ns-page-section ns-page-hero ns-page-hero--split"><div class="ns-page-hero__content"><div class="ns-page-kicker">' + escapeHtml(t("Site page", "Страница сайта")) + '</div><h1>' + escapeHtml(page.title) + '</h1><p>' + escapeHtml(page.summary) + '</p></div></section><section class="ns-page-section"><h2>' + escapeHtml(t("Content", "Контент")) + '</h2><p>' + escapeHtml(t("Start writing this site page here.", "Начните писать страницу сайта здесь.")) + '</p></section>';
+      const nextDraft = {
+        ...draft,
+        status: "draft",
+        project: { ...(draft.project || {}), name: page.title, slug: page.slug },
+        meta: {
+          ...(draft.meta || {}),
+          title: page.title,
+          slug: page.slug,
+          category: "website",
+          kicker: t("Site page", "Страница сайта"),
+          summary: page.summary,
+          excerpt: page.summary,
+          seoTitle: page.title,
+          seoDescription: page.summary,
+          tags: Array.from(new Set([...(draft.meta && draft.meta.tags || []), "site-page"].filter(Boolean)))
+        },
+        write: {
+          ...(draft.write || {}),
+          visualHtml,
+          markdown: "# " + page.title + "\n\n" + page.summary + "\n",
+          activeWorkspaceTab: "draft",
+          activeCabinetTab: "write"
+        },
+        sitePageId: page.id,
+        updatedAt: time
+      };
+
+      const saved = this.store.saveDraft(nextDraft);
+      page.draftId = saved.id;
+      state.pages.unshift(page);
+      state.activePageId = page.id;
+      writeEditorSitePagesState(state);
+
+      this.currentDraft = deepClone(saved);
+      this.lastSavedAt = saved.updatedAt || this.lastSavedAt || "";
+      this.renderDraftList();
+      this.renderPickerGrid();
+      this.renderLeftTemplates();
+      this.mountWriteSurface(this.currentDraft);
+      this.renderDynamicPanels(this.currentDraft);
+      this.renderContextRail();
+      this.renderLeftSources();
+      this.syncHeaderState();
+      this.switchTab(this.surfaceType === "cabinet" ? "write" : "draft");
+      this.closePicker();
+      this.toggleLeftPanel(false);
+      this.updateResponsiveState();
+      this.scrollPrimaryIntoView();
+      this.flashStatus(t("Site page created and opened.", "Страница сайта создана и открыта."));
+      this.broadcast();
+      window.dispatchEvent(new CustomEvent("irgeztne:site-pages-updated", { detail: { source: "editor", draftId: saved.id, pageId: page.id } }));
+      return deepClone(saved);
+    }
+

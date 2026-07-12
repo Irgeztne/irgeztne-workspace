@@ -1,0 +1,38 @@
+/* IRGEZTNE Workspace Site Studio topbar cleanup v5
+   Exact cleanup only. Keeps Pages panel / Settings panel / + New page / HTML / red × visible. */
+.irgeztne-site-studio-topbar-clean-hidden-v5,
+[data-irgeztne-hidden-by="site-studio-topbar-clean-v5"] {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* 1.0.0 v6f: last-loaded visible label guard for Web Studio top tabs.
+   This file is loaded after the older polish CSS, so it wins. */
+.ir-site-studio-v5-overlay .ir-site-studio-v5-tabs--top .ir-site-studio-v5-tab,
+.ir-site-studio-v5-overlay.ir-site-studio-v5-theme-light .ir-site-studio-v5-tabs--top .ir-site-studio-v5-tab,
+.ir-site-studio-v5-overlay.ir-site-studio-v5-theme-dark .ir-site-studio-v5-tabs--top .ir-site-studio-v5-tab,
+.ir-site-studio-v5-overlay.ir-site-studio-v5-lang-ru .ir-site-studio-v5-tabs--top .ir-site-studio-v5-tab,
+.ir-site-studio-v5-overlay.ir-site-studio-v5-lang-en .ir-site-studio-v5-tabs--top .ir-site-studio-v5-tab {
+  font-size: 13px !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+}
+
+.ir-site-studio-v5-overlay .ir-site-studio-v5-tabs--top .ir-site-studio-v5-tab::before,
+.ir-site-studio-v5-overlay .ir-site-studio-v5-tabs--top .ir-site-studio-v5-tab::after,
+.ir-site-studio-v5-overlay.ir-site-studio-v5-theme-light .ir-site-studio-v5-tabs--top .ir-site-studio-v5-tab::before,
+.ir-site-studio-v5-overlay.ir-site-studio-v5-theme-light .ir-site-studio-v5-tabs--top .ir-site-studio-v5-tab::after,
+.ir-site-studio-v5-overlay.ir-site-studio-v5-theme-dark .ir-site-studio-v5-tabs--top .ir-site-studio-v5-tab::before,
+.ir-site-studio-v5-overlay.ir-site-studio-v5-theme-dark .ir-site-studio-v5-tabs--top .ir-site-studio-v5-tab::after,
+.ir-site-studio-v5-overlay.ir-site-studio-v5-lang-ru .ir-site-studio-v5-tabs--top .ir-site-studio-v5-tab::before,
+.ir-site-studio-v5-overlay.ir-site-studio-v5-lang-ru .ir-site-studio-v5-tabs--top .ir-site-studio-v5-tab::after,
+.ir-site-studio-v5-overlay.ir-site-studio-v5-lang-en .ir-site-studio-v5-tabs--top .ir-site-studio-v5-tab::before,
+.ir-site-studio-v5-overlay.ir-site-studio-v5-lang-en .ir-site-studio-v5-tabs--top .ir-site-studio-v5-tab::after {
+  content: "" !important;
+  display: none !important;
+}
+
+.ir-site-studio-v5-overlay.ir-site-studio-v5-lang-ru .ir-site-studio-v5-tabs--top .ir-site-studio-v5-tab[data-v5-tab="publish"] {
+  min-width: 104px !important;
+}

@@ -1,0 +1,92 @@
+  // preview.4: Site pages are edited from Editor, while Site / Pages stays an internal structure engine.
+  const SITE_PAGES_EDITOR_STORAGE_KEY = "irgeztne.sitePages.v0";
+
+  function normalizeEditorSitePage(raw, index) {
+    const source = raw && typeof raw === "object" ? raw : {};
+    const title = String(source.title || (index === 0 ? "Home" : "Untitled page"));
+    const createdAt = source.createdAt || nowIso();
+    return {
+      id: String(source.id || uid("page")),
+      title,
+      slug: slugify(source.slug || title) || "page",
+      status: ["draft", "published", "archived"].includes(String(source.status || "").toLowerCase()) ? String(source.status).toLowerCase() : "draft",
+      type: String(source.type || (index === 0 ? "home" : "page")),
+      menu: source.menu !== false,
+      summary: String(source.summary || ""),
+      draftId: String(source.draftId || ""),
+      createdAt,
+      updatedAt: source.updatedAt || createdAt
+    };
+  }
+
+  function defaultEditorSitePagesState() {
+    const time = nowIso();
+    const defaults = [
+      { id: "page_index", title: "Home", slug: "index", status: "published", type: "home", menu: true, summary: "Main landing page for this local site." },
+      { id: "page_about", title: "About", slug: "about", status: "draft", type: "page", menu: true, summary: "Project, team, or product description." },
+      { id: "page_contact", title: "Contact", slug: "contact", status: "draft", type: "page", menu: true, summary: "Contact and next action page." }
+    ];
+    return {
+      version: 1,
+      activePageId: "page_index",
+      createdAt: time,
+      updatedAt: time,
+      publishConfig: { provider: "manual", outputDir: "output/", status: "foundation-only" },
+      pages: defaults.map((page, index) => normalizeEditorSitePage({ ...page, createdAt: time, updatedAt: time }, index))
+    };
+  }
+
+  function readEditorSitePagesState() {
+    try {
+      const raw = localStorage.getItem(SITE_PAGES_EDITOR_STORAGE_KEY);
+      const fallback = defaultEditorSitePagesState();
+      const parsed = raw ? JSON.parse(raw) : fallback;
+      const source = parsed && typeof parsed === "object" ? parsed : fallback;
+      const pages = Array.isArray(source.pages) && source.pages.length
+        ? source.pages.map((page, index) => normalizeEditorSitePage(page, index))
+        : fallback.pages;
+      const activePageId = source.activePageId && pages.some((page) => page.id === source.activePageId)
+        ? source.activePageId
+        : (pages[0] && pages[0].id) || "";
+      return {
+        version: 1,
+        activePageId,
+        createdAt: source.createdAt || fallback.createdAt,
+        updatedAt: source.updatedAt || fallback.updatedAt,
+        publishConfig: { ...fallback.publishConfig, ...(source.publishConfig || {}) },
+        pages
+      };
+    } catch (error) {
+      console.warn("[NSEditorV1] Could not read Site Pages state:", error);
+      return defaultEditorSitePagesState();
+    }
+  }
+
+  function writeEditorSitePagesState(state) {
+    const next = { ...(state || readEditorSitePagesState()), updatedAt: nowIso() };
+    try {
+      localStorage.setItem(SITE_PAGES_EDITOR_STORAGE_KEY, JSON.stringify(next, null, 2));
+    } catch (error) {
+      console.warn("[NSEditorV1] Could not write Site Pages state:", error);
+    }
+    window.dispatchEvent(new CustomEvent("irgeztne:site-pages-updated", { detail: { state: deepClone(next), source: "editor" } }));
+    return next;
+  }
+
+  function uniqueEditorSitePageSlug(pages, slug, currentId) {
+    const base = slugify(slug || "page") || "page";
+    let next = base;
+    let i = 2;
+    while ((pages || []).some((page) => page.id !== currentId && page.slug === next)) {
+      next = base + "-" + i;
+      i += 1;
+    }
+    return next;
+  }
+
+  function getEditorSitePageByDraftId(draftId) {
+    if (!draftId) return null;
+    const state = readEditorSitePagesState();
+    return (state.pages || []).find((page) => String(page.draftId || "") === String(draftId)) || null;
+  }
+

@@ -1,0 +1,55 @@
+{
+  "id": "landing-product",
+  "version": "0.1.0",
+  "status": "template-lab",
+  "name": {
+    "en": "Landing / Product",
+    "ru": "Лендинг / Продукт"
+  },
+  "description": {
+    "en": "A wide premium product landing template with hero, product mockup, benefits, workflow, proof, FAQ, CTA, EN/RU and light/dark themes.",
+    "ru": "Широкий премиум-лендинг для продукта: hero, product mockup, преимущества, сценарий, proof, FAQ, CTA, EN/RU и светлая/тёмная тема."
+  },
+  "category": "landing",
+  "recommendedFor": ["product landing", "app", "SaaS", "tool", "digital launch", "single-product campaign"],
+  "notRecommendedFor": ["news portal", "documentation", "portfolio gallery"],
+  "features": {
+    "themes": ["light", "dark"],
+    "locales": ["en", "ru"],
+    "rss": false,
+    "stickyHeader": true,
+    "wideLayout": true,
+    "responsive": true,
+    "productMockup": true,
+    "faq": true
+  },
+  "slots": {
+    "brand": {
+      "logoFallback": "brand.logoFallback",
+      "title": "brand.title",
+      "subtitle": "brand.subtitle"
+    },
+    "visuals": ["hero.productMockup", "feature.productVisual"],
+    "footer": {
+      "links": "footer.links"
+    }
+  },
+  "imageGuidelines": {
+    "sourceRule": "../template-image-rules.json",
+    "recommendedImages": ["product mockup", "app screen", "device screenshot", "interface visual", "hero product visual"],
+    "people": "Optional, context only. Product mockups are preferred.",
+    "demoImageRule": {
+      "status": "demo-only",
+      "mustReplaceBeforePublishing": true,
+      "message": {
+        "en": "Demo visuals are placeholders. Replace them with your own product screenshots or mockups before publishing.",
+        "ru": "Демо-визуалы — это заглушки. Перед публикацией замените их своими скриншотами продукта или mockup."
+      }
+    }
+  },
+  "preview": {
+    "light": "preview-light.png",
+    "dark": "preview-dark.png",
+    "status": "pending"
+  }
+}

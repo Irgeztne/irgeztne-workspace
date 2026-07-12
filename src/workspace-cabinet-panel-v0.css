@@ -1,0 +1,1917 @@
+/* IRGEZTNE Workspace Cabinet v0 */
+
+body.ir-wc-v0-ready .workspace-shell .workspace-shell-nav {
+  display: none !important;
+}
+
+.workspace-shell .workspace-panel[data-panel="workspace"] {
+  padding: 14px !important;
+}
+
+.ir-wc-v0 {
+  display: grid;
+  gap: 14px;
+  color: #eaf2ff;
+}
+
+.ir-wc-hero,
+.ir-wc-card {
+  border: 1px solid rgba(105, 165, 255, 0.24);
+  background:
+    radial-gradient(circle at 0% 0%, rgba(71, 139, 255, 0.16), transparent 34%),
+    linear-gradient(180deg, rgba(14, 40, 76, 0.92), rgba(5, 17, 34, 0.96));
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.22);
+  border-radius: 20px;
+}
+
+.ir-wc-hero {
+  padding: 16px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.ir-wc-kicker {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(126, 185, 255, 0.9);
+  margin-bottom: 6px;
+}
+
+.ir-wc-hero h2 {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.1;
+}
+
+.ir-wc-hero p,
+.ir-wc-card p {
+  margin: 7px 0 0;
+  color: rgba(205, 220, 240, 0.78);
+  line-height: 1.45;
+  font-size: 13px;
+}
+
+.ir-wc-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.ir-wc-card {
+  padding: 14px;
+  overflow: hidden;
+}
+
+.ir-wc-card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.ir-wc-card-head span {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 9px;
+  background: rgba(57, 124, 255, 0.18);
+  color: #7bb4ff;
+}
+
+.ir-wc-time {
+  font-size: 34px;
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.ir-wc-date {
+  margin-top: 8px;
+  color: rgba(205, 220, 240, 0.76);
+  text-transform: capitalize;
+}
+
+.ir-wc-calendar-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  text-transform: capitalize;
+}
+
+.ir-wc-week,
+.ir-wc-days {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 5px;
+  text-align: center;
+}
+
+.ir-wc-week span {
+  font-size: 10px;
+  color: rgba(200, 215, 240, 0.58);
+}
+
+.ir-wc-day {
+  min-height: 26px;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  color: rgba(235, 244, 255, 0.78);
+  background: rgba(255, 255, 255, 0.035);
+  font-size: 12px;
+}
+
+.ir-wc-day:empty {
+  background: transparent;
+}
+
+.ir-wc-day.is-today {
+  background: linear-gradient(135deg, rgba(74, 144, 255, 0.95), rgba(50, 214, 148, 0.72));
+  color: white;
+  font-weight: 800;
+}
+
+.ir-wc-note textarea {
+  width: 100%;
+  min-height: 92px;
+  resize: vertical;
+  border-radius: 14px;
+  border: 1px solid rgba(105, 165, 255, 0.22);
+  background: rgba(2, 12, 26, 0.72);
+  color: #eaf2ff;
+  padding: 10px;
+  outline: none;
+  font: inherit;
+}
+
+.ir-wc-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.ir-wc-primary,
+.ir-wc-card button,
+.ir-wc-actions button {
+  border: 1px solid rgba(105, 165, 255, 0.28);
+  background: linear-gradient(180deg, rgba(36, 91, 171, 0.9), rgba(20, 54, 108, 0.92));
+  color: #f4f8ff;
+  border-radius: 12px;
+  padding: 8px 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ir-wc-primary:hover,
+.ir-wc-card button:hover,
+.ir-wc-actions button:hover {
+  transform: translateY(-1px);
+  border-color: rgba(125, 190, 255, 0.58);
+}
+
+@media (min-width: 760px) {
+  .workspace-shell .workspace-panel[data-panel="workspace"] .ir-wc-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .ir-wc-hero {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* IRGEZTNE Workspace Cabinet v0.1 — compact pass */
+
+.workspace-shell .workspace-panel[data-panel="workspace"] .ir-wc-grid {
+  align-items: start !important;
+}
+
+.ir-wc-clock {
+  align-self: start !important;
+  min-height: auto !important;
+}
+
+.ir-wc-time {
+  font-size: 24px !important;
+  letter-spacing: -0.03em !important;
+}
+
+.ir-wc-date {
+  margin-top: 5px !important;
+  font-size: 12px !important;
+}
+
+.ir-wc-mini-hint {
+  margin-top: 6px;
+  font-size: 11px;
+  color: rgba(205, 220, 240, 0.52);
+}
+
+.ir-wc-note {
+  grid-column: 1 / -1;
+}
+
+.ir-wc-note textarea {
+  min-height: 132px !important;
+}
+
+.ir-wc-card button,
+.ir-wc-actions button {
+  background: rgba(37, 86, 155, 0.42) !important;
+  border: 1px solid rgba(126, 184, 255, 0.26) !important;
+  box-shadow: none !important;
+  border-radius: 11px !important;
+  padding: 7px 10px !important;
+}
+
+.ir-wc-card button:hover,
+.ir-wc-actions button:hover {
+  background: rgba(55, 116, 202, 0.54) !important;
+  transform: translateY(-1px);
+}
+
+.ir-wc-primary {
+  background: linear-gradient(180deg, rgba(55, 129, 232, 0.92), rgba(23, 73, 146, 0.94)) !important;
+  border-color: rgba(145, 200, 255, 0.42) !important;
+}
+
+.ir-wc-status-line {
+  border: 1px solid rgba(105, 165, 255, 0.18);
+  background: rgba(5, 17, 34, 0.72);
+  color: rgba(218, 231, 250, 0.72);
+  border-radius: 14px;
+  padding: 9px 11px;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.ir-wc-card {
+  padding: 12px !important;
+}
+
+.ir-wc-card-head {
+  margin-bottom: 8px !important;
+}
+
+.ir-wc-calendar .ir-wc-day {
+  min-height: 23px !important;
+  border-radius: 8px !important;
+}
+
+@media (min-width: 760px) {
+  .workspace-shell .workspace-panel[data-panel="workspace"] .ir-wc-note {
+    grid-column: 1 / -1;
+  }
+}
+
+
+/* IRGEZTNE Workspace Cabinet v0.2 — fit full side panel */
+
+.workspace-shell .workspace-panel[data-panel="workspace"] {
+  padding: 12px 12px 14px !important;
+}
+
+.ir-wc-v0 {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+.ir-wc-hero {
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  padding: 14px !important;
+}
+
+.ir-wc-hero h2 {
+  font-size: 20px !important;
+}
+
+.ir-wc-hero p {
+  max-width: 100% !important;
+}
+
+.workspace-shell .workspace-panel[data-panel="workspace"] .ir-wc-grid {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+  gap: 10px !important;
+  width: 100% !important;
+  align-items: stretch !important;
+}
+
+.ir-wc-card {
+  min-width: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.ir-wc-clock,
+.ir-wc-calendar {
+  min-height: 132px !important;
+}
+
+.ir-wc-note {
+  grid-column: 1 / -1 !important;
+}
+
+.ir-wc-note textarea {
+  min-height: 118px !important;
+}
+
+.ir-wc-card:has(.ir-wc-actions),
+.ir-wc-card:has(button) {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.ir-wc-card .ir-wc-actions,
+.ir-wc-card > button {
+  margin-top: auto !important;
+}
+
+.ir-wc-actions {
+  align-items: flex-start !important;
+}
+
+.ir-wc-actions button,
+.ir-wc-card > button {
+  min-height: 34px !important;
+}
+
+.ir-wc-calendar .ir-wc-week,
+.ir-wc-calendar .ir-wc-days {
+  gap: 4px !important;
+}
+
+.ir-wc-calendar .ir-wc-day {
+  min-height: 22px !important;
+  font-size: 11px !important;
+}
+
+.ir-wc-status-line {
+  width: 100% !important;
+}
+
+@media (max-width: 460px) {
+  .workspace-shell .workspace-panel[data-panel="workspace"] .ir-wc-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .ir-wc-hero {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+
+/* IRGEZTNE Workspace Cabinet v0.3 — no duplicate hero, cleaner grid */
+
+.ir-wc-v03 .ir-wc-hero {
+  display: none !important;
+}
+
+.workspace-shell .workspace-panel[data-panel="workspace"] {
+  padding: 10px 10px 14px !important;
+}
+
+.ir-wc-v03 {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+.ir-wc-v03 .ir-wc-grid {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+  gap: 10px !important;
+  align-items: stretch !important;
+}
+
+.ir-wc-v03 .ir-wc-card {
+  min-width: 0 !important;
+  width: 100% !important;
+  padding: 12px !important;
+  border-radius: 18px !important;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(74, 144, 255, 0.13), transparent 32%),
+    linear-gradient(180deg, rgba(13, 39, 73, 0.88), rgba(4, 16, 32, 0.96)) !important;
+}
+
+.ir-wc-v03 .ir-wc-clock,
+.ir-wc-v03 .ir-wc-calendar {
+  min-height: 128px !important;
+}
+
+.ir-wc-v03 .ir-wc-time {
+  font-size: 24px !important;
+}
+
+.ir-wc-v03 .ir-wc-date {
+  font-size: 12px !important;
+  margin-top: 5px !important;
+}
+
+.ir-wc-v03 .ir-wc-note {
+  grid-column: 1 / -1 !important;
+}
+
+.ir-wc-v03 .ir-wc-note textarea {
+  min-height: 120px !important;
+}
+
+.ir-wc-v03 .ir-wc-tools,
+.ir-wc-v03 .ir-wc-context {
+  min-height: 124px !important;
+}
+
+.ir-wc-v03 .ir-wc-rooms {
+  grid-column: 1 / -1 !important;
+  min-height: auto !important;
+}
+
+.ir-wc-v03 .ir-wc-rooms p {
+  max-width: 440px !important;
+}
+
+.ir-wc-v03 .ir-wc-card-head {
+  margin-bottom: 8px !important;
+}
+
+.ir-wc-v03 .ir-wc-card p {
+  font-size: 12px !important;
+  line-height: 1.4 !important;
+}
+
+.ir-wc-v03 .ir-wc-actions {
+  gap: 7px !important;
+}
+
+.ir-wc-v03 .ir-wc-actions button,
+.ir-wc-v03 .ir-wc-card > button {
+  background: rgba(31, 74, 135, 0.50) !important;
+  border-color: rgba(113, 176, 255, 0.24) !important;
+  box-shadow: none !important;
+}
+
+.ir-wc-v03 .ir-wc-status-line {
+  margin-top: 10px !important;
+}
+
+@media (max-width: 470px) {
+  .ir-wc-v03 .ir-wc-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .ir-wc-v03 .ir-wc-note,
+  .ir-wc-v03 .ir-wc-rooms {
+    grid-column: auto !important;
+  }
+}
+
+
+/* IRGEZTNE Workspace Cabinet v0.4 — compact time row and folded calendar */
+
+.ir-wc-v04 .ir-wc-topline {
+  display: grid !important;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr) !important;
+  gap: 10px !important;
+  margin-bottom: 10px !important;
+}
+
+.ir-wc-v04 .ir-wc-timebox,
+.ir-wc-v04 .ir-wc-calendar-fold {
+  border: 1px solid rgba(105, 165, 255, 0.22) !important;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(74, 144, 255, 0.12), transparent 34%),
+    linear-gradient(180deg, rgba(13, 39, 73, 0.82), rgba(4, 16, 32, 0.94)) !important;
+  border-radius: 16px !important;
+}
+
+.ir-wc-v04 .ir-wc-timebox {
+  min-height: 58px !important;
+  padding: 10px 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+.ir-wc-v04 .ir-wc-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: #53e59d;
+  box-shadow: 0 0 18px rgba(83, 229, 157, 0.65);
+  flex: 0 0 auto;
+}
+
+.ir-wc-v04 .ir-wc-timebox strong {
+  display: block;
+  font-size: 20px !important;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.ir-wc-v04 .ir-wc-timebox small {
+  display: block;
+  margin-top: 5px;
+  color: rgba(205, 220, 240, 0.72);
+  font-size: 11px;
+  text-transform: capitalize;
+}
+
+.ir-wc-v04 .ir-wc-calendar-fold {
+  overflow: hidden;
+}
+
+.ir-wc-v04 .ir-wc-calendar-fold summary {
+  min-height: 58px;
+  padding: 9px 12px;
+  display: grid;
+  align-content: center;
+  gap: 4px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.ir-wc-v04 .ir-wc-calendar-fold summary::-webkit-details-marker {
+  display: none;
+}
+
+.ir-wc-v04 .ir-wc-calendar-fold summary span {
+  color: rgba(160, 190, 230, 0.72);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.ir-wc-v04 .ir-wc-calendar-fold summary strong {
+  font-size: 14px;
+  text-transform: capitalize;
+}
+
+.ir-wc-v04 .ir-wc-calendar-body {
+  padding: 0 10px 10px;
+}
+
+.ir-wc-v04 .ir-wc-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+  gap: 10px !important;
+}
+
+.ir-wc-v04 .ir-wc-note {
+  grid-column: 1 / -1 !important;
+}
+
+.ir-wc-v04 .ir-wc-note textarea {
+  min-height: 136px !important;
+}
+
+.ir-wc-v04 .ir-wc-rooms {
+  grid-column: 1 / -1 !important;
+}
+
+.ir-wc-v04 .ir-wc-card {
+  min-height: auto !important;
+}
+
+.ir-wc-v04 .ir-wc-tools,
+.ir-wc-v04 .ir-wc-context {
+  min-height: 124px !important;
+}
+
+.ir-wc-v04 .ir-wc-status-line {
+  margin-top: 10px !important;
+}
+
+@media (max-width: 470px) {
+  .ir-wc-v04 .ir-wc-topline,
+  .ir-wc-v04 .ir-wc-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+
+/* IRGEZTNE Workspace Cabinet v0.5 — better top row:
+   clock is static, only calendar expands. */
+
+.ir-wc-v04 .ir-wc-topline {
+  grid-template-columns: minmax(128px, 0.72fr) minmax(0, 1.28fr) !important;
+  align-items: start !important;
+  gap: 8px !important;
+}
+
+.ir-wc-v04 .ir-wc-timebox {
+  min-height: 46px !important;
+  padding: 8px 10px !important;
+  border-radius: 14px !important;
+  align-self: start !important;
+  cursor: default !important;
+}
+
+.ir-wc-v04 .ir-wc-timebox strong {
+  font-size: 18px !important;
+}
+
+.ir-wc-v04 .ir-wc-timebox small {
+  font-size: 10px !important;
+  margin-top: 3px !important;
+}
+
+.ir-wc-v04 .ir-wc-dot {
+  width: 8px !important;
+  height: 8px !important;
+}
+
+.ir-wc-v04 .ir-wc-calendar-fold {
+  align-self: start !important;
+}
+
+.ir-wc-v04 .ir-wc-calendar-fold summary {
+  min-height: 46px !important;
+  padding: 8px 10px !important;
+  position: relative !important;
+  padding-right: 28px !important;
+}
+
+.ir-wc-v04 .ir-wc-calendar-fold summary::after {
+  content: "▾";
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(205, 220, 240, 0.72);
+  font-size: 12px;
+}
+
+.ir-wc-v04 .ir-wc-calendar-fold[open] summary::after {
+  content: "▴";
+}
+
+.ir-wc-v04 .ir-wc-calendar-fold summary span {
+  font-size: 9px !important;
+}
+
+.ir-wc-v04 .ir-wc-calendar-fold summary strong {
+  font-size: 13px !important;
+}
+
+.ir-wc-v04 .ir-wc-calendar-body {
+  padding: 0 8px 9px !important;
+}
+
+.ir-wc-v04 .ir-wc-calendar-body .ir-wc-week,
+.ir-wc-v04 .ir-wc-calendar-body .ir-wc-days {
+  gap: 3px !important;
+}
+
+.ir-wc-v04 .ir-wc-calendar-body .ir-wc-day {
+  min-height: 20px !important;
+  font-size: 10px !important;
+}
+
+/* When the calendar opens, the clock must not stretch with it. */
+.ir-wc-v04 .ir-wc-calendar-fold[open] {
+  min-height: auto !important;
+}
+
+.ir-wc-v04 .ir-wc-calendar-fold[open] + * {
+  align-self: start !important;
+}
+
+@media (max-width: 470px) {
+  .ir-wc-v04 .ir-wc-topline {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+
+/* IRGEZTNE Workspace Cabinet v0.6 — tighter panel fit + more square calendar */
+
+.workspace-shell .workspace-panel[data-panel="workspace"] {
+  box-sizing: border-box !important;
+  padding: 10px 7px 14px 8px !important;
+}
+
+.ir-wc-v04,
+.ir-wc-v04 .ir-wc-topline,
+.ir-wc-v04 .ir-wc-grid,
+.ir-wc-v04 .ir-wc-status-line {
+  width: 100% !important;
+  max-width: none !important;
+  box-sizing: border-box !important;
+}
+
+.ir-wc-v04 .ir-wc-timebox,
+.ir-wc-v04 .ir-wc-calendar-fold,
+.ir-wc-v04 .ir-wc-card {
+  box-sizing: border-box !important;
+}
+
+/* Keep clock compact, give calendar a little more breathing room. */
+.ir-wc-v04 .ir-wc-topline {
+  grid-template-columns: minmax(124px, 0.7fr) minmax(0, 1.3fr) !important;
+  gap: 8px !important;
+}
+
+/* Calendar should grow downward a bit, not feel like a flat strip. */
+.ir-wc-v04 .ir-wc-calendar-body {
+  padding: 0 9px 11px !important;
+}
+
+.ir-wc-v04 .ir-wc-calendar-body .ir-wc-week,
+.ir-wc-v04 .ir-wc-calendar-body .ir-wc-days {
+  gap: 4px !important;
+}
+
+.ir-wc-v04 .ir-wc-calendar-body .ir-wc-day {
+  min-height: 24px !important;
+  border-radius: 8px !important;
+  font-size: 10px !important;
+}
+
+/* Make lower widgets use the side panel width more confidently. */
+.ir-wc-v04 .ir-wc-grid {
+  gap: 9px !important;
+}
+
+.ir-wc-v04 .ir-wc-card {
+  padding: 12px !important;
+}
+
+.ir-wc-v04 .ir-wc-note textarea {
+  min-height: 138px !important;
+}
+
+@media (max-width: 470px) {
+  .ir-wc-v04 .ir-wc-topline,
+  .ir-wc-v04 .ir-wc-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+
+/* IRGEZTNE Workspace Cabinet v0.7 — full panel width + calendar opens full-width */
+
+.workspace-shell .workspace-panel[data-panel="workspace"] {
+  padding: 10px 4px 14px 8px !important;
+  box-sizing: border-box !important;
+}
+
+.workspace-shell .workspace-panel[data-panel="workspace"] > * {
+  max-width: none !important;
+}
+
+.ir-wc-v07 {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.ir-wc-v07 *,
+.ir-wc-v07 *::before,
+.ir-wc-v07 *::after {
+  box-sizing: border-box !important;
+}
+
+.ir-wc-v07 .ir-wc-topline {
+  width: 100% !important;
+  display: grid !important;
+  grid-template-columns: minmax(120px, 0.66fr) minmax(0, 1.34fr) !important;
+  gap: 8px !important;
+  align-items: start !important;
+  margin: 0 0 10px !important;
+}
+
+.ir-wc-v07 .ir-wc-timebox,
+.ir-wc-v07 .ir-wc-calendar-toggle,
+.ir-wc-v07 .ir-wc-calendar-wide,
+.ir-wc-v07 .ir-wc-card,
+.ir-wc-v07 .ir-wc-status-line {
+  width: 100% !important;
+  max-width: none !important;
+  border: 1px solid rgba(105, 165, 255, 0.22) !important;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(74, 144, 255, 0.12), transparent 34%),
+    linear-gradient(180deg, rgba(13, 39, 73, 0.82), rgba(4, 16, 32, 0.94)) !important;
+  border-radius: 16px !important;
+}
+
+.ir-wc-v07 .ir-wc-timebox {
+  min-height: 46px !important;
+  padding: 8px 10px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 9px !important;
+  cursor: default !important;
+}
+
+.ir-wc-v07 .ir-wc-dot {
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 999px !important;
+  background: #53e59d !important;
+  box-shadow: 0 0 18px rgba(83, 229, 157, 0.65) !important;
+  flex: 0 0 auto !important;
+}
+
+.ir-wc-v07 .ir-wc-timebox strong {
+  display: block !important;
+  font-size: 18px !important;
+  line-height: 1 !important;
+  letter-spacing: -0.03em !important;
+}
+
+.ir-wc-v07 .ir-wc-timebox small {
+  display: block !important;
+  margin-top: 3px !important;
+  color: rgba(205, 220, 240, 0.72) !important;
+  font-size: 10px !important;
+  text-transform: capitalize !important;
+}
+
+.ir-wc-v07 .ir-wc-calendar-toggle {
+  min-height: 46px !important;
+  padding: 8px 30px 8px 10px !important;
+  display: grid !important;
+  align-content: center !important;
+  gap: 3px !important;
+  position: relative !important;
+  color: #eaf2ff !important;
+  text-align: left !important;
+  cursor: pointer !important;
+}
+
+.ir-wc-v07 .ir-wc-calendar-toggle span {
+  color: rgba(160, 190, 230, 0.72) !important;
+  font-size: 9px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.08em !important;
+}
+
+.ir-wc-v07 .ir-wc-calendar-toggle strong {
+  font-size: 13px !important;
+  text-transform: capitalize !important;
+}
+
+.ir-wc-v07 .ir-wc-calendar-toggle em {
+  position: absolute !important;
+  right: 10px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  font-style: normal !important;
+  color: rgba(205, 220, 240, 0.72) !important;
+}
+
+.ir-wc-v07 .ir-wc-calendar-toggle.is-open em {
+  transform: translateY(-50%) rotate(180deg) !important;
+}
+
+.ir-wc-v07 .ir-wc-calendar-wide {
+  grid-column: 1 / -1 !important;
+  padding: 10px !important;
+  margin-top: 0 !important;
+}
+
+.ir-wc-v07 .ir-wc-calendar-wide[hidden] {
+  display: none !important;
+}
+
+.ir-wc-v07 .ir-wc-calendar-wide .ir-wc-week,
+.ir-wc-v07 .ir-wc-calendar-wide .ir-wc-days {
+  display: grid !important;
+  grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+  gap: 5px !important;
+  text-align: center !important;
+}
+
+.ir-wc-v07 .ir-wc-calendar-wide .ir-wc-week span {
+  font-size: 10px !important;
+  color: rgba(200, 215, 240, 0.58) !important;
+}
+
+.ir-wc-v07 .ir-wc-calendar-wide .ir-wc-day {
+  min-height: 25px !important;
+  border-radius: 8px !important;
+  display: grid !important;
+  place-items: center !important;
+  color: rgba(235, 244, 255, 0.78) !important;
+  background: rgba(255, 255, 255, 0.035) !important;
+  font-size: 10px !important;
+}
+
+.ir-wc-v07 .ir-wc-calendar-wide .ir-wc-day:empty {
+  background: transparent !important;
+}
+
+.ir-wc-v07 .ir-wc-calendar-wide .ir-wc-day.is-today {
+  background: linear-gradient(135deg, rgba(74, 144, 255, 0.95), rgba(50, 214, 148, 0.72)) !important;
+  color: white !important;
+  font-weight: 800 !important;
+}
+
+.ir-wc-v07 .ir-wc-grid {
+  width: 100% !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+  gap: 9px !important;
+}
+
+.ir-wc-v07 .ir-wc-card {
+  min-width: 0 !important;
+  padding: 12px !important;
+}
+
+.ir-wc-v07 .ir-wc-note,
+.ir-wc-v07 .ir-wc-rooms {
+  grid-column: 1 / -1 !important;
+}
+
+.ir-wc-v07 .ir-wc-note textarea {
+  width: 100% !important;
+  min-height: 140px !important;
+}
+
+.ir-wc-v07 .ir-wc-status-line {
+  margin-top: 10px !important;
+  padding: 9px 11px !important;
+  color: rgba(218, 231, 250, 0.72) !important;
+  font-size: 12px !important;
+}
+
+@media (max-width: 470px) {
+  .ir-wc-v07 .ir-wc-topline,
+  .ir-wc-v07 .ir-wc-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .ir-wc-v07 .ir-wc-calendar-wide,
+  .ir-wc-v07 .ir-wc-note,
+  .ir-wc-v07 .ir-wc-rooms {
+    grid-column: auto !important;
+  }
+}
+
+
+/* IRGEZTNE Workspace Cabinet v0.8 — balanced side-panel gutters */
+
+.workspace-shell .workspace-panel[data-panel="workspace"] {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  overflow-x: hidden !important;
+}
+
+.ir-wc-v07 {
+  width: calc(100% - 14px) !important;
+  max-width: none !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* Make every main cabinet block obey the same visual width. */
+.ir-wc-v07 .ir-wc-topline,
+.ir-wc-v07 .ir-wc-grid,
+.ir-wc-v07 .ir-wc-status-line {
+  width: 100% !important;
+  max-width: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* Keep top row balanced after centering. */
+.ir-wc-v07 .ir-wc-topline {
+  grid-template-columns: minmax(122px, 0.64fr) minmax(0, 1.36fr) !important;
+  gap: 9px !important;
+}
+
+/* Lower cards: same left/right rhythm. */
+.ir-wc-v07 .ir-wc-grid {
+  gap: 10px !important;
+}
+
+/* Keep the wide blocks visually aligned with the two-column blocks. */
+.ir-wc-v07 .ir-wc-note,
+.ir-wc-v07 .ir-wc-rooms,
+.ir-wc-v07 .ir-wc-calendar-wide {
+  grid-column: 1 / -1 !important;
+}
+
+/* Slightly soften the too-blue button feeling without redesigning buttons yet. */
+.ir-wc-v07 .ir-wc-actions button,
+.ir-wc-v07 .ir-wc-card > button {
+  background: rgba(34, 77, 137, 0.56) !important;
+  border-color: rgba(118, 174, 240, 0.28) !important;
+}
+
+@media (max-width: 470px) {
+  .ir-wc-v07 {
+    width: calc(100% - 10px) !important;
+  }
+
+  .ir-wc-v07 .ir-wc-topline,
+  .ir-wc-v07 .ir-wc-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+
+/* IRGEZTNE Workspace Cabinet v0.9 — force real left-gutter correction */
+
+.workspace-shell .workspace-panel[data-panel="workspace"] {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  overflow-x: hidden !important;
+}
+
+/* The previous centering did not affect the real visual gutter.
+   So we intentionally shift the cabinet canvas left and expand it. */
+.workspace-shell .workspace-panel[data-panel="workspace"] .ir-wc-v07,
+.workspace-panel[data-panel="workspace"] .ir-wc-v07,
+[data-panel="workspace"] .ir-wc-v07 {
+  width: calc(100% + 8px) !important;
+  max-width: none !important;
+  margin-left: -8px !important;
+  margin-right: 0 !important;
+}
+
+/* Keep all internal rows aligned after the shift. */
+.workspace-shell .workspace-panel[data-panel="workspace"] .ir-wc-v07 .ir-wc-topline,
+.workspace-shell .workspace-panel[data-panel="workspace"] .ir-wc-v07 .ir-wc-grid,
+.workspace-shell .workspace-panel[data-panel="workspace"] .ir-wc-v07 .ir-wc-status-line {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+/-topline,
+.workspace-shell .workspace-panel[data-panel="workspace"] .ir-wc-v07 .ir-wc-grid,
+.workspace-shell .workspace-panel* Slightly reduce visual pressure on the right edge after expansion. */
+.ir-wc-v07 .ir-wc-card,
+.ir-wc-v07 .ir-wc-timebox,
+.ir-wc-v07 .ir-wc-calendar-toggle,
+.ir-wc-v07 .ir-wc-calendar-wide,
+.ir-wc-v07 .ir-wc-status-line {
+  border-radius: 15px !important;
+}
+
+@media (max-width: 470px) {
+  .workspace-shell .workspace-panel[data-panel="workspace"] .ir-wc-v07,
+  .workspace-panel[data-panel="workspace"] .ir-wc-v07,
+  [data-panel="workspace"] .ir-wc-v07 {
+    width: calc(100% + 4px) !important;
+    margin-left: -4px !important;
+  }
+}
+
+
+/* IRGEZTNE Workspace Cabinet v0.10 — restore right rounded corners after gutter fix */
+
+/* v0.9 pushed the cabinet left and expanded it to use the panel.
+   Keep that better position, but leave a few px on the right so rounded
+   corners are not clipped by the panel edge. */
+.workspace-shell .workspace-panel[data-panel="workspace"] .ir-wc-v07,
+.workspace-panel[data-panel="workspace"] .ir-wc-v07,
+[data-panel="workspace"] .ir-wc-v07 {
+  width: calc(100% + 2px) !important;
+  margin-left: -8px !important;
+  margin-right: 6px !important;
+}
+
+/* Make sure every visible card keeps its radius. */
+.ir-wc-v07 .ir-wc-timebox,
+.ir-wc-v07 .ir-wc-calendar-toggle,
+.ir-wc-v07 .ir-wc-calendar-wide,
+.ir-wc-v07 .ir-wc-card,
+.ir-wc-v07 .ir-wc-note,
+.ir-wc-v07 .ir-wc-tools,
+.ir-wc-v07 .ir-wc-context,
+.ir-wc-v07 .ir-wc-rooms,
+.ir-wc-v07 .ir-wc-status-line {
+  border-radius: 16px !important;
+  overflow: hidden !important;
+}
+
+/* Textarea inside quick note should also respect the rounded card feeling. */
+.ir-wc-v07 .ir-wc-note textarea {
+  border-radius: 14px !important;
+}
+
+/* Button row inside Rooms should not visually flatten the parent corner. */
+.ir-wc-v07 .ir-wc-rooms button,
+.ir-wc-v07 .ir-wc-actions button {
+  border-radius: 12px !important;
+}
+
+@media (max-width: 470px) {
+  .workspace-shell .workspace-panel[data-panel="workspace"] .ir-wc-v07,
+  .workspace-panel[data-panel="workspace"] .ir-wc-v07,
+  [data-panel="workspace"] .ir-wc-v07 {
+    width: calc(100% - 2px) !important;
+    margin-left: -4px !important;
+    margin-right: 4px !important;
+  }
+}
+
+
+/* IRGEZTNE Workspace Cabinet v0.11 — remove negative shift, fix parent gutter cleanly */
+
+/* The sharp right corners came after v0.9/v0.10 shifted .ir-wc-v07 with negative margin.
+   Now the cabinet sits normally inside the panel; gutters are controlled by the parent. */
+
+.workspace-shell .workspace-shell-body {
+  padding-left: 0 !important;
+  padding-right: 6px !important;
+  overflow-x: hidden !important;
+}
+
+.workspace-shell .workspace-panel[data-panel="workspace"] {
+  padding: 8px 6px 14px 6px !important;
+  overflow: visible !important;
+  box-sizing: border-box !important;
+}
+
+.workspace-shell .workspace-panel[data-panel="workspace"] .ir-wc-v07,
+.workspace-panel[data-panel="workspace"] .ir-wc-v07,
+[data-panel="workspace"] .ir-wc-v07 {
+  width: 100% !important;
+  max-width: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  transform: none !important;
+  box-sizing: border-box !important;
+}
+
+/* All visible cabinet blocks must stay inside the normal width, so border-radius is not clipped. */
+.ir-wc-v07 .ir-wc-topline,
+.ir-wc-v07 .ir-wc-grid,
+.ir-wc-v07 .ir-wc-status-line {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.ir-wc-v07 .ir-wc-timebox,
+.ir-wc-v07 .ir-wc-calendar-toggle,
+.ir-wc-v07 .ir-wc-calendar-wide,
+.ir-wc-v07 .ir-wc-card,
+.ir-wc-v07 .ir-wc-status-line {
+  border-radius: 16px !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+/* Prevent inner fields/buttons from visually flattening the right side. */
+.ir-wc-v07 textarea,
+.ir-wc-v07 button {
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.ir-wc-v07 .ir-wc-note textarea {
+  border-radius: 14px !important;
+}
+
+@media (max-width: 470px) {
+  .workspace-shell .workspace-shell-body {
+    padding-right: 4px !important;
+  }
+
+  .workspace-shell .workspace-panel[data-panel="workspace"] {
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+  }
+}
+
+
+/* IRGEZTNE Workspace Cabinet v0.12 — calendar toggle title order
+   Month/year goes first, "Calendar / Календарь" becomes the small subtitle below. */
+
+.ir-wc-v07 .ir-wc-calendar-toggle {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: flex-start !important;
+  gap: 2px !important;
+  padding-top: 7px !important;
+  padding-bottom: 7px !important;
+}
+
+.ir-wc-v07 .ir-wc-calendar-toggle strong {
+  order: 1 !important;
+  display: block !important;
+  font-size: 13px !important;
+  line-height: 1.1 !important;
+  font-weight: 800 !important;
+  text-transform: capitalize !important;
+}
+
+.ir-wc-v07 .ir-wc-calendar-toggle span {
+  order: 2 !important;
+  display: block !important;
+  font-size: 9px !important;
+  line-height: 1.1 !important;
+  color: rgba(160, 190, 230, 0.72) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.08em !important;
+}
+
+.ir-wc-v07 .ir-wc-calendar-toggle em {
+  position: absolute !important;
+  right: 10px !important;
+  top: 50% !important;
+}
+
+
+/* IRGEZTNE Workspace Cabinet v0.13 — calendar/time visual alignment */
+
+.ir-wc-v07 .ir-wc-topline {
+  align-items: stretch !important;
+}
+
+/* Time and calendar should feel like the same row family. */
+.ir-wc-v07 .ir-wc-timebox,
+.ir-wc-v07 .ir-wc-calendar-toggle {
+  min-height: 52px !important;
+  height: 52px !important;
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+  align-self: stretch !important;
+}
+
+/* Time block rhythm */
+.ir-wc-v07 .ir-wc-timebox {
+  align-items: center !important;
+}
+
+.ir-wc-v07 .ir-wc-timebox strong {
+  font-size: 18px !important;
+  line-height: 1.05 !important;
+}
+
+.ir-wc-v07 .ir-wc-timebox small {
+  font-size: 10px !important;
+  line-height: 1.15 !important;
+  margin-top: 4px !important;
+}
+
+/* Calendar block rhythm: month/year on top, label below, same vertical feeling as time. */
+.ir-wc-v07 .ir-wc-calendar-toggle {
+  justify-content: center !important;
+  align-items: flex-start !important;
+  gap: 4px !important;
+}
+
+.ir-wc-v07 .ir-wc-calendar-toggle strong {
+  order: 1 !important;
+  font-size: 14px !important;
+  line-height: 1.05 !important;
+  font-weight: 850 !important;
+}
+
+.ir-wc-v07 .ir-wc-calendar-toggle span {
+  order: 2 !important;
+  font-size: 10px !important;
+  line-height: 1.15 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  color: rgba(188, 209, 237, 0.72) !important;
+}
+
+/* Keep arrow centered in the unified 52px row. */
+.ir-wc-v07 .ir-wc-calendar-toggle em {
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+}
+
+.ir-wc-v07 .ir-wc-calendar-toggle.is-open em {
+  transform: translateY(-50%) rotate(180deg) !important;
+}
+
+
+/* IRGEZTNE Workspace Cabinet v0.16c — buttons use Workspace left rail visual language
+   Goal: keep one product button style. This is CSS-only and does not change panel logic. */
+
+.ir-wc-v07 .ir-wc-actions button,
+.ir-wc-v07 .ir-wc-rooms button,
+.ir-wc-v07 .ir-wc-card > button,
+.ir-wc-v07 .ir-wc-calendar-toggle {
+  color: #eaf2ff !important;
+  border: 1px solid rgba(130, 180, 255, 0.16) !important;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(97, 165, 255, 0.10), transparent 42%),
+    rgba(13, 31, 62, 0.62) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
+  transition:
+    transform 0.16s ease,
+    border-color 0.16s ease,
+    background 0.16s ease,
+    box-shadow 0.16s ease,
+    filter 0.16s ease !important;
+}
+
+.ir-wc-v07 .ir-wc-actions button,
+.ir-wc-v07 .ir-wc-rooms button,
+.ir-wc-v07 .ir-wc-card > button {
+  min-height: 34px !important;
+  border-radius: 13px !important;
+  padding: 7px 12px !important;
+  font-weight: 800 !important;
+}
+
+.ir-wc-v07 .ir-wc-actions button:hover,
+.ir-wc-v07 .ir-wc-rooms button:hover,
+.ir-wc-v07 .ir-wc-card > button:hover,
+.ir-wc-v07 .ir-wc-calendar-toggle:hover {
+  transform: translateY(-1px) !important;
+  border-color: rgba(82, 148, 255, 0.45) !important;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(122, 190, 255, 0.16), transparent 46%),
+    linear-gradient(135deg, rgba(31, 91, 188, 0.76), rgba(13, 35, 75, 0.68)) !important;
+  box-shadow:
+    0 14px 32px rgba(20, 86, 210, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+}
+
+.ir-wc-v07 .ir-wc-actions button:active,
+.ir-wc-v07 .ir-wc-rooms button:active,
+.ir-wc-v07 .ir-wc-card > button:active,
+.ir-wc-v07 .ir-wc-calendar-toggle:active {
+  transform: translateY(0) scale(0.99) !important;
+  filter: brightness(0.96) !important;
+}
+
+.ir-wc-v07 .ir-wc-actions button:focus-visible,
+.ir-wc-v07 .ir-wc-rooms button:focus-visible,
+.ir-wc-v07 .ir-wc-card > button:focus-visible,
+.ir-wc-v07 .ir-wc-calendar-toggle:focus-visible {
+  outline: none !important;
+  border-color: rgba(126, 190, 255, 0.58) !important;
+  box-shadow:
+    0 0 0 1px rgba(94, 160, 255, 0.20),
+    0 14px 32px rgba(20, 86, 210, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07) !important;
+}
+
+
+/* =========================================================
+   IRGEZTNE Workspace Cabinet v032
+   Right Home cleanup: dashboard first, modules through cards.
+   Removes duplicate module shortcut blocks from the main compact panel.
+   ========================================================= */
+
+.ir-wc-v032 .ir-wc-grid {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 10px !important;
+}
+
+.ir-wc-v032 .ir-wc-note {
+  grid-column: auto !important;
+}
+
+.ir-wc-v032 .ir-wc-note textarea {
+  min-height: 102px !important;
+  max-height: 180px !important;
+}
+
+.ir-wc-v032 .ir-wc-card {
+  min-height: auto !important;
+}
+
+.ir-wc-v032 .ir-wc-card-head strong {
+  font-size: 14px;
+}
+
+.ir-wc-v032 .ir-wc-smart-list {
+  display: grid;
+  gap: 7px;
+}
+
+.ir-wc-v032 .ir-wc-smart-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  padding: 9px 10px;
+  border: 1px solid rgba(115, 176, 255, 0.14);
+  border-radius: 13px;
+  background: rgba(255,255,255,0.035);
+}
+
+.ir-wc-v032 .ir-wc-smart-row span {
+  min-width: 0;
+  color: rgba(190, 209, 235, 0.78);
+  font-size: 12px;
+}
+
+.ir-wc-v032 .ir-wc-smart-row strong {
+  color: #f1f6ff;
+  font-size: 12px;
+  text-align: right;
+}
+
+.ir-wc-v032 .ir-wc-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.ir-wc-v032 .ir-wc-badges span,
+.ir-wc-v032 .ir-wc-mini-grid span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 0 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(119, 184, 255, 0.17);
+  background: rgba(255,255,255,0.04);
+  color: rgba(225, 238, 255, 0.88);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.ir-wc-v032 .ir-wc-mini-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.ir-wc-v032 .ir-wc-mini-grid span {
+  justify-content: center;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.ir-wc-v032 .ir-wc-workspace-status p,
+.ir-wc-v032 .ir-wc-later-layer p {
+  margin-top: 9px !important;
+  font-size: 12px !important;
+}
+
+.ir-wc-v032 .ir-wc-status-line {
+  font-size: 11px !important;
+  text-align: center;
+}
+
+
+/* v032b: user-facing right Home copy and real note actions */
+.ir-wc-v032 .ir-wc-actions-card .ir-wc-action-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 7px;
+}
+
+.ir-wc-v032 .ir-wc-actions-card button {
+  min-height: 32px;
+  border-radius: 12px;
+  border: 1px solid rgba(112, 170, 255, 0.2);
+  background: linear-gradient(180deg, rgba(41, 91, 164, 0.72), rgba(17, 44, 86, 0.78));
+  color: rgba(240, 247, 255, 0.96);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.ir-wc-v032 .ir-wc-actions-card button:hover {
+  border-color: rgba(125, 184, 255, 0.48);
+  background: linear-gradient(180deg, rgba(54, 116, 210, 0.86), rgba(22, 59, 116, 0.88));
+}
+
+
+
+/* =========================================================
+   IRGEZTNE Workspace Cabinet v033
+   Release minimum right Home panel: time, calendar, quick note.
+   ========================================================= */
+.ir-wc-v033 .ir-wc-grid {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 10px !important;
+}
+
+.ir-wc-v033 .ir-wc-note {
+  grid-column: auto !important;
+}
+
+.ir-wc-v033 .ir-wc-note textarea {
+  min-height: 260px !important;
+  max-height: 520px !important;
+  font-size: 14px !important;
+  line-height: 1.45 !important;
+}
+
+.ir-wc-v033 .ir-wc-status-line {
+  text-align: center;
+  font-size: 11px !important;
+  opacity: 0.78;
+}
+
+\n
+/* =========================================================
+   IRGEZTNE Workspace Cabinet v033b
+   Right Home polish: wider quick note, static calendar box.
+   ========================================================= */
+
+.ir-wc-v033b .ir-wc-topline {
+  display: grid !important;
+  grid-template-columns: minmax(145px, 0.8fr) minmax(220px, 1.4fr) !important;
+  gap: 10px !important;
+  align-items: stretch !important;
+}
+
+.ir-wc-v033b .ir-wc-calendar-toggle,
+.ir-wc-v033b .ir-wc-calendar-wide {
+  display: none !important;
+}
+
+.ir-wc-v033b .ir-wc-calendar-static {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  min-width: 0 !important;
+  min-height: 58px !important;
+  padding: 12px 14px !important;
+  border-radius: 15px !important;
+  border: 1px solid rgba(117, 177, 255, 0.2) !important;
+  background: linear-gradient(180deg, rgba(20, 45, 82, 0.94), rgba(10, 25, 49, 0.95)) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04) !important;
+}
+
+.ir-wc-v033b .ir-wc-calendar-static span {
+  color: rgba(185, 207, 236, 0.78) !important;
+  font-size: 12px !important;
+}
+
+.ir-wc-v033b .ir-wc-calendar-static strong {
+  color: #eef6ff !important;
+  font-size: 15px !important;
+  font-weight: 850 !important;
+  text-align: right !important;
+}
+
+.ir-wc-v033b .ir-wc-grid {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 10px !important;
+  width: 100% !important;
+}
+
+.ir-wc-v033b .ir-wc-note,
+.ir-wc-v033b .ir-wc-card.ir-wc-note {
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  grid-column: 1 / -1 !important;
+  display: block !important;
+}
+
+.ir-wc-v033b .ir-wc-note textarea {
+  width: 100% !important;
+  max-width: none !important;
+  min-height: 285px !important;
+  max-height: 540px !important;
+  font-size: 14px !important;
+  line-height: 1.45 !important;
+}
+
+.ir-wc-v033b .ir-wc-status-line {
+  width: 100% !important;
+  max-width: none !important;
+  text-align: center !important;
+  font-size: 11px !important;
+  opacity: 0.78 !important;
+}
+
+@media (max-width: 520px) {
+  .ir-wc-v033b .ir-wc-topline {
+    grid-template-columns: 1fr !important;
+  }
+}
+\n
+
+/* =========================================================
+   IRGEZTNE Workspace Cabinet v033c
+   Calendar opens on click but is closed by default; no sticky state.
+   ========================================================= */
+
+.ir-wc-v033c .ir-wc-topline {
+  display: grid !important;
+  grid-template-columns: minmax(145px, 0.8fr) minmax(220px, 1.4fr) !important;
+  gap: 10px !important;
+  align-items: stretch !important;
+}
+
+.ir-wc-v033c .ir-wc-calendar-toggle,
+.ir-wc-v033c .ir-wc-calendar-wide {
+  display: none !important;
+}
+
+.ir-wc-v033c .ir-wc-calendar-static.ir-wc-calendar-toggle-v033c {
+  display: flex !important;
+  width: 100% !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  min-width: 0 !important;
+  min-height: 58px !important;
+  padding: 12px 14px !important;
+  border-radius: 15px !important;
+  border: 1px solid rgba(117, 177, 255, 0.2) !important;
+  background: linear-gradient(180deg, rgba(20, 45, 82, 0.94), rgba(10, 25, 49, 0.95)) !important;
+  color: inherit !important;
+  cursor: pointer !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04) !important;
+}
+
+.ir-wc-v033c .ir-wc-calendar-static span {
+  color: rgba(185, 207, 236, 0.78) !important;
+  font-size: 12px !important;
+}
+
+.ir-wc-v033c .ir-wc-calendar-static strong {
+  color: #eef6ff !important;
+  font-size: 15px !important;
+  font-weight: 850 !important;
+  text-align: right !important;
+}
+
+.ir-wc-v033c .ir-wc-calendar-static em {
+  color: rgba(190, 213, 245, 0.78) !important;
+  font-style: normal !important;
+  font-size: 12px !important;
+}
+
+.ir-wc-v033c .ir-wc-calendar-static.is-open em {
+  transform: rotate(180deg);
+}
+
+.ir-wc-v033c .ir-wc-calendar-body-v033c {
+  margin-top: 10px !important;
+  padding: 12px !important;
+  border-radius: 17px !important;
+  border: 1px solid rgba(117, 177, 255, 0.18) !important;
+  background: linear-gradient(180deg, rgba(18, 40, 76, 0.82), rgba(10, 24, 47, 0.92)) !important;
+}
+
+.ir-wc-v033c .ir-wc-calendar-body-v033c[hidden] {
+  display: none !important;
+}
+
+.ir-wc-v033c .ir-wc-calendar-body-v033c .ir-wc-week,
+.ir-wc-v033c .ir-wc-calendar-body-v033c .ir-wc-days {
+  display: grid !important;
+  grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+  gap: 6px !important;
+}
+
+.ir-wc-v033c .ir-wc-calendar-body-v033c .ir-wc-week {
+  margin-bottom: 7px !important;
+  color: rgba(180, 202, 232, 0.72) !important;
+  font-size: 11px !important;
+  text-align: center !important;
+}
+
+.ir-wc-v033c .ir-wc-calendar-body-v033c .ir-wc-day {
+  min-height: 27px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 9px !important;
+  background: rgba(255,255,255,0.035) !important;
+  color: rgba(232, 242, 255, 0.88) !important;
+  font-size: 12px !important;
+}
+
+.ir-wc-v033c .ir-wc-calendar-body-v033c .ir-wc-day:empty {
+  background: transparent !important;
+}
+
+.ir-wc-v033c .ir-wc-calendar-body-v033c .ir-wc-day.is-today {
+  background: linear-gradient(135deg, rgba(48, 130, 255, 0.95), rgba(91, 196, 170, 0.86)) !important;
+  color: white !important;
+  font-weight: 850 !important;
+}
+
+.ir-wc-v033c .ir-wc-note,
+.ir-wc-v033c .ir-wc-card.ir-wc-note {
+  width: 100% !important;
+  max-width: none !important;
+  grid-column: 1 / -1 !important;
+}
+
+.ir-wc-v033c .ir-wc-note textarea {
+  width: 100% !important;
+  max-width: none !important;
+  min-height: 285px !important;
+}
+
+@media (max-width: 520px) {
+  .ir-wc-v033c .ir-wc-topline {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* =========================================================
+   IRGEZTNE v040c - Workspace compact Home calendar alignment
+   Target: src/workspace-cabinet-panel-v0.css
+
+   Fixes the right Workspace Home top row:
+   - clock card and calendar toggle sit on the same visual line;
+   - calendar button does not drop/lower itself;
+   - opened calendar month appears below the row;
+   - Quick note remains below.
+   ========================================================= */
+
+.ir-wc-v033c .ir-wc-top-row,
+.ir-wc-v07 .ir-wc-top-row,
+.ir-wc-v04 .ir-wc-top-row,
+.ir-wc-v033c [class*="top-row"],
+.ir-wc-v07 [class*="top-row"],
+.ir-wc-v04 [class*="top-row"] {
+  display: grid !important;
+  grid-template-columns: minmax(140px, 0.72fr) minmax(220px, 1.28fr) !important;
+  align-items: start !important;
+  gap: 10px !important;
+}
+
+/* Clock and calendar must be equal-height buttons/cards when calendar is closed. */
+.ir-wc-v033c .ir-wc-time-card,
+.ir-wc-v033c .ir-wc-clock-card,
+.ir-wc-v033c .ir-wc-calendar-toggle,
+.ir-wc-v033c .ir-wc-calendar-static,
+.ir-wc-v033c .ir-wc-calendar-toggle-v033c,
+.ir-wc-v07 .ir-wc-time-card,
+.ir-wc-v07 .ir-wc-clock-card,
+.ir-wc-v07 .ir-wc-calendar-toggle,
+.ir-wc-v04 .ir-wc-time-card,
+.ir-wc-v04 .ir-wc-clock-card,
+.ir-wc-v04 .ir-wc-calendar-toggle,
+.ir-wc-v04 .ir-wc-calendar-fold > summary {
+  box-sizing: border-box !important;
+  min-height: 54px !important;
+  height: 54px !important;
+  margin: 0 !important;
+  align-self: start !important;
+}
+
+/* Calendar toggle inner layout: label left, month/year right, arrow at far edge. */
+.ir-wc-v033c .ir-wc-calendar-toggle,
+.ir-wc-v033c .ir-wc-calendar-static,
+.ir-wc-v033c .ir-wc-calendar-toggle-v033c,
+.ir-wc-v07 .ir-wc-calendar-toggle,
+.ir-wc-v04 .ir-wc-calendar-toggle,
+.ir-wc-v04 .ir-wc-calendar-fold > summary {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto auto !important;
+  align-items: center !important;
+  justify-items: stretch !important;
+  gap: 8px !important;
+  padding: 10px 14px !important;
+  line-height: 1.1 !important;
+  overflow: hidden !important;
+}
+
+/* Keep text centered vertically inside the closed calendar button. */
+.ir-wc-v033c .ir-wc-calendar-toggle span,
+.ir-wc-v033c .ir-wc-calendar-toggle strong,
+.ir-wc-v033c .ir-wc-calendar-toggle em,
+.ir-wc-v033c .ir-wc-calendar-static span,
+.ir-wc-v033c .ir-wc-calendar-static strong,
+.ir-wc-v033c .ir-wc-calendar-static em,
+.ir-wc-v07 .ir-wc-calendar-toggle span,
+.ir-wc-v07 .ir-wc-calendar-toggle strong,
+.ir-wc-v07 .ir-wc-calendar-toggle em,
+.ir-wc-v04 .ir-wc-calendar-toggle span,
+.ir-wc-v04 .ir-wc-calendar-toggle strong,
+.ir-wc-v04 .ir-wc-calendar-toggle em,
+.ir-wc-v04 .ir-wc-calendar-fold > summary span,
+.ir-wc-v04 .ir-wc-calendar-fold > summary strong,
+.ir-wc-v04 .ir-wc-calendar-fold > summary em {
+  display: block !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1.1 !important;
+  transform: none !important;
+  position: static !important;
+}
+
+.ir-wc-v033c .ir-wc-calendar-toggle span,
+.ir-wc-v033c .ir-wc-calendar-static span,
+.ir-wc-v07 .ir-wc-calendar-toggle span,
+.ir-wc-v04 .ir-wc-calendar-toggle span,
+.ir-wc-v04 .ir-wc-calendar-fold > summary span {
+  color: rgba(190, 211, 239, 0.78) !important;
+  font-size: 12px !important;
+  text-align: left !important;
+}
+
+.ir-wc-v033c .ir-wc-calendar-toggle strong,
+.ir-wc-v033c .ir-wc-calendar-static strong,
+.ir-wc-v07 .ir-wc-calendar-toggle strong,
+.ir-wc-v04 .ir-wc-calendar-toggle strong,
+.ir-wc-v04 .ir-wc-calendar-fold > summary strong {
+  color: rgba(242, 248, 255, 0.98) !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  text-align: right !important;
+  white-space: nowrap !important;
+}
+
+.ir-wc-v033c .ir-wc-calendar-toggle em,
+.ir-wc-v033c .ir-wc-calendar-static em,
+.ir-wc-v07 .ir-wc-calendar-toggle em,
+.ir-wc-v04 .ir-wc-calendar-toggle em,
+.ir-wc-v04 .ir-wc-calendar-fold > summary em {
+  width: 14px !important;
+  min-width: 14px !important;
+  text-align: right !important;
+  font-style: normal !important;
+  color: rgba(190, 211, 239, 0.78) !important;
+}
+
+/* If any earlier polish used pseudo arrows, keep them from affecting height. */
+.ir-wc-v033c .ir-wc-calendar-toggle::after,
+.ir-wc-v033c .ir-wc-calendar-static::after,
+.ir-wc-v07 .ir-wc-calendar-toggle::after,
+.ir-wc-v04 .ir-wc-calendar-toggle::after,
+.ir-wc-v04 .ir-wc-calendar-fold > summary::after {
+  position: static !important;
+  display: inline-block !important;
+  line-height: 1 !important;
+  transform: none !important;
+  margin: 0 !important;
+}
+
+/* Open calendar body always belongs below the full top row, not inside the closed button height. */
+.ir-wc-v033c .ir-wc-calendar-body-v033c,
+.ir-wc-v033c .ir-wc-calendar-wide,
+.ir-wc-v07 .ir-wc-calendar-wide,
+.ir-wc-v04 .ir-wc-calendar-body,
+.ir-wc-v04 .ir-wc-calendar-wide {
+  grid-column: 1 / -1 !important;
+  width: 100% !important;
+  margin-top: 10px !important;
+  align-self: stretch !important;
+}
+
+/* Details-based older calendar: prevent open summary from stretching with body. */
+.ir-wc-v04 .ir-wc-calendar-fold[open] {
+  align-self: start !important;
+}
+
+.ir-wc-v04 .ir-wc-calendar-fold[open] > summary {
+  min-height: 54px !important;
+  height: 54px !important;
+}
+
+/* Narrow compact panel: keep two top controls on one row while possible. */
+@media (max-width: 620px) {
+  .ir-wc-v033c .ir-wc-top-row,
+  .ir-wc-v07 .ir-wc-top-row,
+  .ir-wc-v04 .ir-wc-top-row,
+  .ir-wc-v033c [class*="top-row"],
+  .ir-wc-v07 [class*="top-row"],
+  .ir-wc-v04 [class*="top-row"] {
+    grid-template-columns: minmax(128px, 0.74fr) minmax(190px, 1.26fr) !important;
+    gap: 8px !important;
+  }
+
+  .ir-wc-v033c .ir-wc-time-card,
+  .ir-wc-v033c .ir-wc-clock-card,
+  .ir-wc-v033c .ir-wc-calendar-toggle,
+  .ir-wc-v033c .ir-wc-calendar-static,
+  .ir-wc-v033c .ir-wc-calendar-toggle-v033c,
+  .ir-wc-v07 .ir-wc-time-card,
+  .ir-wc-v07 .ir-wc-clock-card,
+  .ir-wc-v07 .ir-wc-calendar-toggle,
+  .ir-wc-v04 .ir-wc-time-card,
+  .ir-wc-v04 .ir-wc-clock-card,
+  .ir-wc-v04 .ir-wc-calendar-toggle,
+  .ir-wc-v04 .ir-wc-calendar-fold > summary {
+    min-height: 52px !important;
+    height: 52px !important;
+  }
+
+  .ir-wc-v033c .ir-wc-calendar-toggle,
+  .ir-wc-v033c .ir-wc-calendar-static,
+  .ir-wc-v033c .ir-wc-calendar-toggle-v033c,
+  .ir-wc-v07 .ir-wc-calendar-toggle,
+  .ir-wc-v04 .ir-wc-calendar-toggle,
+  .ir-wc-v04 .ir-wc-calendar-fold > summary {
+    padding: 9px 12px !important;
+  }
+}
+
+/* Very narrow fallback: stack cleanly instead of half-dropping the calendar. */
+@media (max-width: 380px) {
+  .ir-wc-v033c .ir-wc-top-row,
+  .ir-wc-v07 .ir-wc-top-row,
+  .ir-wc-v04 .ir-wc-top-row,
+  .ir-wc-v033c [class*="top-row"],
+  .ir-wc-v07 [class*="top-row"],
+  .ir-wc-v04 [class*="top-row"] {
+    grid-template-columns: 1fr !important;
+  }
+}

@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    http-equiv="Content-Security-Policy"
+    content="default-src 'self' 'unsafe-inline' data: blob: https: http:; img-src 'self' data: https: http:; media-src 'self' data: https: http:; frame-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline';"
+  />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+ <title>IRGEZTNE</title>
+ <link rel="stylesheet" href="styles.css" />
+<link rel="stylesheet" href="src/v81-panels.css" />
+<link rel="stylesheet" href="src/modules/files/files-v0.css" />
+<link rel="stylesheet" href="src/v82-editor-v1.css" />
+<link rel="stylesheet" href="src/v83-editor-shell.css" />
+<link rel="stylesheet" href="src/modules/projects/projects-v0.css" />
+<link rel="stylesheet" href="src/modules/relations/relations-v0.css" />
+<link rel="stylesheet" href="src/modules/notes/notes-v0.css" />
+<link rel="stylesheet" href="src/modules/tools/tools-v0.css" />
+<link rel="stylesheet" href="src/v87-vitrina-v1.css" />
+<link rel="stylesheet" href="src/v88-codehub-v1.css" />
+<link rel="stylesheet" href="src/modules/map/map-v0.css" />
+<link rel="stylesheet" href="src/modules/documents/documents-v0.css" />
+<link rel="stylesheet" href="src/modules/site-pages/site-pages-v0.css" />
+<link rel="stylesheet" href="src/modules/ecosystem/ecosystem-v0.css" />
+<link rel="stylesheet" href="src/modules/rooms/rooms-v0.css" />
+<link rel="stylesheet" href="src/modules/fili-store/fili-store-v0.css" />
+<link rel="stylesheet" href="src/modules/fili-safe/fili-safe-v0.css" />
+<link rel="stylesheet" href="src/modules/analytics/analytics-v0.css" />
+<link rel="stylesheet" href="src/modules/workspace-backup/workspace-backup-v0.css" />
+<link rel="stylesheet" href="src/v92-topbar-menu.css" />
+<link rel="icon" type="image/svg+xml" href="./assets/branding/favicon.png?v=v7g2e" />
+  <!-- preview.4: Editor Web Studio Safe v5 -->
+  <link rel="stylesheet" href="./src/modules/editor-site-studio-safe/editor-site-studio-safe-v5.css?v=v084f-editor-unlink-color-picker">
+  <!-- IRGEZTNE_EDITOR_CORE_ASSETS_V065C -->
+  <link rel="stylesheet" href="./src/modules/irgeztne-editor-core/irgeztne-editor-core.css">
+  <!-- preview.4: Web Studio v5 layout polish SAFE -->
+  <link rel="stylesheet" href="./src/modules/editor-site-studio-safe/editor-site-studio-v5-layout-polish-safe.css">
+  <!-- preview.4: Web Studio v5 editor button style safe -->
+  <link rel="stylesheet" href="./src/modules/editor-site-studio-safe/site-studio-v5-editor-button-style-safe.css">
+  <!-- preview.4: Web Studio v5 exit/back safe -->
+  <link rel="stylesheet" href="./src/modules/editor-site-studio-safe/site-studio-v5-exit-back-safe.css">
+  <link rel="stylesheet" href="./src/modules/editor-site-studio-safe/site-studio-topbar-clean-v5.css">
+  <link rel="stylesheet" href="./src/workspace-cabinet-panel-v0.css">
+  <link rel="stylesheet" href="src/modules/rooms/rooms-live-v1.css">
+  <link rel="stylesheet" href="src/v039i-cabinet-rooms-polish.css">
+  <link rel="stylesheet" href="src/v039j-strong-visual-polish.css">
+  <link rel="stylesheet" href="src/workspace-cabinet-panel-v040d.css">
+  <link rel="stylesheet" href="src/v039k-rooms-message-area-polish.css">
+
+
+
+</head>
+<body>
+  <div class="app-shell" id="appShell">
+    <header class="topbar topbar--true-top">
+      <div class="topbar-row topbar-row--tabs">
+        <div class="topbar-brand">
+          <div class="brand-block brand-block--irgeztne">
+<div class="brand-wordmark-wrap">
+              <div class="brand-identity-row" aria-label="IRGEZTNE">
+                <img class="brand-wordmark-image brand-app-mark-image" src="./assets/branding/header-mark-transparent.png?v=v7g2h" alt="" aria-hidden="true" />
+                <span class="brand-wordmark-text">IRGEZTNE</span>
+              </div>
+              <span class="brand-shell-label">оболочка браузера</span>
+            </div>
+          </div>
+        </div>
+
+        <section class="tabsbar tabsbar-top" id="tabsBar">
+          <div class="tabs-scroll" id="tabsScroll"></div>
+          <button class="icon-btn add-tab-btn tabs-add-btn" id="addTabBtn" title="Новая вкладка" aria-label="Новая вкладка">＋</button>
+        </section>
+
+
+      </div>
+
+      <div class="topbar-row topbar-row--nav">
+        <div class="nav-controls">
+          <button class="nav-btn home-nav-btn" id="homeBtn" title="Workspace Home" aria-label="Workspace Home">⌂</button>
+          <button class="nav-btn" id="backBtn" title="Back" aria-label="Back">←</button>
+          <button class="nav-btn" id="forwardBtn" title="Forward" aria-label="Forward">→</button>
+          <button class="nav-btn" id="reloadBtn" title="Reload" aria-label="Reload">↻</button>
+        </div>
+
+        <div class="topbar-address">
+          <div class="address-wrap" id="addressWrap">
+            <button
+              class="source-trigger"
+              id="sourceTrigger"
+              type="button"
+              aria-haspopup="listbox"
+              aria-expanded="false"
+              title="Источник поиска"
+            >
+              <span class="source-trigger-label" id="sourceTriggerLabel">Google</span>
+              <span class="source-trigger-caret">▾</span>
+            </button>
+
+            <div class="source-dropdown hidden" id="sourceDropdown" role="listbox" aria-label="Источник поиска">
+              <button class="source-option active" data-source="google" role="option" aria-selected="true">Google</button>
+              <button class="source-option" data-source="yandex" role="option" aria-selected="false">Yandex</button>
+              <button class="source-option" data-source="duckduckgo" role="option" aria-selected="false">DuckDuckGo</button>
+              <button class="source-option" data-source="wikipedia" role="option" aria-selected="false">Wikipedia</button>
+              <button class="source-option" data-source="ipfs" role="option" aria-selected="false">IPFS</button>
+              <button class="source-option" data-source="ns" role="option" aria-selected="false">NS</button>
+            </div>
+
+            <input
+              id="addressInput"
+              class="address-input"
+              type="text"
+              spellcheck="false"
+              autocomplete="off"
+              placeholder="Искать через Google или ввести адрес"
+            />
+
+            <div class="address-actions">
+              <button class="utility-btn" id="bookmarkBtn" title="Закладка" aria-label="Закладка">★</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="topbar-actions">
+          <div class="workspace-cluster">
+            <button
+              class="workspace-toggle"
+              id="workspaceToggle"
+              type="button"
+              title="Переключить режим рабочего пространства"
+              aria-pressed="false"
+            >
+              <span class="workspace-indicator-dot"></span>
+              <span class="workspace-toggle-text">Пространство</span>
+            </button>
+          </div>
+
+          <button
+            class="icon-btn account-toggle-btn"
+            id="accountToggle"
+            type="button"
+            title="IRGEZTNE ID"
+            aria-label="IRGEZTNE ID"
+            aria-haspopup="menu"
+            aria-expanded="false"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M12 12.25a4.25 4.25 0 1 0 0-8.5 4.25 4.25 0 0 0 0 8.5Zm0 2.1c-3.95 0-7.25 2.12-7.25 4.72 0 .64.52 1.18 1.18 1.18h12.14c.66 0 1.18-.54 1.18-1.18 0-2.6-3.3-4.72-7.25-4.72Z" />
+            </svg>
+            <span class="account-toggle-dot" aria-hidden="true"></span>
+          </button>
+
+          <button class="icon-btn hamburger-btn" id="hamburgerBtn" title="Свернуть левую панель" aria-label="Свернуть левую панель">☰</button>
+
+          <button
+            class="icon-btn workspace-backup-topbar-btn"
+            id="workspaceBackupTopbarBtn"
+            type="button"
+            title="Backup / Резервная копия"
+            aria-label="Backup / Резервная копия"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M6.4 4.2h11.2l2 4.1v10.9a1.8 1.8 0 0 1-1.8 1.8H6.2a1.8 1.8 0 0 1-1.8-1.8V8.3l2-4.1Z" />
+              <path d="M8 8.3h8" />
+              <path d="M12 7.4v7.2" />
+              <path d="m8.9 11.8 3.1 3.1 3.1-3.1" />
+            </svg>
+            <span class="workspace-backup-topbar-dot" aria-hidden="true"></span>
+          </button>
+
+          <div class="topbar-more" id="topbarMore">
+            <button
+              class="icon-btn more-menu-btn"
+              id="topbarMoreBtn"
+              type="button"
+              title="Меню IRGEZTNE"
+              aria-label="Меню IRGEZTNE"
+              aria-haspopup="menu"
+              aria-expanded="false"
+            >⋮</button>
+            <div class="topbar-more-menu hidden" id="topbarMoreMenu" role="menu" aria-label="IRGEZTNE menu">
+              <button type="button" role="menuitem" data-topbar-link="website">Официальный сайт</button>
+              <button type="button" role="menuitem" data-topbar-link="updates">Проверить новую версию</button>
+              <button type="button" role="menuitem" data-topbar-link="releases">Релизы / история версий</button>
+              <button type="button" role="menuitem" data-topbar-action="docs-status">Документация — в разработке</button>
+              <button type="button" role="menuitem" data-topbar-link="github">GitHub репозиторий</button>
+              <button type="button" role="menuitem" data-topbar-action="about">О IRGEZTNE</button>
+            </div>
+          </div>
+
+          <div class="topbar-status hidden" id="topbarStatus" role="status" aria-live="polite"></div>
+        </div>
+      </div>
+      <div class="topbar-bookmarks-row saved-sites-panel hidden" id="savedSitesPanel" aria-hidden="true" aria-label="Закладки">
+        <div class="saved-sites-list" id="savedSitesList"></div>
+      </div>
+    </header>
+
+    <main class="main-layout mode-normal" id="mainLayout">
+      <section class="browser-shell" id="browserShell">
+        <div class="browser-stage" id="browserStage">
+          <div class="webview-stack" id="webviewStack"></div>
+        </div>
+      </section>
+
+      <div
+        class="workspace-divider hidden"
+        id="workspaceDivider"
+        role="separator"
+        aria-orientation="vertical"
+        aria-label="Изменить ширину рабочего пространства"
+        tabindex="0"
+      >
+        <span class="workspace-divider-handle"></span>
+      </div>
+
+      <aside class="workspace-shell hidden" id="workspaceShell" aria-hidden="true">
+        <div class="workspace-shell-header">
+          <div class="workspace-shell-title">
+            <span class="workspace-shell-dot"></span>
+            <span>Пространство</span>
+          </div>
+
+          <div class="workspace-shell-actions">
+            <button class="workspace-mini-btn" id="workspaceCollapseBtn" title="Закрыть пространство">✕</button>
+          </div>
+        </div>
+
+        <div class="workspace-shell-nav hidden" id="workspaceShellNav" hidden aria-hidden="true" style="display:none !important;">
+  <button class="workspace-nav-btn active" data-section="workspace">Пространство</button>
+  <button class="workspace-nav-btn" data-section="files">Файлы</button>
+  <button class="workspace-nav-btn" data-section="projects">Проекты</button>
+  <button class="workspace-nav-btn" data-section="notes">Заметки</button>
+  <button class="workspace-nav-btn" data-section="documents">Офис</button>
+  <button class="workspace-nav-btn" data-section="site-pages">Web Studio</button>
+  <button class="workspace-nav-btn" data-section="tools">Инструменты</button>
+  <button class="workspace-nav-btn" data-section="map">Карта</button>
+  <button class="workspace-nav-btn" data-section="editor">Редактор</button>
+  <button class="workspace-nav-btn" data-section="codehub">Мастерская</button>
+  <button class="workspace-nav-btn" data-section="marketplace">Шаблоны</button>
+  <button class="workspace-nav-btn" data-section="rooms">Чат</button>
+  <button class="workspace-nav-btn" data-section="fili-store">Fili Store</button>
+  <button class="workspace-nav-btn" data-section="fili-safe">Fili Safe</button>
+  <button class="workspace-nav-btn" data-section="analytics">Аналитика</button>
+</div>
+
+        <div class="workspace-shell-body" id="workspaceShellBody">          <section class="workspace-panel active" data-panel="workspace">
+            <div class="workspace-combined-layout workspace-home-dashboard" id="workspaceCombinedLayout">
+              <section class="panel-card workspace-home-hero-card">
+                <div class="workspace-home-hero-main">
+                  <div class="workspace-home-hero-copy">
+                    <div class="workspace-home-kicker">Главная IRGEZTNE</div>
+                    <h2 class="workspace-home-title">Пространство</h2>
+                    <p class="workspace-home-description">Живой обзор файлов, проектов, заметок и быстрых действий внутри текущей оболочки.</p>
+                  </div>
+
+                  <div class="workspace-home-actions" role="group" aria-label="Быстрые действия главной">
+                    <button type="button" class="workspace-home-action-btn" data-home-open="files">Файлы</button>
+                    <button type="button" class="workspace-home-action-btn" data-home-open="projects">Проекты</button>
+                    <button type="button" class="workspace-home-action-btn" data-home-open="notes">Заметки</button>
+                    <button type="button" class="workspace-home-action-btn" data-home-open="editor">Редактор</button>
+                    <button type="button" class="workspace-home-action-btn secondary" data-home-open-cabinet="files">Файлы</button>
+                  </div>
+
+                <div class="workspace-home-stat-grid">
+                  <div class="workspace-home-stat-card">
+                    <span class="workspace-home-stat-label">Файлы</span>
+                    <strong class="workspace-home-stat-value" id="homeStatFiles">0</strong>
+                    <span class="workspace-home-stat-meta" id="homeFilesMeta">Файлы и материалы</span>
+                  </div>
+                  <div class="workspace-home-stat-card">
+                    <span class="workspace-home-stat-label">Проекты</span>
+                    <strong class="workspace-home-stat-value" id="homeStatProjects">0</strong>
+                    <span class="workspace-home-stat-meta" id="homeProjectsMeta">Текущие контейнеры</span>
+                  </div>
+                  <div class="workspace-home-stat-card">
+                    <span class="workspace-home-stat-label">Заметки</span>
+                    <strong class="workspace-home-stat-value" id="homeStatNotes">0</strong>
+                    <span class="workspace-home-stat-meta" id="homeNotesMeta">Сохранённые заметки</span>
+                  </div>
+                  <div class="workspace-home-stat-card">
+                    <span class="workspace-home-stat-label">Избранное</span>
+                    <strong class="workspace-home-stat-value" id="homeStatFavorites">0</strong>
+                    <span class="workspace-home-stat-meta" id="homeFavoritesMeta">Закреплённый или отмеченный контекст</span>
+                  </div>
+                </div>
+
+                <div class="workspace-home-focus-strip" id="homeFocusStrip">
+                  <span class="workspace-home-focus-chip">Активный файл: нет</span>
+                  <span class="workspace-home-focus-chip">Проект: нет</span>
+                  <span class="workspace-home-focus-chip">Заметка: нет</span>
+                </div>
+              </section>
+
+              <section class="panel-card workspace-home-module-card">
+                <div class="panel-card-header workspace-home-card-header">
+                  <div>
+                    <h3>Недавние файлы</h3>
+                    <span>Последние элементы библиотеки</span>
+                  </div>
+                  <button type="button" class="workspace-home-inline-btn" data-home-open="files">Открыть модуль</button>
+                </div>
+                <div class="workspace-home-list" id="homeFilesList"></div>
+              </section>
+
+              <section class="panel-card workspace-home-module-card">
+                <div class="panel-card-header workspace-home-card-header">
+                  <div>
+                    <h3>Недавние проекты</h3>
+                    <span>Основные рабочие контейнеры</span>
+                  </div>
+                  <button type="button" class="workspace-home-inline-btn" data-home-open="projects">Открыть модуль</button>
+                </div>
+                <div class="workspace-home-list" id="homeProjectsList"></div>
+              </section>
+
+              <section class="panel-card workspace-home-module-card">
+                <div class="panel-card-header workspace-home-card-header">
+                  <div>
+                    <h3>Недавние заметки</h3>
+                    <span>Связанные заметки и быстрый захват</span>
+                  </div>
+                  <button type="button" class="workspace-home-inline-btn" data-home-open="notes">Открыть модуль</button>
+                </div>
+                <div class="workspace-home-list" id="homeNotesList"></div>
+              </section>
+
+
+              <section class="panel-card workspace-home-quicknote-card">
+                <div class="panel-card-header workspace-home-card-header">
+                  <div>
+                    <h3>Быстрый захват</h3>
+                    <span>Временная локальная заметка, синхронизированная с текущим полем пространства</span>
+                  </div>
+                  <button type="button" class="workspace-home-inline-btn" data-home-open="notes">Открыть заметки</button>
+                </div>
+                <textarea class="notes-editor compact-editor workspace-home-quicknote" id="workspaceNotesCombined" placeholder="Быстрая заметка..."></textarea>
+                <div class="workspace-home-hint-row">
+                  <span class="workspace-home-hint">Сначала локальный черновик</span>
+                  <span class="workspace-home-hint">Заметки, чтобы превратить это в структурированную запись</span>
+                </div>
+              </section>
+
+              <section class="panel-card workspace-home-workflow-card">
+                <div class="panel-card-header workspace-home-card-header">
+                  <div>
+                    <h3>Маршруты пространства</h3>
+                    <span>Основная работа — сейчас. Шаблоны и Мастерская — отдельные направления для пакетов, тем, блоков и ассетов.</span>
+                  </div>
+                </div>
+
+                <div class="workspace-home-shortcut-grid workspace-home-shortcut-grid--layered">
+                  <button type="button" class="workspace-home-shortcut workspace-home-shortcut--primary" data-home-open="marketplace">
+                    <strong>Шаблоны</strong>
+                    <span>Бесплатные официальные шаблоны для Web Studio и будущей публикации.</span>
+                  </button>
+
+                  <button type="button" class="workspace-home-shortcut workspace-home-shortcut--primary" data-home-open="codehub">
+                    <strong>Мастерская</strong>
+                    <span>Пакеты для Workspace и Web Studio: шаблоны, темы, блоки, виджеты и ассеты.</span>
+                  </button>
+
+                  <button type="button" class="workspace-home-shortcut" data-home-open="files">
+                    <strong>Файлы</strong>
+                    <span>Библиотека файлов, материалов и ассетов.</span>
+                  </button>
+
+                  <button type="button" class="workspace-home-shortcut" data-home-open="projects">
+                    <strong>Проекты</strong>
+                    <span>Контейнеры, связывающие заметки, черновики и файлы.</span>
+                  </button>
+
+                  <button type="button" class="workspace-home-shortcut" data-home-open="notes">
+                    <strong>Заметки</strong>
+                    <span>Сохранённые фрагменты и связанные ссылки.</span>
+                  </button>
+
+                  <button type="button" class="workspace-home-shortcut" data-home-open="editor">
+                    <strong>Редактор</strong>
+                    <span>Подготовка черновиков и публикации.</span>
+                  </button>
+
+                  <button type="button" class="workspace-home-shortcut workspace-home-shortcut--primary" data-home-open="site-pages">
+                    <strong>Web Studio</strong>
+                    <span>Site identity, pages manager, menu foundation и будущий build/export flow.</span>
+                  </button>
+
+                  <button type="button" class="workspace-home-shortcut" data-home-open="tools">
+                    <strong>Инструменты</strong>
+                    <span>Служебные действия, сравнение, маршрутизация и извлечение.</span>
+                  </button>
+
+                  <button type="button" class="workspace-home-shortcut" data-home-open-cabinet="projects">
+                    <strong>Пространство</strong>
+                    <span>Расширенный рабочий вид для текущей оболочки.</span>
+                  </button>
+                </div>
+
+                 <div class="workspace-home-future-block workspace-home-future-block--ecosystem">
+  <div class="workspace-home-future-title"></div>
+  <div class="ecosystem-v0-card-grid ecosystem-v0-card-grid--workspace">
+    <button type="button" class="workspace-home-shortcut ecosystem-v0-card" data-ecosystem-card="rooms" data-home-open="rooms" title="Открыть Чат">
+      <strong>Чат</strong>
+      <span>Локальные обсуждения и будущий слой коммуникации.</span>
+    </button>
+    <button type="button" class="workspace-home-shortcut ecosystem-v0-card" data-ecosystem-card="fili-store" data-home-open="fili-store" title="Открыть Fili Store v0">
+      <strong>Fili Store v0</strong>
+      <span>Шаблоны полезных файловых пакетов без оплат в v0.</span>
+    </button>
+    <button type="button" class="workspace-home-shortcut ecosystem-v0-card" data-ecosystem-card="fili-safe" data-home-open="fili-safe" title="Открыть Fili Safe v0">
+      <strong>Fili Safe v0</strong>
+      <span>Локальный профиль, подписи и будущий слой безопасности.</span>
+    </button>
+    <button type="button" class="workspace-home-shortcut ecosystem-v0-card" data-ecosystem-card="analytics" data-home-open="analytics" title="Открыть Веб-аналитика">
+      <strong>Веб-аналитика</strong>
+      <span>Веб-аналитика сайта, экспортов и публикации.</span>
+    </button>
+  </div>
+</div>
+              </section>
+            </div>
+          </section>
+
+<section class="workspace-panel" data-panel="rooms">
+            <div class="panel-card large">
+              <div class="panel-card-header">
+                <h3>Чат</h3>
+                <span>Комнаты · локальные комнаты для решений, задач, заметок и ссылок</span>
+              </div>
+              <div class="module-shell-card module-shell-card--rooms standalone-shell ecosystem-v0-shell">
+                <div class="module-stage-row">
+                  <span class="module-stage is-v0">v0 local-first</span>
+                  <span class="module-meta-chip">Без сервера · Без видео · P2P позже</span>
+                </div>
+                <div class="module-block-grid two-up tall-grid">
+                  <div class="module-block large-block">
+                    <div class="module-block-title">Локальные комнаты</div>
+                    <div class="module-block-text">Первый слой для рабочих обсуждений, решений, идей и сообщений проекта. Всё хранится локально и не требует аккаунта.</div>
+                  </div>
+                  <div class="module-block-stack">
+                    <div class="module-block compact-block">
+                      <div class="module-block-title">Сообщения проекта</div>
+                      <div class="module-block-text">Позже комнаты смогут связываться с проектом, файлом, документом, точкой карты и черновиком редактора.</div>
+                    </div>
+                    <div class="module-block compact-block">
+                      <div class="module-block-title">P2P позже</div>
+                      <div class="module-block-text">WebRTC/libp2p-style связь и видео не входят в v0. Сначала безопасная локальная структура.</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="module-checklist three-col">
+                  <span>Локальные комнаты</span>
+                  <span>Заметки сообщений позже</span>
+                  <span>Будущий P2P-адаптер</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="workspace-panel" data-panel="fili-store">
+            <div class="panel-card large">
+              <div class="panel-card-header">
+                <h3>Fili Store</h3>
+                <span>Fili Store v0 · структура будущего рынка полезных файлов</span>
+              </div>
+              <div class="module-shell-card module-shell-card--fili-store standalone-shell ecosystem-v0-shell">
+                <div class="module-stage-row">
+                  <span class="module-stage is-v0">v0 catalog shell</span>
+                  <span class="module-meta-chip">Без оплат · Без credits · Локальные категории</span>
+                </div>
+                <div class="module-block-grid two-up">
+                  <div class="module-block compact-block">
+                    <div class="module-block-title">Файловые категории</div>
+                    <div class="module-block-text">Шаблоны, секции, темы, пакеты иконок, asset packs, пакеты Веб-мастерской, шаблоны документов и пресеты публикации.</div>
+                  </div>
+                  <div class="module-block compact-block">
+                    <div class="module-block-title">Без финансов сейчас</div>
+                    <div class="module-block-text">v0 только показывает направление. Покупки, credits, payouts и marketplace-правила появятся намного позже.</div>
+                  </div>
+                </div>
+                <div class="module-checklist three-col">
+                  <span>Полезные файлы</span>
+                  <span>Категории пакетов</span>
+                  <span>Fili Market позже</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="workspace-panel" data-panel="files">
+            <div class="panel-card files-card">
+              <div class="panel-card-header files-header">
+                <div>
+                  <h3>Файлы</h3>
+                  <span>Библиотека файлов, ассетов и материалов workspace</span>
+                </div>
+              </div>
+
+              <div data-source-library-root></div>
+            </div>
+          </section>
+
+          <section class="workspace-panel" data-panel="projects">
+            <div class="panel-card">
+              <div class="panel-card-header">
+                <h3>Проекты</h3>
+                <span>Project containers that connect files, drafts, notes, and workspace context</span>
+              </div>
+              <div data-projects-root data-projects-surface="workspace"></div>
+            </div>
+          </section>
+
+          <section class="workspace-panel" data-panel="notes">
+            <div class="panel-card">
+              <div class="panel-card-header">
+                <h3>Заметки</h3>
+                <span>Быстрый захват, заметки проекта и связанные ссылки</span>
+              </div>
+              <div data-notes-root data-notes-surface="workspace"></div>
+            </div>
+          </section>
+
+          <section class="workspace-panel" data-panel="documents">
+            <div data-documents-root data-documents-surface="workspace"></div>
+          </section>
+
+
+          <section class="workspace-panel" data-panel="site-pages">
+            <div data-site-pages-root data-site-pages-surface="workspace"></div>
+          </section>
+
+          <section class="workspace-panel" data-panel="tools">
+            <div class="ns-tools-host" data-tools-root data-tools-surface="workspace"></div>
+          </section>
+
+          <section class="workspace-panel" data-panel="map">
+            <div data-map-root data-map-surface="workspace"></div>
+          </section>
+
+<section class="workspace-panel" data-panel="editor">
+            <div class="panel-card">
+              <div class="panel-card-header">
+                <h3>Editor</h3>
+                <span>Web Studio</span>
+              </div>
+
+              <div class="workspace-editor-launcher">
+                <div class="workspace-editor-launcher-kicker">Web Studio</div>
+                <h4 class="workspace-editor-launcher-title">Редактор для письма. Workspace для быстрого запуска.</h4>
+                <p class="workspace-editor-launcher-copy">
+                  Open the full editor, or jump straight to the linked modules around the current work.
+                </p>
+
+                <div class="workspace-editor-launcher-actions">
+                  <button type="button" class="workspace-editor-launcher-btn primary" data-workspace-editor-open-cabinet="editor">Открыть редактор</button>
+                  <button type="button" class="workspace-editor-launcher-btn" data-workspace-editor-open="files">Файлы</button>
+                  <button type="button" class="workspace-editor-launcher-btn" data-workspace-editor-open="notes">Заметки</button>
+                  <button type="button" class="workspace-editor-launcher-btn" data-workspace-editor-open="projects">Проекты</button>
+                </div>
+
+                <div class="workspace-editor-launcher-meta">
+                  <div class="workspace-editor-meta-card">
+                    <span class="workspace-editor-meta-label">Surface</span>
+                    <strong class="workspace-editor-meta-value">Launcher only</strong>
+                    <span class="workspace-editor-meta-copy">Keep the narrow panel light and fast.</span>
+                  </div>
+                  <div class="workspace-editor-meta-card">
+                    <span class="workspace-editor-meta-label">Write / Preview / Deploy</span>
+                    <strong class="workspace-editor-meta-value">Редактор</strong>
+                    <span class="workspace-editor-meta-copy">Use the wide editor for the full flow.</span>
+                  </div>
+                </div>
+              </div>
+
+              <div id="nsEditorWorkspaceMount" class="ns-editor-mount workspace-editor-hidden-mount" data-editor-surface="workspace" aria-hidden="true"></div>
+            </div>
+          </section>
+
+          <section class="workspace-panel" data-panel="marketplace">
+  <div class="panel-card workspace-vitrina-panel-card">
+    <div class="panel-card-header">
+      <h3>Шаблоны</h3>
+      <span>Официальные шаблоны · Бесплатно · Preview.4</span>
+    </div>
+
+    <div class="workspace-vitrina-lite-note">
+      <div class="workspace-vitrina-lite-copy">
+        <strong>Quick workspace browse</strong>
+        <span>Откройте полный preview и поток установки через рабочее пространство.</span>
+      </div>
+      <button type="button" class="workspace-home-inline-btn" data-home-open-cabinet="marketplace">Открыть шаблоны</button>
+    </div>
+
+    <div class="ns-vitrina-host ns-vitrina-host--workspace" data-vitrina-root data-vitrina-surface="workspace"></div>
+  </div>
+</section>
+
+<section class="workspace-panel" data-panel="fili-safe">
+            <div class="panel-card large">
+              <div class="panel-card-header">
+                <h3>Fili Safe</h3>
+                <span>Fili Safe v0 · локальный профиль, подписи и будущая безопасность</span>
+              </div>
+              <div class="module-shell-card module-shell-card--fili-safe standalone-shell ecosystem-v0-shell">
+                <div class="module-stage-row">
+                  <span class="module-stage is-v0">v0 safe shell</span>
+                  <span class="module-meta-chip">Без крипты · Без custody · Без оплат</span>
+                </div>
+                <div class="module-block-stack">
+                  <div class="module-block compact-block">
+                    <div class="module-block-title">Локальная безопасная зона</div>
+                    <div class="module-block-text">Место для будущего профиля автора, publisher identity, package signatures и ключей публикации.</div>
+                  </div>
+                  <div class="module-block compact-block">
+                    <div class="module-block-title">File Credits позже</div>
+                    <div class="module-block-text">Credits/балансы не включены в v0. Будущий withdrawable balance должен быть обеспечен реальным доходом, не “из воздуха”.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="workspace-panel" data-panel="analytics">
+            <div class="panel-card large">
+              <div class="panel-card-header">
+                <h3>Веб-аналитика</h3>
+                <span>Веб-аналитика · локальная аналитика без внешних SDK</span>
+              </div>
+              <div class="module-shell-card module-shell-card--analytics standalone-shell ecosystem-v0-shell">
+                <div class="module-stage-row">
+                  <span class="module-stage is-v0">v0 local analytics</span>
+                  <span class="module-meta-chip">Файлы · Проекты · Экспорты · Мастерская</span>
+                </div>
+                <div class="module-block-grid two-up">
+                  <div class="module-block compact-block">
+                    <div class="module-block-title">Локальные сигналы</div>
+                    <div class="module-block-text">В будущем здесь будут сводки по файлам, проектам, документам, шаблонам, экспортам и публикациям.</div>
+                  </div>
+                  <div class="module-block compact-block">
+                    <div class="module-block-title">Не рыночная аналитика</div>
+                    <div class="module-block-text">Это не биржи и не крипто-dashboard. Это наблюдательный центр своего workspace и будущей FiliNet-активности.</div>
+                  </div>
+                </div>
+                <div class="module-checklist three-col">
+                  <span>Без внешних SDK</span>
+                  <span>Локальные счётчики позже</span>
+                  <span>FiliNet signals later</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="workspace-panel" data-panel="codehub">
+            <div data-codehub-root data-codehub-surface="workspace"></div>
+          </section>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <div class="cabinet-overlay hidden" id="cabinetOverlay" aria-hidden="true">
+    <div class="cabinet-surface" id="cabinetSurface">
+      <div class="cabinet-grid-view" id="cabinetGridView">
+        <div class="cabinet-header">
+          <div class="cabinet-title-wrap">
+            <span class="cabinet-dot"></span>
+            <div>
+              <div class="cabinet-title">Кабинет</div>
+              <div class="cabinet-subtitle">Модули пространства</div>
+            </div>
+          </div>
+          <button class="cabinet-close-btn" id="cabinetCloseBtn" title="Закрыть">✕</button>
+        </div>
+        <div class="cabinet-grid-nav" data-preview4-grid-nav="true">
+          <button type="button" data-open-section="workspace">Главная</button>
+          <button type="button" data-open-section="files">Файлы</button>
+          <button type="button" data-open-section="projects">Проекты</button>
+          <button type="button" data-open-section="notes">Заметки</button>
+          <button type="button" data-open-section="documents">Офис</button>
+          <button type="button" data-open-section="site-pages">Веб-студия</button>
+          <button type="button" data-open-section="tools">Инструменты</button>
+          <button type="button" data-open-section="codehub">Мастерская</button>
+          <button type="button" data-open-section="marketplace">Шаблоны</button>
+          <button type="button" data-open-section="rooms">Чат</button>
+          <button type="button" data-open-section="analytics">Аналитика</button>
+        </div>
+
+
+        <div class="cabinet-grid">
+  <div class="cabinet-group cabinet-group--primary">
+    <button class="cabinet-tile cabinet-tile--primary" data-open-section="workspace" type="button">
+      <span class="cabinet-tile-title">Главная</span>
+      <span class="cabinet-tile-text">Обзор пространства, недавние маршруты и чистая точка запуска для основных модулей.</span>
+    </button>
+
+    <button class="cabinet-tile cabinet-tile--primary" data-open-section="files" type="button">
+      <span class="cabinet-tile-title">Файлы</span>
+      <span class="cabinet-tile-text">Файлы, загрузки, документы и материалы workspace.</span>
+    </button>
+
+    <button class="cabinet-tile cabinet-tile--primary" data-open-section="projects" type="button">
+      <span class="cabinet-tile-title">Проекты</span>
+      <span class="cabinet-tile-text">Контейнеры, связывающие файлы, черновики, заметки и рабочий поток.</span>
+    </button>
+
+    <button class="cabinet-tile cabinet-tile--primary" data-open-section="notes" type="button">
+      <span class="cabinet-tile-title">Заметки</span>
+      <span class="cabinet-tile-text">Быстрый захват, связанные ссылки и рабочие фрагменты.</span>
+    </button>
+
+    <button class="cabinet-tile cabinet-tile--primary" data-open-section="documents" type="button">
+      <span class="cabinet-tile-title">Офис</span>
+      <span class="cabinet-tile-text">Лёгкий Writer для статей, отчётов, исследований и Markdown/HTML export.</span>
+    </button>
+
+
+    <button class="cabinet-tile cabinet-tile--primary" data-open-section="site-pages" type="button">
+      <span class="cabinet-tile-title">Веб-студия</span>
+      <span class="cabinet-tile-text">Страницы, меню, предпросмотр, экспорт и подготовка публикации сайта.</span>
+    </button>
+
+    <button class="cabinet-tile cabinet-tile--primary" data-open-section="tools" type="button">
+      <span class="cabinet-tile-title">Инструменты</span>
+      <span class="cabinet-tile-text">Служебные действия, сравнение, перевод, маршрутизация и извлечение.</span>
+    </button>
+
+    <button class="cabinet-tile cabinet-tile--primary" data-open-section="map" type="button">
+      <span class="cabinet-tile-title">Карта</span>
+      <span class="cabinet-tile-text">Canvas-карта для исследований, регионов, проектов и будущих связей с файлами.</span>
+    </button>
+
+    <button class="cabinet-tile cabinet-tile--primary" data-open-section="editor" type="button">
+      <span class="cabinet-tile-title">Editor</span>
+      <span class="cabinet-tile-text">Создание страниц, preview, export и публикация сайта.</span>
+    </button>
+
+
+    <button class="cabinet-tile cabinet-tile--primary" data-open-section="codehub" type="button">
+      <span class="cabinet-tile-title">Мастерская</span>
+      <span class="cabinet-tile-text">Пакеты для Workspace и Web Studio: шаблоны, темы, блоки, виджеты и ассеты.</span>
+    </button>
+
+    <button class="cabinet-tile cabinet-tile--primary" data-open-section="marketplace" type="button">
+      <span class="cabinet-tile-title">Шаблоны</span>
+      <span class="cabinet-tile-text">Бесплатные официальные шаблоны IRGEZTNE для быстрого старта.</span>
+    </button>
+    <button class="cabinet-tile cabinet-tile--primary" data-open-section="rooms" type="button" data-preview4-card="rooms">
+      <span class="cabinet-tile-title">Чат</span>
+      <span class="cabinet-tile-text">Локальные комнаты проекта, решения, задачи, заметки и ссылки.</span>
+    </button>
+
+    <button class="cabinet-tile cabinet-tile--primary" data-open-section="analytics" type="button" data-preview4-card="web-analytics">
+      <span class="cabinet-tile-title">Веб-аналитика</span>
+      <span class="cabinet-tile-text">Веб-аналитика сайта, экспортов и публикации.</span>
+    </button>
+
+  </div>
+
+  <div class="cabinet-group cabinet-group--future cabinet-group--ecosystem">
+    <div class="cabinet-group-title"></div>
+
+    <div class="ecosystem-v0-card-grid ecosystem-v0-card-grid--cabinet">
+      <button class="cabinet-tile ecosystem-v0-card" data-ecosystem-card="rooms" data-open-section="rooms" type="button" title="Открыть Чат">
+        <span class="cabinet-tile-title">Чат</span>
+        <span class="cabinet-tile-text">Локальные обсуждения и будущий слой коммуникации.</span>
+      </button>
+      <button class="cabinet-tile ecosystem-v0-card" data-ecosystem-card="fili-store" data-open-section="fili-store" type="button" title="Открыть Fili Store v0">
+        <span class="cabinet-tile-title">Fili Store v0</span>
+        <span class="cabinet-tile-text">Шаблоны полезных файловых пакетов без оплат в v0.</span>
+      </button>
+      <button class="cabinet-tile ecosystem-v0-card" data-ecosystem-card="fili-safe" data-open-section="fili-safe" type="button" title="Открыть Fili Safe v0">
+        <span class="cabinet-tile-title">Fili Safe v0</span>
+        <span class="cabinet-tile-text">Локальный профиль, подписи и будущий слой безопасности.</span>
+      </button>
+      <button class="cabinet-tile ecosystem-v0-card" data-ecosystem-card="analytics" data-open-section="analytics" type="button" title="Открыть Веб-аналитика">
+        <span class="cabinet-tile-title">Веб-аналитика</span>
+        <span class="cabinet-tile-text">Веб-аналитика сайта, экспортов и публикации.</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+      </div>
+
+      <div class="cabinet-expanded-view hidden" id="cabinetExpandedView">
+        <div class="cabinet-expanded-header">
+          <div class="cabinet-expanded-left">
+            <button class="cabinet-back-btn" id="cabinetBackBtn" title="Назад в Workspace">←</button>
+            <div>
+              <div class="cabinet-expanded-title" id="cabinetExpandedTitle">Раздел</div>
+              <div class="cabinet-expanded-subtitle" id="cabinetExpandedSubtitle">Раздел пространства</div>
+            </div>
+          </div>
+
+          <div class="cabinet-expanded-right">
+            <button class="cabinet-close-btn" id="cabinetCloseBtnExpanded" title="Закрыть">✕</button>
+          </div>
+        </div>
+        
+        <div class="cabinet-inner-nav" id="cabinetInnerNav">
+  <button class="cabinet-inner-nav-btn" data-section="workspace">Главная</button>
+  <button class="cabinet-inner-nav-btn" data-section="files">Файлы</button>
+  <button class="cabinet-inner-nav-btn" data-section="projects">Проекты</button>
+  <button class="cabinet-inner-nav-btn" data-section="notes">Заметки</button>
+  <button class="cabinet-inner-nav-btn" data-section="documents">Офис</button>
+  <button class="cabinet-inner-nav-btn" data-section="site-pages">Web Studio</button>
+  <button class="cabinet-inner-nav-btn" data-section="tools">Инструменты</button>
+  <button class="cabinet-inner-nav-btn" data-section="map">Карта</button>
+  <button class="cabinet-inner-nav-btn" data-section="editor">Редактор</button>
+  <button class="cabinet-inner-nav-btn" data-section="codehub">Мастерская</button>
+  <button class="cabinet-inner-nav-btn" data-section="marketplace">Шаблоны</button>
+  <button class="cabinet-inner-nav-btn" data-section="rooms">Чат</button>
+  <button class="cabinet-inner-nav-btn" data-section="fili-store">Fili Store</button>
+  <button class="cabinet-inner-nav-btn" data-section="fili-safe">Fili Safe</button>
+  <button class="cabinet-inner-nav-btn" data-section="analytics">Аналитика</button>
+</div>
+        <div class="cabinet-expanded-body" id="cabinetExpandedBody">
+          <section class="cabinet-section-panel active" data-cabinet-panel="rooms">
+            <div class="cabinet-panel-grid two-wide ecosystem-v0-grid">
+              <div class="cabinet-panel-card large">
+                <h3>Чат</h3>
+                <p>Комнаты — локальные проектные комнаты для решений, задач, заметок и ссылок без сервера и аккаунтов.</p>
+                <div class="module-checklist compact">
+                  <span>Локальные комнаты</span>
+                  <span>Сообщения проекта later</span>
+                  <span>P2P/video later</span>
+                </div>
+              </div>
+              <div class="cabinet-panel-card">
+                <h3>Статус</h3>
+                <p>Первый слой коммуникации. В v0 это честная локальная оболочка, чтобы убрать хвост “Video & Chat”, но не тянуть тяжёлую сеть.</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="cabinet-section-panel" data-cabinet-panel="fili-store">
+            <div class="cabinet-panel-grid two-wide ecosystem-v0-grid">
+              <div class="cabinet-panel-card large">
+                <h3>Fili Store</h3>
+                <p>Fili Store v0 — будущая витрина полезных файлов: шаблоны, секции, темы, ассеты, пакеты иконок, пакеты Веб-мастерской и пресеты публикации.</p>
+                <div class="module-checklist compact">
+                  <span>Без оплат</span>
+                  <span>Категории полезных файлов</span>
+                  <span>Fili Market позже</span>
+                </div>
+              </div>
+              <div class="cabinet-panel-card">
+                <h3>Правило v0</h3>
+                <p>Сейчас это не финансовый модуль. Marketplace, credits и выплаты появятся только после реальной файловой ценности и правил безопасности.</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="cabinet-section-panel" data-cabinet-panel="fili-safe">
+            <div class="cabinet-panel-grid two-wide ecosystem-v0-grid">
+              <div class="cabinet-panel-card large">
+                <h3>Fili Safe</h3>
+                <p>Fili Safe v0 — локальная безопасная зона для будущего профиля автора, подписей пакетов, ключей публикации и File Credits позже.</p>
+                <div class="module-checklist compact">
+                  <span>Без крипты</span>
+                  <span>Без custody</span>
+                  <span>Подписи позже</span>
+                </div>
+              </div>
+              <div class="cabinet-panel-card">
+                <h3>Без финансов сейчас</h3>
+                <p>Wallet/credits не реализуются в v0. Любой будущий вывод должен быть обеспечен реальным доходом, а не создан “из воздуха”.</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="cabinet-section-panel" data-cabinet-panel="analytics">
+            <div class="cabinet-panel-grid two-wide ecosystem-v0-grid">
+              <div class="cabinet-panel-card large">
+                <h3>Веб-аналитика</h3>
+                <p>Веб-аналитика — локальный центр аналитики по файлам, проектам, документам, шаблонам, экспортам, Веб-мастерской и публикациям.</p>
+                <div class="module-checklist compact">
+                  <span>Без внешних SDK</span>
+                  <span>Локальная аналитика</span>
+                  <span>FiliNet позже</span>
+                </div>
+              </div>
+              <div class="cabinet-panel-card">
+                <h3>Не рыночная аналитика</h3>
+                <p>Это не биржи и не crypto-dashboard. Это аналитика собственного рабочего пространства и будущей файловой инфраструктурой.</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="cabinet-section-panel" data-cabinet-panel="files">
+            <div class="cabinet-panel-card">
+              <div class="panel-card-header">
+                <h3>Файлы</h3>
+                <span>Библиотека материалов</span>
+              </div>
+
+              <div data-source-library-root></div>
+            </div>
+          </section>
+
+          <section class="cabinet-section-panel" data-cabinet-panel="projects">
+            <div class="cabinet-panel-card">
+              <div class="panel-card-header">
+                <h3>Проекты</h3>
+                <span>Контейнеры для файлов, черновиков, заметок и рабочего потока</span>
+              </div>
+
+              <div data-projects-root data-projects-surface="cabinet"></div>
+            </div>
+          </section>
+
+          <section class="cabinet-section-panel" data-cabinet-panel="notes">
+            <div class="cabinet-panel-card">
+              <div class="panel-card-header">
+                <h3>Заметки</h3>
+                <span>Быстрый захват, связанный с проектами, файлами и будущими черновиками</span>
+              </div>
+              <div data-notes-root data-notes-surface="cabinet"></div>
+            </div>
+          </section>
+
+          <section class="cabinet-section-panel" data-cabinet-panel="documents">
+            <div data-documents-root data-documents-surface="cabinet"></div>
+          </section>
+
+
+          <section class="cabinet-section-panel" data-cabinet-panel="site-pages">
+            <div data-site-pages-root data-site-pages-surface="cabinet"></div>
+          </section>
+
+          <section class="cabinet-section-panel" data-cabinet-panel="tools">
+            <div class="ns-tools-host ns-tools-host--cabinet" data-tools-root data-tools-surface="cabinet"></div>
+          </section>
+
+<section class="cabinet-section-panel" data-cabinet-panel="map">
+  <div data-map-root data-map-surface="cabinet"></div>
+</section>
+
+<section class="cabinet-section-panel cabinet-section-panel--editor" data-cabinet-panel="editor">
+            <div class="ns-editor-cabinet-host" data-editor-host="cabinet">
+              <div id="nsEditorCabinetMount" class="ns-editor-mount ns-editor-mount--cabinet" data-editor-surface="cabinet"></div>
+            </div>
+          </section>
+
+          <section class="cabinet-section-panel" data-cabinet-panel="marketplace">
+  <div class="cabinet-panel-grid single">
+    <div class="cabinet-panel-card">
+      <div class="panel-card-header">
+        <h3>Шаблоны</h3>
+        <span>Официальные шаблоны · Бесплатно · Preview.4</span>
+      </div>
+      <div class="ns-vitrina-host ns-vitrina-host--cabinet" data-vitrina-root data-vitrina-surface="cabinet"></div>
+    </div>
+  </div>
+</section>
+
+<section class="cabinet-section-panel" data-cabinet-panel="codehub">
+  <div data-codehub-root data-codehub-surface="cabinet"></div>
+</section>
+
+<section class="cabinet-section-panel" data-cabinet-panel="workspace">
+            <div class="cabinet-panel-grid cabinet-home-grid two-wide">
+              <div class="cabinet-panel-card large cabinet-home-recent-card">
+                <div class="panel-card-header">
+                  <h3>Недавнее</h3>
+                  <span>Последние элементы по основному рабочему пути</span>
+                </div>
+                <div class="cabinet-home-recent-grid">
+                  <div class="cabinet-home-recent-block">
+                    <div class="cabinet-home-mini-head">Недавние файлы</div>
+                    <div class="cabinet-home-mini-list" id="cabinetHomeRecentFiles"></div>
+                  </div>
+                  <div class="cabinet-home-recent-block">
+                    <div class="cabinet-home-mini-head">Недавние проекты</div>
+                    <div class="cabinet-home-mini-list" id="cabinetHomeRecentProjects"></div>
+                  </div>
+                  <div class="cabinet-home-recent-block">
+                    <div class="cabinet-home-mini-head">Недавние заметки</div>
+                    <div class="cabinet-home-mini-list" id="cabinetHomeRecentNotes"></div>
+                  </div>
+                  <div class="cabinet-home-recent-block">
+                    <div class="cabinet-home-mini-head">Недавние пакеты</div>
+                    <div class="cabinet-home-mini-list" id="cabinetHomeRecentPackages"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="cabinet-panel-card cabinet-home-continue-card">
+                <div class="panel-card-header">
+                  <h3>Продолжить</h3>
+                  <span>Продолжить последние активные элементы, не открывая сначала каждый модуль</span>
+                </div>
+                <div class="cabinet-home-resume" id="cabinetHomeContinueBlock"></div>
+              </div>
+              <div class="cabinet-panel-card cabinet-home-route-card">
+                <div class="panel-card-header">
+                  <h3>Основные маршруты</h3>
+                  <span>Открывайте основные модули из одного места</span>
+                </div>
+                <div class="workspace-home-shortcut-grid cabinet-home-shortcut-grid">
+                  <button type="button" class="workspace-home-shortcut" data-open-section="files"><strong>Файлы</strong><span>Библиотека, загрузки и активные исходные материалы.</span></button>
+                  <button type="button" class="workspace-home-shortcut" data-open-section="projects"><strong>Проекты</strong><span>Контейнеры для черновиков, файлов и заметок.</span></button>
+                  <button type="button" class="workspace-home-shortcut" data-open-section="notes"><strong>Заметки</strong><span>Фиксируйте фрагменты, ссылки и связанные заметки.</span></button>
+                  <button type="button" class="workspace-home-shortcut" data-open-section="documents"><strong>Офис</strong><span>Лёгкий Writer для статей, отчётов и Markdown/HTML export.</span></button>
+
+                  <button type="button" class="workspace-home-shortcut workspace-home-shortcut--primary" data-open-section="site-pages"><strong>Web Studio</strong><span>Identity, pages, menu and export/build foundation.</span></button>
+                  <button type="button" class="workspace-home-shortcut" data-open-section="map"><strong>Карта</strong><span>Canvas-карта для проектов, регионов, материалов и будущих связей.</span></button>
+                  <button type="button" class="workspace-home-shortcut" data-open-section="editor"><strong>Редактор</strong><span>Пишите, дорабатывайте, просматривайте и готовьте выпуск.</span></button>
+                  <button type="button" class="workspace-home-shortcut workspace-home-shortcut--primary" data-open-section="codehub">Мастерская</button>
+                  <button type="button" class="workspace-home-shortcut workspace-home-shortcut--primary" data-open-section="marketplace"><strong>Шаблоны</strong><span>Открывайте бесплатные официальные шаблоны для быстрого старта.</span></button>
+                </div>
+              </div>
+              <div class="cabinet-panel-card cabinet-home-future-card">
+                <div class="panel-card-header">
+                  <h3>Экосистемный слой v0</h3>
+                  <span>Первые честные оболочки будущих направлений, без тяжёлой сети и финансов.</span>
+                </div>
+                <div class="ecosystem-v0-card-grid ecosystem-v0-card-grid--home">
+                  <button class="workspace-home-shortcut ecosystem-v0-card" data-ecosystem-card="rooms" data-open-section="rooms" type="button" title="Открыть Чат">
+                    <strong>Чат</strong>
+                    <span>Локальные обсуждения и будущий слой коммуникации.</span>
+                  </button>
+                  <button class="workspace-home-shortcut ecosystem-v0-card" data-ecosystem-card="fili-store" data-open-section="fili-store" type="button" title="Открыть Fili Store v0">
+                    <strong>Fili Store v0</strong>
+                    <span>Шаблоны полезных файловых пакетов без оплат в v0.</span>
+                  </button>
+                  <button class="workspace-home-shortcut ecosystem-v0-card" data-ecosystem-card="fili-safe" data-open-section="fili-safe" type="button" title="Открыть Fili Safe v0">
+                    <strong>Fili Safe v0</strong>
+                    <span>Локальный профиль, подписи и будущий слой безопасности.</span>
+                  </button>
+                  <button class="workspace-home-shortcut ecosystem-v0-card" data-ecosystem-card="analytics" data-open-section="analytics" type="button" title="Открыть Веб-аналитика">
+                    <strong>Веб-аналитика</strong>
+                    <span>Веб-аналитика сайта, экспортов и публикации.</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+<script type="module" src="./src/bootstrap.js"></script>
+<script src="src/v81-editor-storage.js"></script>
+<script src="./src/ns-library-store.js"></script>
+<script src="./src/ns-knowledge-store.js"></script>
+<script src="./src/ns-pack-store.js"></script>
+<script src="./src/ns-codehub-store.js"></script>
+<script src="./src/ns-knowledge-sync.js"></script>
+<script src="./src/v82-editor-v1.js"></script>
+<script src="./src/modules/files/files-v0.js"></script>
+<script src="./src/ns-project-store.js"></script>
+<script src="./src/ns-notes-store.js"></script>
+<script src="./src/ns-relations-store.js"></script>
+<script src="./src/modules/projects/projects-v0.js"></script>
+<script src="./src/modules/notes/notes-v0.js"></script>
+<script src="./src/modules/tools/tools-v0.js"></script>
+<script src="./src/v87-vitrina-v1.js"></script>
+<script src="./src/v88-codehub-v1.js"></script>
+<script src="./src/modules/map/map-v0.js"></script>
+<script src="./src/modules/documents/documents-v0.js"></script>
+<script src="./src/modules/ecosystem/ecosystem-v0-shared.js"></script>
+<script src="./src/modules/rooms/rooms-v0.js"></script>
+  <script src="src/modules/rooms/rooms-live-v1.js"></script>
+<script src="./src/modules/fili-store/fili-store-v0.js"></script>
+<script src="./src/modules/fili-safe/fili-safe-v0.js"></script>
+<script src="./src/modules/analytics/analytics-v0.js"></script>
+<script src="./src/modules/site-pages/site-pages-v0.js"></script>
+<script src="./src/site-profile-store.js"></script>
+<script src="./src/modules/workspace-backup/workspace-backup-v0.js"></script>
+<script src="./src/modules/editor-site-page-bridge/editor-site-page-bridge-v0.js"></script>
+<script src="./src/v92-topbar-menu.js"></script>
+<script src="./src/connected/connected-account-v044.js"></script>
+  <!-- preview.4: Editor Web Studio Safe v5 -->
+  <!-- IRGEZTNE_EDITOR_CORE_ASSETS_V065C -->
+  <script src="./src/modules/irgeztne-editor-core/irgeztne-editor-core-api.js"></script>
+  <script src="./src/modules/irgeztne-editor-core/irgeztne-editor-core-toolbar.js"></script>
+  <script src="./src/modules/irgeztne-editor-core/irgeztne-editor-core-webstudio-bridge.js"></script>
+  <script src="./src/modules/editor-site-studio-safe/editor-site-studio-safe-v5.js?v=v084f-editor-unlink-color-picker"></script>
+  <script src="./src/modules/editor-site-studio-safe/site-studio-remove-back-button-v2.js"></script>
+  <script src="./src/modules/editor-site-studio-safe/editor-site-studio-exit-cleanup-v1.js"></script>
+  <script src="./src/modules/editor-site-studio-safe/site-studio-topbar-clean-v5.js"></script>
+<script src="./src/modules/editor-site-studio-safe/site-studio-cabinet-direct-open-v1.js"></script>
+<script src="./src/preview4-grid-nav-lang-fix.js"></script>
+<script src="./src/preview4-cabinet-card-drag-v1.js"></script>
+<script src="./src/preview4-cabinet-nav-drag-v1.js"></script>
+<script src="./src/preview4-official-templates-v1.js"></script>
+<script src="./src/preview4-webstudio-stable-pages-bridge-v1.js"></script>
+  <script src="./src/workspace-cabinet-panel-v0.js"></script>
+  <script src="src/ui-release-cleanup-v039d.js"></script>
+  <script src="src/ui-release-cleanup-v039e.js"></script>
+  <script src="src/v039i-workspace-first-click-bridge.js"></script>
+  <script src="src/v039j-strong-visual-polish.js"></script>
+  <script src="src/v039k-rooms-message-area-polish.js"></script>
+</body>
+</html>

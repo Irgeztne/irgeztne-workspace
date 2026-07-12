@@ -1,0 +1,410 @@
+/* =========================================================
+   IRGEZTNE Workspace v041b
+   Analytics layout fix after v041.
+
+   Fixes:
+   - compact right panel no longer uses big two-column layout;
+   - old/static-looking duplicate metric blocks are collapsed into one
+     small Data sources card;
+   - big Analytics no longer creates a long "endless" page;
+   - chart and event stream have controlled heights.
+   ========================================================= */
+
+.ir-wa-v041b,
+.ir-wa-v041b * {
+  box-sizing: border-box;
+}
+
+.ir-wa-v041b {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1.16fr) minmax(340px, 0.84fr) !important;
+  grid-template-areas:
+    "hero hero"
+    "chart stream"
+    "connect source"
+    "connect privacy";
+  gap: 14px !important;
+  align-items: start !important;
+  width: 100%;
+  min-width: 0;
+}
+
+.ir-wa-v041b .ecosystem-v0-card {
+  min-width: 0;
+}
+
+.ir-wa-hero-card { grid-area: hero; }
+.ir-wa-chart-card { grid-area: chart; }
+.ir-wa-stream-card { grid-area: stream; }
+.ir-wa-connect-card { grid-area: connect; }
+.ir-wa-source-card { grid-area: source; }
+.ir-wa-privacy-card { grid-area: privacy; }
+
+.ir-wa-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+}
+
+.ir-wa-card-head h4 {
+  margin: 0 0 4px;
+}
+
+.ir-wa-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 28px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(126, 184, 255, 0.20);
+  background: rgba(255,255,255,0.05);
+  color: rgba(226,238,255,0.82);
+  font-size: 12px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.ir-wa-pill i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #f6c85f;
+  box-shadow: 0 0 14px rgba(246, 200, 95, 0.42);
+}
+
+.ir-wa-pill.is-ready i {
+  background: #57df9b;
+  box-shadow: 0 0 14px rgba(87, 223, 155, 0.55);
+}
+
+.ir-wa-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin: 14px 0 0;
+}
+
+.ir-wa-kpi,
+.ir-wa-source-item,
+.ir-wa-connect-grid article {
+  min-width: 0;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(126, 184, 255, 0.15);
+  background:
+    radial-gradient(circle at 0 0, rgba(59, 130, 246, 0.12), transparent 46%),
+    rgba(255,255,255,0.045);
+}
+
+.ir-wa-kpi span,
+.ir-wa-source-item span,
+.ir-wa-connect-grid span {
+  display: block;
+  color: rgba(190, 211, 239, 0.70);
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.ir-wa-kpi strong {
+  display: block;
+  margin-top: 6px;
+  color: rgba(244, 249, 255, 0.98);
+  font-size: 30px;
+  line-height: 1;
+  font-weight: 900;
+}
+
+.ir-wa-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.ir-wa-actions .ecosystem-v0-btn {
+  min-width: 118px;
+}
+
+.ir-wa-bars {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  align-items: end;
+  gap: 8px;
+  height: 168px;
+  max-height: 168px;
+  padding: 8px 2px 0;
+  overflow: hidden;
+}
+
+.ir-wa-bar {
+  display: grid;
+  grid-template-rows: 1fr auto auto;
+  gap: 5px;
+  min-width: 0;
+  height: 154px;
+  text-align: center;
+  color: rgba(190, 211, 239, 0.68);
+}
+
+.ir-wa-bar span {
+  align-self: end;
+  width: 100%;
+  min-height: 8px;
+  border-radius: 999px 999px 7px 7px;
+  background: linear-gradient(180deg, rgba(91, 196, 170, 0.92), rgba(48, 130, 255, 0.86));
+  box-shadow: 0 10px 22px rgba(48, 130, 255, 0.14);
+}
+
+.ir-wa-bar em {
+  display: block;
+  font-style: normal;
+  font-size: 11px;
+}
+
+.ir-wa-bar strong {
+  display: block;
+  color: rgba(238, 246, 255, 0.9);
+  font-size: 12px;
+}
+
+.ir-wa-event-list {
+  display: grid;
+  gap: 8px;
+  max-height: 260px;
+  overflow: auto;
+  padding-right: 2px;
+}
+
+.ir-wa-event {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 13px;
+  border: 1px solid rgba(126, 184, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.ir-wa-event div {
+  min-width: 0;
+}
+
+.ir-wa-event strong,
+.ir-wa-event span,
+.ir-wa-event em {
+  display: block;
+}
+
+.ir-wa-event strong {
+  color: rgba(245, 249, 255, 0.92);
+}
+
+.ir-wa-event span,
+.ir-wa-event em {
+  color: rgba(226, 238, 255, 0.62);
+  font-size: 12px;
+}
+
+.ir-wa-event span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ir-wa-event em {
+  flex: 0 0 auto;
+  max-width: 44%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-style: normal;
+  text-align: right;
+}
+
+.ir-wa-empty {
+  display: grid;
+  gap: 4px;
+  min-height: 92px;
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px dashed rgba(126, 184, 255, 0.18);
+  background: rgba(255, 255, 255, 0.035);
+  color: rgba(190, 211, 239, 0.72);
+}
+
+.ir-wa-empty strong {
+  color: rgba(238, 246, 255, 0.9);
+}
+
+.ir-wa-connect-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.ir-wa-connect-grid strong,
+.ir-wa-source-item strong {
+  display: block;
+  min-width: 0;
+  margin-top: 4px;
+  color: rgba(238, 246, 255, 0.92);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.ir-wa-snippet {
+  display: block;
+  width: 100%;
+  min-height: 118px;
+  max-height: 180px;
+  resize: vertical;
+  border-radius: 14px;
+  border: 1px solid rgba(126, 184, 255, 0.16);
+  background: rgba(3, 10, 22, 0.62);
+  color: rgba(238, 246, 255, 0.88);
+  padding: 12px;
+  font: 12px/1.45 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.ir-wa-source-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.ir-wa-principles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ir-wa-principles span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(126, 184, 255, 0.18);
+  background: rgba(255,255,255,0.05);
+  color: rgba(226,238,255,0.78);
+  font-size: 12px;
+}
+
+@media (max-width: 980px) {
+  .ir-wa-v041b {
+    grid-template-columns: 1fr !important;
+    grid-template-areas:
+      "hero"
+      "chart"
+      "stream"
+      "connect"
+      "source"
+      "privacy";
+  }
+
+  .ir-wa-kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Right Workspace panel can keep data-panel="workspace".
+   Therefore compact rules must target any Analytics content inside
+   .workspace-panel, not only [data-panel="analytics"]. */
+.workspace-shell .workspace-panel .ir-wa-v041b {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  grid-template-areas:
+    "hero"
+    "chart"
+    "stream"
+    "connect" !important;
+  gap: 10px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+}
+
+.workspace-shell .workspace-panel .ir-wa-v041b .ir-wa-source-card,
+.workspace-shell .workspace-panel .ir-wa-v041b .ir-wa-privacy-card {
+  display: none !important;
+}
+
+.workspace-shell .workspace-panel .ir-wa-v041b .ecosystem-v0-card {
+  padding: 12px !important;
+  border-radius: 16px !important;
+}
+
+.workspace-shell .workspace-panel .ir-wa-v041b .ir-wa-card-head {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 8px !important;
+}
+
+.workspace-shell .workspace-panel .ir-wa-v041b .ir-wa-kpis {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+  margin-top: 10px !important;
+}
+
+.workspace-shell .workspace-panel .ir-wa-v041b .ir-wa-kpi {
+  padding: 10px !important;
+  border-radius: 13px !important;
+}
+
+.workspace-shell .workspace-panel .ir-wa-v041b .ir-wa-kpi strong {
+  font-size: 24px !important;
+}
+
+.workspace-shell .workspace-panel .ir-wa-v041b .ir-wa-actions {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 8px !important;
+}
+
+.workspace-shell .workspace-panel .ir-wa-v041b .ir-wa-actions .ecosystem-v0-btn {
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+.workspace-shell .workspace-panel .ir-wa-v041b .ir-wa-bars {
+  height: 112px !important;
+  max-height: 112px !important;
+  gap: 5px !important;
+}
+
+.workspace-shell .workspace-panel .ir-wa-v041b .ir-wa-bar {
+  height: 100px !important;
+}
+
+.workspace-shell .workspace-panel .ir-wa-v041b .ir-wa-bar em,
+.workspace-shell .workspace-panel .ir-wa-v041b .ir-wa-bar strong,
+.workspace-shell .workspace-panel .ir-wa-v041b .ir-wa-kpi span,
+.workspace-shell .workspace-panel .ir-wa-v041b .ir-wa-event span,
+.workspace-shell .workspace-panel .ir-wa-v041b .ir-wa-event em {
+  font-size: 10px !important;
+}
+
+.workspace-shell .workspace-panel .ir-wa-v041b .ir-wa-event-list {
+  max-height: 180px !important;
+}
+
+.workspace-shell .workspace-panel .ir-wa-v041b .ir-wa-event {
+  padding: 9px !important;
+  border-radius: 12px !important;
+}
+
+.workspace-shell .workspace-panel .ir-wa-v041b .ir-wa-connect-grid {
+  gap: 7px !important;
+}
+
+.workspace-shell .workspace-panel .ir-wa-v041b .ir-wa-snippet {
+  min-height: 86px !important;
+  max-height: 120px !important;
+  font-size: 10px !important;
+}

@@ -1,0 +1,48 @@
+node_modules/
+data.backup-before-release/
+*.zip
+*.tar.gz
+*.7z
+*.rar
+.DS_Store
+Thumbs.db
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+dist/
+release/
+out/
+.cache/
+
+# IRGEZTNE local Storage Core data
+data/*.db
+data/*.db-wal
+data/*.db-shm
+data/**/storage-secret.key
+*.sqlite
+*.sqlite3
+
+# Local secrets / user data
+storage-secret.key
+*.local.json
+
+# IRGEZTNE Workspace clean source baseline
+
+# Runtime state created by the application
+data/
+
+# Historical local storage
+backups/
+_archive/
+_archive_project_cleanup/
+
+# Old patch snapshots and broken working copies
+*.bak
+*.bak-*
+*.bak.*
+*.before-*
+*.broken
+*.broken-*
+*.broken.*
+*.dirty-*
+

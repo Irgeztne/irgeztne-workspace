@@ -1,0 +1,217 @@
+/* IRGEZTNE v043c - final account placement */
+
+#irgeztne-connected-account.ir-connected-account-btn.ir-account-final-v043c {
+  position: relative !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px !important;
+  max-width: 42px !important;
+  flex: 0 0 42px !important;
+  margin-left: 6px !important;
+  margin-right: 6px !important;
+  padding: 0 !important;
+  border-radius: 14px !important;
+  border: 1px solid rgba(110, 178, 255, 0.38) !important;
+  background:
+    radial-gradient(circle at 30% 18%, rgba(125, 211, 252, 0.42), transparent 42%),
+    linear-gradient(180deg, rgba(37, 99, 235, 0.96), rgba(21, 58, 155, 0.96)) !important;
+  color: #fff !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    0 10px 24px rgba(37,99,235,0.24) !important;
+  cursor: pointer !important;
+  z-index: 999 !important;
+  vertical-align: middle !important;
+}
+
+#irgeztne-connected-account.ir-connected-account-btn.ir-account-final-v043c:hover {
+  border-color: rgba(170, 220, 255, 0.82) !important;
+  transform: translateY(-1px);
+}
+
+#irgeztne-connected-account.ir-connected-account-btn.ir-account-final-v043c svg {
+  display: block !important;
+  width: 21px !important;
+  height: 21px !important;
+  fill: currentColor !important;
+  opacity: 0.98 !important;
+}
+
+#irgeztne-connected-account .ir-connected-dot {
+  position: absolute !important;
+  right: 4px !important;
+  bottom: 4px !important;
+  width: 10px !important;
+  height: 10px !important;
+  border-radius: 999px !important;
+  border: 2px solid rgba(7, 18, 37, 0.98) !important;
+  background: #f6c85f !important;
+  box-shadow: 0 0 10px rgba(246,200,95,.52) !important;
+}
+
+#irgeztne-connected-account.is-connected .ir-connected-dot {
+  background: #57df9b !important;
+  box-shadow: 0 0 10px rgba(87,223,155,.65) !important;
+}
+
+.ir-connected-menu {
+  position: fixed;
+  z-index: 100000;
+  padding: 10px;
+  border-radius: 18px;
+  border: 1px solid rgba(126,184,255,.24);
+  background:
+    radial-gradient(circle at 0 0, rgba(59,130,246,.18), transparent 45%),
+    linear-gradient(180deg, rgba(12,30,60,.98), rgba(5,13,28,.98));
+  color: rgba(232,242,255,.94);
+  box-shadow: 0 18px 60px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.06);
+}
+
+.ir-connected-menu[hidden] {
+  display: none !important;
+}
+
+.ir-connected-menu-head {
+  display: grid;
+  grid-template-columns: 42px minmax(0,1fr);
+  gap: 10px;
+  align-items: center;
+  padding: 6px;
+}
+
+.ir-connected-menu-avatar,
+.ir-connected-gate-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 35% 22%, rgba(151,219,255,.55), transparent 37%),
+    linear-gradient(180deg, rgba(37,99,235,.94), rgba(29,78,216,.94));
+  box-shadow: 0 0 0 1px rgba(255,255,255,.12) inset, 0 12px 28px rgba(37,99,235,.22);
+}
+
+.ir-connected-menu-head strong,
+.ir-connected-menu-head span {
+  display: block;
+  min-width: 0;
+}
+
+.ir-connected-menu-head strong {
+  color: rgba(248,252,255,.98);
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.ir-connected-menu-head span,
+.ir-connected-note {
+  color: rgba(190,211,239,.72);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.ir-connected-status {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 8px 4px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(126,184,255,.15);
+  background: rgba(255,255,255,.045);
+  color: rgba(226,238,255,.82);
+  font-size: 12px;
+}
+
+.ir-connected-status span {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #f6c85f;
+}
+
+.ir-connected-status.is-connected span {
+  background: #57df9b;
+}
+
+.ir-connected-menu button {
+  width: 100%;
+  min-height: 36px;
+  margin-top: 7px;
+  border-radius: 12px;
+  border: 1px solid rgba(126,184,255,.16);
+  background: rgba(255,255,255,.06);
+  color: rgba(238,246,255,.92);
+  font: inherit;
+  cursor: pointer;
+}
+
+.ir-connected-menu button:hover {
+  border-color: rgba(153,207,255,.48);
+  background: rgba(59,130,246,.16);
+}
+
+.ir-connected-menu button.is-primary {
+  border-color: rgba(95,173,255,.54);
+  background: linear-gradient(135deg, rgba(37,99,235,.96), rgba(14,165,233,.74));
+  color: #fff;
+}
+
+.ir-connected-note {
+  margin: 10px 6px 4px;
+}
+
+.ir-connected-dev {
+  margin-top: 8px;
+  color: rgba(190,211,239,.72);
+  font-size: 12px;
+}
+
+.ir-connected-dev summary {
+  cursor: pointer;
+  padding: 6px;
+}
+
+.ir-connected-gate {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+  padding: 26px 18px;
+  border-radius: 22px;
+  border: 1px solid rgba(126,184,255,.18);
+  background:
+    radial-gradient(circle at 50% 0, rgba(59,130,246,.18), transparent 48%),
+    linear-gradient(180deg, rgba(13,30,58,.94), rgba(6,14,29,.96));
+  color: rgba(232,242,255,.94);
+  text-align: center;
+}
+
+.ir-connected-gate-icon {
+  width: 58px;
+  height: 58px;
+}
+
+.ir-connected-gate h3 {
+  margin: 0;
+  color: rgba(248,252,255,.98);
+  font-size: 22px;
+  line-height: 1.2;
+}
+
+.ir-connected-gate p {
+  max-width: 620px;
+  margin: 0;
+  color: rgba(190,211,239,.78);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.ir-connected-gate-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}

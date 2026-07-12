@@ -1,0 +1,482 @@
+.ns-tools-host {
+  min-width: 0;
+  min-height: 0;
+}
+
+.ns-tools-v1 {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  min-height: 0;
+  color: #eaf2ff;
+}
+
+.ns-tools-v1 * {
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+.ns-tools-v1__stage-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ns-tools-v1__stage,
+.ns-tools-v1__meta {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(120, 180, 255, 0.18);
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 12px;
+}
+
+.ns-tools-v1__stage.is-ready {
+  background: rgba(50, 110, 255, 0.14);
+  border-color: rgba(104, 162, 255, 0.26);
+}
+
+.ns-tools-v1__tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ns-tools-v1__tab,
+.ns-tools-v1__btn {
+  border: 1px solid rgba(120, 180, 255, 0.18);
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(29, 52, 96, 0.96), rgba(16, 32, 61, 0.96));
+  color: #eaf2ff;
+  transition: 0.18s ease;
+  cursor: pointer;
+}
+
+.ns-tools-v1__tab {
+  min-height: 34px;
+  padding: 0 12px;
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.ns-tools-v1__tab.is-active,
+.ns-tools-v1__btn.primary {
+  background: linear-gradient(180deg, rgba(57, 105, 191, 0.98), rgba(25, 53, 103, 0.98));
+  border-color: rgba(124, 183, 255, 0.34);
+}
+
+.ns-tools-v1__panel {
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(120, 180, 255, 0.12);
+  background: linear-gradient(180deg, rgba(13, 24, 46, 0.96), rgba(8, 17, 33, 0.98));
+}
+
+.ns-tools-v1__panel.is-active {
+  display: flex;
+}
+
+.ns-tools-v1__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.ns-tools-v1__head h4 {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.15;
+}
+
+.ns-tools-v1__head p {
+  margin: 4px 0 0;
+  color: #b6cae8;
+  line-height: 1.35;
+  max-width: 780px;
+}
+
+.ns-tools-v1__toolbar {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.ns-tools-v1__field {
+  display: grid;
+  gap: 6px;
+}
+
+.ns-tools-v1__field span {
+  font-size: 12px;
+  color: #b6cae8;
+}
+
+.ns-tools-v1__field select,
+.ns-tools-v1__field textarea,
+.ns-tools-v1__field input {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid rgba(120, 180, 255, 0.18);
+  background: linear-gradient(180deg, rgba(20, 36, 67, 0.98), rgba(11, 24, 45, 0.98));
+  color: #eaf2ff;
+}
+
+.ns-tools-v1__field select,
+.ns-tools-v1__field input {
+  min-height: 40px;
+  padding: 0 12px;
+}
+
+.ns-tools-v1__field textarea {
+  min-height: 126px;
+  padding: 12px 14px;
+  resize: vertical;
+  line-height: 1.45;
+}
+
+.ns-tools-v1__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ns-tools-v1__btn {
+  min-height: 36px;
+  padding: 0 12px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.ns-tools-v1__btn.secondary {
+  background: linear-gradient(180deg, rgba(26, 44, 79, 0.96), rgba(15, 28, 52, 0.96));
+}
+
+.ns-tools-v1__status {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.04);
+  color: #b6cae8;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.ns-tools-v1__file-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  min-width: 1px !important;
+  min-height: 1px !important;
+  max-width: 1px !important;
+  max-height: 1px !important;
+  opacity: 0.001 !important;
+  overflow: hidden !important;
+  clip-path: inset(50%) !important;
+  pointer-events: none !important;
+}
+
+.ns-tools-v1__dropzone {
+  width: 100%;
+  min-height: 128px;
+  padding: 18px;
+  display: grid;
+  place-items: center;
+  gap: 8px;
+  text-align: center;
+  border-radius: 18px;
+  border: 1px dashed rgba(124, 183, 255, 0.34);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(60, 127, 255, 0.18), transparent 42%),
+    linear-gradient(180deg, rgba(20, 45, 82, 0.78), rgba(10, 24, 47, 0.92));
+  color: #eaf2ff;
+  cursor: pointer;
+  transition: 0.18s ease;
+}
+
+.ns-tools-v1__dropzone:hover,
+.ns-tools-v1__dropzone.is-dragover {
+  border-color: rgba(123, 204, 255, 0.72);
+  transform: translateY(-1px);
+  box-shadow: 0 18px 50px rgba(38, 112, 255, 0.18);
+}
+
+.ns-tools-v1__dropzone.has-file {
+  border-style: solid;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(79, 203, 160, 0.18), transparent 42%),
+    linear-gradient(180deg, rgba(20, 50, 84, 0.84), rgba(10, 27, 48, 0.94));
+}
+
+.ns-tools-v1__drop-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #3b82f6, #22c55e);
+  color: white;
+  font-weight: 900;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  box-shadow: 0 12px 26px rgba(54, 133, 246, 0.26);
+}
+
+.ns-tools-v1__dropzone strong {
+  font-size: 16px;
+  line-height: 1.2;
+}
+
+.ns-tools-v1__dropzone small {
+  color: rgba(190, 211, 239, 0.78);
+  line-height: 1.35;
+}
+
+.ns-tools-v1__choose-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  min-width: 120px;
+  margin-top: 6px;
+  padding: 0 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(132, 188, 255, 0.44);
+  background: linear-gradient(180deg, rgba(64, 137, 255, 0.98), rgba(32, 91, 178, 0.96));
+  color: #ffffff;
+  font-weight: 850;
+  font-size: 13px;
+  box-shadow: 0 10px 22px rgba(50, 120, 255, 0.22), inset 0 1px 0 rgba(255,255,255,0.24);
+  pointer-events: none;
+}
+
+.ns-tools-v1__dropzone:hover .ns-tools-v1__choose-button,
+.ns-tools-v1__dropzone.is-dragover .ns-tools-v1__choose-button {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px rgba(50, 120, 255, 0.30), inset 0 1px 0 rgba(255,255,255,0.28);
+}
+
+.ns-tools-v1__image-preview {
+  display: grid;
+  place-items: center;
+  gap: 8px;
+  min-height: 150px;
+  border-radius: 14px;
+  border: 1px dashed rgba(120, 180, 255, 0.22);
+  background: rgba(255,255,255,0.035);
+  color: #b6cae8;
+  text-align: center;
+  padding: 12px;
+}
+
+.ns-tools-v1__image-preview img {
+  max-width: min(100%, 560px);
+  max-height: 330px;
+  object-fit: contain;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.04);
+}
+
+.ns-tools-v1__preview-label {
+  color: rgba(190, 211, 239, 0.82);
+  font-size: 12px;
+  font-weight: 750;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.workspace-shell .ns-tools-v1 {
+  gap: 10px;
+}
+
+.workspace-shell .ns-tools-v1__stage-row {
+  display: none;
+}
+
+.workspace-shell .ns-tools-v1__toolbar {
+  grid-template-columns: 1fr;
+}
+
+.workspace-shell .ns-tools-v1__panel {
+  padding: 12px;
+}
+
+.workspace-shell .ns-tools-v1__head h4 {
+  font-size: 16px;
+}
+
+.workspace-shell .ns-tools-v1__head p {
+  font-size: 12px;
+}
+
+.workspace-shell .ns-tools-v1__tabs {
+  gap: 7px;
+}
+
+.workspace-shell .ns-tools-v1__tab {
+  min-height: 32px;
+  padding: 0 10px;
+  font-size: 12px;
+}
+
+.workspace-shell .ns-tools-v1__field textarea {
+  min-height: 150px;
+}
+
+.workspace-shell .ns-tools-v1__dropzone {
+  min-height: 112px;
+  padding: 14px;
+  border-radius: 16px;
+}
+
+.workspace-shell .ns-tools-v1__drop-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+}
+
+.workspace-shell .ns-tools-v1__dropzone strong {
+  font-size: 14px;
+}
+
+.workspace-shell .ns-tools-v1__dropzone small {
+  font-size: 11px;
+}
+
+.workspace-shell .ns-tools-v1__choose-button {
+  min-height: 31px;
+  min-width: 108px;
+  padding: 0 13px;
+  font-size: 12px;
+}
+
+.workspace-shell .ns-tools-v1__image-preview img {
+  max-height: 240px;
+}
+
+@media (max-width: 980px) {
+  .ns-tools-v1__toolbar {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================================================
+   IRGEZTNE Tools v037
+   Button polish: hover / active / focus states.
+   Logic unchanged.
+   ========================================================= */
+
+.ns-tools-v1__tab,
+.ns-tools-v1__btn,
+.ns-tools-v1__dropzone,
+.ns-tools-v1__choose-button {
+  will-change: transform, box-shadow, border-color, background;
+}
+
+.ns-tools-v1__tab,
+.ns-tools-v1__btn {
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    0 8px 18px rgba(0,0,0,0.14);
+}
+
+.ns-tools-v1__tab::after,
+.ns-tools-v1__btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.10), transparent);
+  transform: translateX(-120%);
+  transition: transform 0.35s ease;
+}
+
+.ns-tools-v1__tab:hover,
+.ns-tools-v1__btn:hover {
+  transform: translateY(-1px);
+  border-color: rgba(132, 195, 255, 0.52);
+  background: linear-gradient(180deg, rgba(40, 82, 148, 0.98), rgba(19, 47, 90, 0.98));
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.12),
+    0 14px 30px rgba(41, 113, 255, 0.20);
+}
+
+.ns-tools-v1__tab:hover::after,
+.ns-tools-v1__btn:hover::after {
+  transform: translateX(120%);
+}
+
+.ns-tools-v1__tab:active,
+.ns-tools-v1__btn:active {
+  transform: translateY(0);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.06),
+    0 5px 12px rgba(0,0,0,0.16);
+}
+
+.ns-tools-v1__tab:focus-visible,
+.ns-tools-v1__btn:focus-visible,
+.ns-tools-v1__field select:focus-visible,
+.ns-tools-v1__field input:focus-visible,
+.ns-tools-v1__field textarea:focus-visible,
+.ns-tools-v1__dropzone:focus-within {
+  outline: 2px solid rgba(111, 184, 255, 0.82);
+  outline-offset: 2px;
+}
+
+.ns-tools-v1__tab.is-active {
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.14),
+    0 14px 34px rgba(41, 113, 255, 0.22);
+}
+
+.ns-tools-v1__btn.primary:hover {
+  background: linear-gradient(180deg, rgba(72, 145, 255, 1), rgba(32, 92, 184, 0.98));
+  border-color: rgba(144, 206, 255, 0.66);
+}
+
+.ns-tools-v1__btn.secondary:hover {
+  background: linear-gradient(180deg, rgba(45, 72, 120, 0.98), rgba(22, 42, 76, 0.98));
+  border-color: rgba(132, 183, 255, 0.40);
+}
+
+.ns-tools-v1__btn:disabled,
+.ns-tools-v1__tab:disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.workspace-shell .workspace-panel[data-panel="tools"] .ns-tools-v1__tab:hover,
+.workspace-shell .workspace-panel[data-panel="tools"] .ns-tools-v1__btn:hover {
+  transform: translateY(-1px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ns-tools-v1__tab,
+  .ns-tools-v1__btn,
+  .ns-tools-v1__tab::after,
+  .ns-tools-v1__btn::after,
+  .ns-tools-v1__dropzone,
+  .ns-tools-v1__choose-button {
+    transition: none !important;
+  }
+
+  .ns-tools-v1__tab:hover,
+  .ns-tools-v1__btn:hover,
+  .ns-tools-v1__dropzone:hover {
+    transform: none !important;
+  }
+}
+

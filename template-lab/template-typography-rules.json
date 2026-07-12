@@ -1,0 +1,34 @@
+{
+  "version": "0.1.0",
+  "purpose": "Common typography rules for official IRGEZTNE Web Studio templates.",
+  "localeTypographyRule": {
+    "reason": "Russian text is usually longer and wider than English text, so official templates need language-aware typography.",
+    "default": {
+      "titleScale": "base",
+      "letterSpacing": "template default",
+      "copyLength": "normal"
+    },
+    "ru": {
+      "titleScale": "slightly smaller than EN",
+      "lineHeight": "slightly calmer",
+      "letterSpacing": "less aggressive than EN",
+      "textWrap": "balanced",
+      "copyLength": "shorter when needed",
+      "layoutGoal": "RU version should keep the same visual balance and should not push key visuals too far down."
+    },
+    "recommendedCss": [
+      "html[lang='ru'] .hero h1",
+      "html[lang='ru'] h2",
+      "text-wrap: balance",
+      "shorter RU hero copy where needed"
+    ]
+  },
+  "templateDefaults": {
+    "blog-news": "Large editorial type is allowed, but RU titles must be checked separately.",
+    "business-product": "Business headings should stay serious and readable in RU.",
+    "documentation": "Docs typography should prioritize reading comfort in both EN and RU.",
+    "landing-product": "RU hero title should use a calmer scale to keep the product visual visible.",
+    "portfolio": "RU project titles should not break the visual grid.",
+    "agency-studio": "RU presentation headlines should be slightly calmer than EN."
+  }
+}

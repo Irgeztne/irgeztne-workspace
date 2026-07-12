@@ -1,0 +1,264 @@
+/* IRGEZTNE Workspace — Site Studio v5 Editor Button Style Safe
+   This adapts the old Editor "unified lively buttons" / "neutral until hover" style
+   to Site Studio v5 only. It intentionally does not touch Workspace, Browser Shell,
+   old Editor global .ns-editor-shell__button rules, or app-wide buttons. */
+
+.ir-site-studio-v5-overlay .ir-site-studio-v5-btn::before,
+.ir-site-studio-v5-overlay .ir-site-studio-v5-tab::before,
+.ir-site-studio-v5-overlay .ir-site-studio-v5-tool::before,
+.ir-site-studio-v5-overlay .ir-site-studio-v5-icon-btn::before,
+.ir-site-studio-v5-toolbar-btn::before,
+.ir-site-studio-v5-float-btn::before {
+  content: none !important;
+  display: none !important;
+}
+
+/* Base: calm, dark, soft. Hover becomes liquid-blue. */
+.ir-site-studio-v5-toolbar-btn,
+.ir-site-studio-v5-float-btn,
+.ir-site-studio-v5-overlay .ir-site-studio-v5-btn,
+.ir-site-studio-v5-overlay .ir-site-studio-v5-tab,
+.ir-site-studio-v5-overlay .ir-site-studio-v5-tool,
+.ir-site-studio-v5-overlay .ir-site-studio-v5-icon-btn {
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 7px !important;
+  min-height: 34px !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  aspect-ratio: auto !important;
+  border-radius: 14px !important;
+  border: 1px solid rgba(126, 170, 235, 0.28) !important;
+  background: linear-gradient(180deg, rgba(25, 44, 76, 0.94), rgba(13, 28, 52, 0.96)) !important;
+  color: rgba(232, 242, 255, 0.96) !important;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.22) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    0 8px 16px rgba(0,0,0,0.14) !important;
+  transform: none !important;
+  transition:
+    transform 0.16s ease,
+    box-shadow 0.16s ease,
+    border-color 0.16s ease,
+    filter 0.16s ease,
+    background 0.16s ease,
+    color 0.16s ease !important;
+  white-space: nowrap !important;
+  overflow: hidden;
+}
+
+/* Hover: the exact calmer liquid-blue direction from the old Editor button block. */
+.ir-site-studio-v5-toolbar-btn:hover,
+.ir-site-studio-v5-float-btn:hover,
+.ir-site-studio-v5-overlay .ir-site-studio-v5-btn:hover,
+.ir-site-studio-v5-overlay .ir-site-studio-v5-tab:hover,
+.ir-site-studio-v5-overlay .ir-site-studio-v5-tool:hover,
+.ir-site-studio-v5-overlay .ir-site-studio-v5-icon-btn:hover,
+.ir-site-studio-v5-toolbar-btn:focus-visible,
+.ir-site-studio-v5-float-btn:focus-visible,
+.ir-site-studio-v5-overlay .ir-site-studio-v5-btn:focus-visible,
+.ir-site-studio-v5-overlay .ir-site-studio-v5-tab:focus-visible,
+.ir-site-studio-v5-overlay .ir-site-studio-v5-tool:focus-visible,
+.ir-site-studio-v5-overlay .ir-site-studio-v5-icon-btn:focus-visible {
+  color: #ffffff !important;
+  border-color: rgba(125, 226, 255, 0.62) !important;
+  background:
+    radial-gradient(circle at 18% 0%, rgba(224, 242, 254, 0.42), transparent 36%),
+    linear-gradient(180deg, #3190e9 0%, #2a69ce 58%, #1e4fa5 100%) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.18),
+    0 12px 24px rgba(30, 95, 200, 0.24) !important;
+  transform: translateY(-1px) !important;
+  filter: saturate(1.04) !important;
+  outline: none !important;
+}
+
+.ir-site-studio-v5-toolbar-btn:active,
+.ir-site-studio-v5-float-btn:active,
+.ir-site-studio-v5-overlay .ir-site-studio-v5-btn:active,
+.ir-site-studio-v5-overlay .ir-site-studio-v5-tab:active,
+.ir-site-studio-v5-overlay .ir-site-studio-v5-tool:active,
+.ir-site-studio-v5-overlay .ir-site-studio-v5-icon-btn:active {
+  transform: translateY(0) scale(0.985) !important;
+  box-shadow:
+    inset 0 1px 3px rgba(0,0,0,0.18),
+    0 7px 16px rgba(10, 29, 67, 0.22) !important;
+}
+
+/* Primary: also calm by default, not bright blue all the time. */
+.ir-site-studio-v5-overlay .ir-site-studio-v5-btn--primary:not(:hover):not(:focus-visible),
+.ir-site-studio-v5-overlay .ir-site-studio-v5-tab.is-active:not(:hover):not(:focus-visible),
+.ir-site-studio-v5-overlay .ir-site-studio-v5-tab[aria-selected="true"]:not(:hover):not(:focus-visible) {
+  color: rgba(232, 242, 255, 0.96) !important;
+  background: linear-gradient(180deg, rgba(25, 44, 76, 0.94), rgba(13, 28, 52, 0.96)) !important;
+  border-color: rgba(126, 170, 235, 0.28) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    0 8px 16px rgba(0,0,0,0.14) !important;
+}
+
+.ir-site-studio-v5-overlay .ir-site-studio-v5-btn--primary:hover,
+.ir-site-studio-v5-overlay .ir-site-studio-v5-btn--primary:focus-visible,
+.ir-site-studio-v5-overlay .ir-site-studio-v5-tab.is-active,
+.ir-site-studio-v5-overlay .ir-site-studio-v5-tab[aria-selected="true"] {
+  color: #ffffff !important;
+  border-color: rgba(125, 226, 255, 0.68) !important;
+  background:
+    radial-gradient(circle at 18% 0%, rgba(224, 242, 254, 0.44), transparent 36%),
+    linear-gradient(180deg, #3396ee 0%, #2a6dd2 56%, #1d4fa8 100%) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.20),
+    0 12px 24px rgba(30, 95, 200, 0.28) !important;
+}
+
+/* Danger: red, but compact and not a huge block. */
+.ir-site-studio-v5-overlay .ir-site-studio-v5-btn--danger,
+.ir-site-studio-v5-overlay .ir-site-studio-v5-icon-btn.ir-site-studio-v5-btn--danger {
+  color: #fff7f8 !important;
+  border-color: rgba(255, 128, 150, 0.42) !important;
+  background:
+    radial-gradient(circle at 18% 0%, rgba(255, 196, 209, 0.24), transparent 35%),
+    linear-gradient(180deg, #b33a4c 0%, #8c2237 58%, #681727 100%) !important;
+  border-radius: 14px !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.14),
+    0 8px 16px rgba(132, 28, 49, 0.20) !important;
+}
+
+.ir-site-studio-v5-overlay .ir-site-studio-v5-btn--danger:hover,
+.ir-site-studio-v5-overlay .ir-site-studio-v5-icon-btn.ir-site-studio-v5-btn--danger:hover {
+  border-color: rgba(255, 128, 150, 0.56) !important;
+  background:
+    radial-gradient(circle at 18% 0%, rgba(255, 196, 209, 0.30), transparent 35%),
+    linear-gradient(180deg, #c14458 0%, #982940 58%, #711a2b 100%) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.18),
+    0 12px 24px rgba(132, 28, 49, 0.28) !important;
+}
+
+/* Compact page row action buttons. */
+.ir-site-studio-v5-overlay .ir-site-studio-v5-page-row {
+  padding: 8px !important;
+  border-radius: 16px !important;
+}
+
+.ir-site-studio-v5-overlay .ir-site-studio-v5-row-actions {
+  gap: 5px !important;
+  margin-top: 6px !important;
+}
+
+.ir-site-studio-v5-overlay .ir-site-studio-v5-icon-btn {
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px !important;
+  min-height: 28px !important;
+  border-radius: 10px !important;
+  padding: 0 !important;
+  font-size: 12px !important;
+}
+
+.ir-site-studio-v5-overlay .ir-site-studio-v5-btn--xs {
+  min-height: 28px !important;
+  padding: 5px 8px !important;
+  border-radius: 10px !important;
+  font-size: 11px !important;
+}
+
+.ir-site-studio-v5-overlay .ir-site-studio-v5-btn--sm {
+  min-height: 32px !important;
+  padding: 7px 10px !important;
+  border-radius: 12px !important;
+  font-size: 12px !important;
+}
+
+/* Disabled provider buttons stay visibly inactive. */
+.ir-site-studio-v5-overlay .ir-site-studio-v5-btn:disabled {
+  opacity: .48 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  filter: none !important;
+}
+
+/* Color inputs remain real color pickers. */
+.ir-site-studio-v5-overlay .ir-site-studio-v5-input[type="color"],
+.ir-site-studio-v5-overlay .ir-site-studio-v5-identity-card input[type="color"],
+.ir-site-studio-v5-overlay .ir-site-studio-v5-settings input[type="color"] {
+  min-height: 42px !important;
+  padding: 4px !important;
+  cursor: pointer !important;
+}
+
+
+/* 1.0.0: passive helper badge in Site Studio topbar */
+.ns-site-studio__top-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 2.25rem;
+  padding: 0.45rem 0.72rem;
+  border: 1px solid rgba(145, 190, 255, 0.24);
+  border-radius: 0.9rem;
+  color: rgba(226, 238, 255, 0.72);
+  background: rgba(12, 28, 52, 0.54);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  pointer-events: none;
+}
+
+.ns-site-studio__top-hint kbd {
+  padding: 0.12rem 0.36rem;
+  border-radius: 0.42rem;
+  border: 1px solid rgba(145, 190, 255, 0.28);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(245, 249, 255, 0.86);
+  font: inherit;
+  font-weight: 700;
+}
+
+
+/* IRGEZTNE_SITE_SETTINGS_BUTTON_VISIBLE_V002
+   Exact target: Web Studio current site badge → “Настройки сайта”.
+   Makes the button visible without hover.
+*/
+.ir-site-studio-v5-overlay .ir-site-studio-v5-current-site-badge
+.ir-site-studio-v5-btn[data-v5-action="site-cockpit-open"],
+.ir-site-studio-v5-current-site-badge
+.ir-site-studio-v5-btn[data-v5-action="site-cockpit-open"] {
+  opacity: 1 !important;
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  letter-spacing: .01em !important;
+  background:
+    linear-gradient(135deg, rgba(56, 189, 248, .96), rgba(37, 99, 235, .96)) !important;
+  border: 1px solid rgba(186, 230, 253, .96) !important;
+  box-shadow:
+    0 0 0 1px rgba(14, 165, 233, .38),
+    0 12px 30px rgba(37, 99, 235, .34),
+    inset 0 1px 0 rgba(255, 255, 255, .28) !important;
+  transform: translateY(0) !important;
+}
+
+.ir-site-studio-v5-overlay .ir-site-studio-v5-current-site-badge
+.ir-site-studio-v5-btn[data-v5-action="site-cockpit-open"]::before,
+.ir-site-studio-v5-current-site-badge
+.ir-site-studio-v5-btn[data-v5-action="site-cockpit-open"]::before {
+  content: "⚙";
+  margin-right: .45em;
+  font-size: .95em;
+}
+
+.ir-site-studio-v5-overlay .ir-site-studio-v5-current-site-badge
+.ir-site-studio-v5-btn[data-v5-action="site-cockpit-open"]:hover,
+.ir-site-studio-v5-current-site-badge
+.ir-site-studio-v5-btn[data-v5-action="site-cockpit-open"]:hover {
+  background:
+    linear-gradient(135deg, rgba(125, 211, 252, 1), rgba(59, 130, 246, 1)) !important;
+  border-color: rgba(224, 242, 254, 1) !important;
+  box-shadow:
+    0 0 0 1px rgba(186, 230, 253, .55),
+    0 16px 36px rgba(37, 99, 235, .44),
+    inset 0 1px 0 rgba(255, 255, 255, .34) !important;
+  transform: translateY(-1px) !important;
+}

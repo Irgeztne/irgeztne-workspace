@@ -1,0 +1,57 @@
+{
+  "id": "documentation",
+  "version": "0.1.0",
+  "status": "template-lab",
+  "name": {
+    "en": "Documentation / Knowledge Base",
+    "ru": "Документация / База знаний"
+  },
+  "description": {
+    "en": "A wide documentation template with sidebar navigation, search, article content, code examples, callouts, API cards, FAQ, EN/RU and light/dark themes.",
+    "ru": "Широкий шаблон документации: боковая навигация, поиск, статья, примеры кода, callout-блоки, API-карточки, FAQ, EN/RU и светлая/тёмная тема."
+  },
+  "category": "documentation",
+  "recommendedFor": ["documentation", "knowledge base", "developer docs", "product guide", "help center"],
+  "notRecommendedFor": ["portfolio", "news portal", "marketing landing"],
+  "features": {
+    "themes": ["light", "dark"],
+    "locales": ["en", "ru"],
+    "rss": "optional-for-changelog",
+    "stickyHeader": true,
+    "wideLayout": true,
+    "responsive": true,
+    "searchUI": true,
+    "codeBlocks": true,
+    "callouts": true,
+    "faq": true
+  },
+  "slots": {
+    "brand": {
+      "logoFallback": "brand.logoFallback",
+      "title": "brand.title",
+      "subtitle": "brand.subtitle"
+    },
+    "visuals": ["hero.codeVisual"],
+    "footer": {
+      "links": "footer.links"
+    }
+  },
+  "imageGuidelines": {
+    "sourceRule": "../template-image-rules.json",
+    "recommendedImages": ["code screenshot", "interface screenshot", "diagram", "docs sidebar", "terminal/code block"],
+    "people": "Usually not needed. If used, only context/non-identifiable.",
+    "demoImageRule": {
+      "status": "demo-only",
+      "mustReplaceBeforePublishing": true,
+      "message": {
+        "en": "Demo visuals are placeholders. Replace them with your own product screenshots or diagrams before publishing.",
+        "ru": "Демо-визуалы — это заглушки. Перед публикацией замените их своими скриншотами продукта или схемами."
+      }
+    }
+  },
+  "preview": {
+    "light": "preview-light.png",
+    "dark": "preview-dark.png",
+    "status": "pending"
+  }
+}

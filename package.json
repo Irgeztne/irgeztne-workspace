@@ -1,0 +1,105 @@
+{
+  "name": "irgeztne-workspace",
+  "version": "1.0.0-preview.4",
+  "description": "IRGEZTNE Workspace Preview.4 is an early local-first desktop workspace with Web Studio, publishing preparation, notes, projects, files, and workspace tools.",
+  "main": "main.js",
+  "author": {
+    "name": "Irgeztne",
+    "email": "irgeztne@gmail.com"
+  },
+  "license": "MPL-2.0",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "dist:appimage": "electron-builder --linux AppImage",
+    "dist:deb": "electron-builder --linux deb",
+    "dist:linux": "electron-builder --linux deb AppImage --publish never",
+    "dist:win": "electron-builder --win nsis --publish never",
+    "dist:mac": "electron-builder --mac dmg --publish never",
+    "fix:sandbox": "sudo chown root:root node_modules/electron/dist/chrome-sandbox && sudo chmod 4755 node_modules/electron/dist/chrome-sandbox",
+    "tiptap:sandbox": "vite tiptap-sandbox --host 127.0.0.1 --port 5179"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.10.0",
+    "jodit": "^4.12.2",
+    "tinymce": "^6.8.6",
+    "@tiptap/core": "latest",
+    "@tiptap/starter-kit": "latest",
+    "@tiptap/extension-image": "latest",
+    "@tiptap/extension-placeholder": "latest",
+    "@tiptap/extension-link": "latest",
+    "@tiptap/extension-underline": "latest"
+  },
+  "devDependencies": {
+    "electron": "41.3.0",
+    "electron-builder": "^26.8.1",
+    "vite": "latest"
+  },
+  "build": {
+    "appId": "com.irgeztne.workspace",
+    "productName": "IRGEZTNE-Workspace",
+    "artifactName": "IRGEZTNE-Workspace-${version}.${ext}",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "assets/**/*",
+      "src/**/*",
+      "templates/**/*",
+      "index.html",
+      "main.js",
+      "preload.js",
+      "renderer.js",
+      "state.js",
+      "styles.css",
+      "package.json"
+    ],
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Utility",
+      "maintainer": "Irgeztne <irgeztne@gmail.com>",
+      "icon": "build/icons",
+      "desktop": {
+        "entry": {
+          "GenericName": "Desktop workspace",
+          "Keywords": "IRGEZTNE;Workspace;Browser;Editor;Publishing;Notes;Files;",
+          "Comment": "IRGEZTNE Workspace is an early preview desktop workspace for browsing, writing, editing, and preparing web projects for future publishing.",
+          "Name": "IRGEZTNE Workspace",
+          "StartupWMClass": "irgeztne-workspace"
+        }
+      }
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "build/icon.ico"
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "icon": "build/icon.icns",
+      "category": "public.app-category.developer-tools"
+    },
+    "deb": {
+      "afterInstall": "build/linux/after-install.sh",
+      "afterRemove": "build/linux/after-remove.sh",
+      "fpm": [
+        "build/linux/com.irgeztne.workspace.metainfo.xml=/usr/share/metainfo/com.irgeztne.workspace.metainfo.xml",
+        "build/linux/copyright=/usr/share/doc/irgeztne-workspace/copyright"
+      ]
+    },
+    "executableName": "irgeztne-workspace"
+  },
+  "productName": "IRGEZTNE-Workspace",
+  "homepage": "https://irgeztne.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Irgeztne/irgeztne-workspace.git"
+  }
+}

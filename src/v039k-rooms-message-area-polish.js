@@ -1,0 +1,158 @@
+/* IRGEZTNE Workspace v039k — inject Rooms message-area polish last */
+(function () {
+  'use strict';
+
+  const CSS_ID = 'irgeztne-v039k-rooms-message-area-polish-runtime';
+  const css = `/* IRGEZTNE Workspace v039k — Rooms message area polish
+   Purpose:
+   - keep compact Live room card;
+   - make message writing area comfortable;
+   - move Send button below the textarea;
+   - keep Live API status as a small footer line.
+*/
+
+/* Apply to all Live Rooms cards, including source-rendered v039h and runtime polished v039j. */
+[data-live-rooms-panel] .rooms-live-v1__chat,
+.rooms-live-v1 .rooms-live-v1__chat {
+  display: grid !important;
+  gap: 9px !important;
+}
+
+/* Message history/result area: compact, but not dominant. */
+[data-live-rooms-panel] .rooms-live-v1__messages,
+.rooms-live-v1 .rooms-live-v1__messages {
+  min-height: 76px !important;
+  max-height: 130px !important;
+  padding: 10px !important;
+}
+
+/* Compose area: textarea + full-width send button below.
+   This fixes the tiny one-line feeling from v039j. */
+[data-live-rooms-panel] .rooms-live-v1__compose,
+.rooms-live-v1 .rooms-live-v1__compose,
+.workspace-panel [data-live-rooms-panel] .rooms-live-v1__compose,
+.workspace-shell .workspace-panel [data-live-rooms-panel] .rooms-live-v1__compose {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  grid-template-rows: auto auto !important;
+  gap: 8px !important;
+  align-items: stretch !important;
+}
+
+/* The actual message box. */
+[data-live-rooms-panel] .rooms-live-v1__compose textarea,
+.rooms-live-v1 .rooms-live-v1__compose textarea,
+.workspace-panel [data-live-rooms-panel] .rooms-live-v1__compose textarea,
+.workspace-shell .workspace-panel [data-live-rooms-panel] .rooms-live-v1__compose textarea {
+  width: 100% !important;
+  min-height: 92px !important;
+  height: 92px !important;
+  max-height: 150px !important;
+  resize: vertical !important;
+  box-sizing: border-box !important;
+  line-height: 1.35 !important;
+  padding: 12px 13px !important;
+}
+
+/* Send button below textarea. */
+[data-live-rooms-panel] .rooms-live-v1__compose .ecosystem-v0-btn,
+.rooms-live-v1 .rooms-live-v1__compose .ecosystem-v0-btn,
+.workspace-panel [data-live-rooms-panel] .rooms-live-v1__compose .ecosystem-v0-btn,
+.workspace-shell .workspace-panel [data-live-rooms-panel] .rooms-live-v1__compose .ecosystem-v0-btn {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 40px !important;
+  min-height: 40px !important;
+  align-self: stretch !important;
+  justify-self: stretch !important;
+}
+
+/* Status becomes a quiet footer, not a competing block. */
+[data-live-rooms-panel] .rooms-live-v1__status,
+.rooms-live-v1 .rooms-live-v1__status {
+  min-height: 28px !important;
+  padding: 6px 9px !important;
+  font-size: 11.5px !important;
+  line-height: 1.25 !important;
+  opacity: 0.88 !important;
+}
+
+/* Keep the whole card reasonable in the right panel. */
+.workspace-panel [data-live-rooms-panel],
+.workspace-shell .workspace-panel [data-live-rooms-panel] {
+  gap: 10px !important;
+}
+
+/* In right compact panel, keep two columns only when it actually has room.
+   This prevents cramped "write area squeezed by send button" layouts. */
+@media (min-width: 470px) {
+  .workspace-panel [data-live-rooms-panel] .rooms-live-v1__main,
+  .workspace-shell .workspace-panel [data-live-rooms-panel] .rooms-live-v1__main,
+  [data-live-rooms-panel] .rooms-live-v1__main {
+    grid-template-columns: minmax(190px, 230px) minmax(230px, 1fr) !important;
+    gap: 12px !important;
+  }
+}
+
+/* If the right panel is narrow, stack setup/chat vertically and still keep a usable message field. */
+@media (max-width: 469px) {
+  .workspace-panel [data-live-rooms-panel] .rooms-live-v1__main,
+  .workspace-shell .workspace-panel [data-live-rooms-panel] .rooms-live-v1__main,
+  [data-live-rooms-panel] .rooms-live-v1__main {
+    grid-template-columns: 1fr !important;
+  }
+
+  .workspace-panel [data-live-rooms-panel] .rooms-live-v1__compose textarea,
+  .workspace-shell .workspace-panel [data-live-rooms-panel] .rooms-live-v1__compose textarea,
+  [data-live-rooms-panel] .rooms-live-v1__compose textarea {
+    min-height: 96px !important;
+    height: 96px !important;
+  }
+}
+
+/* Big Rooms page: do not stretch the chat across the whole page,
+   but allow a little more breathing room than the small panel. */
+body:not(.workspace-panel) .rooms-live-v039h,
+.rooms-live-v039h {
+  width: min(720px, 100%) !important;
+}
+
+@media (min-width: 900px) {
+  .rooms-live-v039h .rooms-live-v1__compose textarea,
+  [data-live-rooms-panel].rooms-live-v039h .rooms-live-v1__compose textarea {
+    min-height: 96px !important;
+    height: 96px !important;
+  }
+}
+`;
+
+  function inject() {
+    let style = document.getElementById(CSS_ID);
+    if (!style) {
+      style = document.createElement('style');
+      style.id = CSS_ID;
+      document.head.appendChild(style);
+    }
+
+    if (style.textContent !== css) {
+      style.textContent = css;
+    }
+  }
+
+  function runSoon() {
+    inject();
+    setTimeout(inject, 80);
+    setTimeout(inject, 300);
+    setTimeout(inject, 900);
+  }
+
+  document.addEventListener('DOMContentLoaded', runSoon);
+  document.addEventListener('click', runSoon, true);
+  document.addEventListener('irg:language-changed', runSoon);
+  window.addEventListener('resize', runSoon);
+
+  if (document.readyState !== 'loading') runSoon();
+
+  window.IRGEZTNEV039KRoomsMessageAreaPolish = { inject };
+})();

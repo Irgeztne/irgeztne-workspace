@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Мастерская пакетов — шаблоны, блоки, виджеты и ассеты</title>
+  <meta name="description" content="Публичная мастерская пакетов: шаблоны, темы, блоки, виджеты и ассеты для Web Studio и будущих продуктов.">
+  <link rel="stylesheet" href="./assets/workshop.css">
+</head>
+<body>
+  <div class="ws-shell">
+    <aside class="ws-sidebar">
+      <a class="ws-brand" href="#top" aria-label="Мастерская пакетов">
+        <span class="ws-brand-mark">◇</span>
+        <span>
+          <strong>Workshop</strong>
+          <small>Мастерская пакетов</small>
+        </span>
+      </a>
+
+      <nav class="ws-nav" aria-label="Навигация">
+        <a href="#top" class="active">Главная</a>
+        <a href="#packages">Пакеты</a>
+        <a href="#authors">Авторам</a>
+        <a href="#submit">Добавить пакет</a>
+        <a href="#rules">Правила</a>
+      </nav>
+
+      <section class="ws-side-card">
+        <h3>Как это связано</h3>
+        <p>В приложении нажимается «Мастерская», а здесь открывается публичная витрина пакетов во встроенном браузере.</p>
+        <div class="ws-flow-mini">
+          <span>Приложение</span>
+          <b>→</b>
+          <span>Браузер</span>
+          <b>→</b>
+          <span>Сайт</span>
+        </div>
+      </section>
+
+      <section class="ws-side-card ws-checklist">
+        <h3>Что смогут пользователи</h3>
+        <p>Скачивать бесплатные пакеты, смотреть превью, сохранять избранное, следить за авторами.</p>
+      </section>
+
+      <section class="ws-side-card ws-checklist">
+        <h3>Что смогут мастера</h3>
+        <p>Публиковать шаблоны, блоки, темы, ассеты и виджеты после проверки качества.</p>
+      </section>
+    </aside>
+
+    <main class="ws-main" id="top">
+      <header class="ws-topbar">
+        <div>
+          <p class="ws-kicker">Публичная витрина</p>
+          <h1>Мастерская пакетов</h1>
+        </div>
+        <div class="ws-top-actions">
+          <a class="ws-btn ws-btn-ghost" href="#packages">Смотреть пакеты</a>
+          <a class="ws-btn ws-btn-primary" href="#submit">Добавить пакет</a>
+        </div>
+      </header>
+
+      <section class="ws-hero">
+        <div class="ws-hero-copy">
+          <p class="ws-kicker">Шаблоны · блоки · плагины · ассеты</p>
+          <h2>Создавайте. Делитесь. Используйте.</h2>
+          <p>
+            Место, где пользователи находят готовые решения, а авторы публикуют аккуратные пакеты:
+            шаблоны, темы, виджеты, блоки, иконки, изображения и стартовые наборы.
+          </p>
+          <div class="ws-hero-actions">
+            <a class="ws-btn ws-btn-primary" href="#packages">Открыть каталог</a>
+            <a class="ws-btn ws-btn-soft" href="#authors">Стать автором</a>
+          </div>
+        </div>
+
+        <div class="ws-hero-art" aria-hidden="true">
+          <div class="ws-cube">
+            <span class="ws-chip ws-chip-a">TPL</span>
+            <span class="ws-chip ws-chip-b">PLG</span>
+            <span class="ws-chip ws-chip-c">IMG</span>
+            <span class="ws-chip ws-chip-d">WGT</span>
+            <div class="ws-cube-core">PKG</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="ws-stat-grid" aria-label="Категории">
+        <button class="ws-stat active" data-filter="all"><span>Все</span><strong>48</strong></button>
+        <button class="ws-stat" data-filter="template"><span>Шаблоны</span><strong>12</strong></button>
+        <button class="ws-stat" data-filter="theme"><span>Темы</span><strong>8</strong></button>
+        <button class="ws-stat" data-filter="widget"><span>Виджеты</span><strong>9</strong></button>
+        <button class="ws-stat" data-filter="asset-pack"><span>Ассеты</span><strong>11</strong></button>
+        <button class="ws-stat" data-filter="pack"><span>Блоки</span><strong>6</strong></button>
+        <button class="ws-stat" data-filter="starter"><span>Стартеры</span><strong>2</strong></button>
+      </section>
+
+      <section class="ws-panel" id="packages">
+        <div class="ws-panel-head">
+          <div>
+            <p class="ws-kicker">Каталог</p>
+            <h2>Популярные пакеты</h2>
+          </div>
+          <div class="ws-tools">
+            <input id="wsSearch" type="search" placeholder="Поиск пакетов...">
+            <select id="wsSort">
+              <option value="popular">Сортировка: популярные</option>
+              <option value="new">Сортировка: новые</option>
+              <option value="free">Сначала бесплатные</option>
+              <option value="rating">По рейтингу</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="ws-package-grid" id="wsPackageGrid"></div>
+      </section>
+
+      <section class="ws-section-grid">
+        <article class="ws-panel ws-structure">
+          <p class="ws-kicker">Структура</p>
+          <h2>Как устроена Мастерская</h2>
+          <div class="ws-map">
+            <span>Главная</span>
+            <span>Категории</span>
+            <span>Пакет</span>
+            <span>Автор</span>
+            <span>Отзывы</span>
+            <span>Лицензия</span>
+            <span>Правила</span>
+          </div>
+        </article>
+
+        <article class="ws-panel" id="authors">
+          <p class="ws-kicker">Авторам</p>
+          <h2>Публикация без базара</h2>
+          <p>
+            Это не marketplace «продавай всё подряд». Публикуются только тематические пакеты:
+            шаблоны, темы, блоки, виджеты, ассеты и стартовые наборы.
+          </p>
+          <ul class="ws-list">
+            <li>Бесплатная база приветствуется.</li>
+            <li>Платные функции могут быть позже.</li>
+            <li>Пакет должен иметь описание, превью, автора, версию и лицензию.</li>
+            <li>В v1 принимаются только безопасные пассивные пакеты. Опасный код не принимается никогда.</li>
+          </ul>
+        </article>
+      </section>
+
+      <section class="ws-section-grid">
+        <article class="ws-panel ws-submit" id="submit">
+          <p class="ws-kicker">Демо-форма</p>
+          <h2>Добавить пакет</h2>
+          <form id="wsSubmitForm">
+            <label>
+              Название пакета
+              <input name="title" placeholder="Например: Clean Landing Pack">
+            </label>
+            <label>
+              Тип пакета
+              <select name="type">
+                <option value="template">Шаблон</option>
+                <option value="theme">Тема</option>
+                <option value="pack">Блоки</option>
+                <option value="widget">Виджет</option>
+                <option value="asset-pack">Пакет ассетов</option>
+                <option value="starter">Стартовый набор</option>
+              </select>
+            </label>
+            <label>
+              Краткое описание
+              <textarea name="description" rows="4" placeholder="Что даёт пакет пользователю?"></textarea>
+            </label>
+            <button class="ws-btn ws-btn-primary" type="submit">Создать черновик</button>
+          </form>
+          <p class="ws-note" id="wsSubmitNote">Пока это демо: данные не отправляются на сервер. Позже Workshop будет публичным SEO-разделом официального сайта.</p>
+        </article>
+
+        <article class="ws-panel" id="rules">
+          <p class="ws-kicker">Правила</p>
+          <h2>Безопасность и качество</h2>
+          <div class="ws-rule-list">
+            <div><strong>Безопасность</strong><span>Опасный код не принимается никогда. В первой версии — только пассивные шаблоны, темы, блоки, ассеты и структурированные данные.</span></div>
+            <div><strong>Качество</strong><span>У пакета должны быть превью, описание, версия и автор.</span></div>
+            <div><strong>Сообщество</strong><span>Отзывы и рейтинги помогают находить полезное.</span></div>
+            <div><strong>Монетизация</strong><span>Бесплатная база, платные дополнения позже.</span></div>
+          </div>
+        </article>
+      </section>
+
+      <footer class="ws-footer">
+        <span>Мастерская пакетов v0.1</span>
+        <span>Не базар. Не рекламная помойка. А полка полезных решений.</span>
+      </footer>
+    </main>
+  </div>
+
+  <div class="ws-modal" id="wsModal" aria-hidden="true">
+    <div class="ws-modal-card" role="dialog" aria-modal="true" aria-labelledby="wsModalTitle">
+      <button class="ws-modal-close" id="wsModalClose" type="button" aria-label="Закрыть">×</button>
+      <div id="wsModalBody"></div>
+    </div>
+  </div>
+
+  <script src="./assets/workshop.js"></script>
+</body>
+</html>

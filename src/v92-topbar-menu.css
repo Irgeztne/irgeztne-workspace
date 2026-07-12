@@ -1,0 +1,171 @@
+/* IRGEZTNE topbar more menu v0 — website/updates/releases/docs/status/about */
+.topbar-more {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+.more-menu-btn {
+  font-size: 22px;
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+.topbar-more-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 210;
+  min-width: 246px;
+  padding: 8px;
+  border-radius: 18px;
+  border: 1px solid rgba(126, 180, 255, 0.22);
+  background:
+    linear-gradient(180deg, rgba(13, 28, 56, 0.98), rgba(8, 18, 36, 0.98));
+  box-shadow: 0 22px 54px rgba(0, 0, 0, 0.42), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+.topbar-more-menu::before {
+  content: '';
+  position: absolute;
+  top: -7px;
+  right: 14px;
+  width: 12px;
+  height: 12px;
+  transform: rotate(45deg);
+  border-left: 1px solid rgba(126, 180, 255, 0.22);
+  border-top: 1px solid rgba(126, 180, 255, 0.22);
+  background: rgba(13, 28, 56, 0.98);
+}
+
+.topbar-more-menu button {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  min-height: 38px;
+  padding: 9px 10px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: left;
+  color: var(--text-1);
+  background: transparent;
+  border: 1px solid transparent;
+  font-size: 13px;
+  line-height: 1.25;
+}
+
+.topbar-more-menu button:hover,
+.topbar-more-menu button:focus-visible {
+  background: rgba(62, 118, 255, 0.14);
+  border-color: rgba(126, 180, 255, 0.18);
+}
+
+.topbar-more-menu button[data-topbar-action="docs-status"] {
+  color: #d8e6ff;
+}
+
+.topbar-status {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 14px;
+  z-index: 220;
+  max-width: min(360px, calc(100vw - 28px));
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(126, 180, 255, 0.24);
+  background: linear-gradient(180deg, rgba(9, 22, 45, 0.98), rgba(6, 16, 32, 0.98));
+  color: var(--text-1);
+  box-shadow: 0 20px 52px rgba(0,0,0,0.42), inset 0 1px 0 rgba(255,255,255,0.05);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.utility-btn#bookmarkBtn {
+  position: relative;
+}
+
+.utility-btn#bookmarkBtn[aria-pressed="true"] {
+  color: #eaf7ff;
+  border-color: rgba(118, 196, 255, 0.70);
+  background: linear-gradient(180deg, rgba(36, 91, 168, 0.98), rgba(17, 55, 112, 0.98));
+  box-shadow: 0 0 0 1px rgba(118, 196, 255, 0.18), 0 10px 26px rgba(28, 119, 255, 0.22), inset 0 1px 0 rgba(255,255,255,0.10);
+}
+
+.utility-btn#bookmarkBtn[aria-pressed="true"]:hover {
+  color: #ffffff;
+  border-color: rgba(146, 216, 255, 0.88);
+  background: linear-gradient(180deg, rgba(48, 112, 196, 1), rgba(22, 69, 134, 1));
+}
+
+@media (max-width: 780px) {
+  .topbar-more-menu {
+    min-width: 220px;
+    right: -4px;
+  }
+
+  .topbar-status {
+    right: 8px;
+  }
+}
+
+/* 1.0.0: visible local-first backup entry point */
+.workspace-backup-topbar-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #eafff3;
+  border-color: rgba(87, 235, 151, 0.72);
+  background:
+    radial-gradient(circle at 28% 18%, rgba(184, 255, 211, 0.28), transparent 28%),
+    linear-gradient(180deg, rgba(31, 184, 104, 0.98), rgba(9, 111, 69, 0.98));
+  box-shadow:
+    0 0 0 1px rgba(98, 255, 164, 0.16),
+    0 10px 26px rgba(20, 190, 104, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+.workspace-backup-topbar-btn svg {
+  width: 19px;
+  height: 19px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.95;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.20));
+}
+
+.workspace-backup-topbar-btn:hover,
+.workspace-backup-topbar-btn:focus-visible {
+  color: #ffffff;
+  border-color: rgba(146, 255, 193, 0.98);
+  background:
+    radial-gradient(circle at 28% 18%, rgba(213, 255, 228, 0.38), transparent 30%),
+    linear-gradient(180deg, rgba(44, 210, 125, 1), rgba(12, 133, 78, 1));
+  transform: translateY(-1px);
+  box-shadow:
+    0 0 0 1px rgba(125, 255, 181, 0.25),
+    0 14px 32px rgba(20, 190, 104, 0.30),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.workspace-backup-topbar-btn:active {
+  transform: translateY(0);
+}
+
+.workspace-backup-topbar-dot {
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #86ffb9;
+  box-shadow: 0 0 0 2px rgba(5, 34, 23, 0.72), 0 0 12px rgba(134, 255, 185, 0.92);
+}

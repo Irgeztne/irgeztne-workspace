@@ -1,0 +1,96 @@
+{
+  "version": "0.1.0",
+  "purpose": "Common image rules for official IRGEZTNE Web Studio templates.",
+  "peopleRule": {
+    "allowPeople": true,
+    "mode": "context-only",
+    "recommended": [
+      "people from behind",
+      "side view",
+      "hands working",
+      "meeting without portrait focus",
+      "office atmosphere",
+      "workspace process",
+      "team silhouettes",
+      "non-identifiable people"
+    ],
+    "avoid": [
+      "portrait-first images",
+      "recognizable official faces",
+      "celebrity-like faces",
+      "images where one person becomes the brand of the template",
+      "overly staged stock smiles",
+      "faces used as identity/logo"
+    ],
+    "reason": "Official templates must stay universal. Demo images may show work and atmosphere, but should not make a specific person the face of the template."
+  },
+  "templateDefaults": {
+    "blog-news": {
+      "recommended": [
+        "workspace",
+        "editorial desk",
+        "city",
+        "technology",
+        "newsroom atmosphere"
+      ],
+      "people": "Allowed only as context, not as portrait."
+    },
+    "business-product": {
+      "recommended": [
+        "office",
+        "team from behind",
+        "meeting",
+        "hands with laptop",
+        "product process",
+        "company building"
+      ],
+      "people": "Allowed only as context, non-identifiable."
+    },
+    "documentation": {
+      "recommended": [
+        "code screenshot",
+        "interface screenshot",
+        "diagram",
+        "docs sidebar",
+        "terminal/code block"
+      ],
+      "people": "Usually not needed."
+    },
+    "portfolio": {
+      "recommended": [
+        "work samples",
+        "case visuals",
+        "project screenshots"
+      ],
+      "people": "Only if the portfolio owner chooses their own images."
+    },
+    "agency-studio": {
+      "recommended": [
+        "team process",
+        "studio workspace",
+        "case visuals",
+        "project wall"
+      ],
+      "people": "Context only, no portrait-first demo identity."
+    },
+    "landing": {
+      "recommended": [
+        "product mockup",
+        "device",
+        "app screen",
+        "hero visual"
+      ],
+      "people": "Optional, context only."
+    }
+  },
+  "demoImageRule": {
+    "status": "demo-only",
+    "meaning": "Images included in official templates are demonstration placeholders used to show layout, mood and visual direction.",
+    "mustReplaceBeforePublishing": true,
+    "userMessage": {
+      "en": "Demo images are placeholders. Replace them with your own images before publishing.",
+      "ru": "Демо-изображения — это заглушки для просмотра шаблона. Перед публикацией замените их своими изображениями."
+    },
+    "reason": "Official template images should help users understand the design, but should not become final published content by default."
+  }
+}

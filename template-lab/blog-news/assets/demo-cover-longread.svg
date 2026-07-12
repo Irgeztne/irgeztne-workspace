@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 760">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#23130f"/>
+      <stop offset=".52" stop-color="#84301f"/>
+      <stop offset="1" stop-color="#e28b43"/>
+    </linearGradient>
+    <radialGradient id="spot" cx=".68" cy=".34" r=".5">
+      <stop offset="0" stop-color="#ffd0a5" stop-opacity=".42"/>
+      <stop offset=".3" stop-color="#ffffff" stop-opacity=".12"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1600" height="760" fill="url(#bg)"/>
+  <rect width="1600" height="760" fill="url(#spot)"/>
+  <rect x="180" y="180" width="420" height="320" rx="28" fill="#0f1218" opacity=".42"/>
+  <rect x="245" y="240" width="290" height="36" rx="18" fill="#ffe8d0" opacity=".48"/>
+  <rect x="245" y="305" width="210" height="26" rx="13" fill="#ffe8d0" opacity=".32"/>
+  <rect x="245" y="355" width="260" height="26" rx="13" fill="#ffe8d0" opacity=".28"/>
+  <path d="M0 540 C250 430 450 500 700 380 C980 245 1160 360 1600 210 L1600 760 L0 760Z" fill="#180f11" opacity=".34"/>
+</svg>

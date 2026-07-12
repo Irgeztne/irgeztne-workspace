@@ -1,0 +1,36 @@
+{
+  "itemId": "catalog-template-folder-editorial-brief",
+  "templateId": "folder-editorial-brief",
+  "name": "Folder Editorial Brief",
+  "description": "Файловый newsroom-шаблон из папки templates: lead, facts, why it matters.",
+  "version": "0.1.0",
+  "installed": true,
+  "trust": "local-file",
+  "template": {
+    "id": "folder-editorial-brief",
+    "name": "Folder Editorial Brief",
+    "category": "article",
+    "description": "Файловый newsroom-шаблон из папки templates.",
+    "defaults": {
+      "kicker": "Folder Editorial Brief",
+      "title": "Untitled Folder Editorial Brief",
+      "author": "IRGEZTNE Desk",
+      "summary": "Локальный файловый редакционный бриф, загруженный из папки templates.",
+      "excerpt": "A newsroom starter that now lives as a real JSON file.",
+      "seoTitle": "Untitled Folder Editorial Brief",
+      "seoDescription": "Локальный файловый редакционный бриф, загруженный из папки templates.",
+      "keywords": ["editorial", "brief", "folder"],
+      "visualHtml": "<article class=\"ns-page-section ns-post\"><div class=\"ns-page-kicker\">Folder Editorial Brief</div><h1>Главный заголовок материала</h1><p><strong>Лид:</strong> Start with the strongest confirmed fact.</p><h2>Что произошло</h2><p>Lay out the core event in a clear block.</p><h2>Почему это важно</h2><p>Explain why the story matters now and what to watch next.</p></article>",
+      "markdown": "# Главный заголовок материала\n\n**Лид:** Start with the strongest confirmed fact.\n\n## Что произошло\n\nLay out the core event in a clear block.\n\n## Почему это важно\n\nExplain why the story matters now and what to watch next.",
+      "blocks": [
+        { "type": "heading-1", "text": "Главный заголовок материала" },
+        { "type": "paragraph", "text": "Лид: Start with the strongest confirmed fact." },
+        { "type": "heading-2", "text": "Что произошло" },
+        { "type": "paragraph", "text": "Lay out the core event in a clear block." },
+        { "type": "heading-2", "text": "Почему это важно" },
+        { "type": "paragraph", "text": "Explain why the story matters now and what to watch next." }
+      ],
+      "tags": ["editorial", "folder", "local-file"]
+    }
+  }
+}

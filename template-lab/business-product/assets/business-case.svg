@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 760">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#dff3ea"/>
+      <stop offset=".55" stop-color="#85c8a3"/>
+      <stop offset="1" stop-color="#1e5d46"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#12372b"/>
+      <stop offset="1" stop-color="#9be7b7"/>
+    </linearGradient>
+  </defs>
+  <rect width="1400" height="760" fill="url(#sky)"/>
+  <path d="M0 560 C260 470 500 540 740 420 C990 300 1120 360 1400 260 L1400 760 L0 760Z" fill="#0f211b" opacity=".28"/>
+  <g opacity=".88">
+    <polygon points="170,660 330,170 500,660" fill="url(#glass)"/>
+    <polygon points="560,660 720,90 900,660" fill="#164332"/>
+    <polygon points="930,660 1070,230 1210,660" fill="url(#glass)"/>
+  </g>
+  <g stroke="#f3fff8" stroke-width="6" opacity=".45">
+    <path d="M250 420h160M225 500h220M620 360h210M595 455h260M995 470h150"/>
+  </g>
+</svg>

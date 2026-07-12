@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>IRGEZTNE Editor Core WebStudio Bridge Demo</title>
+  <link rel="stylesheet" href="./irgeztne-editor-core.css">
+</head>
+<body>
+  <main class="ir-editor-shell">
+    <header class="ir-editor-head">
+      <div>
+        <h1>IRGEZTNE Editor Core WebStudio Bridge Demo</h1>
+        <p>v065b: bridge writes editor HTML into hidden textarea and keeps demo content in localStorage.</p>
+      </div>
+    </header>
+
+    <section class="ir-editor-layout">
+      <div class="ir-editor-panel">
+        <div id="bridgeHost" class="ir-editor-core-webstudio-demo-host">
+          <textarea id="bridgeTextarea" data-v5-content="1"><p>Bridge demo: этот HTML хранится в textarea.</p></textarea>
+          <div id="bridgeHint">Bridge loading…</div>
+        </div>
+      </div>
+
+      <aside class="ir-preview-panel">
+        <h2>Textarea value</h2>
+        <textarea id="textareaPreview" readonly></textarea>
+        <h2>Preview</h2>
+        <article id="bridgePreview" class="ir-preview"></article>
+      </aside>
+    </section>
+  </main>
+
+  <script src="./irgeztne-editor-core-api.js"></script>
+  <script src="./irgeztne-editor-core-toolbar.js"></script>
+  <script src="./irgeztne-editor-core-webstudio-bridge.js"></script>
+  <script>
+    (function () {
+      var host = document.getElementById("bridgeHost");
+      var textarea = document.getElementById("bridgeTextarea");
+      var hint = document.getElementById("bridgeHint");
+      var textareaPreview = document.getElementById("textareaPreview");
+      var bridgePreview = document.getElementById("bridgePreview");
+
+      var storageKey = "irgeztne.editor-core.webstudio-bridge-demo.v065b.html";
+
+      try {
+        var saved = localStorage.getItem(storageKey);
+        if (saved) textarea.value = saved;
+      } catch (error) {}
+
+      function sync(html) {
+        textareaPreview.value = textarea.value || "";
+        bridgePreview.innerHTML = html || "<p>Preview empty.</p>";
+
+        try {
+          localStorage.setItem(storageKey, textarea.value || "");
+        } catch (error) {}
+      }
+
+      window.IRGEZTNEBridgeDemo = window.IRGEZTNEEditorCoreWebStudioBridge.create({
+        host: host,
+        textarea: textarea,
+        hint: hint,
+        onChange: function (payload) {
+          sync(payload.html);
+        }
+      });
+
+      sync(textarea.value);
+    })();
+  </script>
+</body>
+</html>

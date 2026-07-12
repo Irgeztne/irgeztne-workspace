@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>IRGEZTNE Editor Workbench</title>
+  <link rel="stylesheet" href="./editor-workbench.css?v=v084f">
+</head>
+<body>
+  <main class="ewb-shell" data-theme="dark">
+    <header class="ewb-top">
+      <div>
+        <div class="ewb-kicker">EDITOR WORKBENCH</div>
+        <strong id="ewbPageTitle">Page</strong>
+      </div>
+      <div class="ewb-status" id="ewbStatus">ready</div>
+    </header>
+
+    <section class="ewb-toolbar" aria-label="Editor toolbar">
+      <button data-cmd="bold"><b>B</b></button>
+      <button data-cmd="italic"><i>I</i></button>
+      <button data-cmd="underline"><u>U</u></button>
+      <button data-cmd="strikeThrough"><s>S</s></button>
+      <button data-action="color">A</button>
+      <button data-action="highlight">▰</button>
+
+      <span class="ewb-sep"></span>
+
+      <button data-block="p">P</button>
+      <button data-block="h1">H1</button>
+      <button data-block="h2">H2</button>
+      <button data-block="h3">H3</button>
+      <button data-block="blockquote">❞</button>
+
+      <span class="ewb-sep"></span>
+
+      <button data-cmd="insertUnorderedList">•</button>
+      <button data-cmd="insertOrderedList">1.</button>
+      <button data-cmd="undo">↶</button>
+      <button data-cmd="redo">↷</button>
+
+      <span class="ewb-sep"></span>
+
+      <button data-action="link">🔗</button>
+      <button data-cmd="unlink">⛓</button>
+      <button data-action="image">🖼</button>
+      <button data-action="video">▶</button>
+      <button data-action="emoji">🙂</button>
+      <button data-action="divider">─</button>
+      <button data-action="code">{}</button>
+
+      <span class="ewb-sep"></span>
+
+      <button data-action="html">HTML</button>
+      <button data-action="save" class="is-primary">Save</button>
+      <button data-action="preview">Preview</button>
+    </section>
+
+    <section class="ewb-editor-wrap">
+      <article id="ewbEditor" class="ewb-editor" contenteditable="true" spellcheck="true" aria-label="Editor"></article>
+
+      <section id="ewbHtmlPanel" class="ewb-html-panel" hidden>
+        <header class="ewb-html-head">
+          <strong>HTML</strong>
+          <div>
+            <button type="button" data-action="html-apply" class="is-primary">Apply visual</button>
+            <button type="button" data-action="html-close">Close</button>
+          </div>
+        </header>
+        <textarea id="ewbHtml" spellcheck="false"></textarea>
+        <p>HTML mode is isolated inside the workbench. Use Apply visual to return to the editor.</p>
+      </section>
+    </section>
+  </main>
+
+  <script src="./editor-workbench.js?v=v084f"></script>
+</body>
+</html>

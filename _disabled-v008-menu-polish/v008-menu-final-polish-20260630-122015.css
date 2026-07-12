@@ -1,0 +1,60 @@
+/* IRGEZTNE v008 — final menu polish
+   Возврат настоящих старых горизонтальных меню без фальшивого JS-переключателя. */
+
+/* 1) v009: правый первый слой “Пространство” не трогаем.
+   Его верхний слой открывается карточками/левым меню, а не этим старым workspaceShellNav. */
+
+/* 2) Большой кабинет: старое меню должно быть видимым и кликабельным */
+#cabinetExpandedView:not(.hidden) #cabinetInnerNav,
+#cabinetExpandedView:not(.hidden) .cabinet-inner-nav,
+#cabinetOverlay:not(.hidden) .cabinet-grid-nav,
+.cabinet-expanded-view:not(.hidden) .cabinet-inner-nav {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  height: auto !important;
+  min-height: 34px !important;
+  max-height: none !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+}
+
+#cabinetExpandedView:not(.hidden) #cabinetInnerNav > *,
+#cabinetExpandedView:not(.hidden) .cabinet-inner-nav > *,
+#cabinetOverlay:not(.hidden) .cabinet-grid-nav > * {
+  display: inline-flex !important;
+  visibility: visible !important;
+}
+
+/* 3) Кнопка “Настройки сайта” — оставить на месте, но сделать заметнее */
+.irgeztne-site-settings-cta-v008 {
+  border-color: rgba(139, 196, 255, 0.72) !important;
+  background: linear-gradient(180deg, rgba(69, 145, 255, 0.96), rgba(27, 91, 190, 0.96)) !important;
+  color: #fff !important;
+  box-shadow:
+    0 10px 24px rgba(36, 117, 255, 0.22),
+    inset 0 1px 0 rgba(255,255,255,0.22) !important;
+  font-weight: 800 !important;
+}
+
+.irgeztne-site-settings-cta-v008:hover {
+  transform: translateY(-1px) !important;
+  border-color: rgba(180, 221, 255, 0.95) !important;
+  background: linear-gradient(180deg, rgba(92, 166, 255, 1), rgba(37, 111, 224, 1)) !important;
+  box-shadow:
+    0 16px 34px rgba(53, 139, 255, 0.34),
+    0 0 0 3px rgba(93, 164, 255, 0.14),
+    inset 0 1px 0 rgba(255,255,255,0.28) !important;
+}
+
+
+/* IRGEZTNE v009: Fili Store / Fili Safe are not active product areas now. */
+#cabinetExpandedView [data-section="fili-store"],
+#cabinetExpandedView [data-section="fili-safe"],
+#cabinetOverlay [data-open-section="fili-store"],
+#cabinetOverlay [data-open-section="fili-safe"],
+#workspaceShellNav [data-section="fili-store"],
+#workspaceShellNav [data-section="fili-safe"] {
+  display: none !important;
+  visibility: hidden !important;
+}

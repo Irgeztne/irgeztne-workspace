@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ArcDocs · Documentation Template</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-template-id="documentation" data-template-version="0.1.0">
+  <header class="docs-header">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark" data-slot="brand.logoFallback">A</span>
+      <span>
+        <strong data-slot="brand.title" data-i18n="brandName">ArcDocs</strong>
+        <small data-slot="brand.subtitle" data-i18n="brandSub">Documentation / Knowledge Base</small>
+      </span>
+    </a>
+
+    <label class="search-box">
+      <span>⌕</span>
+      <input data-i18n-placeholder="searchPlaceholder" placeholder="Search documentation">
+    </label>
+
+    <nav class="top-nav" aria-label="Top navigation">
+      <a href="#" data-i18n="navGuides">Guides</a>
+      <a href="#" data-i18n="navApi">API</a>
+      <a href="#" data-i18n="navChangelog">Changelog</a>
+    </nav>
+
+    <div class="header-actions">
+      <button class="lang-toggle" type="button" aria-label="Toggle language">EN</button>
+      <button class="theme-toggle" type="button" aria-label="Toggle theme">☾</button>
+    </div>
+  </header>
+
+  <main class="docs-shell">
+    <aside class="left-sidebar">
+      <div class="sidebar-section">
+        <strong data-i18n="sidebarStart">Start</strong>
+        <a class="active" href="#" data-i18n="sideIntro">Introduction</a>
+        <a href="#" data-i18n="sideInstall">Installation</a>
+        <a href="#" data-i18n="sideStructure">Project structure</a>
+      </div>
+
+      <div class="sidebar-section">
+        <strong data-i18n="sidebarGuides">Guides</strong>
+        <a href="#" data-i18n="sideEditor">Editor setup</a>
+        <a href="#" data-i18n="sideTemplates">Templates</a>
+        <a href="#" data-i18n="sidePublish">Publishing</a>
+        <a href="#" data-i18n="sideSeo">SEO settings</a>
+      </div>
+
+      <div class="sidebar-section">
+        <strong data-i18n="sidebarReference">Reference</strong>
+        <a href="#" data-i18n="sideConfig">Config file</a>
+        <a href="#" data-i18n="sideApi">API hooks</a>
+        <a href="#" data-i18n="sideFaq">FAQ</a>
+      </div>
+    </aside>
+
+    <article class="docs-content">
+      <section class="hero">
+        <div>
+          <span class="eyebrow" data-i18n="heroKicker">Documentation template</span>
+          <h1 data-i18n="heroTitle">A wide knowledge base for products, tools and technical guides.</h1>
+          <p data-i18n="heroText">Clean navigation, readable articles, code examples, callouts, API cards and a real documentation rhythm — without turning the page into a grid of generic cards.</p>
+
+          <div class="hero-actions">
+            <a class="primary-btn" href="#quick-start" data-i18n="heroPrimary">Quick start</a>
+            <a class="secondary-btn" href="#api" data-i18n="heroSecondary">View API</a>
+          </div>
+        </div>
+
+        <aside class="code-preview" data-slot="hero.codeVisual">
+          <div class="window-dots"><i></i><i></i><i></i></div>
+          <pre><code>site:
+  template: documentation
+  theme: light-dark
+  locale:
+    - en
+    - ru
+
+features:
+  search: true
+  codeBlocks: true
+  callouts: true</code></pre>
+        </aside>
+      </section>
+
+      <section id="quick-start" class="article-section">
+        <span class="eyebrow" data-i18n="quickKicker">Quick start</span>
+        <h2 data-i18n="quickTitle">Give readers the answer first, then details.</h2>
+        <p data-i18n="quickText">A good documentation page starts with orientation: what this page explains, who it is for, and what the reader can do next.</p>
+
+        <div class="steps">
+          <article>
+            <span>01</span>
+            <h3 data-i18n="step1Title">Install</h3>
+            <p data-i18n="step1Text">Show the minimum setup without overwhelming the reader.</p>
+          </article>
+          <article>
+            <span>02</span>
+            <h3 data-i18n="step2Title">Configure</h3>
+            <p data-i18n="step2Text">Explain the important settings and safe defaults.</p>
+          </article>
+          <article>
+            <span>03</span>
+            <h3 data-i18n="step3Title">Publish</h3>
+            <p data-i18n="step3Text">Point the reader toward preview, export or deployment.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="callout">
+        <strong data-i18n="calloutTitle">Documentation should feel calm, not empty.</strong>
+        <p data-i18n="calloutText">Wide layouts are useful when they support reading: side navigation, article content, table of contents and examples all visible together.</p>
+      </section>
+
+      <section id="api" class="article-section">
+        <span class="eyebrow" data-i18n="apiKicker">API / Reference</span>
+        <h2 data-i18n="apiTitle">Reference blocks should be structured and scannable.</h2>
+
+        <div class="api-grid">
+          <article>
+            <small>GET</small>
+            <h3>/sites</h3>
+            <p data-i18n="api1">Returns a list of available sites and metadata.</p>
+          </article>
+          <article>
+            <small>POST</small>
+            <h3>/publish</h3>
+            <p data-i18n="api2">Starts export or publishing for the selected project.</p>
+          </article>
+          <article>
+            <small>PATCH</small>
+            <h3>/settings</h3>
+            <p data-i18n="api3">Updates SEO, OpenGraph, robots and custom settings.</p>
+          </article>
+        </div>
+
+        <div class="code-block">
+          <div class="code-title">
+            <strong data-i18n="codeTitle">Example request</strong>
+            <span>JSON</span>
+          </div>
+          <pre><code>{
+  "siteId": "northline-journal",
+  "template": "documentation",
+  "locale": "ru",
+  "publish": {
+    "provider": "static-export"
+  }
+}</code></pre>
+        </div>
+      </section>
+
+      <section class="article-section">
+        <span class="eyebrow" data-i18n="faqKicker">FAQ</span>
+        <h2 data-i18n="faqTitle">Answer common questions before they become friction.</h2>
+
+        <div class="faq-list">
+          <details open>
+            <summary data-i18n="faq1Title">Can this template use images?</summary>
+            <p data-i18n="faq1Text">Yes, but documentation usually works best with code screenshots, interface examples, diagrams and tables.</p>
+          </details>
+          <details>
+            <summary data-i18n="faq2Title">Is RSS needed here?</summary>
+            <p data-i18n="faq2Text">It can be useful for changelogs or product updates, but it should not be presented as a social sharing icon.</p>
+          </details>
+          <details>
+            <summary data-i18n="faq3Title">Can users replace demo content?</summary>
+            <p data-i18n="faq3Text">Yes. Demo content is only for preview and should be replaced with real project documentation.</p>
+          </details>
+        </div>
+      </section>
+
+      <nav class="next-prev" aria-label="Next and previous">
+        <a href="#">
+          <small data-i18n="prev">Previous</small>
+          <strong data-i18n="prevTitle">Template overview</strong>
+        </a>
+        <a href="#">
+          <small data-i18n="next">Next</small>
+          <strong data-i18n="nextTitle">Installation</strong>
+        </a>
+      </nav>
+    </article>
+
+    <aside class="right-toc">
+      <strong data-i18n="tocTitle">On this page</strong>
+      <a href="#quick-start" data-i18n="tocQuick">Quick start</a>
+      <a href="#api" data-i18n="tocApi">API reference</a>
+      <a href="#" data-i18n="tocFaq">FAQ</a>
+
+      <div class="version-card">
+        <span data-i18n="version">Version</span>
+        <strong>0.1.0</strong>
+        <small data-i18n="versionText">Template lab preview</small>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="docs-footer">
+    <strong data-i18n="footerName">ArcDocs</strong>
+    <span data-i18n="footerText">IRGEZTNE Web Studio · Documentation template lab</span>
+  </footer>
+
+  <script>
+    const dict = {
+      en: {
+        title: 'ArcDocs · Documentation Template',
+        brandName: 'ArcDocs',
+        brandSub: 'Documentation / Knowledge Base',
+        searchPlaceholder: 'Search documentation',
+        navGuides: 'Guides',
+        navApi: 'API',
+        navChangelog: 'Changelog',
+        sidebarStart: 'Start',
+        sideIntro: 'Introduction',
+        sideInstall: 'Installation',
+        sideStructure: 'Project structure',
+        sidebarGuides: 'Guides',
+        sideEditor: 'Editor setup',
+        sideTemplates: 'Templates',
+        sidePublish: 'Publishing',
+        sideSeo: 'SEO settings',
+        sidebarReference: 'Reference',
+        sideConfig: 'Config file',
+        sideApi: 'API hooks',
+        sideFaq: 'FAQ',
+        heroKicker: 'Documentation template',
+        heroTitle: 'A wide knowledge base for products, tools and technical guides.',
+        heroText: 'Clean navigation, readable articles, code examples, callouts, API cards and a real documentation rhythm — without turning the page into a grid of generic cards.',
+        heroPrimary: 'Quick start',
+        heroSecondary: 'View API',
+        quickKicker: 'Quick start',
+        quickTitle: 'Give readers the answer first, then details.',
+        quickText: 'A good documentation page starts with orientation: what this page explains, who it is for, and what the reader can do next.',
+        step1Title: 'Install',
+        step1Text: 'Show the minimum setup without overwhelming the reader.',
+        step2Title: 'Configure',
+        step2Text: 'Explain the important settings and safe defaults.',
+        step3Title: 'Publish',
+        step3Text: 'Point the reader toward preview, export or deployment.',
+        calloutTitle: 'Documentation should feel calm, not empty.',
+        calloutText: 'Wide layouts are useful when they support reading: side navigation, article content, table of contents and examples all visible together.',
+        apiKicker: 'API / Reference',
+        apiTitle: 'Reference blocks should be structured and scannable.',
+        api1: 'Returns a list of available sites and metadata.',
+        api2: 'Starts export or publishing for the selected project.',
+        api3: 'Updates SEO, OpenGraph, robots and custom settings.',
+        codeTitle: 'Example request',
+        faqKicker: 'FAQ',
+        faqTitle: 'Answer common questions before they become friction.',
+        faq1Title: 'Can this template use images?',
+        faq1Text: 'Yes, but documentation usually works best with code screenshots, interface examples, diagrams and tables.',
+        faq2Title: 'Is RSS needed here?',
+        faq2Text: 'It can be useful for changelogs or product updates, but it should not be presented as a social sharing icon.',
+        faq3Title: 'Can users replace demo content?',
+        faq3Text: 'Yes. Demo content is only for preview and should be replaced with real project documentation.',
+        prev: 'Previous',
+        prevTitle: 'Template overview',
+        next: 'Next',
+        nextTitle: 'Installation',
+        tocTitle: 'On this page',
+        tocQuick: 'Quick start',
+        tocApi: 'API reference',
+        tocFaq: 'FAQ',
+        version: 'Version',
+        versionText: 'Template lab preview',
+        footerName: 'ArcDocs',
+        footerText: 'IRGEZTNE Web Studio · Documentation template lab'
+      },
+      ru: {
+        title: 'ArcDocs · Шаблон документации',
+        brandName: 'ArcDocs',
+        brandSub: 'Документация / База знаний',
+        searchPlaceholder: 'Поиск по документации',
+        navGuides: 'Гайды',
+        navApi: 'API',
+        navChangelog: 'Изменения',
+        sidebarStart: 'Старт',
+        sideIntro: 'Введение',
+        sideInstall: 'Установка',
+        sideStructure: 'Структура проекта',
+        sidebarGuides: 'Гайды',
+        sideEditor: 'Настройка редактора',
+        sideTemplates: 'Шаблоны',
+        sidePublish: 'Публикация',
+        sideSeo: 'SEO-настройки',
+        sidebarReference: 'Справочник',
+        sideConfig: 'Config-файл',
+        sideApi: 'API hooks',
+        sideFaq: 'FAQ',
+        heroKicker: 'Шаблон документации',
+        heroTitle: 'Широкая база знаний для продуктов, инструментов и технических гайдов.',
+        heroText: 'Чистая навигация, читаемые статьи, примеры кода, callout-блоки, API-карточки и настоящий ритм документации — без превращения страницы в обычную сетку карточек.',
+        heroPrimary: 'Быстрый старт',
+        heroSecondary: 'Смотреть API',
+        quickKicker: 'Быстрый старт',
+        quickTitle: 'Сначала дайте ответ, потом детали.',
+        quickText: 'Хорошая документация начинается с ориентации: что объясняет страница, для кого она и что читатель может сделать дальше.',
+        step1Title: 'Установить',
+        step1Text: 'Покажите минимальную настройку без перегруза.',
+        step2Title: 'Настроить',
+        step2Text: 'Объясните важные параметры и безопасные значения по умолчанию.',
+        step3Title: 'Опубликовать',
+        step3Text: 'Направьте читателя к предпросмотру, экспорту или деплою.',
+        calloutTitle: 'Документация должна быть спокойной, но не пустой.',
+        calloutText: 'Широкий макет полезен, когда помогает чтению: боковая навигация, статья, оглавление и примеры видны вместе.',
+        apiKicker: 'API / Справочник',
+        apiTitle: 'Справочные блоки должны быть структурными и быстрыми для чтения.',
+        api1: 'Возвращает список доступных сайтов и метаданные.',
+        api2: 'Запускает экспорт или публикацию выбранного проекта.',
+        api3: 'Обновляет SEO, OpenGraph, robots и пользовательские настройки.',
+        codeTitle: 'Пример запроса',
+        faqKicker: 'FAQ',
+        faqTitle: 'Ответьте на частые вопросы до того, как они станут препятствием.',
+        faq1Title: 'Можно ли использовать изображения?',
+        faq1Text: 'Да, но для документации чаще лучше подходят скриншоты кода, интерфейса, схемы и таблицы.',
+        faq2Title: 'Нужен ли здесь RSS?',
+        faq2Text: 'Он может быть полезен для changelog или обновлений продукта, но не должен выглядеть как social share-иконка.',
+        faq3Title: 'Можно ли заменить demo-контент?',
+        faq3Text: 'Да. Demo-контент нужен только для просмотра шаблона и должен заменяться реальной документацией проекта.',
+        prev: 'Назад',
+        prevTitle: 'Обзор шаблона',
+        next: 'Дальше',
+        nextTitle: 'Установка',
+        tocTitle: 'На странице',
+        tocQuick: 'Быстрый старт',
+        tocApi: 'API справочник',
+        tocFaq: 'FAQ',
+        version: 'Версия',
+        versionText: 'Превью в template lab',
+        footerName: 'ArcDocs',
+        footerText: 'IRGEZTNE Web Studio · песочница шаблона Documentation'
+      }
+    };
+
+    const langButton = document.querySelector('.lang-toggle');
+    const themeButton = document.querySelector('.theme-toggle');
+
+    function setLang(lang) {
+      const t = dict[lang] || dict.en;
+      document.documentElement.lang = lang;
+      document.title = t.title;
+
+      document.querySelectorAll('[data-i18n]').forEach((node) => {
+        const key = node.dataset.i18n;
+        if (t[key]) node.textContent = t[key];
+      });
+
+      document.querySelectorAll('[data-i18n-placeholder]').forEach((node) => {
+        const key = node.dataset.i18nPlaceholder;
+        if (t[key]) node.placeholder = t[key];
+      });
+
+      langButton.textContent = lang.toUpperCase();
+      localStorage.setItem('arcdocs-lang', lang);
+    }
+
+    function setTheme(theme) {
+      document.documentElement.dataset.theme = theme;
+      themeButton.textContent = theme === 'dark' ? '☀' : '☾';
+      localStorage.setItem('arcdocs-theme', theme);
+    }
+
+    setLang(localStorage.getItem('arcdocs-lang') || (((navigator.language || '').toLowerCase().startsWith('ru')) ? 'ru' : 'en'));
+    setTheme(localStorage.getItem('arcdocs-theme') || 'light');
+
+    langButton.addEventListener('click', () => {
+      setLang(document.documentElement.lang === 'ru' ? 'en' : 'ru');
+    });
+
+    themeButton.addEventListener('click', () => {
+      setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+    });
+  </script>
+</body>
+</html>

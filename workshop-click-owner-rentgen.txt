@@ -1,0 +1,3351 @@
+
+
+=== src/legacy-shell.js ===
+
+--- src/legacy-shell.js:114-124 ---
+  114:   bindHomeShortcuts();
+  115:   initHomeDashboard();
+  116:   applyWorkspaceUi();
+  117:   syncCabinetUi();
+  118:   setWorkspaceSection(state.activeWorkspaceSection);
+  119: 
+  120:   function bindWorkspace() {
+  121:     els.workspaceToggle?.addEventListener('click', () => {
+  122:       if (!state.workspaceEnabled) {
+  123:         setWorkspaceEnabled(true);
+  124:         setWorkspaceMode('split');
+
+--- src/legacy-shell.js:119-129 ---
+  119: 
+  120:   function bindWorkspace() {
+  121:     els.workspaceToggle?.addEventListener('click', () => {
+  122:       if (!state.workspaceEnabled) {
+  123:         setWorkspaceEnabled(true);
+  124:         setWorkspaceMode('split');
+  125:         return;
+  126:       }
+  127: 
+  128:       if (state.workspaceMode === 'normal') {
+  129:         setWorkspaceMode('split');
+
+--- src/legacy-shell.js:129-139 ---
+  129:         setWorkspaceMode('split');
+  130:         return;
+  131:       }
+  132: 
+  133:       setWorkspaceEnabled(false);
+  134:       setWorkspaceMode('normal');
+  135:     });
+  136: 
+  137:     els.workspaceCollapseBtn?.addEventListener('click', () => {
+  138:       if (state.activeWorkspaceSection && state.activeWorkspaceSection !== 'workspace') {
+  139:         setWorkspaceSection('workspace');
+
+--- src/legacy-shell.js:135-145 ---
+  135:     });
+  136: 
+  137:     els.workspaceCollapseBtn?.addEventListener('click', () => {
+  138:       if (state.activeWorkspaceSection && state.activeWorkspaceSection !== 'workspace') {
+  139:         setWorkspaceSection('workspace');
+  140:         setWorkspaceEnabled(true);
+  141:         setWorkspaceMode('split');
+  142:         return;
+  143:       }
+  144: 
+  145:       setWorkspaceEnabled(false);
+
+--- src/legacy-shell.js:136-146 ---
+  136: 
+  137:     els.workspaceCollapseBtn?.addEventListener('click', () => {
+  138:       if (state.activeWorkspaceSection && state.activeWorkspaceSection !== 'workspace') {
+  139:         setWorkspaceSection('workspace');
+  140:         setWorkspaceEnabled(true);
+  141:         setWorkspaceMode('split');
+  142:         return;
+  143:       }
+  144: 
+  145:       setWorkspaceEnabled(false);
+  146:       setWorkspaceMode('normal');
+
+--- src/legacy-shell.js:141-151 ---
+  141:         setWorkspaceMode('split');
+  142:         return;
+  143:       }
+  144: 
+  145:       setWorkspaceEnabled(false);
+  146:       setWorkspaceMode('normal');
+  147:     });
+  148: 
+  149:     els.workspaceShellNav?.addEventListener('click', (event) => {
+  150:       const button = event.target.closest('[data-section]');
+  151:       if (!button) return;
+
+--- src/legacy-shell.js:146-156 ---
+  146:       setWorkspaceMode('normal');
+  147:     });
+  148: 
+  149:     els.workspaceShellNav?.addEventListener('click', (event) => {
+  150:       const button = event.target.closest('[data-section]');
+  151:       if (!button) return;
+  152:       setWorkspaceSection(String(button.dataset.section || 'workspace'));
+  153:     });
+  154: 
+  155:     if (els.workspaceDivider && els.mainLayout) {
+  156:       els.workspaceDivider.addEventListener('mousedown', (event) => {
+
+--- src/legacy-shell.js:148-158 ---
+  148: 
+  149:     els.workspaceShellNav?.addEventListener('click', (event) => {
+  150:       const button = event.target.closest('[data-section]');
+  151:       if (!button) return;
+  152:       setWorkspaceSection(String(button.dataset.section || 'workspace'));
+  153:     });
+  154: 
+  155:     if (els.workspaceDivider && els.mainLayout) {
+  156:       els.workspaceDivider.addEventListener('mousedown', (event) => {
+  157:         if (state.workspaceMode !== 'split') return;
+  158:         event.preventDefault();
+
+--- src/legacy-shell.js:202-212 ---
+  202:     document.addEventListener('irgeztne:global-navigation-start', () => {
+  203:       if (state.isCabinetOpen) closeCabinet();
+  204: 
+  205:       if (state.workspaceEnabled) {
+  206:         setWorkspaceEnabled(false);
+  207:         setWorkspaceMode('normal');
+  208:       }
+  209:     });
+  210: 
+  211:     els.hamburgerBtn?.addEventListener('click', () => {
+  212:       if (state.isCabinetOpen) closeCabinet();
+
+--- src/legacy-shell.js:229-239 ---
+  229:       closeCabinet();
+  230:     });
+  231: 
+  232:     document.addEventListener('click', (event) => {
+  233:       const tile = event.target.closest('[data-open-section]');
+  234:       if (tile) {
+  235:         const section = String(tile.dataset.openSection || 'workspace');
+  236:         showCabinetSection(section);
+  237:         return;
+  238:       }
+  239: 
+
+--- src/legacy-shell.js:236-246 ---
+  236:         showCabinetSection(section);
+  237:         return;
+  238:       }
+  239: 
+  240:       const inner = event.target.closest('.cabinet-inner-nav-btn[data-section]');
+  241:       if (inner) {
+  242:         const section = String(inner.dataset.section || 'workspace');
+  243:         showCabinetSection(section);
+  244:       }
+  245:     });
+  246: 
+
+--- src/legacy-shell.js:260-270 ---
+  260:         showPlannedModuleNotice(plannedBtn);
+  261:         return;
+  262:       }
+  263: 
+  264:       const workspaceBtn = event.target.closest('[data-home-open]');
+  265:       if (workspaceBtn) {
+  266:         const section = String(workspaceBtn.dataset.homeOpen || '');
+  267:         if (!section) return;
+  268: 
+  269:         setWorkspaceEnabled(true);
+  270:         if (section !== 'workspace' && state.workspaceMode === 'normal') {
+
+--- src/legacy-shell.js:265-275 ---
+  265:       if (workspaceBtn) {
+  266:         const section = String(workspaceBtn.dataset.homeOpen || '');
+  267:         if (!section) return;
+  268: 
+  269:         setWorkspaceEnabled(true);
+  270:         if (section !== 'workspace' && state.workspaceMode === 'normal') {
+  271:           setWorkspaceMode('split');
+  272:         }
+  273:         setWorkspaceSection(section);
+  274:         return;
+  275:       }
+
+--- src/legacy-shell.js:269-279 ---
+  269:         setWorkspaceEnabled(true);
+  270:         if (section !== 'workspace' && state.workspaceMode === 'normal') {
+  271:           setWorkspaceMode('split');
+  272:         }
+  273:         setWorkspaceSection(section);
+  274:         return;
+  275:       }
+  276: 
+  277:       const cabinetBtn = event.target.closest('[data-home-open-cabinet]');
+  278:       if (cabinetBtn) {
+  279:         const section = String(cabinetBtn.dataset.homeOpenCabinet || '');
+
+--- src/legacy-shell.js:273-283 ---
+  273:         setWorkspaceSection(section);
+  274:         return;
+  275:       }
+  276: 
+  277:       const cabinetBtn = event.target.closest('[data-home-open-cabinet]');
+  278:       if (cabinetBtn) {
+  279:         const section = String(cabinetBtn.dataset.homeOpenCabinet || '');
+  280:         if (!section) return;
+  281:         openCabinet();
+  282:         showCabinetSection(section);
+  283:         return;
+
+--- src/legacy-shell.js:286-296 ---
+  286:       const workspaceEditorBtn = event.target.closest('[data-workspace-editor-open]');
+  287:       if (workspaceEditorBtn) {
+  288:         const section = String(workspaceEditorBtn.dataset.workspaceEditorOpen || '');
+  289:         if (!section) return;
+  290:         setWorkspaceEnabled(true);
+  291:         if (section !== 'workspace' && state.workspaceMode === 'normal') {
+  292:           setWorkspaceMode('split');
+  293:         }
+  294:         setWorkspaceSection(section);
+  295:         return;
+  296:       }
+
+--- src/legacy-shell.js:290-300 ---
+  290:         setWorkspaceEnabled(true);
+  291:         if (section !== 'workspace' && state.workspaceMode === 'normal') {
+  292:           setWorkspaceMode('split');
+  293:         }
+  294:         setWorkspaceSection(section);
+  295:         return;
+  296:       }
+  297: 
+  298:       const workspaceEditorCabinetBtn = event.target.closest('[data-workspace-editor-open-cabinet]');
+  299:       if (workspaceEditorCabinetBtn) {
+  300:         const section = String(workspaceEditorCabinetBtn.dataset.workspaceEditorOpenCabinet || '').trim() || 'editor';
+
+--- src/legacy-shell.js:304-314 ---
+  304:       }
+  305:     });
+  306: 
+  307:     document.addEventListener('ns-projects:open-workspace', () => {
+  308:       openProjectTarget('workspace');
+  309:     });
+  310: 
+  311:     document.addEventListener('ns-projects:new-note', (event) => {
+  312:       const projectId = event && event.detail ? String(event.detail.projectId || '') : '';
+  313:       openProjectTarget('notes');
+  314: 
+
+--- src/legacy-shell.js:309-319 ---
+  309:     });
+  310: 
+  311:     document.addEventListener('ns-projects:new-note', (event) => {
+  312:       const projectId = event && event.detail ? String(event.detail.projectId || '') : '';
+  313:       openProjectTarget('notes');
+  314: 
+  315:       if (window.NSNotesStore && typeof window.NSNotesStore.createNote === 'function') {
+  316:         const note = window.NSNotesStore.createNote({
+  317:           title: tr('Untitled note', tr('Untitled note','Заметка без названия')),
+  318:           type: 'note',
+  319:           text: '',
+
+--- src/legacy-shell.js:327-337 ---
+  327:     });
+  328: 
+  329:     document.addEventListener('ns-projects:new-draft', (event) => {
+  330:       const projectId = event && event.detail ? String(event.detail.projectId || '') : '';
+  331:       const surfaceType = openProjectTarget('editor');
+  332: 
+  333:       if (window.NSEditorV1 && typeof window.NSEditorV1.createDraftFromTemplate === 'function') {
+  334:         let draft = window.NSEditorV1.createDraftFromTemplate(null);
+  335: 
+  336:         if (draft && projectId && window.__nsEditorV1Instance && window.__nsEditorV1Instance.store && typeof window.__nsEditorV1Instance.store.saveDraft === 'function') {
+  337:           draft = window.__nsEditorV1Instance.store.saveDraft(Object.assign({}, draft, { projectId }));
+
+--- src/legacy-shell.js:343-353 ---
+  343:       }
+  344:     });
+  345: 
+  346:     document.addEventListener('ns-projects:open-files', () => {
+  347:       openProjectTarget('files');
+  348:     });
+  349: 
+  350:     document.addEventListener('ns-projects:open-documents', () => {
+  351:       openProjectTarget('documents');
+  352:     });
+  353: 
+
+--- src/legacy-shell.js:347-357 ---
+  347:       openProjectTarget('files');
+  348:     });
+  349: 
+  350:     document.addEventListener('ns-projects:open-documents', () => {
+  351:       openProjectTarget('documents');
+  352:     });
+  353: 
+  354:     document.addEventListener('ns-projects:open-map', () => {
+  355:       openProjectTarget('map');
+  356:     });
+  357: 
+
+--- src/legacy-shell.js:351-361 ---
+  351:       openProjectTarget('documents');
+  352:     });
+  353: 
+  354:     document.addEventListener('ns-projects:open-map', () => {
+  355:       openProjectTarget('map');
+  356:     });
+  357: 
+  358:     document.addEventListener('ns-projects:open-note', () => {
+  359:       openProjectTarget('notes');
+  360:     });
+  361: 
+
+--- src/legacy-shell.js:355-365 ---
+  355:       openProjectTarget('map');
+  356:     });
+  357: 
+  358:     document.addEventListener('ns-projects:open-note', () => {
+  359:       openProjectTarget('notes');
+  360:     });
+  361: 
+  362:     document.addEventListener('ns-tools:use-text', (event) => {
+  363:       const detail = event && event.detail ? event.detail : {};
+  364:       openProjectTarget('tools');
+  365:       setTimeout(() => {
+
+--- src/legacy-shell.js:360-370 ---
+  360:     });
+  361: 
+  362:     document.addEventListener('ns-tools:use-text', (event) => {
+  363:       const detail = event && event.detail ? event.detail : {};
+  364:       openProjectTarget('tools');
+  365:       setTimeout(() => {
+  366:         pushTextIntoTools(detail);
+  367:       }, 60);
+  368:     });
+  369: 
+  370:     document.addEventListener('ns-notes:open-project', () => {
+
+--- src/legacy-shell.js:367-377 ---
+  367:       }, 60);
+  368:     });
+  369: 
+  370:     document.addEventListener('ns-notes:open-project', () => {
+  371:       openProjectTarget('projects');
+  372:     });
+  373: 
+  374:     document.addEventListener('ns-notes:open-files', () => {
+  375:       openProjectTarget('files');
+  376:     });
+  377: 
+
+--- src/legacy-shell.js:371-381 ---
+  371:       openProjectTarget('projects');
+  372:     });
+  373: 
+  374:     document.addEventListener('ns-notes:open-files', () => {
+  375:       openProjectTarget('files');
+  376:     });
+  377: 
+  378:     document.addEventListener('ns-codehub:open-workspace', () => {
+  379:       openProjectTarget('codehub');
+  380:     });
+  381: 
+
+--- src/legacy-shell.js:374-384 ---
+  374:     document.addEventListener('ns-notes:open-files', () => {
+  375:       openProjectTarget('files');
+  376:     });
+  377: 
+  378:     document.addEventListener('ns-codehub:open-workspace', () => {
+  379:       openProjectTarget('codehub');
+  380:     });
+  381: 
+  382:     document.addEventListener('ns-codehub:open-cabinet', () => {
+  383:       openCabinet();
+  384:       showCabinetSection('codehub');
+
+--- src/legacy-shell.js:375-385 ---
+  375:       openProjectTarget('files');
+  376:     });
+  377: 
+  378:     document.addEventListener('ns-codehub:open-workspace', () => {
+  379:       openProjectTarget('codehub');
+  380:     });
+  381: 
+  382:     document.addEventListener('ns-codehub:open-cabinet', () => {
+  383:       openCabinet();
+  384:       showCabinetSection('codehub');
+  385:     });
+
+--- src/legacy-shell.js:378-388 ---
+  378:     document.addEventListener('ns-codehub:open-workspace', () => {
+  379:       openProjectTarget('codehub');
+  380:     });
+  381: 
+  382:     document.addEventListener('ns-codehub:open-cabinet', () => {
+  383:       openCabinet();
+  384:       showCabinetSection('codehub');
+  385:     });
+  386:   }
+  387: 
+  388:   function openProjectTarget(section) {
+
+--- src/legacy-shell.js:380-390 ---
+  380:     });
+  381: 
+  382:     document.addEventListener('ns-codehub:open-cabinet', () => {
+  383:       openCabinet();
+  384:       showCabinetSection('codehub');
+  385:     });
+  386:   }
+  387: 
+  388:   function openProjectTarget(section) {
+  389:     const next = String(section || 'workspace');
+  390: 
+
+--- src/legacy-shell.js:384-394 ---
+  384:       showCabinetSection('codehub');
+  385:     });
+  386:   }
+  387: 
+  388:   function openProjectTarget(section) {
+  389:     const next = String(section || 'workspace');
+  390: 
+  391:     if (state.isCabinetOpen) {
+  392:       showCabinetSection(next);
+  393:       return 'cabinet';
+  394:     }
+
+--- src/legacy-shell.js:392-402 ---
+  392:       showCabinetSection(next);
+  393:       return 'cabinet';
+  394:     }
+  395: 
+  396:     setWorkspaceEnabled(true);
+  397:     if (next !== 'workspace' && state.workspaceMode === 'normal') {
+  398:       setWorkspaceMode('split');
+  399:     }
+  400:     setWorkspaceSection(next);
+  401:     return 'workspace';
+  402:   }
+
+--- src/legacy-shell.js:396-406 ---
+  396:     setWorkspaceEnabled(true);
+  397:     if (next !== 'workspace' && state.workspaceMode === 'normal') {
+  398:       setWorkspaceMode('split');
+  399:     }
+  400:     setWorkspaceSection(next);
+  401:     return 'workspace';
+  402:   }
+  403: 
+  404:   function pushTextIntoTools(payload) {
+  405:     const text = payload && payload.text ? String(payload.text) : '';
+  406:     if (!text) return;
+
+--- src/legacy-shell.js:422-432 ---
+  422:       }
+  423:     });
+  424:   }
+  425: 
+  426:   function setWorkspaceEnabled(enabled) {
+  427:     state.workspaceEnabled = Boolean(enabled);
+  428:     if (!state.workspaceEnabled && state.workspaceMode !== 'normal') {
+  429:       state.workspaceMode = 'normal';
+  430:     }
+  431:     applyWorkspaceUi();
+  432:   }
+
+--- src/legacy-shell.js:438-448 ---
+  438:     }
+  439:     applyWorkspaceUi();
+  440:   }
+  441: 
+  442:   function setWorkspaceSection(section) {
+  443:     const next = String(section || 'workspace');
+  444:     state.activeWorkspaceSection = next;
+  445: 
+  446:     els.workspaceShellNav?.querySelectorAll('.workspace-nav-btn').forEach((button) => {
+  447:       const isActive = button.dataset.section === next;
+  448:       button.classList.toggle('active', isActive);
+
+--- src/legacy-shell.js:490-500 ---
+  490:     state.cabinetMode = 'grid';
+  491: 
+  492:     // Big Cabinet is a full surface. Keep the small split Workspace closed
+  493:     // behind it; the Workspace button can still open the small panel separately.
+  494:     setWorkspaceEnabled(false);
+  495:     setWorkspaceMode('normal');
+  496: 
+  497:     syncCabinetUi();
+  498:   }
+  499: 
+  500:   function closeCabinet() {
+
+--- src/legacy-shell.js:504-514 ---
+  504:   }
+  505: 
+  506:   function showCabinetGrid() {
+  507:     state.cabinetMode = 'grid';
+  508:     setWorkspaceEnabled(false);
+  509:     setWorkspaceMode('normal');
+  510:     syncCabinetUi();
+  511:   }
+  512: 
+  513:   function showCabinetSection(section) {
+  514:     const next = String(section || 'workspace');
+
+--- src/legacy-shell.js:544-554 ---
+  544:     }
+  545: 
+  546:     // Big Cabinet owns the visible module surface.
+  547:     // Do not open the small split Workspace behind expanded Cabinet sections.
+  548:     setWorkspaceEnabled(false);
+  549:     setWorkspaceMode('normal');
+  550: 
+  551:     if (next === 'workspace') {
+  552:       renderHomeDashboard();
+  553:     }
+  554: 
+
+--- src/legacy-shell.js:585-595 ---
+  585:   if (homeDashboardBound) return;
+  586:   homeDashboardBound = true;
+  587: 
+  588:   document.addEventListener('click', (event) => {
+  589:     const fileBtn = event.target.closest('[data-home-open-file]');
+  590:     if (fileBtn) {
+  591:       const fileId = String(fileBtn.dataset.homeOpenFile || '');
+  592:       if (!fileId || !window.NSLibraryStore) return;
+  593: 
+  594:       if (typeof window.NSLibraryStore.setActiveItem === 'function') {
+  595:         window.NSLibraryStore.setActiveItem(fileId);
+
+--- src/legacy-shell.js:597-607 ---
+  597: 
+  598:       if (state.isCabinetOpen) {
+  599:         showCabinetSection('files');
+  600:       } else {
+  601:         setWorkspaceEnabled(true);
+  602:         if (state.workspaceMode === 'normal') setWorkspaceMode('split');
+  603:         setWorkspaceSection('files');
+  604:       }
+  605:       return;
+  606:     }
+  607: 
+
+--- src/legacy-shell.js:599-609 ---
+  599:         showCabinetSection('files');
+  600:       } else {
+  601:         setWorkspaceEnabled(true);
+  602:         if (state.workspaceMode === 'normal') setWorkspaceMode('split');
+  603:         setWorkspaceSection('files');
+  604:       }
+  605:       return;
+  606:     }
+  607: 
+  608:     const fileTabBtn = event.target.closest('[data-home-open-file-tab]');
+  609:     if (fileTabBtn) {
+
+--- src/legacy-shell.js:604-614 ---
+  604:       }
+  605:       return;
+  606:     }
+  607: 
+  608:     const fileTabBtn = event.target.closest('[data-home-open-file-tab]');
+  609:     if (fileTabBtn) {
+  610:       const fileId = String(fileTabBtn.dataset.homeOpenFileTab || '');
+  611:       if (!fileId) return;
+  612: 
+  613:       const opened = openLibraryItemInTab(fileId);
+  614:       if (opened && state.isCabinetOpen) {
+
+--- src/legacy-shell.js:616-626 ---
+  616:       }
+  617:       return;
+  618:     }
+  619: 
+  620:     const projectBtn = event.target.closest('[data-home-open-project]');
+  621:     if (projectBtn) {
+  622:       const projectId = String(projectBtn.dataset.homeOpenProject || '');
+  623:       if (!projectId || !window.NSProjectStore) return;
+  624: 
+  625:       if (typeof window.NSProjectStore.setLastOpenedProjectId === 'function') {
+  626:         window.NSProjectStore.setLastOpenedProjectId(projectId);
+
+--- src/legacy-shell.js:628-638 ---
+  628: 
+  629:       if (state.isCabinetOpen) {
+  630:         showCabinetSection('projects');
+  631:       } else {
+  632:         setWorkspaceEnabled(true);
+  633:         if (state.workspaceMode === 'normal') setWorkspaceMode('split');
+  634:         setWorkspaceSection('projects');
+  635:       }
+  636:       return;
+  637:     }
+  638: 
+
+--- src/legacy-shell.js:630-640 ---
+  630:         showCabinetSection('projects');
+  631:       } else {
+  632:         setWorkspaceEnabled(true);
+  633:         if (state.workspaceMode === 'normal') setWorkspaceMode('split');
+  634:         setWorkspaceSection('projects');
+  635:       }
+  636:       return;
+  637:     }
+  638: 
+  639:     const noteBtn = event.target.closest('[data-home-open-note]');
+  640:     if (noteBtn) {
+
+--- src/legacy-shell.js:635-645 ---
+  635:       }
+  636:       return;
+  637:     }
+  638: 
+  639:     const noteBtn = event.target.closest('[data-home-open-note]');
+  640:     if (noteBtn) {
+  641:       const noteId = String(noteBtn.dataset.homeOpenNote || '');
+  642:       if (!noteId || !window.NSNotesStore) return;
+  643: 
+  644:       if (typeof window.NSNotesStore.setLastOpenedNoteId === 'function') {
+  645:         window.NSNotesStore.setLastOpenedNoteId(noteId);
+
+--- src/legacy-shell.js:647-657 ---
+  647: 
+  648:       if (state.isCabinetOpen) {
+  649:         showCabinetSection('notes');
+  650:       } else {
+  651:         setWorkspaceEnabled(true);
+  652:         if (state.workspaceMode === 'normal') setWorkspaceMode('split');
+  653:         setWorkspaceSection('notes');
+  654:       }
+  655:       return;
+  656:     }
+  657: 
+
+--- src/legacy-shell.js:649-659 ---
+  649:         showCabinetSection('notes');
+  650:       } else {
+  651:         setWorkspaceEnabled(true);
+  652:         if (state.workspaceMode === 'normal') setWorkspaceMode('split');
+  653:         setWorkspaceSection('notes');
+  654:       }
+  655:       return;
+  656:     }
+  657: 
+  658: 
+  659:     const packageBtn = event.target.closest('[data-home-open-package]');
+
+--- src/legacy-shell.js:655-665 ---
+  655:       return;
+  656:     }
+  657: 
+  658: 
+  659:     const packageBtn = event.target.closest('[data-home-open-package]');
+  660:     if (packageBtn) {
+  661:       const packageId = String(packageBtn.dataset.homeOpenPackage || '');
+  662:       if (!packageId || !window.NSCodeHubStore) return;
+  663: 
+  664:       if (typeof window.NSCodeHubStore.setActiveItem === 'function') {
+  665:         window.NSCodeHubStore.setActiveItem(packageId);
+
+--- src/legacy-shell.js:658-668 ---
+  658: 
+  659:     const packageBtn = event.target.closest('[data-home-open-package]');
+  660:     if (packageBtn) {
+  661:       const packageId = String(packageBtn.dataset.homeOpenPackage || '');
+  662:       if (!packageId || !window.NSCodeHubStore) return;
+  663: 
+  664:       if (typeof window.NSCodeHubStore.setActiveItem === 'function') {
+  665:         window.NSCodeHubStore.setActiveItem(packageId);
+  666:       }
+  667: 
+  668:       if (state.isCabinetOpen) {
+
+--- src/legacy-shell.js:660-670 ---
+  660:     if (packageBtn) {
+  661:       const packageId = String(packageBtn.dataset.homeOpenPackage || '');
+  662:       if (!packageId || !window.NSCodeHubStore) return;
+  663: 
+  664:       if (typeof window.NSCodeHubStore.setActiveItem === 'function') {
+  665:         window.NSCodeHubStore.setActiveItem(packageId);
+  666:       }
+  667: 
+  668:       if (state.isCabinetOpen) {
+  669:         showCabinetSection('codehub');
+  670:       } else {
+
+--- src/legacy-shell.js:661-671 ---
+  661:       const packageId = String(packageBtn.dataset.homeOpenPackage || '');
+  662:       if (!packageId || !window.NSCodeHubStore) return;
+  663: 
+  664:       if (typeof window.NSCodeHubStore.setActiveItem === 'function') {
+  665:         window.NSCodeHubStore.setActiveItem(packageId);
+  666:       }
+  667: 
+  668:       if (state.isCabinetOpen) {
+  669:         showCabinetSection('codehub');
+  670:       } else {
+  671:         setWorkspaceEnabled(true);
+
+--- src/legacy-shell.js:665-675 ---
+  665:         window.NSCodeHubStore.setActiveItem(packageId);
+  666:       }
+  667: 
+  668:       if (state.isCabinetOpen) {
+  669:         showCabinetSection('codehub');
+  670:       } else {
+  671:         setWorkspaceEnabled(true);
+  672:         if (state.workspaceMode === 'normal') setWorkspaceMode('split');
+  673:         setWorkspaceSection('codehub');
+  674:       }
+  675:     }
+
+--- src/legacy-shell.js:667-677 ---
+  667: 
+  668:       if (state.isCabinetOpen) {
+  669:         showCabinetSection('codehub');
+  670:       } else {
+  671:         setWorkspaceEnabled(true);
+  672:         if (state.workspaceMode === 'normal') setWorkspaceMode('split');
+  673:         setWorkspaceSection('codehub');
+  674:       }
+  675:     }
+  676:   });
+  677: }
+
+--- src/legacy-shell.js:669-679 ---
+  669:         showCabinetSection('codehub');
+  670:       } else {
+  671:         setWorkspaceEnabled(true);
+  672:         if (state.workspaceMode === 'normal') setWorkspaceMode('split');
+  673:         setWorkspaceSection('codehub');
+  674:       }
+  675:     }
+  676:   });
+  677: }
+  678: 
+  679: function subscribeHomeDashboard() {
+
+--- src/legacy-shell.js:697-707 ---
+  697:   if (window.NSNotesStore && typeof window.NSNotesStore.subscribe === 'function') {
+  698:     window.NSNotesStore.subscribe(rerender);
+  699:   }
+  700: 
+  701:   if (window.NSCodeHubStore && typeof window.NSCodeHubStore.subscribe === 'function') {
+  702:     window.NSCodeHubStore.subscribe(rerender);
+  703:   }
+  704: 
+  705:   document.addEventListener('irg:bookmarks-updated', rerender);
+  706: }
+  707: 
+
+--- src/legacy-shell.js:698-708 ---
+  698:     window.NSNotesStore.subscribe(rerender);
+  699:   }
+  700: 
+  701:   if (window.NSCodeHubStore && typeof window.NSCodeHubStore.subscribe === 'function') {
+  702:     window.NSCodeHubStore.subscribe(rerender);
+  703:   }
+  704: 
+  705:   document.addEventListener('irg:bookmarks-updated', rerender);
+  706: }
+  707: 
+  708: function getBrowserBookmarks() {
+
+--- src/legacy-shell.js:717-727 ---
+  717: function openBrowserBookmark(url, title) {
+  718:   const target = String(url || '').trim();
+  719:   if (!target) return false;
+  720:   const api = window.__IRG_BROWSER_SHELL_API;
+  721:   if (api && typeof api.createTab === 'function') {
+  722:     api.createTab({ title: title || target, url: target });
+  723:     if (typeof api.updateAddressFromActiveTab === 'function') {
+  724:       api.updateAddressFromActiveTab();
+  725:     }
+  726:     if (state.isCabinetOpen) closeCabinet();
+  727:     return true;
+
+--- src/legacy-shell.js:718-728 ---
+  718:   const target = String(url || '').trim();
+  719:   if (!target) return false;
+  720:   const api = window.__IRG_BROWSER_SHELL_API;
+  721:   if (api && typeof api.createTab === 'function') {
+  722:     api.createTab({ title: title || target, url: target });
+  723:     if (typeof api.updateAddressFromActiveTab === 'function') {
+  724:       api.updateAddressFromActiveTab();
+  725:     }
+  726:     if (state.isCabinetOpen) closeCabinet();
+  727:     return true;
+  728:   }
+
+--- src/legacy-shell.js:780-790 ---
+  780:   const activeNote = activeNoteId && window.NSNotesStore && typeof window.NSNotesStore.getById === 'function'
+  781:     ? window.NSNotesStore.getById(activeNoteId)
+  782:     : null;
+  783: 
+  784:   const packageItems = window.NSCodeHubStore && typeof window.NSCodeHubStore.getAll === 'function'
+  785:     ? window.NSCodeHubStore.getAll()
+  786:     : [];
+  787:   const packageItemsSorted = packageItems.slice().sort(compareUpdatedDesc);
+  788:   const activePackage = window.NSCodeHubStore && typeof window.NSCodeHubStore.getActiveItem === 'function'
+  789:     ? window.NSCodeHubStore.getActiveItem()
+  790:     : null;
+
+--- src/legacy-shell.js:781-791 ---
+  781:     ? window.NSNotesStore.getById(activeNoteId)
+  782:     : null;
+  783: 
+  784:   const packageItems = window.NSCodeHubStore && typeof window.NSCodeHubStore.getAll === 'function'
+  785:     ? window.NSCodeHubStore.getAll()
+  786:     : [];
+  787:   const packageItemsSorted = packageItems.slice().sort(compareUpdatedDesc);
+  788:   const activePackage = window.NSCodeHubStore && typeof window.NSCodeHubStore.getActiveItem === 'function'
+  789:     ? window.NSCodeHubStore.getActiveItem()
+  790:     : null;
+  791: 
+
+--- src/legacy-shell.js:784-794 ---
+  784:   const packageItems = window.NSCodeHubStore && typeof window.NSCodeHubStore.getAll === 'function'
+  785:     ? window.NSCodeHubStore.getAll()
+  786:     : [];
+  787:   const packageItemsSorted = packageItems.slice().sort(compareUpdatedDesc);
+  788:   const activePackage = window.NSCodeHubStore && typeof window.NSCodeHubStore.getActiveItem === 'function'
+  789:     ? window.NSCodeHubStore.getActiveItem()
+  790:     : null;
+  791: 
+  792:   if (hasWorkspaceHome) {
+  793:     setTextContent('homeStatFiles', String(fileItems.length));
+  794:     setTextContent('homeStatProjects', String(projectItems.length));
+
+--- src/legacy-shell.js:785-795 ---
+  785:     ? window.NSCodeHubStore.getAll()
+  786:     : [];
+  787:   const packageItemsSorted = packageItems.slice().sort(compareUpdatedDesc);
+  788:   const activePackage = window.NSCodeHubStore && typeof window.NSCodeHubStore.getActiveItem === 'function'
+  789:     ? window.NSCodeHubStore.getActiveItem()
+  790:     : null;
+  791: 
+  792:   if (hasWorkspaceHome) {
+  793:     setTextContent('homeStatFiles', String(fileItems.length));
+  794:     setTextContent('homeStatProjects', String(projectItems.length));
+  795:     setTextContent('homeStatNotes', String(noteItems.length));
+
+--- src/legacy-shell.js:827-837 ---
+  827:           title: item && item.name ? normalizeWorkspaceLabel(item.name) : tr('Untitled file','Файл без названия'),
+  828:           meta: normalizeWorkspaceLabel((isCompactHome
+  829:             ? [item && item.category ? item.category : tr('other','другое')].filter(Boolean).join(' · ')
+  830:             : [item && item.category ? item.category : tr('other','другое'), kind, formatHomeDate(item && item.updatedAt)].filter(Boolean).join(' · '))),
+  831:           primaryAction: `<button type="button" class="workspace-home-row-btn" data-home-open-file="${escapeHtml(item.id)}">${tr('Open',tr('Open','Открыть'))}</button>`,
+  832:           secondaryAction: ''
+  833:         };
+  834:       }),
+  835:       isCompactHome ? compactEmpty.files : 'Файлов пока нет. Загрузите файлы, чтобы начать собирать библиотеку источников.'
+  836:     );
+  837: 
+
+--- src/legacy-shell.js:845-855 ---
+  845:           title: normalizeWorkspaceLabel(project.title || tr('Untitled project','Проект без названия')),
+  846:           meta: normalizeWorkspaceLabel((isCompactHome
+  847:             ? [project.type || tr('project','проект')].filter(Boolean).join(' · ')
+  848:             : [project.type, project.status, `${tr('Files','Файлы')} ${counts.files}`, `${tr('Notes','Заметки')} ${counts.notes}`].filter(Boolean).join(' · '))),
+  849:           primaryAction: `<button type="button" class="workspace-home-row-btn" data-home-open-project="${escapeHtml(project.id)}">${tr('Open',tr('Open','Открыть'))}</button>`
+  850:         };
+  851:       }),
+  852:       isCompactHome ? compactEmpty.projects : tr('No projects yet. Create a project to connect files, notes, and drafts.', 'Проектов пока нет. Создайте проект, чтобы связать файлы, заметки и черновики.')
+  853:     );
+  854: 
+  855:     renderHomeList(
+
+--- src/legacy-shell.js:862-872 ---
+  862:           title: normalizeWorkspaceLabel(note.title || tr('Untitled note','Заметка без названия')),
+  863:           meta: normalizeWorkspaceLabel(isCompactHome
+  864:             ? compactPreview
+  865:             : [note.type, compactPreview].filter(Boolean).join(' · ')),
+  866:           primaryAction: `<button type="button" class="workspace-home-row-btn" data-home-open-note="${escapeHtml(note.id)}">${tr('Open',tr('Open','Открыть'))}</button>`
+  867:         };
+  868:       }),
+  869:       isCompactHome ? compactEmpty.notes : tr('No notes yet. Use quick capture or open the notes module.', 'Заметок пока нет. Используйте быстрый захват или откройте модуль заметок.')
+  870:     );
+  871: 
+  872:   }
+
+--- src/legacy-shell.js:986-996 ---
+  986:       '  <div class="cabinet-home-mini-copy">',
+  987:       `    <div class="cabinet-home-mini-title">${escapeHtml(item.title || tr('Untitled','Без названия'))}</div>`,
+  988:       `    <div class="cabinet-home-mini-meta">${escapeHtml(item.meta || '')}</div>`,
+  989:       '  </div>',
+  990:       `  <button type="button" class="cabinet-home-mini-btn" data-home-open-${escapeHtml(item.actionType)}="${escapeHtml(item.id || '')}">${escapeHtml(item.action || tr('Open',tr('Open','Открыть')))}</button>`,
+  991:       '</div>'
+  992:     ].join('');
+  993:   }).join('');
+  994: }
+  995: 
+  996: function renderCabinetContinueBlock(containerId, items) {
+
+--- src/legacy-shell.js:1006-1016 ---
+ 1006:       `    <div class="cabinet-home-resume-meta">${escapeHtml(item.meta || '')}</div>`,
+ 1007:       '  </div>',
+ 1008:       isEmpty
+ 1009:         ? '  <span class="cabinet-home-mini-btn" aria-hidden="true">' + tr('Waiting','Ожидание') + '</span>'
+ 1010:         : `  <button type="button" class="cabinet-home-resume-btn" data-home-open-${escapeHtml(item.actionType)}="${escapeHtml(item.id)}">${tr('Open',tr('Open','Открыть'))}</button>`,
+ 1011:       '</div>'
+ 1012:     ].join('');
+ 1013:   }).join('');
+ 1014: }
+ 1015: 
+ 1016: function renderHomeList(containerId, items, emptyText) {
+
+--- src/legacy-shell.js:1069-1079 ---
+ 1069:       'site-pages': tr('Web Studio', 'Web Studio'),
+ 1070:       tools: tr('Tools', 'Инструменты'),
+ 1071:       editor: tr('Editor', 'Редактор'),
+ 1072:       wallet: 'Fili Safe',
+ 1073:       codehub: tr('Web Workshop', 'Веб-мастерская'),
+ 1074:       marketplace: tr('Templates', 'Шаблоны'),
+ 1075:       map: tr('Map', 'Карта'),
+ 1076:       workspace: tr('Home', 'Главная')
+ 1077:     };
+ 1078:     return map[section] || tr('Section', 'Раздел');
+ 1079:   }
+
+--- src/legacy-shell.js:1094-1104 ---
+ 1094:       'site-pages': tr('Site identity, Pages Manager, menu foundation, and future build/export flow', 'Идентичность сайта, Pages Manager, основа меню и будущий build/export flow'),
+ 1095:       tools: tr('Utilities for files, images, PDF, text and publishing', 'Утилиты для файлов, изображений, PDF, текста и публикации'),
+ 1096:       editor: tr('Drafting and editing surface', 'Поверхность для черновиков и редактирования'),
+ 1097:       wallet: tr('Local safe/profile shell; no finance in v0', 'Локальная безопасная зона; без финансов в v0'),
+ 1098:       codehub: tr('Package drafts and template preparation', 'Черновики пакетов и подготовка шаблонов'),
+ 1099:       marketplace: tr('Templates, themes, packs, and submitted Templates items', 'Шаблоны, темы, паки и отправленные элементы Шаблоныа'),
+ 1100:       map: tr('Canvas map for research, regions, projects, and future file links', 'Canvas-карта для исследований, регионов, проектов и будущих связей с файлами'),
+ 1101:       workspace: tr('Main launch point for files, notes, projects, editor, and bookmarks', 'Главная точка запуска для файлов, заметок, проектов, редактора и закладок')
+ 1102:     };
+ 1103:     return map[section] || tr('Workspace section', 'Раздел пространства');
+ 1104:   }
+
+
+=== renderer.js ===
+
+--- renderer.js:54-64 ---
+   54:     backBtn: document.getElementById("backBtn"),
+   55:     forwardBtn: document.getElementById("forwardBtn"),
+   56:     reloadBtn: document.getElementById("reloadBtn"),
+   57:     bookmarkBtn: document.getElementById("bookmarkBtn"),
+   58:     addTabBtn: document.getElementById("addTabBtn"),
+   59:     hamburgerBtn: document.getElementById("hamburgerBtn"),
+   60: 
+   61:     addressInput: document.getElementById("addressInput"),
+   62:     addressWrap: document.getElementById("addressWrap"),
+   63: 
+   64:     sourceTrigger: document.getElementById("sourceTrigger"),
+
+--- renderer.js:117-127 ---
+  117:     "editor",
+  118:     "marketplace",
+  119:     "wallet",
+  120:     "analytics",
+  121:     "codehub"
+  122:   ]);
+  123: 
+  124:   const KNOWN_CABINET_SECTIONS = new Set([
+  125:     "video",
+  126:     "chat",
+  127:     "files",
+
+--- renderer.js:128-138 ---
+  128:     "projects",
+  129:     "notes",
+  130:     "tools",
+  131:     "editor",
+  132:     "codehub",
+  133:     "workspace",
+  134:     "marketplace",
+  135:     "wallet",
+  136:     "analytics"
+  137:   ]);
+  138: 
+
+--- renderer.js:178-188 ---
+  178:     bindProjectsBridge();
+  179:     bindNotesBridge();
+  180:     bindLibraryBridge();
+  181: 
+  182:     createTab({
+  183:       title: "New Tab",
+  184:       url: "https://www.google.com"
+  185:     });
+  186: 
+  187:     updateSourceUI();
+  188:     updateWorkspaceUI();
+
+--- renderer.js:185-195 ---
+  185:     });
+  186: 
+  187:     updateSourceUI();
+  188:     updateWorkspaceUI();
+  189:     setWorkspaceSection(state.activeWorkspaceSection);
+  190:     syncInputWithActiveTab();
+  191:   }
+  192: 
+  193:   function restoreSavedState() {
+  194:     try {
+  195:       state.notesValue = localStorage.getItem(STORAGE_KEYS.notes) || "";
+
+--- renderer.js:357-367 ---
+  357:       els.addressInput,
+  358:       "keydown",
+  359:       (event) => {
+  360:         if (event.key === "Enter") {
+  361:           navigateFromInput();
+  362:         }
+  363:       },
+  364:       "addressInput"
+  365:     );
+  366: 
+  367:     bindIfExists(
+
+--- renderer.js:364-374 ---
+  364:       "addressInput"
+  365:     );
+  366: 
+  367:     bindIfExists(
+  368:       els.addTabBtn,
+  369:       "click",
+  370:       () => {
+  371:         createTab({
+  372:           title: "New Tab",
+  373:           url: "https://www.google.com"
+  374:         });
+
+--- renderer.js:367-377 ---
+  367:     bindIfExists(
+  368:       els.addTabBtn,
+  369:       "click",
+  370:       () => {
+  371:         createTab({
+  372:           title: "New Tab",
+  373:           url: "https://www.google.com"
+  374:         });
+  375:       },
+  376:       "addTabBtn"
+  377:     );
+
+--- renderer.js:372-382 ---
+  372:           title: "New Tab",
+  373:           url: "https://www.google.com"
+  374:         });
+  375:       },
+  376:       "addTabBtn"
+  377:     );
+  378: 
+  379:     bindIfExists(
+  380:       els.backBtn,
+  381:       "click",
+  382:       () => {
+
+--- renderer.js:450-460 ---
+  450:       els.workspaceCollapseBtn,
+  451:       "click",
+  452:       () => {
+  453:         if (state.activeWorkspaceSection && state.activeWorkspaceSection !== "workspace") {
+  454:           setWorkspaceSection("workspace");
+  455:           setWorkspaceEnabled(true);
+  456:           setWorkspaceMode("split");
+  457:           return;
+  458:         }
+  459: 
+  460:         setWorkspaceEnabled(false);
+
+--- renderer.js:451-461 ---
+  451:       "click",
+  452:       () => {
+  453:         if (state.activeWorkspaceSection && state.activeWorkspaceSection !== "workspace") {
+  454:           setWorkspaceSection("workspace");
+  455:           setWorkspaceEnabled(true);
+  456:           setWorkspaceMode("split");
+  457:           return;
+  458:         }
+  459: 
+  460:         setWorkspaceEnabled(false);
+  461:         setWorkspaceMode("normal");
+
+--- renderer.js:456-466 ---
+  456:           setWorkspaceMode("split");
+  457:           return;
+  458:         }
+  459: 
+  460:         setWorkspaceEnabled(false);
+  461:         setWorkspaceMode("normal");
+  462:       },
+  463:       "workspaceCollapseBtn"
+  464:     );
+  465: 
+  466:     bindIfExists(
+
+--- renderer.js:668-678 ---
+  668:           const provider = providerSelect ? providerSelect.value : "google";
+  669:           const from = fromSelect ? fromSelect.value : "auto";
+  670:           const to = toSelect ? toSelect.value : "ru";
+  671:           const url = buildTranslatorUrl(provider, from, to, text);
+  672:           createTab({ title: makeTranslatorTabTitle(provider, to), url });
+  673:           setTranslatorStatus(status, "Translation opened in a new tab.");
+  674:         });
+  675:       }
+  676:     });
+  677:   }
+  678: 
+
+--- renderer.js:819-829 ---
+  819:     bindIfExists(els.cabinetCloseBtn, "click", closeCabinet, "cabinetCloseBtn");
+  820:     bindIfExists(els.cabinetCloseBtnExpanded, "click", closeCabinet, "cabinetCloseBtnExpanded");
+  821:     bindIfExists(els.cabinetBackBtn, "click", showCabinetGrid, "cabinetBackBtn");
+  822: 
+  823:     document.querySelectorAll("[data-open-section]").forEach((button) => {
+  824:       button.addEventListener("click", () => {
+  825:         const section = button.dataset.openSection;
+  826:         openCabinetSection(section);
+  827:       });
+  828:     });
+  829: 
+
+--- renderer.js:1583-1593 ---
+ 1583:       activateTab(existingTab.id);
+ 1584:       return true;
+ 1585:     }
+ 1586: 
+ 1587:     createTab({
+ 1588:       title: item.name || item.originalName || "Library File",
+ 1589:       url: item.storage.dataUrl,
+ 1590:       displayUrl: makeLibraryDisplayUrl(item),
+ 1591:       fileId: item.id,
+ 1592:       sourceType: "library",
+ 1593:       libraryKey: getLibraryItemKey(item)
+
+--- renderer.js:1595-1605 ---
+ 1595: 
+ 1596:     return true;
+ 1597:   }
+ 1598: 
+ 1599:   function createTab({ title, url, displayUrl = "", fileId = null, sourceType = "web", libraryKey = "" }) {
+ 1600:     const existingTab = findExistingTabMatch({
+ 1601:       title,
+ 1602:       url,
+ 1603:       displayUrl,
+ 1604:       fileId,
+ 1605:       sourceType,
+
+--- renderer.js:1691-1701 ---
+ 1691:       lastPopupUrl = targetUrl;
+ 1692:       lastPopupAt = now;
+ 1693: 
+ 1694:       try {
+ 1695:         createTab({
+ 1696:           title: rawTitle || targetUrl,
+ 1697:           url: targetUrl,
+ 1698:           sourceType: "web"
+ 1699:         });
+ 1700:         return true;
+ 1701:       } catch (error) {
+
+--- renderer.js:1831-1841 ---
+ 1831:       }
+ 1832:     }
+ 1833:   }
+ 1834: 
+ 1835:   function navigateFromInput() {
+ 1836:     if (!els.addressInput) return;
+ 1837: 
+ 1838:     const raw = els.addressInput.value.trim();
+ 1839:     if (!raw) return;
+ 1840: 
+ 1841:     const targetUrl = resolveInputToUrl(raw, state.currentSource);
+
+--- renderer.js:2081-2091 ---
+ 2081:     const nextSection = resolveWorkspaceSection(section);
+ 2082:     const desiredMode = options.mode || "split";
+ 2083: 
+ 2084:     if (options.enable !== false) {
+ 2085:       setWorkspaceEnabled(true);
+ 2086:       if (desiredMode !== "normal" && state.workspaceMode === "normal") {
+ 2087:         setWorkspaceMode(desiredMode);
+ 2088:       }
+ 2089:     }
+ 2090: 
+ 2091:     setWorkspaceSection(nextSection);
+
+--- renderer.js:2087-2097 ---
+ 2087:         setWorkspaceMode(desiredMode);
+ 2088:       }
+ 2089:     }
+ 2090: 
+ 2091:     setWorkspaceSection(nextSection);
+ 2092:     return nextSection;
+ 2093:   }
+ 2094: 
+ 2095:   function openCabinetSection(section) {
+ 2096:     const nextSection = resolveCabinetSection(section);
+ 2097:     ensureCabinetVisible();
+
+--- renderer.js:2119-2129 ---
+ 2119:         const url = String(payload.url || '').trim();
+ 2120:         if (!url) return false;
+ 2121:         const title = String(payload.title || options.title || 'Предпросмотр сайта').trim() || 'Предпросмотр сайта';
+ 2122:         const displayUrl = String(payload.displayUrl || url);
+ 2123:         createTab({ title, url, displayUrl, sourceType: 'web' });
+ 2124:         return true;
+ 2125:       },
+ 2126:       openHome() {
+ 2127:         return openWorkspaceSection("workspace");
+ 2128:       }
+ 2129:     };
+
+--- renderer.js:2130-2140 ---
+ 2130:   }
+ 2131: 
+ 2132:   function toggleWorkspaceMain() {
+ 2133:     if (!state.workspaceEnabled || state.workspaceMode === "normal") {
+ 2134:       setWorkspaceEnabled(true);
+ 2135:       setWorkspaceMode("split");
+ 2136:       return;
+ 2137:     }
+ 2138: 
+ 2139:     setWorkspaceEnabled(false);
+ 2140:     setWorkspaceMode("normal");
+
+--- renderer.js:2135-2145 ---
+ 2135:       setWorkspaceMode("split");
+ 2136:       return;
+ 2137:     }
+ 2138: 
+ 2139:     setWorkspaceEnabled(false);
+ 2140:     setWorkspaceMode("normal");
+ 2141:   }
+ 2142: 
+ 2143:   function setWorkspaceEnabled(enabled) {
+ 2144:     state.workspaceEnabled = Boolean(enabled);
+ 2145: 
+
+--- renderer.js:2139-2149 ---
+ 2139:     setWorkspaceEnabled(false);
+ 2140:     setWorkspaceMode("normal");
+ 2141:   }
+ 2142: 
+ 2143:   function setWorkspaceEnabled(enabled) {
+ 2144:     state.workspaceEnabled = Boolean(enabled);
+ 2145: 
+ 2146:     if (!state.workspaceEnabled && state.workspaceMode !== "normal") {
+ 2147:       state.workspaceMode = "normal";
+ 2148:     }
+ 2149: 
+
+--- renderer.js:2197-2207 ---
+ 2197:     clampWorkspaceWidth();
+ 2198:     applyWorkspaceWidth();
+ 2199:   }
+ 2200: 
+ 2201:   function setWorkspaceSection(section) {
+ 2202:     const resolvedSection = resolveWorkspaceSection(section);
+ 2203:     state.activeWorkspaceSection = resolvedSection;
+ 2204: 
+ 2205:     if (els.workspaceShellNav) {
+ 2206:       els.workspaceShellNav.querySelectorAll(".workspace-nav-btn").forEach((button) => {
+ 2207:         const isActive = button.dataset.section === resolvedSection;
+
+--- renderer.js:2320-2330 ---
+ 2320:       projects: ["Проекты", "Контейнеры, связывающие файлы, заметки, черновики и контекст пространства"],
+ 2321:       notes: ["Заметки", "Быстрый захват и связанный проектный блокнот"],
+ 2322:       tools: ["Tools", "Служебные модули и рабочие действия"],
+ 2323:       editor: ["Editor", "Быстрая авторская панель и лёгкое разделённое пространство черновика"],
+ 2324:       codehub: ["CodeHub", "Реальное направление кода и публикации"],
+ 2325:       workspace: ["Workspace", "Главная точка запуска для файлов, заметок, проектов, редактора и закладок"],
+ 2326:       chat: ["Chat", "Исследовательский и помощнический поток рядом с активной сессией браузера"],
+ 2327:       marketplace: ["Marketplace", "Будущий модуль, оставленный на месте"],
+ 2328:       wallet: ["Wallet", "Будущий модуль, оставленный на месте"],
+ 2329:       analytics: ["Analytics", "Будущий модуль, оставленный на месте"]
+ 2330:     };
+
+--- renderer.js:2352-2362 ---
+ 2352:       expandedBody.scrollTop = 0;
+ 2353:     }
+ 2354: 
+ 2355:     if (resolvedSection === "workspace") {
+ 2356:       setWorkspaceEnabled(true);
+ 2357: 
+ 2358:       if (state.workspaceMode === "normal") {
+ 2359:         setWorkspaceMode("split");
+ 2360:       }
+ 2361: 
+ 2362:       setWorkspaceSection("workspace");
+
+--- renderer.js:2358-2368 ---
+ 2358:       if (state.workspaceMode === "normal") {
+ 2359:         setWorkspaceMode("split");
+ 2360:       }
+ 2361: 
+ 2362:       setWorkspaceSection("workspace");
+ 2363:     }
+ 2364:   }
+ 2365: 
+ 2366:   function bindProjectsBridge() {
+ 2367:     function openProjectTarget(section) {
+ 2368:       if (state.isCabinetOpen) {
+
+--- renderer.js:2363-2373 ---
+ 2363:     }
+ 2364:   }
+ 2365: 
+ 2366:   function bindProjectsBridge() {
+ 2367:     function openProjectTarget(section) {
+ 2368:       if (state.isCabinetOpen) {
+ 2369:         openCabinetSection(section);
+ 2370:         return "cabinet";
+ 2371:       }
+ 2372:       openWorkspaceSection(section, {
+ 2373:         enable: true,
+
+--- renderer.js:2410-2420 ---
+ 2410:     });
+ 2411: 
+ 2412:     document.addEventListener("ns-projects:new-draft", function (event) {
+ 2413:       const projectId = event && event.detail ? String(event.detail.projectId || "") : "";
+ 2414:       const surfaceType = openProjectTarget("editor");
+ 2415: 
+ 2416:       if (window.NSEditorV1 && typeof window.NSEditorV1.createDraftFromTemplate === "function") {
+ 2417:         let draft = window.NSEditorV1.createDraftFromTemplate(null);
+ 2418: 
+ 2419:         if (draft && projectId && window.__nsEditorV1Instance && window.__nsEditorV1Instance.store && typeof window.__nsEditorV1Instance.store.saveDraft === "function") {
+ 2420:           draft = window.__nsEditorV1Instance.store.saveDraft(Object.assign({}, draft, { projectId }));
+
+--- renderer.js:2427-2437 ---
+ 2427:     });
+ 2428: 
+ 2429:     document.addEventListener("ns-projects:new-note", function (event) {
+ 2430:       const projectId = event && event.detail ? String(event.detail.projectId || "") : "";
+ 2431:       openProjectTarget("notes");
+ 2432: 
+ 2433:       if (window.NSNotesStore && typeof window.NSNotesStore.createNote === "function") {
+ 2434:         const note = window.NSNotesStore.createNote({
+ 2435:           title: "Заметка без названия",
+ 2436:           type: "note",
+ 2437:           text: "",
+
+--- renderer.js:2444-2454 ---
+ 2444:       }
+ 2445:     });
+ 2446: 
+ 2447:     document.addEventListener("ns-projects:open-files", function () {
+ 2448:       openProjectTarget("files");
+ 2449:     });
+ 2450: 
+ 2451:     document.addEventListener("ns-projects:open-note", function () {
+ 2452:       openProjectTarget("notes");
+ 2453:     });
+ 2454: 
+
+--- renderer.js:2448-2458 ---
+ 2448:       openProjectTarget("files");
+ 2449:     });
+ 2450: 
+ 2451:     document.addEventListener("ns-projects:open-note", function () {
+ 2452:       openProjectTarget("notes");
+ 2453:     });
+ 2454: 
+ 2455:     document.addEventListener("ns-tools:use-text", function (event) {
+ 2456:       const detail = event && event.detail ? event.detail : {};
+ 2457:       openProjectTarget("tools");
+ 2458:       setTimeout(function () {
+
+--- renderer.js:2453-2463 ---
+ 2453:     });
+ 2454: 
+ 2455:     document.addEventListener("ns-tools:use-text", function (event) {
+ 2456:       const detail = event && event.detail ? event.detail : {};
+ 2457:       openProjectTarget("tools");
+ 2458:       setTimeout(function () {
+ 2459:         pushTextIntoTools(detail);
+ 2460:       }, 60);
+ 2461:     });
+ 2462:   }
+ 2463: 
+
+--- renderer.js:2499-2509 ---
+ 2499:     if (homeDashboardBound) return;
+ 2500:     homeDashboardBound = true;
+ 2501: 
+ 2502:     document.addEventListener("click", function (event) {
+ 2503:       const openBtn = event.target.closest("[data-home-open]");
+ 2504:       if (openBtn) {
+ 2505:         const section = String(openBtn.dataset.homeOpen || "");
+ 2506:         if (!section) return;
+ 2507: 
+ 2508:         openWorkspaceSection(section, {
+ 2509:           enable: true,
+
+--- renderer.js:2511-2521 ---
+ 2511:         });
+ 2512:         return;
+ 2513:       }
+ 2514: 
+ 2515:       const cabinetBtn = event.target.closest("[data-home-open-cabinet]");
+ 2516:       if (cabinetBtn) {
+ 2517:         const section = String(cabinetBtn.dataset.homeOpenCabinet || "");
+ 2518:         if (!section) return;
+ 2519:         openCabinetSection(section);
+ 2520:         return;
+ 2521:       }
+
+--- renderer.js:2519-2529 ---
+ 2519:         openCabinetSection(section);
+ 2520:         return;
+ 2521:       }
+ 2522: 
+ 2523:       const fileBtn = event.target.closest("[data-home-open-file]");
+ 2524:       if (fileBtn) {
+ 2525:         const fileId = String(fileBtn.dataset.homeOpenFile || "");
+ 2526:         if (!fileId || !window.NSLibraryStore) return;
+ 2527: 
+ 2528:         if (typeof window.NSLibraryStore.setActiveItem === "function") {
+ 2529:           window.NSLibraryStore.setActiveItem(fileId);
+
+--- renderer.js:2532-2542 ---
+ 2532:         openWorkspaceSection("files");
+ 2533:         return;
+ 2534:       }
+ 2535: 
+ 2536:       const fileTabBtn = event.target.closest("[data-home-open-file-tab]");
+ 2537:       if (fileTabBtn) {
+ 2538:         const fileId = String(fileTabBtn.dataset.homeOpenFileTab || "");
+ 2539:         if (!fileId) return;
+ 2540: 
+ 2541:         const opened = openLibraryItemInTab(fileId);
+ 2542:         if (!opened) return;
+
+--- renderer.js:2546-2556 ---
+ 2546:         }
+ 2547:         return;
+ 2548:       }
+ 2549: 
+ 2550:       const projectBtn = event.target.closest("[data-home-open-project]");
+ 2551:       if (projectBtn) {
+ 2552:         const projectId = String(projectBtn.dataset.homeOpenProject || "");
+ 2553:         if (!projectId || !window.NSProjectStore) return;
+ 2554: 
+ 2555:         if (typeof window.NSProjectStore.setLastOpenedProjectId === "function") {
+ 2556:           window.NSProjectStore.setLastOpenedProjectId(projectId);
+
+--- renderer.js:2559-2569 ---
+ 2559:         openWorkspaceSection("projects");
+ 2560:         return;
+ 2561:       }
+ 2562: 
+ 2563:       const noteBtn = event.target.closest("[data-home-open-note]");
+ 2564:       if (noteBtn) {
+ 2565:         const noteId = String(noteBtn.dataset.homeOpenNote || "");
+ 2566:         if (!noteId || !window.NSNotesStore) return;
+ 2567: 
+ 2568:         if (typeof window.NSNotesStore.setLastOpenedNoteId === "function") {
+ 2569:           window.NSNotesStore.setLastOpenedNoteId(noteId);
+
+--- renderer.js:2688-2698 ---
+ 2688:           title: item && item.name ? item.name : "Файл без названия",
+ 2689:           meta: (isCompactHome
+ 2690:             ? [item && item.category ? item.category : "другое"].filter(Boolean).join(" · ")
+ 2691:             : [item && item.category ? item.category : "другое", kind, updated].filter(Boolean).join(" · ")),
+ 2692:           primaryAction: '<button type="button" class="workspace-home-row-btn" data-home-open-file="' + escapeHtml(item.id) + '">Открыть</button>',
+ 2693:           secondaryAction: ''
+ 2694:         };
+ 2695:       }),
+ 2696:       isCompactHome ? compactEmpty.files : "Файлов пока нет. Загрузите файлы, чтобы начать наполнять библиотеку источников."
+ 2697:     );
+ 2698: 
+
+--- renderer.js:2706-2716 ---
+ 2706:           title: project.title || "Проект без названия",
+ 2707:           meta: (isCompactHome
+ 2708:             ? [project.type || 'проект'].filter(Boolean).join(" · ")
+ 2709:             : [project.type, project.status, 'Файлы ' + counts.files, 'Заметки ' + counts.notes].filter(Boolean).join(" · ")),
+ 2710:           primaryAction: '<button type="button" class="workspace-home-row-btn" data-home-open-project="' + escapeHtml(project.id) + '">Открыть</button>'
+ 2711:         };
+ 2712:       }),
+ 2713:       isCompactHome ? compactEmpty.projects : "Проектов пока нет. Создайте проект, чтобы связать файлы, заметки и черновики."
+ 2714:     );
+ 2715: 
+ 2716:     renderHomeList(
+
+--- renderer.js:2721-2731 ---
+ 2721:         const compactPreview = preview ? preview.slice(0, previewLimit) + (preview.length > previewLimit ? "…" : "") : "Пустая заметка";
+ 2722:         return {
+ 2723:           title: note.title || "Заметка без названия",
+ 2724:           meta: isCompactHome ? (note.type || 'заметка') : [note.type, compactPreview].filter(Boolean).join(" · "),
+ 2725:           primaryAction: '<button type="button" class="workspace-home-row-btn" data-home-open-note="' + escapeHtml(note.id) + '">Открыть</button>'
+ 2726:         };
+ 2727:       }),
+ 2728:       isCompactHome ? compactEmpty.notes : "Заметок пока нет. Используйте быстрый захват или откройте модуль заметок."
+ 2729:     );
+ 2730:   }
+ 2731: 
+
+
+=== src/browser/tabs.js ===
+
+--- src/browser/tabs.js:1-9 ---
+    1: import { SOURCES } from './sources-ui.js';
+    2: 
+    3: const WORKSPACE_START_URL = 'irgeztne://workspace';
+    4: 
+    5:   // IRGEZTNE_WORKSHOP_BROWSER_DOOR_V003
+    6:   // IRGEZTNE_WORKSHOP_BROWSER_DOOR_V003C: also intercept legacy codehub entrances.
+    7:   // Public Workshop preview door: the app opens the same Workshop surface
+    8:   // inside the built-in browser. Later this should become the official SEO URL.
+    9:   const WORKSHOP_SITE_URL_V003 = new URL('./workshop-site/index.html', window.location.href).href;
+
+--- src/browser/tabs.js:2-12 ---
+    2: 
+    3: const WORKSPACE_START_URL = 'irgeztne://workspace';
+    4: 
+    5:   // IRGEZTNE_WORKSHOP_BROWSER_DOOR_V003
+    6:   // IRGEZTNE_WORKSHOP_BROWSER_DOOR_V003C: also intercept legacy codehub entrances.
+    7:   // Public Workshop preview door: the app opens the same Workshop surface
+    8:   // inside the built-in browser. Later this should become the official SEO URL.
+    9:   const WORKSHOP_SITE_URL_V003 = new URL('./workshop-site/index.html', window.location.href).href;
+   10: 
+   11: const WORKSPACE_START_TITLE = 'IRGEZTNE Workspace';
+   12: 
+
+--- src/browser/tabs.js:25-35 ---
+   25:   return SOURCES.google.home;
+   26: }
+   27: 
+   28: function isWorkspaceStartUrl(url) {
+   29:   return String(url || '').trim().toLowerCase().startsWith(WORKSPACE_START_URL);
+   30: }
+   31: 
+   32: function createWorkspaceStartTabData() {
+   33:   return {
+   34:     url: WORKSPACE_START_URL,
+   35:     title: WORKSPACE_START_TITLE,
+
+--- src/browser/tabs.js:30-40 ---
+   30: }
+   31: 
+   32: function createWorkspaceStartTabData() {
+   33:   return {
+   34:     url: WORKSPACE_START_URL,
+   35:     title: WORKSPACE_START_TITLE,
+   36:     displayUrl: WORKSPACE_START_URL,
+   37:     sourceType: 'workspace',
+   38:     kind: 'workspace-start'
+   39:   };
+   40: }
+
+--- src/browser/tabs.js:32-42 ---
+   32: function createWorkspaceStartTabData() {
+   33:   return {
+   34:     url: WORKSPACE_START_URL,
+   35:     title: WORKSPACE_START_TITLE,
+   36:     displayUrl: WORKSPACE_START_URL,
+   37:     sourceType: 'workspace',
+   38:     kind: 'workspace-start'
+   39:   };
+   40: }
+   41: 
+   42: function esc(v) {
+
+--- src/browser/tabs.js:64-74 ---
+   64:         <span>${startLang('Рабочие зоны', 'Work zones')}</span>
+   65:       </div>
+   66:       <nav class="irgeztne-start-nav">
+   67:         <button type="button" class="active" data-start-focus="home"><span class="irgeztne-start-nav-icon">⌂</span><span class="irgeztne-start-nav-label">${startLang('Главная', 'Home')}</span></button>
+   68:         <button type="button" data-open-section="site-pages"><span class="irgeztne-start-nav-icon">◈</span><span class="irgeztne-start-nav-label">Web Studio</span></button>
+   69:         <button type="button" data-open-section="files"><span class="irgeztne-start-nav-icon">▣</span><span class="irgeztne-start-nav-label">${startLang('Файлы', 'Files')}</span></button>
+   70:         <button type="button" data-open-section="projects"><span class="irgeztne-start-nav-icon">▰</span><span class="irgeztne-start-nav-label">${startLang('Проекты', 'Projects')}</span></button>
+   71:         <button type="button" data-open-section="documents"><span class="irgeztne-start-nav-icon">▤</span><span class="irgeztne-start-nav-label">${startLang('Офис', 'Office')}</span></button>
+   72:         <button type="button" data-open-section="notes"><span class="irgeztne-start-nav-icon">✎</span><span class="irgeztne-start-nav-label">${startLang('Заметки', 'Notes')}</span></button>
+   73:         <button type="button" data-open-section="marketplace"><span class="irgeztne-start-nav-icon">▧</span><span class="irgeztne-start-nav-label">${startLang('Шаблоны', 'Templates')}</span></button>
+   74:         <button type="button" data-open-section="codehub"><span class="irgeztne-start-nav-icon">◇</span><span class="irgeztne-start-nav-label">${startLang('Мастерская пакетов', 'Package Workshop')}</span></button>
+
+--- src/browser/tabs.js:65-75 ---
+   65:       </div>
+   66:       <nav class="irgeztne-start-nav">
+   67:         <button type="button" class="active" data-start-focus="home"><span class="irgeztne-start-nav-icon">⌂</span><span class="irgeztne-start-nav-label">${startLang('Главная', 'Home')}</span></button>
+   68:         <button type="button" data-open-section="site-pages"><span class="irgeztne-start-nav-icon">◈</span><span class="irgeztne-start-nav-label">Web Studio</span></button>
+   69:         <button type="button" data-open-section="files"><span class="irgeztne-start-nav-icon">▣</span><span class="irgeztne-start-nav-label">${startLang('Файлы', 'Files')}</span></button>
+   70:         <button type="button" data-open-section="projects"><span class="irgeztne-start-nav-icon">▰</span><span class="irgeztne-start-nav-label">${startLang('Проекты', 'Projects')}</span></button>
+   71:         <button type="button" data-open-section="documents"><span class="irgeztne-start-nav-icon">▤</span><span class="irgeztne-start-nav-label">${startLang('Офис', 'Office')}</span></button>
+   72:         <button type="button" data-open-section="notes"><span class="irgeztne-start-nav-icon">✎</span><span class="irgeztne-start-nav-label">${startLang('Заметки', 'Notes')}</span></button>
+   73:         <button type="button" data-open-section="marketplace"><span class="irgeztne-start-nav-icon">▧</span><span class="irgeztne-start-nav-label">${startLang('Шаблоны', 'Templates')}</span></button>
+   74:         <button type="button" data-open-section="codehub"><span class="irgeztne-start-nav-icon">◇</span><span class="irgeztne-start-nav-label">${startLang('Мастерская пакетов', 'Package Workshop')}</span></button>
+   75:         <button type="button" data-open-section="rooms"><span class="irgeztne-start-nav-icon">◌</span><span class="irgeztne-start-nav-label">${startLang('Чат', 'Chat')}</span></button>
+
+--- src/browser/tabs.js:66-76 ---
+   66:       <nav class="irgeztne-start-nav">
+   67:         <button type="button" class="active" data-start-focus="home"><span class="irgeztne-start-nav-icon">⌂</span><span class="irgeztne-start-nav-label">${startLang('Главная', 'Home')}</span></button>
+   68:         <button type="button" data-open-section="site-pages"><span class="irgeztne-start-nav-icon">◈</span><span class="irgeztne-start-nav-label">Web Studio</span></button>
+   69:         <button type="button" data-open-section="files"><span class="irgeztne-start-nav-icon">▣</span><span class="irgeztne-start-nav-label">${startLang('Файлы', 'Files')}</span></button>
+   70:         <button type="button" data-open-section="projects"><span class="irgeztne-start-nav-icon">▰</span><span class="irgeztne-start-nav-label">${startLang('Проекты', 'Projects')}</span></button>
+   71:         <button type="button" data-open-section="documents"><span class="irgeztne-start-nav-icon">▤</span><span class="irgeztne-start-nav-label">${startLang('Офис', 'Office')}</span></button>
+   72:         <button type="button" data-open-section="notes"><span class="irgeztne-start-nav-icon">✎</span><span class="irgeztne-start-nav-label">${startLang('Заметки', 'Notes')}</span></button>
+   73:         <button type="button" data-open-section="marketplace"><span class="irgeztne-start-nav-icon">▧</span><span class="irgeztne-start-nav-label">${startLang('Шаблоны', 'Templates')}</span></button>
+   74:         <button type="button" data-open-section="codehub"><span class="irgeztne-start-nav-icon">◇</span><span class="irgeztne-start-nav-label">${startLang('Мастерская пакетов', 'Package Workshop')}</span></button>
+   75:         <button type="button" data-open-section="rooms"><span class="irgeztne-start-nav-icon">◌</span><span class="irgeztne-start-nav-label">${startLang('Чат', 'Chat')}</span></button>
+   76:         <button type="button" data-open-section="analytics"><span class="irgeztne-start-nav-icon">↗</span><span class="irgeztne-start-nav-label">${startLang('Аналитика', 'Analytics')}</span></button>
+
+--- src/browser/tabs.js:67-77 ---
+   67:         <button type="button" class="active" data-start-focus="home"><span class="irgeztne-start-nav-icon">⌂</span><span class="irgeztne-start-nav-label">${startLang('Главная', 'Home')}</span></button>
+   68:         <button type="button" data-open-section="site-pages"><span class="irgeztne-start-nav-icon">◈</span><span class="irgeztne-start-nav-label">Web Studio</span></button>
+   69:         <button type="button" data-open-section="files"><span class="irgeztne-start-nav-icon">▣</span><span class="irgeztne-start-nav-label">${startLang('Файлы', 'Files')}</span></button>
+   70:         <button type="button" data-open-section="projects"><span class="irgeztne-start-nav-icon">▰</span><span class="irgeztne-start-nav-label">${startLang('Проекты', 'Projects')}</span></button>
+   71:         <button type="button" data-open-section="documents"><span class="irgeztne-start-nav-icon">▤</span><span class="irgeztne-start-nav-label">${startLang('Офис', 'Office')}</span></button>
+   72:         <button type="button" data-open-section="notes"><span class="irgeztne-start-nav-icon">✎</span><span class="irgeztne-start-nav-label">${startLang('Заметки', 'Notes')}</span></button>
+   73:         <button type="button" data-open-section="marketplace"><span class="irgeztne-start-nav-icon">▧</span><span class="irgeztne-start-nav-label">${startLang('Шаблоны', 'Templates')}</span></button>
+   74:         <button type="button" data-open-section="codehub"><span class="irgeztne-start-nav-icon">◇</span><span class="irgeztne-start-nav-label">${startLang('Мастерская пакетов', 'Package Workshop')}</span></button>
+   75:         <button type="button" data-open-section="rooms"><span class="irgeztne-start-nav-icon">◌</span><span class="irgeztne-start-nav-label">${startLang('Чат', 'Chat')}</span></button>
+   76:         <button type="button" data-open-section="analytics"><span class="irgeztne-start-nav-icon">↗</span><span class="irgeztne-start-nav-label">${startLang('Аналитика', 'Analytics')}</span></button>
+   77:         <button type="button" data-open-section="tools"><span class="irgeztne-start-nav-icon">⚙</span><span class="irgeztne-start-nav-label">${startLang('Инструменты', 'Tools')}</span></button>
+
+--- src/browser/tabs.js:68-78 ---
+   68:         <button type="button" data-open-section="site-pages"><span class="irgeztne-start-nav-icon">◈</span><span class="irgeztne-start-nav-label">Web Studio</span></button>
+   69:         <button type="button" data-open-section="files"><span class="irgeztne-start-nav-icon">▣</span><span class="irgeztne-start-nav-label">${startLang('Файлы', 'Files')}</span></button>
+   70:         <button type="button" data-open-section="projects"><span class="irgeztne-start-nav-icon">▰</span><span class="irgeztne-start-nav-label">${startLang('Проекты', 'Projects')}</span></button>
+   71:         <button type="button" data-open-section="documents"><span class="irgeztne-start-nav-icon">▤</span><span class="irgeztne-start-nav-label">${startLang('Офис', 'Office')}</span></button>
+   72:         <button type="button" data-open-section="notes"><span class="irgeztne-start-nav-icon">✎</span><span class="irgeztne-start-nav-label">${startLang('Заметки', 'Notes')}</span></button>
+   73:         <button type="button" data-open-section="marketplace"><span class="irgeztne-start-nav-icon">▧</span><span class="irgeztne-start-nav-label">${startLang('Шаблоны', 'Templates')}</span></button>
+   74:         <button type="button" data-open-section="codehub"><span class="irgeztne-start-nav-icon">◇</span><span class="irgeztne-start-nav-label">${startLang('Мастерская пакетов', 'Package Workshop')}</span></button>
+   75:         <button type="button" data-open-section="rooms"><span class="irgeztne-start-nav-icon">◌</span><span class="irgeztne-start-nav-label">${startLang('Чат', 'Chat')}</span></button>
+   76:         <button type="button" data-open-section="analytics"><span class="irgeztne-start-nav-icon">↗</span><span class="irgeztne-start-nav-label">${startLang('Аналитика', 'Analytics')}</span></button>
+   77:         <button type="button" data-open-section="tools"><span class="irgeztne-start-nav-icon">⚙</span><span class="irgeztne-start-nav-label">${startLang('Инструменты', 'Tools')}</span></button>
+   78:       </nav>
+
+--- src/browser/tabs.js:69-79 ---
+   69:         <button type="button" data-open-section="files"><span class="irgeztne-start-nav-icon">▣</span><span class="irgeztne-start-nav-label">${startLang('Файлы', 'Files')}</span></button>
+   70:         <button type="button" data-open-section="projects"><span class="irgeztne-start-nav-icon">▰</span><span class="irgeztne-start-nav-label">${startLang('Проекты', 'Projects')}</span></button>
+   71:         <button type="button" data-open-section="documents"><span class="irgeztne-start-nav-icon">▤</span><span class="irgeztne-start-nav-label">${startLang('Офис', 'Office')}</span></button>
+   72:         <button type="button" data-open-section="notes"><span class="irgeztne-start-nav-icon">✎</span><span class="irgeztne-start-nav-label">${startLang('Заметки', 'Notes')}</span></button>
+   73:         <button type="button" data-open-section="marketplace"><span class="irgeztne-start-nav-icon">▧</span><span class="irgeztne-start-nav-label">${startLang('Шаблоны', 'Templates')}</span></button>
+   74:         <button type="button" data-open-section="codehub"><span class="irgeztne-start-nav-icon">◇</span><span class="irgeztne-start-nav-label">${startLang('Мастерская пакетов', 'Package Workshop')}</span></button>
+   75:         <button type="button" data-open-section="rooms"><span class="irgeztne-start-nav-icon">◌</span><span class="irgeztne-start-nav-label">${startLang('Чат', 'Chat')}</span></button>
+   76:         <button type="button" data-open-section="analytics"><span class="irgeztne-start-nav-icon">↗</span><span class="irgeztne-start-nav-label">${startLang('Аналитика', 'Analytics')}</span></button>
+   77:         <button type="button" data-open-section="tools"><span class="irgeztne-start-nav-icon">⚙</span><span class="irgeztne-start-nav-label">${startLang('Инструменты', 'Tools')}</span></button>
+   78:       </nav>
+   79:       <div class="irgeztne-start-rail-footer">
+
+--- src/browser/tabs.js:70-80 ---
+   70:         <button type="button" data-open-section="projects"><span class="irgeztne-start-nav-icon">▰</span><span class="irgeztne-start-nav-label">${startLang('Проекты', 'Projects')}</span></button>
+   71:         <button type="button" data-open-section="documents"><span class="irgeztne-start-nav-icon">▤</span><span class="irgeztne-start-nav-label">${startLang('Офис', 'Office')}</span></button>
+   72:         <button type="button" data-open-section="notes"><span class="irgeztne-start-nav-icon">✎</span><span class="irgeztne-start-nav-label">${startLang('Заметки', 'Notes')}</span></button>
+   73:         <button type="button" data-open-section="marketplace"><span class="irgeztne-start-nav-icon">▧</span><span class="irgeztne-start-nav-label">${startLang('Шаблоны', 'Templates')}</span></button>
+   74:         <button type="button" data-open-section="codehub"><span class="irgeztne-start-nav-icon">◇</span><span class="irgeztne-start-nav-label">${startLang('Мастерская пакетов', 'Package Workshop')}</span></button>
+   75:         <button type="button" data-open-section="rooms"><span class="irgeztne-start-nav-icon">◌</span><span class="irgeztne-start-nav-label">${startLang('Чат', 'Chat')}</span></button>
+   76:         <button type="button" data-open-section="analytics"><span class="irgeztne-start-nav-icon">↗</span><span class="irgeztne-start-nav-label">${startLang('Аналитика', 'Analytics')}</span></button>
+   77:         <button type="button" data-open-section="tools"><span class="irgeztne-start-nav-icon">⚙</span><span class="irgeztne-start-nav-label">${startLang('Инструменты', 'Tools')}</span></button>
+   78:       </nav>
+   79:       <div class="irgeztne-start-rail-footer">
+   80:         <span class="irgeztne-start-status-dot"></span>
+
+--- src/browser/tabs.js:71-81 ---
+   71:         <button type="button" data-open-section="documents"><span class="irgeztne-start-nav-icon">▤</span><span class="irgeztne-start-nav-label">${startLang('Офис', 'Office')}</span></button>
+   72:         <button type="button" data-open-section="notes"><span class="irgeztne-start-nav-icon">✎</span><span class="irgeztne-start-nav-label">${startLang('Заметки', 'Notes')}</span></button>
+   73:         <button type="button" data-open-section="marketplace"><span class="irgeztne-start-nav-icon">▧</span><span class="irgeztne-start-nav-label">${startLang('Шаблоны', 'Templates')}</span></button>
+   74:         <button type="button" data-open-section="codehub"><span class="irgeztne-start-nav-icon">◇</span><span class="irgeztne-start-nav-label">${startLang('Мастерская пакетов', 'Package Workshop')}</span></button>
+   75:         <button type="button" data-open-section="rooms"><span class="irgeztne-start-nav-icon">◌</span><span class="irgeztne-start-nav-label">${startLang('Чат', 'Chat')}</span></button>
+   76:         <button type="button" data-open-section="analytics"><span class="irgeztne-start-nav-icon">↗</span><span class="irgeztne-start-nav-label">${startLang('Аналитика', 'Analytics')}</span></button>
+   77:         <button type="button" data-open-section="tools"><span class="irgeztne-start-nav-icon">⚙</span><span class="irgeztne-start-nav-label">${startLang('Инструменты', 'Tools')}</span></button>
+   78:       </nav>
+   79:       <div class="irgeztne-start-rail-footer">
+   80:         <span class="irgeztne-start-status-dot"></span>
+   81:         <span>${startLang('Локальная оболочка', 'Local shell')}</span>
+
+--- src/browser/tabs.js:72-82 ---
+   72:         <button type="button" data-open-section="notes"><span class="irgeztne-start-nav-icon">✎</span><span class="irgeztne-start-nav-label">${startLang('Заметки', 'Notes')}</span></button>
+   73:         <button type="button" data-open-section="marketplace"><span class="irgeztne-start-nav-icon">▧</span><span class="irgeztne-start-nav-label">${startLang('Шаблоны', 'Templates')}</span></button>
+   74:         <button type="button" data-open-section="codehub"><span class="irgeztne-start-nav-icon">◇</span><span class="irgeztne-start-nav-label">${startLang('Мастерская пакетов', 'Package Workshop')}</span></button>
+   75:         <button type="button" data-open-section="rooms"><span class="irgeztne-start-nav-icon">◌</span><span class="irgeztne-start-nav-label">${startLang('Чат', 'Chat')}</span></button>
+   76:         <button type="button" data-open-section="analytics"><span class="irgeztne-start-nav-icon">↗</span><span class="irgeztne-start-nav-label">${startLang('Аналитика', 'Analytics')}</span></button>
+   77:         <button type="button" data-open-section="tools"><span class="irgeztne-start-nav-icon">⚙</span><span class="irgeztne-start-nav-label">${startLang('Инструменты', 'Tools')}</span></button>
+   78:       </nav>
+   79:       <div class="irgeztne-start-rail-footer">
+   80:         <span class="irgeztne-start-status-dot"></span>
+   81:         <span>${startLang('Локальная оболочка', 'Local shell')}</span>
+   82:       </div>
+
+--- src/browser/tabs.js:73-83 ---
+   73:         <button type="button" data-open-section="marketplace"><span class="irgeztne-start-nav-icon">▧</span><span class="irgeztne-start-nav-label">${startLang('Шаблоны', 'Templates')}</span></button>
+   74:         <button type="button" data-open-section="codehub"><span class="irgeztne-start-nav-icon">◇</span><span class="irgeztne-start-nav-label">${startLang('Мастерская пакетов', 'Package Workshop')}</span></button>
+   75:         <button type="button" data-open-section="rooms"><span class="irgeztne-start-nav-icon">◌</span><span class="irgeztne-start-nav-label">${startLang('Чат', 'Chat')}</span></button>
+   76:         <button type="button" data-open-section="analytics"><span class="irgeztne-start-nav-icon">↗</span><span class="irgeztne-start-nav-label">${startLang('Аналитика', 'Analytics')}</span></button>
+   77:         <button type="button" data-open-section="tools"><span class="irgeztne-start-nav-icon">⚙</span><span class="irgeztne-start-nav-label">${startLang('Инструменты', 'Tools')}</span></button>
+   78:       </nav>
+   79:       <div class="irgeztne-start-rail-footer">
+   80:         <span class="irgeztne-start-status-dot"></span>
+   81:         <span>${startLang('Локальная оболочка', 'Local shell')}</span>
+   82:       </div>
+   83:     </aside>
+
+--- src/browser/tabs.js:104-114 ---
+  104:         </form>
+  105:       </div>
+  106: 
+  107:       <div class="irgeztne-start-quick">
+  108:         <button type="button" class="irgeztne-start-card irgeztne-start-card--primary irgeztne-start-card--web" data-open-section="site-pages">
+  109:           <span class="irgeztne-start-icon">◆</span>
+  110:           <strong>Web Studio</strong>
+  111:           <small>${startLang('Сайты, страницы, шаблоны, предпросмотр, экспорт и публикация.', 'Sites, pages, templates, preview, export and publishing.')}</small>
+  112:         </button>
+  113:         <button type="button" class="irgeztne-start-card irgeztne-start-card--files" data-home-open="files" title="Open compact Files">
+  114:           <span class="irgeztne-start-icon">▣</span>
+
+--- src/browser/tabs.js:109-119 ---
+  109:           <span class="irgeztne-start-icon">◆</span>
+  110:           <strong>Web Studio</strong>
+  111:           <small>${startLang('Сайты, страницы, шаблоны, предпросмотр, экспорт и публикация.', 'Sites, pages, templates, preview, export and publishing.')}</small>
+  112:         </button>
+  113:         <button type="button" class="irgeztne-start-card irgeztne-start-card--files" data-home-open="files" title="Open compact Files">
+  114:           <span class="irgeztne-start-icon">▣</span>
+  115:           <strong>${startLang('Файлы', 'Files')}</strong>
+  116:           <small>${startLang('Ассеты, изображения и материалы для текущей работы.', 'Assets, images and source materials for current work.')}</small>
+  117:         </button>
+  118:         <button type="button" class="irgeztne-start-card irgeztne-start-card--projects" data-home-open="projects" title="Open compact Projects">
+  119:           <span class="irgeztne-start-icon">▰</span>
+
+--- src/browser/tabs.js:114-124 ---
+  114:           <span class="irgeztne-start-icon">▣</span>
+  115:           <strong>${startLang('Файлы', 'Files')}</strong>
+  116:           <small>${startLang('Ассеты, изображения и материалы для текущей работы.', 'Assets, images and source materials for current work.')}</small>
+  117:         </button>
+  118:         <button type="button" class="irgeztne-start-card irgeztne-start-card--projects" data-home-open="projects" title="Open compact Projects">
+  119:           <span class="irgeztne-start-icon">▰</span>
+  120:           <strong>${startLang('Проекты', 'Projects')}</strong>
+  121:           <small>${startLang('Контейнеры работы, черновики и связанные материалы.', 'Work containers, drafts and linked materials.')}</small>
+  122:         </button>
+  123:         <button type="button" class="irgeztne-start-card irgeztne-start-card--office" data-home-open="documents" title="Open compact Office">
+  124:           <span class="irgeztne-start-icon">▤</span>
+
+--- src/browser/tabs.js:119-129 ---
+  119:           <span class="irgeztne-start-icon">▰</span>
+  120:           <strong>${startLang('Проекты', 'Projects')}</strong>
+  121:           <small>${startLang('Контейнеры работы, черновики и связанные материалы.', 'Work containers, drafts and linked materials.')}</small>
+  122:         </button>
+  123:         <button type="button" class="irgeztne-start-card irgeztne-start-card--office" data-home-open="documents" title="Open compact Office">
+  124:           <span class="irgeztne-start-icon">▤</span>
+  125:           <strong>${startLang('Офис', 'Office')}</strong>
+  126:           <small>${startLang('Документы, тексты, описания и рабочие записи.', 'Documents, texts, descriptions and working notes.')}</small>
+  127:         </button>
+  128:         <button type="button" class="irgeztne-start-card irgeztne-start-card--notes" data-home-open="notes" title="Open compact Notes">
+  129:           <span class="irgeztne-start-icon">✦</span>
+
+--- src/browser/tabs.js:124-134 ---
+  124:           <span class="irgeztne-start-icon">▤</span>
+  125:           <strong>${startLang('Офис', 'Office')}</strong>
+  126:           <small>${startLang('Документы, тексты, описания и рабочие записи.', 'Documents, texts, descriptions and working notes.')}</small>
+  127:         </button>
+  128:         <button type="button" class="irgeztne-start-card irgeztne-start-card--notes" data-home-open="notes" title="Open compact Notes">
+  129:           <span class="irgeztne-start-icon">✦</span>
+  130:           <strong>${startLang('Заметки', 'Notes')}</strong>
+  131:           <small>${startLang('Быстрые мысли, фрагменты, ссылки и рабочие черновики.', 'Quick thoughts, fragments, links and working drafts.')}</small>
+  132:         </button>
+  133:         <button type="button" class="irgeztne-start-card irgeztne-start-card--templates" data-home-open="marketplace" title="Open compact Templates">
+  134:           <span class="irgeztne-start-icon">▧</span>
+
+--- src/browser/tabs.js:129-139 ---
+  129:           <span class="irgeztne-start-icon">✦</span>
+  130:           <strong>${startLang('Заметки', 'Notes')}</strong>
+  131:           <small>${startLang('Быстрые мысли, фрагменты, ссылки и рабочие черновики.', 'Quick thoughts, fragments, links and working drafts.')}</small>
+  132:         </button>
+  133:         <button type="button" class="irgeztne-start-card irgeztne-start-card--templates" data-home-open="marketplace" title="Open compact Templates">
+  134:           <span class="irgeztne-start-icon">▧</span>
+  135:           <strong>${startLang('Шаблоны', 'Templates')}</strong>
+  136:           <small>${startLang('Официальные бесплатные шаблоны и темы для старта.', 'Official free templates and themes to start with.')}</small>
+  137:         </button>
+  138:         <button type="button" class="irgeztne-start-card irgeztne-start-card--workshop" data-open-workshop-site="1" title="Open Package Workshop site">
+  139:           <span class="irgeztne-start-icon">◇</span>
+
+--- src/browser/tabs.js:134-144 ---
+  134:           <span class="irgeztne-start-icon">▧</span>
+  135:           <strong>${startLang('Шаблоны', 'Templates')}</strong>
+  136:           <small>${startLang('Официальные бесплатные шаблоны и темы для старта.', 'Official free templates and themes to start with.')}</small>
+  137:         </button>
+  138:         <button type="button" class="irgeztne-start-card irgeztne-start-card--workshop" data-open-workshop-site="1" title="Open Package Workshop site">
+  139:           <span class="irgeztne-start-icon">◇</span>
+  140:           <strong>${startLang('Мастерская пакетов', 'Package Workshop')}</strong>
+  141:           <small>${startLang('Блоки, темы, секции, ассеты и заготовки для сайтов.', 'Blocks, themes, sections, assets and website materials.')}</small>
+  142:         </button>
+  143:         <button type="button" class="irgeztne-start-card irgeztne-start-card--rooms" data-home-open="rooms" title="Open compact Rooms">
+  144:           <span class="irgeztne-start-icon">◌</span>
+
+--- src/browser/tabs.js:136-146 ---
+  136:           <small>${startLang('Официальные бесплатные шаблоны и темы для старта.', 'Official free templates and themes to start with.')}</small>
+  137:         </button>
+  138:         <button type="button" class="irgeztne-start-card irgeztne-start-card--workshop" data-open-workshop-site="1" title="Open Package Workshop site">
+  139:           <span class="irgeztne-start-icon">◇</span>
+  140:           <strong>${startLang('Мастерская пакетов', 'Package Workshop')}</strong>
+  141:           <small>${startLang('Блоки, темы, секции, ассеты и заготовки для сайтов.', 'Blocks, themes, sections, assets and website materials.')}</small>
+  142:         </button>
+  143:         <button type="button" class="irgeztne-start-card irgeztne-start-card--rooms" data-home-open="rooms" title="Open compact Rooms">
+  144:           <span class="irgeztne-start-icon">◌</span>
+  145:           <strong>${startLang('Чат', 'Chat')}</strong>
+  146:           <small>${startLang('Основа рабочего чата для быстрого проектного общения.', 'Work chat foundation for quick project communication.')}</small>
+
+--- src/browser/tabs.js:139-149 ---
+  139:           <span class="irgeztne-start-icon">◇</span>
+  140:           <strong>${startLang('Мастерская пакетов', 'Package Workshop')}</strong>
+  141:           <small>${startLang('Блоки, темы, секции, ассеты и заготовки для сайтов.', 'Blocks, themes, sections, assets and website materials.')}</small>
+  142:         </button>
+  143:         <button type="button" class="irgeztne-start-card irgeztne-start-card--rooms" data-home-open="rooms" title="Open compact Rooms">
+  144:           <span class="irgeztne-start-icon">◌</span>
+  145:           <strong>${startLang('Чат', 'Chat')}</strong>
+  146:           <small>${startLang('Основа рабочего чата для быстрого проектного общения.', 'Work chat foundation for quick project communication.')}</small>
+  147:         </button>
+  148:         <button type="button" class="irgeztne-start-card irgeztne-start-card--analytics" data-home-open="analytics" title="Open compact Analytics">
+  149:           <span class="irgeztne-start-icon">↗</span>
+
+--- src/browser/tabs.js:144-154 ---
+  144:           <span class="irgeztne-start-icon">◌</span>
+  145:           <strong>${startLang('Чат', 'Chat')}</strong>
+  146:           <small>${startLang('Основа рабочего чата для быстрого проектного общения.', 'Work chat foundation for quick project communication.')}</small>
+  147:         </button>
+  148:         <button type="button" class="irgeztne-start-card irgeztne-start-card--analytics" data-home-open="analytics" title="Open compact Analytics">
+  149:           <span class="irgeztne-start-icon">↗</span>
+  150:           <strong>${startLang('Аналитика', 'Analytics')}</strong>
+  151:           <small>${startLang('Будущая аналитика сайтов, публикаций и результатов.', 'Local summary for sites, templates, documents and activity.')}</small>
+  152:         </button>
+  153:         <button type="button" class="irgeztne-start-card irgeztne-start-card--tools" data-home-open="tools" title="Open compact Tools">
+  154:           <span class="irgeztne-start-icon">⚙</span>
+
+--- src/browser/tabs.js:149-159 ---
+  149:           <span class="irgeztne-start-icon">↗</span>
+  150:           <strong>${startLang('Аналитика', 'Analytics')}</strong>
+  151:           <small>${startLang('Будущая аналитика сайтов, публикаций и результатов.', 'Local summary for sites, templates, documents and activity.')}</small>
+  152:         </button>
+  153:         <button type="button" class="irgeztne-start-card irgeztne-start-card--tools" data-home-open="tools" title="Open compact Tools">
+  154:           <span class="irgeztne-start-icon">⚙</span>
+  155:           <strong>${startLang('Инструменты', 'Tools')}</strong>
+  156:           <small>${startLang('Практические помощники для файлов и рабочего процесса.', 'Practical helpers for files and workflow.')}</small>
+  157:         </button>
+  158:       </div>
+  159: 
+
+--- src/browser/tabs.js:163-173 ---
+  163:             <strong>${startLang('Продолжить работу', 'Continue work')}</strong>
+  164:             <span>${startLang('последнее', 'recent')}</span>
+  165:           </div>
+  166:           <div class="irgeztne-start-list">
+  167:             <button type="button" data-open-section="site-pages"><span>Web Studio</span><small>${startLang('Продолжить сайты и страницы', 'Continue sites and pages')}</small></button>
+  168:             <button type="button" data-home-open="projects"><span>${startLang('Проекты', 'Projects')}</span><small>${startLang('Открыть рабочие контейнеры', 'Open work containers')}</small></button>
+  169:             <button type="button" data-home-open="files"><span>${startLang('Файлы', 'Files')}</span><small>${startLang('Открыть материалы и ассеты', 'Open materials and assets')}</small></button>
+  170:           </div>
+  171:         </section>
+  172:         <section class="irgeztne-start-panel">
+  173:           <div class="irgeztne-start-panel-head">
+
+--- src/browser/tabs.js:164-174 ---
+  164:             <span>${startLang('последнее', 'recent')}</span>
+  165:           </div>
+  166:           <div class="irgeztne-start-list">
+  167:             <button type="button" data-open-section="site-pages"><span>Web Studio</span><small>${startLang('Продолжить сайты и страницы', 'Continue sites and pages')}</small></button>
+  168:             <button type="button" data-home-open="projects"><span>${startLang('Проекты', 'Projects')}</span><small>${startLang('Открыть рабочие контейнеры', 'Open work containers')}</small></button>
+  169:             <button type="button" data-home-open="files"><span>${startLang('Файлы', 'Files')}</span><small>${startLang('Открыть материалы и ассеты', 'Open materials and assets')}</small></button>
+  170:           </div>
+  171:         </section>
+  172:         <section class="irgeztne-start-panel">
+  173:           <div class="irgeztne-start-panel-head">
+  174:             <strong>${startLang('Избранное', 'Favorites')}</strong>
+
+--- src/browser/tabs.js:165-175 ---
+  165:           </div>
+  166:           <div class="irgeztne-start-list">
+  167:             <button type="button" data-open-section="site-pages"><span>Web Studio</span><small>${startLang('Продолжить сайты и страницы', 'Continue sites and pages')}</small></button>
+  168:             <button type="button" data-home-open="projects"><span>${startLang('Проекты', 'Projects')}</span><small>${startLang('Открыть рабочие контейнеры', 'Open work containers')}</small></button>
+  169:             <button type="button" data-home-open="files"><span>${startLang('Файлы', 'Files')}</span><small>${startLang('Открыть материалы и ассеты', 'Open materials and assets')}</small></button>
+  170:           </div>
+  171:         </section>
+  172:         <section class="irgeztne-start-panel">
+  173:           <div class="irgeztne-start-panel-head">
+  174:             <strong>${startLang('Избранное', 'Favorites')}</strong>
+  175:             <span>★</span>
+
+--- src/browser/tabs.js:183-193 ---
+  183:             <strong>${startLang('Быстрые действия', 'Quick actions')}</strong>
+  184:             <span>${startLang('рабочее', 'workspace')}</span>
+  185:           </div>
+  186:           <div class="irgeztne-start-actions">
+  187:             <button type="button" data-open-section="site-pages">${startLang('Создать сайт', 'Create site')}</button>
+  188:             <button type="button" data-home-open="marketplace">${startLang('Шаблоны', 'Templates')}</button>
+  189:             <button type="button" data-open-workshop-site="1">${startLang('Мастерская пакетов', 'Package Workshop')}</button>
+  190:             <button type="button" data-open-section="workspace">${startLang('Пространство', 'Workspace')}</button>
+  191:           </div>
+  192:         </section>
+  193:       </div>
+
+--- src/browser/tabs.js:184-194 ---
+  184:             <span>${startLang('рабочее', 'workspace')}</span>
+  185:           </div>
+  186:           <div class="irgeztne-start-actions">
+  187:             <button type="button" data-open-section="site-pages">${startLang('Создать сайт', 'Create site')}</button>
+  188:             <button type="button" data-home-open="marketplace">${startLang('Шаблоны', 'Templates')}</button>
+  189:             <button type="button" data-open-workshop-site="1">${startLang('Мастерская пакетов', 'Package Workshop')}</button>
+  190:             <button type="button" data-open-section="workspace">${startLang('Пространство', 'Workspace')}</button>
+  191:           </div>
+  192:         </section>
+  193:       </div>
+  194:     </section>
+
+--- src/browser/tabs.js:185-195 ---
+  185:           </div>
+  186:           <div class="irgeztne-start-actions">
+  187:             <button type="button" data-open-section="site-pages">${startLang('Создать сайт', 'Create site')}</button>
+  188:             <button type="button" data-home-open="marketplace">${startLang('Шаблоны', 'Templates')}</button>
+  189:             <button type="button" data-open-workshop-site="1">${startLang('Мастерская пакетов', 'Package Workshop')}</button>
+  190:             <button type="button" data-open-section="workspace">${startLang('Пространство', 'Workspace')}</button>
+  191:           </div>
+  192:         </section>
+  193:       </div>
+  194:     </section>
+  195:   `;
+
+--- src/browser/tabs.js:186-196 ---
+  186:           <div class="irgeztne-start-actions">
+  187:             <button type="button" data-open-section="site-pages">${startLang('Создать сайт', 'Create site')}</button>
+  188:             <button type="button" data-home-open="marketplace">${startLang('Шаблоны', 'Templates')}</button>
+  189:             <button type="button" data-open-workshop-site="1">${startLang('Мастерская пакетов', 'Package Workshop')}</button>
+  190:             <button type="button" data-open-section="workspace">${startLang('Пространство', 'Workspace')}</button>
+  191:           </div>
+  192:         </section>
+  193:       </div>
+  194:     </section>
+  195:   `;
+  196: 
+
+--- src/browser/tabs.js:241-251 ---
+  241:     if (sourcePicker && !sourcePicker.contains(event.target)) closeStartSourceMenu();
+  242:   });
+  243:   
+  244:   document.addEventListener('click', function handleWorkshopSiteDoorV003(event) {
+  245:     const button = event.target && event.target.closest ? event.target.closest('[data-open-workshop-site], [data-home-open="codehub"], [data-open-section="codehub"], [data-section="codehub"]') : null;
+  246:     if (!button) return;
+  247: 
+  248:     event.preventDefault();
+  249:     event.stopPropagation();
+  250: 
+  251:     try {
+
+--- src/browser/tabs.js:248-258 ---
+  248:     event.preventDefault();
+  249:     event.stopPropagation();
+  250: 
+  251:     try {
+  252:       navigateActiveTab(WORKSHOP_SITE_URL_V003);
+  253:     } catch (error) {
+  254:       console.warn('[IRGEZTNE_WORKSHOP_BROWSER_DOOR_V003] failed to open Workshop site', error);
+  255:     }
+  256:   }, true);
+  257: 
+  258: document.addEventListener('irg:source-changed', (event) => {
+
+--- src/browser/tabs.js:380-390 ---
+  380:   return pane;
+  381: }
+  382: 
+  383: export function initTabs(state, els) {
+  384:   function normalizeCreateTabArgs(input, maybeTitle) {
+  385:     if (input && typeof input === 'object' && !Array.isArray(input)) {
+  386:       const nextUrl = typeof input.url === 'string' && input.url.trim()
+  387:         ? input.url.trim()
+  388:         : getSourceHomeUrl(state);
+  389:       return {
+  390:         url: nextUrl,
+
+--- src/browser/tabs.js:440-450 ---
+  440:         `<span class="tab-close" data-close-tab="${tab.id}" title="Close tab">✕</span>`;
+  441:       els.tabsScroll.appendChild(button);
+  442:     });
+  443: 
+  444:     if (els.addTabBtn) {
+  445:       els.addTabBtn.dataset.addTab = 'true';
+  446:       els.addTabBtn.setAttribute('title', 'New tab');
+  447:       els.addTabBtn.setAttribute('aria-label', 'New tab');
+  448:       els.addTabBtn.classList.add('tabs-add-btn');
+  449:       els.tabsScroll.appendChild(els.addTabBtn);
+  450:     }
+
+--- src/browser/tabs.js:441-451 ---
+  441:       els.tabsScroll.appendChild(button);
+  442:     });
+  443: 
+  444:     if (els.addTabBtn) {
+  445:       els.addTabBtn.dataset.addTab = 'true';
+  446:       els.addTabBtn.setAttribute('title', 'New tab');
+  447:       els.addTabBtn.setAttribute('aria-label', 'New tab');
+  448:       els.addTabBtn.classList.add('tabs-add-btn');
+  449:       els.tabsScroll.appendChild(els.addTabBtn);
+  450:     }
+  451:   }
+
+--- src/browser/tabs.js:442-452 ---
+  442:     });
+  443: 
+  444:     if (els.addTabBtn) {
+  445:       els.addTabBtn.dataset.addTab = 'true';
+  446:       els.addTabBtn.setAttribute('title', 'New tab');
+  447:       els.addTabBtn.setAttribute('aria-label', 'New tab');
+  448:       els.addTabBtn.classList.add('tabs-add-btn');
+  449:       els.tabsScroll.appendChild(els.addTabBtn);
+  450:     }
+  451:   }
+  452: 
+
+--- src/browser/tabs.js:443-453 ---
+  443: 
+  444:     if (els.addTabBtn) {
+  445:       els.addTabBtn.dataset.addTab = 'true';
+  446:       els.addTabBtn.setAttribute('title', 'New tab');
+  447:       els.addTabBtn.setAttribute('aria-label', 'New tab');
+  448:       els.addTabBtn.classList.add('tabs-add-btn');
+  449:       els.tabsScroll.appendChild(els.addTabBtn);
+  450:     }
+  451:   }
+  452: 
+  453:   function scrollElementIntoView(node) {
+
+--- src/browser/tabs.js:444-454 ---
+  444:     if (els.addTabBtn) {
+  445:       els.addTabBtn.dataset.addTab = 'true';
+  446:       els.addTabBtn.setAttribute('title', 'New tab');
+  447:       els.addTabBtn.setAttribute('aria-label', 'New tab');
+  448:       els.addTabBtn.classList.add('tabs-add-btn');
+  449:       els.tabsScroll.appendChild(els.addTabBtn);
+  450:     }
+  451:   }
+  452: 
+  453:   function scrollElementIntoView(node) {
+  454:     if (!node || typeof node.scrollIntoView !== 'function') return;
+
+--- src/browser/tabs.js:445-455 ---
+  445:       els.addTabBtn.dataset.addTab = 'true';
+  446:       els.addTabBtn.setAttribute('title', 'New tab');
+  447:       els.addTabBtn.setAttribute('aria-label', 'New tab');
+  448:       els.addTabBtn.classList.add('tabs-add-btn');
+  449:       els.tabsScroll.appendChild(els.addTabBtn);
+  450:     }
+  451:   }
+  452: 
+  453:   function scrollElementIntoView(node) {
+  454:     if (!node || typeof node.scrollIntoView !== 'function') return;
+  455: 
+
+--- src/browser/tabs.js:473-483 ---
+  473:     scrollElementIntoView(activeButton);
+  474:   }
+  475: 
+  476:   function scrollAddButtonIntoView() {
+  477:     if (!els.addTabBtn) return;
+  478:     scrollElementIntoView(els.addTabBtn);
+  479:   }
+  480: 
+  481:   function renderWebviews() {
+  482:     if (!els.webviewStack) return;
+  483: 
+
+--- src/browser/tabs.js:474-484 ---
+  474:   }
+  475: 
+  476:   function scrollAddButtonIntoView() {
+  477:     if (!els.addTabBtn) return;
+  478:     scrollElementIntoView(els.addTabBtn);
+  479:   }
+  480: 
+  481:   function renderWebviews() {
+  482:     if (!els.webviewStack) return;
+  483: 
+  484:     els.webviewStack.innerHTML = '';
+
+--- src/browser/tabs.js:554-564 ---
+  554:       detail: { tabId }
+  555:     }));
+  556:   }
+  557: 
+  558:   function createTab(input = getSourceHomeUrl(state), maybeTitle = 'New Tab') {
+  559:     if (arguments.length === 0) {
+  560:       const sourceForTitle = SOURCES[state.currentSource] || SOURCES.google;
+  561:       maybeTitle = sourceForTitle && sourceForTitle.label ? sourceForTitle.label : 'New Tab';
+  562:     }
+  563:     const normalized = normalizeCreateTabArgs(input, maybeTitle);
+  564: 
+
+--- src/browser/tabs.js:559-569 ---
+  559:     if (arguments.length === 0) {
+  560:       const sourceForTitle = SOURCES[state.currentSource] || SOURCES.google;
+  561:       maybeTitle = sourceForTitle && sourceForTitle.label ? sourceForTitle.label : 'New Tab';
+  562:     }
+  563:     const normalized = normalizeCreateTabArgs(input, maybeTitle);
+  564: 
+  565:     const tab = {
+  566:       id: makeTabId(state),
+  567:       url: normalized.url,
+  568:       title: normalized.title,
+  569:       displayUrl: normalized.displayUrl,
+
+--- src/browser/tabs.js:589-599 ---
+  589:     const wasActive = state.tabs[index].id === state.activeTabId;
+  590:     state.tabs.splice(index, 1);
+  591: 
+  592:     if (!state.tabs.length) {
+  593:       createTab();
+  594:       return;
+  595:     }
+  596: 
+  597:     if (wasActive) {
+  598:       const fallback = state.tabs[Math.max(0, index - 1)] || state.tabs[0];
+  599:       state.activeTabId = fallback.id;
+
+--- src/browser/tabs.js:608-618 ---
+  608:       detail: { tabId: state.activeTabId }
+  609:     }));
+  610:   }
+  611: 
+  612:   function navigateActiveTab(url) {
+  613:     const active = state.tabs.find((item) => item.id === state.activeTabId);
+  614:     if (!active) return;
+  615: 
+  616:     document.dispatchEvent(new CustomEvent('irgeztne:global-navigation-start', {
+  617:       detail: { url }
+  618:     }));
+
+--- src/browser/tabs.js:692-702 ---
+  692:       activateTab(existing.id);
+  693:       return existing;
+  694:     }
+  695: 
+  696:     return createTab(createWorkspaceStartTabData());
+  697:   }
+  698: 
+  699:   function bindHomeButton() {
+  700:     const homeButton = document.getElementById('homeBtn');
+  701:     if (!homeButton || homeButton.dataset.boundHome === 'true') return;
+  702: 
+
+--- src/browser/tabs.js:707-717 ---
+  707:       activateWorkspaceHome();
+  708:     });
+  709:   }
+  710: 
+  711:   function bindAddTabButton() {
+  712:     if (!els.addTabBtn || els.addTabBtn.dataset.boundClick === 'true') return;
+  713: 
+  714:     els.addTabBtn.dataset.boundClick = 'true';
+  715:     els.addTabBtn.addEventListener('click', (event) => {
+  716:       event.preventDefault();
+  717:       event.stopPropagation();
+
+--- src/browser/tabs.js:708-718 ---
+  708:     });
+  709:   }
+  710: 
+  711:   function bindAddTabButton() {
+  712:     if (!els.addTabBtn || els.addTabBtn.dataset.boundClick === 'true') return;
+  713: 
+  714:     els.addTabBtn.dataset.boundClick = 'true';
+  715:     els.addTabBtn.addEventListener('click', (event) => {
+  716:       event.preventDefault();
+  717:       event.stopPropagation();
+  718:       createTab();
+
+--- src/browser/tabs.js:710-720 ---
+  710: 
+  711:   function bindAddTabButton() {
+  712:     if (!els.addTabBtn || els.addTabBtn.dataset.boundClick === 'true') return;
+  713: 
+  714:     els.addTabBtn.dataset.boundClick = 'true';
+  715:     els.addTabBtn.addEventListener('click', (event) => {
+  716:       event.preventDefault();
+  717:       event.stopPropagation();
+  718:       createTab();
+  719:     });
+  720:   }
+
+--- src/browser/tabs.js:711-721 ---
+  711:   function bindAddTabButton() {
+  712:     if (!els.addTabBtn || els.addTabBtn.dataset.boundClick === 'true') return;
+  713: 
+  714:     els.addTabBtn.dataset.boundClick = 'true';
+  715:     els.addTabBtn.addEventListener('click', (event) => {
+  716:       event.preventDefault();
+  717:       event.stopPropagation();
+  718:       createTab();
+  719:     });
+  720:   }
+  721: 
+
+--- src/browser/tabs.js:714-724 ---
+  714:     els.addTabBtn.dataset.boundClick = 'true';
+  715:     els.addTabBtn.addEventListener('click', (event) => {
+  716:       event.preventDefault();
+  717:       event.stopPropagation();
+  718:       createTab();
+  719:     });
+  720:   }
+  721: 
+  722:   els.tabsScroll?.addEventListener('click', (event) => {
+  723:     const closeTarget = event.target.closest('[data-close-tab]');
+  724:     if (closeTarget) {
+
+--- src/browser/tabs.js:726-736 ---
+  726:       closeTab(closeTarget.dataset.closeTab);
+  727:       return;
+  728:     }
+  729: 
+  730:     const addTarget = event.target.closest('#addTabBtn, [data-add-tab="true"]');
+  731:     if (addTarget) {
+  732:       event.preventDefault();
+  733:       event.stopPropagation();
+  734:       createTab();
+  735:       return;
+  736:     }
+
+--- src/browser/tabs.js:730-740 ---
+  730:     const addTarget = event.target.closest('#addTabBtn, [data-add-tab="true"]');
+  731:     if (addTarget) {
+  732:       event.preventDefault();
+  733:       event.stopPropagation();
+  734:       createTab();
+  735:       return;
+  736:     }
+  737: 
+  738:     const tabButton = event.target.closest('[data-tab-id]');
+  739:     if (tabButton) {
+  740:       activateTab(tabButton.dataset.tabId);
+
+--- src/browser/tabs.js:745-755 ---
+  745:     const query = String(event && event.detail && event.detail.query ? event.detail.query : '').trim();
+  746:     if (!query) return;
+  747:     const directUrl = /^(https?:\/\/|file:\/\/|about:|irgeztne:\/\/)/i.test(query) || /^[\w.-]+\.[a-z]{2,}(\/.*)?$/i.test(query);
+  748:     if (/^irgeztne:\/\/workspace/i.test(query)) {
+  749:       navigateActiveTab(WORKSPACE_START_URL);
+  750:       return;
+  751:     }
+  752:     if (directUrl) {
+  753:       const normalized = /^(https?:\/\/|file:\/\/|about:)/i.test(query) ? query : `https://${query}`;
+  754:       navigateActiveTab(normalized);
+  755:       return;
+
+--- src/browser/tabs.js:750-760 ---
+  750:       return;
+  751:     }
+  752:     if (directUrl) {
+  753:       const normalized = /^(https?:\/\/|file:\/\/|about:)/i.test(query) ? query : `https://${query}`;
+  754:       navigateActiveTab(normalized);
+  755:       return;
+  756:     }
+  757:     const source = SOURCES[state.currentSource] || SOURCES.google;
+  758:     navigateActiveTab(source.buildSearchUrl(query));
+  759:   });
+  760: 
+
+--- src/browser/tabs.js:754-764 ---
+  754:       navigateActiveTab(normalized);
+  755:       return;
+  756:     }
+  757:     const source = SOURCES[state.currentSource] || SOURCES.google;
+  758:     navigateActiveTab(source.buildSearchUrl(query));
+  759:   });
+  760: 
+  761:   bindAddTabButton();
+  762:   bindHomeButton();
+  763:   createTab(createWorkspaceStartTabData());
+  764: 
+
+--- src/browser/tabs.js:757-767 ---
+  757:     const source = SOURCES[state.currentSource] || SOURCES.google;
+  758:     navigateActiveTab(source.buildSearchUrl(query));
+  759:   });
+  760: 
+  761:   bindAddTabButton();
+  762:   bindHomeButton();
+  763:   createTab(createWorkspaceStartTabData());
+  764: 
+  765:   return {
+  766:     createTab,
+  767:     closeTab,
+
+--- src/browser/tabs.js:759-769 ---
+  759:   });
+  760: 
+  761:   bindAddTabButton();
+  762:   bindHomeButton();
+  763:   createTab(createWorkspaceStartTabData());
+  764: 
+  765:   return {
+  766:     createTab,
+  767:     closeTab,
+  768:     activateTab,
+  769:     navigateActiveTab,
+
+--- src/browser/tabs.js:762-772 ---
+  762:   bindHomeButton();
+  763:   createTab(createWorkspaceStartTabData());
+  764: 
+  765:   return {
+  766:     createTab,
+  767:     closeTab,
+  768:     activateTab,
+  769:     navigateActiveTab,
+  770:     getActiveWebview,
+  771:     updateAddressFromActiveTab,
+  772:     openLibraryFileInTab,
+
+--- src/browser/tabs.js:765-775 ---
+  765:   return {
+  766:     createTab,
+  767:     closeTab,
+  768:     activateTab,
+  769:     navigateActiveTab,
+  770:     getActiveWebview,
+  771:     updateAddressFromActiveTab,
+  772:     openLibraryFileInTab,
+  773:     getSourceHomeUrl: () => getSourceHomeUrl(state)
+  774:   };
+  775: }
+
+
+=== index.html ===
+
+--- index.html:17-27 ---
+   17: <link rel="stylesheet" href="src/modules/relations/relations-v0.css" />
+   18: <link rel="stylesheet" href="src/modules/notes/notes-v0.css" />
+   19: <link rel="stylesheet" href="src/modules/tools/tools-v0.css" />
+   20: <link rel="stylesheet" href="src/v87-vitrina-v1.css" />
+   21: <link rel="stylesheet" href="src/v88-codehub-v1.css" />
+   22: <link rel="stylesheet" href="src/modules/map/map-v0.css" />
+   23: <link rel="stylesheet" href="src/modules/documents/documents-v0.css" />
+   24: <link rel="stylesheet" href="src/modules/site-pages/site-pages-v0.css" />
+   25: <link rel="stylesheet" href="src/modules/ecosystem/ecosystem-v0.css" />
+   26: <link rel="stylesheet" href="src/modules/rooms/rooms-v0.css" />
+   27: <link rel="stylesheet" href="src/modules/fili-store/fili-store-v0.css" />
+
+--- index.html:68-78 ---
+   68:         </div>
+   69: 
+   70:         <section class="tabsbar tabsbar-top" id="tabsBar">
+   71:           <div class="tabs-scroll" id="tabsScroll"></div>
+   72:           <button class="icon-btn add-tab-btn tabs-add-btn" id="addTabBtn" title="Новая вкладка" aria-label="Новая вкладка">＋</button>
+   73:         </section>
+   74: 
+   75: 
+   76:       </div>
+   77: 
+   78:       <div class="topbar-row topbar-row--nav">
+
+--- index.html:226-236 ---
+  226:           </div>
+  227:         </div>
+  228: 
+  229:         <div class="workspace-shell-nav hidden" id="workspaceShellNav" hidden aria-hidden="true" style="display:none !important;">
+  230:   <button class="workspace-nav-btn active" data-section="workspace">Пространство</button>
+  231:   <button class="workspace-nav-btn" data-section="files">Файлы</button>
+  232:   <button class="workspace-nav-btn" data-section="projects">Проекты</button>
+  233:   <button class="workspace-nav-btn" data-section="notes">Заметки</button>
+  234:   <button class="workspace-nav-btn" data-section="documents">Офис</button>
+  235:   <button class="workspace-nav-btn" data-section="site-pages">Web Studio</button>
+  236:   <button class="workspace-nav-btn" data-section="tools">Инструменты</button>
+
+--- index.html:227-237 ---
+  227:         </div>
+  228: 
+  229:         <div class="workspace-shell-nav hidden" id="workspaceShellNav" hidden aria-hidden="true" style="display:none !important;">
+  230:   <button class="workspace-nav-btn active" data-section="workspace">Пространство</button>
+  231:   <button class="workspace-nav-btn" data-section="files">Файлы</button>
+  232:   <button class="workspace-nav-btn" data-section="projects">Проекты</button>
+  233:   <button class="workspace-nav-btn" data-section="notes">Заметки</button>
+  234:   <button class="workspace-nav-btn" data-section="documents">Офис</button>
+  235:   <button class="workspace-nav-btn" data-section="site-pages">Web Studio</button>
+  236:   <button class="workspace-nav-btn" data-section="tools">Инструменты</button>
+  237:   <button class="workspace-nav-btn" data-section="map">Карта</button>
+
+--- index.html:228-238 ---
+  228: 
+  229:         <div class="workspace-shell-nav hidden" id="workspaceShellNav" hidden aria-hidden="true" style="display:none !important;">
+  230:   <button class="workspace-nav-btn active" data-section="workspace">Пространство</button>
+  231:   <button class="workspace-nav-btn" data-section="files">Файлы</button>
+  232:   <button class="workspace-nav-btn" data-section="projects">Проекты</button>
+  233:   <button class="workspace-nav-btn" data-section="notes">Заметки</button>
+  234:   <button class="workspace-nav-btn" data-section="documents">Офис</button>
+  235:   <button class="workspace-nav-btn" data-section="site-pages">Web Studio</button>
+  236:   <button class="workspace-nav-btn" data-section="tools">Инструменты</button>
+  237:   <button class="workspace-nav-btn" data-section="map">Карта</button>
+  238:   <button class="workspace-nav-btn" data-section="editor">Редактор</button>
+
+--- index.html:229-239 ---
+  229:         <div class="workspace-shell-nav hidden" id="workspaceShellNav" hidden aria-hidden="true" style="display:none !important;">
+  230:   <button class="workspace-nav-btn active" data-section="workspace">Пространство</button>
+  231:   <button class="workspace-nav-btn" data-section="files">Файлы</button>
+  232:   <button class="workspace-nav-btn" data-section="projects">Проекты</button>
+  233:   <button class="workspace-nav-btn" data-section="notes">Заметки</button>
+  234:   <button class="workspace-nav-btn" data-section="documents">Офис</button>
+  235:   <button class="workspace-nav-btn" data-section="site-pages">Web Studio</button>
+  236:   <button class="workspace-nav-btn" data-section="tools">Инструменты</button>
+  237:   <button class="workspace-nav-btn" data-section="map">Карта</button>
+  238:   <button class="workspace-nav-btn" data-section="editor">Редактор</button>
+  239:   <button class="workspace-nav-btn" data-section="codehub">Веб-мастерская</button>
+
+--- index.html:230-240 ---
+  230:   <button class="workspace-nav-btn active" data-section="workspace">Пространство</button>
+  231:   <button class="workspace-nav-btn" data-section="files">Файлы</button>
+  232:   <button class="workspace-nav-btn" data-section="projects">Проекты</button>
+  233:   <button class="workspace-nav-btn" data-section="notes">Заметки</button>
+  234:   <button class="workspace-nav-btn" data-section="documents">Офис</button>
+  235:   <button class="workspace-nav-btn" data-section="site-pages">Web Studio</button>
+  236:   <button class="workspace-nav-btn" data-section="tools">Инструменты</button>
+  237:   <button class="workspace-nav-btn" data-section="map">Карта</button>
+  238:   <button class="workspace-nav-btn" data-section="editor">Редактор</button>
+  239:   <button class="workspace-nav-btn" data-section="codehub">Веб-мастерская</button>
+  240:   <button class="workspace-nav-btn" data-section="marketplace">Шаблоны</button>
+
+--- index.html:231-241 ---
+  231:   <button class="workspace-nav-btn" data-section="files">Файлы</button>
+  232:   <button class="workspace-nav-btn" data-section="projects">Проекты</button>
+  233:   <button class="workspace-nav-btn" data-section="notes">Заметки</button>
+  234:   <button class="workspace-nav-btn" data-section="documents">Офис</button>
+  235:   <button class="workspace-nav-btn" data-section="site-pages">Web Studio</button>
+  236:   <button class="workspace-nav-btn" data-section="tools">Инструменты</button>
+  237:   <button class="workspace-nav-btn" data-section="map">Карта</button>
+  238:   <button class="workspace-nav-btn" data-section="editor">Редактор</button>
+  239:   <button class="workspace-nav-btn" data-section="codehub">Веб-мастерская</button>
+  240:   <button class="workspace-nav-btn" data-section="marketplace">Шаблоны</button>
+  241:   <button class="workspace-nav-btn" data-section="rooms">Чат</button>
+
+--- index.html:232-242 ---
+  232:   <button class="workspace-nav-btn" data-section="projects">Проекты</button>
+  233:   <button class="workspace-nav-btn" data-section="notes">Заметки</button>
+  234:   <button class="workspace-nav-btn" data-section="documents">Офис</button>
+  235:   <button class="workspace-nav-btn" data-section="site-pages">Web Studio</button>
+  236:   <button class="workspace-nav-btn" data-section="tools">Инструменты</button>
+  237:   <button class="workspace-nav-btn" data-section="map">Карта</button>
+  238:   <button class="workspace-nav-btn" data-section="editor">Редактор</button>
+  239:   <button class="workspace-nav-btn" data-section="codehub">Веб-мастерская</button>
+  240:   <button class="workspace-nav-btn" data-section="marketplace">Шаблоны</button>
+  241:   <button class="workspace-nav-btn" data-section="rooms">Чат</button>
+  242:   <button class="workspace-nav-btn" data-section="fili-store">Fili Store</button>
+
+--- index.html:233-243 ---
+  233:   <button class="workspace-nav-btn" data-section="notes">Заметки</button>
+  234:   <button class="workspace-nav-btn" data-section="documents">Офис</button>
+  235:   <button class="workspace-nav-btn" data-section="site-pages">Web Studio</button>
+  236:   <button class="workspace-nav-btn" data-section="tools">Инструменты</button>
+  237:   <button class="workspace-nav-btn" data-section="map">Карта</button>
+  238:   <button class="workspace-nav-btn" data-section="editor">Редактор</button>
+  239:   <button class="workspace-nav-btn" data-section="codehub">Веб-мастерская</button>
+  240:   <button class="workspace-nav-btn" data-section="marketplace">Шаблоны</button>
+  241:   <button class="workspace-nav-btn" data-section="rooms">Чат</button>
+  242:   <button class="workspace-nav-btn" data-section="fili-store">Fili Store</button>
+  243:   <button class="workspace-nav-btn" data-section="fili-safe">Fili Safe</button>
+
+--- index.html:234-244 ---
+  234:   <button class="workspace-nav-btn" data-section="documents">Офис</button>
+  235:   <button class="workspace-nav-btn" data-section="site-pages">Web Studio</button>
+  236:   <button class="workspace-nav-btn" data-section="tools">Инструменты</button>
+  237:   <button class="workspace-nav-btn" data-section="map">Карта</button>
+  238:   <button class="workspace-nav-btn" data-section="editor">Редактор</button>
+  239:   <button class="workspace-nav-btn" data-section="codehub">Веб-мастерская</button>
+  240:   <button class="workspace-nav-btn" data-section="marketplace">Шаблоны</button>
+  241:   <button class="workspace-nav-btn" data-section="rooms">Чат</button>
+  242:   <button class="workspace-nav-btn" data-section="fili-store">Fili Store</button>
+  243:   <button class="workspace-nav-btn" data-section="fili-safe">Fili Safe</button>
+  244:   <button class="workspace-nav-btn" data-section="analytics">Веб-аналитика</button>
+
+--- index.html:235-245 ---
+  235:   <button class="workspace-nav-btn" data-section="site-pages">Web Studio</button>
+  236:   <button class="workspace-nav-btn" data-section="tools">Инструменты</button>
+  237:   <button class="workspace-nav-btn" data-section="map">Карта</button>
+  238:   <button class="workspace-nav-btn" data-section="editor">Редактор</button>
+  239:   <button class="workspace-nav-btn" data-section="codehub">Веб-мастерская</button>
+  240:   <button class="workspace-nav-btn" data-section="marketplace">Шаблоны</button>
+  241:   <button class="workspace-nav-btn" data-section="rooms">Чат</button>
+  242:   <button class="workspace-nav-btn" data-section="fili-store">Fili Store</button>
+  243:   <button class="workspace-nav-btn" data-section="fili-safe">Fili Safe</button>
+  244:   <button class="workspace-nav-btn" data-section="analytics">Веб-аналитика</button>
+  245: </div>
+
+--- index.html:236-246 ---
+  236:   <button class="workspace-nav-btn" data-section="tools">Инструменты</button>
+  237:   <button class="workspace-nav-btn" data-section="map">Карта</button>
+  238:   <button class="workspace-nav-btn" data-section="editor">Редактор</button>
+  239:   <button class="workspace-nav-btn" data-section="codehub">Веб-мастерская</button>
+  240:   <button class="workspace-nav-btn" data-section="marketplace">Шаблоны</button>
+  241:   <button class="workspace-nav-btn" data-section="rooms">Чат</button>
+  242:   <button class="workspace-nav-btn" data-section="fili-store">Fili Store</button>
+  243:   <button class="workspace-nav-btn" data-section="fili-safe">Fili Safe</button>
+  244:   <button class="workspace-nav-btn" data-section="analytics">Веб-аналитика</button>
+  245: </div>
+  246: 
+
+--- index.html:237-247 ---
+  237:   <button class="workspace-nav-btn" data-section="map">Карта</button>
+  238:   <button class="workspace-nav-btn" data-section="editor">Редактор</button>
+  239:   <button class="workspace-nav-btn" data-section="codehub">Веб-мастерская</button>
+  240:   <button class="workspace-nav-btn" data-section="marketplace">Шаблоны</button>
+  241:   <button class="workspace-nav-btn" data-section="rooms">Чат</button>
+  242:   <button class="workspace-nav-btn" data-section="fili-store">Fili Store</button>
+  243:   <button class="workspace-nav-btn" data-section="fili-safe">Fili Safe</button>
+  244:   <button class="workspace-nav-btn" data-section="analytics">Веб-аналитика</button>
+  245: </div>
+  246: 
+  247:         <div class="workspace-shell-body" id="workspaceShellBody">          <section class="workspace-panel active" data-panel="workspace">
+
+--- index.html:238-248 ---
+  238:   <button class="workspace-nav-btn" data-section="editor">Редактор</button>
+  239:   <button class="workspace-nav-btn" data-section="codehub">Веб-мастерская</button>
+  240:   <button class="workspace-nav-btn" data-section="marketplace">Шаблоны</button>
+  241:   <button class="workspace-nav-btn" data-section="rooms">Чат</button>
+  242:   <button class="workspace-nav-btn" data-section="fili-store">Fili Store</button>
+  243:   <button class="workspace-nav-btn" data-section="fili-safe">Fili Safe</button>
+  244:   <button class="workspace-nav-btn" data-section="analytics">Веб-аналитика</button>
+  245: </div>
+  246: 
+  247:         <div class="workspace-shell-body" id="workspaceShellBody">          <section class="workspace-panel active" data-panel="workspace">
+  248:             <div class="workspace-combined-layout workspace-home-dashboard" id="workspaceCombinedLayout">
+
+--- index.html:239-249 ---
+  239:   <button class="workspace-nav-btn" data-section="codehub">Веб-мастерская</button>
+  240:   <button class="workspace-nav-btn" data-section="marketplace">Шаблоны</button>
+  241:   <button class="workspace-nav-btn" data-section="rooms">Чат</button>
+  242:   <button class="workspace-nav-btn" data-section="fili-store">Fili Store</button>
+  243:   <button class="workspace-nav-btn" data-section="fili-safe">Fili Safe</button>
+  244:   <button class="workspace-nav-btn" data-section="analytics">Веб-аналитика</button>
+  245: </div>
+  246: 
+  247:         <div class="workspace-shell-body" id="workspaceShellBody">          <section class="workspace-panel active" data-panel="workspace">
+  248:             <div class="workspace-combined-layout workspace-home-dashboard" id="workspaceCombinedLayout">
+  249:               <section class="panel-card workspace-home-hero-card">
+
+--- index.html:240-250 ---
+  240:   <button class="workspace-nav-btn" data-section="marketplace">Шаблоны</button>
+  241:   <button class="workspace-nav-btn" data-section="rooms">Чат</button>
+  242:   <button class="workspace-nav-btn" data-section="fili-store">Fili Store</button>
+  243:   <button class="workspace-nav-btn" data-section="fili-safe">Fili Safe</button>
+  244:   <button class="workspace-nav-btn" data-section="analytics">Веб-аналитика</button>
+  245: </div>
+  246: 
+  247:         <div class="workspace-shell-body" id="workspaceShellBody">          <section class="workspace-panel active" data-panel="workspace">
+  248:             <div class="workspace-combined-layout workspace-home-dashboard" id="workspaceCombinedLayout">
+  249:               <section class="panel-card workspace-home-hero-card">
+  250:                 <div class="workspace-home-hero-main">
+
+--- index.html:254-264 ---
+  254:                     <p class="workspace-home-description">Живой обзор файлов, проектов, заметок и быстрых действий внутри текущей оболочки.</p>
+  255:                   </div>
+  256: 
+  257:                   <div class="workspace-home-actions" role="group" aria-label="Быстрые действия главной">
+  258:                     <button type="button" class="workspace-home-action-btn" data-home-open="files">Файлы</button>
+  259:                     <button type="button" class="workspace-home-action-btn" data-home-open="projects">Проекты</button>
+  260:                     <button type="button" class="workspace-home-action-btn" data-home-open="notes">Заметки</button>
+  261:                     <button type="button" class="workspace-home-action-btn" data-home-open="editor">Редактор</button>
+  262:                     <button type="button" class="workspace-home-action-btn secondary" data-home-open-cabinet="files">Файлы</button>
+  263:                   </div>
+  264: 
+
+--- index.html:255-265 ---
+  255:                   </div>
+  256: 
+  257:                   <div class="workspace-home-actions" role="group" aria-label="Быстрые действия главной">
+  258:                     <button type="button" class="workspace-home-action-btn" data-home-open="files">Файлы</button>
+  259:                     <button type="button" class="workspace-home-action-btn" data-home-open="projects">Проекты</button>
+  260:                     <button type="button" class="workspace-home-action-btn" data-home-open="notes">Заметки</button>
+  261:                     <button type="button" class="workspace-home-action-btn" data-home-open="editor">Редактор</button>
+  262:                     <button type="button" class="workspace-home-action-btn secondary" data-home-open-cabinet="files">Файлы</button>
+  263:                   </div>
+  264: 
+  265:                 <div class="workspace-home-stat-grid">
+
+--- index.html:256-266 ---
+  256: 
+  257:                   <div class="workspace-home-actions" role="group" aria-label="Быстрые действия главной">
+  258:                     <button type="button" class="workspace-home-action-btn" data-home-open="files">Файлы</button>
+  259:                     <button type="button" class="workspace-home-action-btn" data-home-open="projects">Проекты</button>
+  260:                     <button type="button" class="workspace-home-action-btn" data-home-open="notes">Заметки</button>
+  261:                     <button type="button" class="workspace-home-action-btn" data-home-open="editor">Редактор</button>
+  262:                     <button type="button" class="workspace-home-action-btn secondary" data-home-open-cabinet="files">Файлы</button>
+  263:                   </div>
+  264: 
+  265:                 <div class="workspace-home-stat-grid">
+  266:                   <div class="workspace-home-stat-card">
+
+--- index.html:257-267 ---
+  257:                   <div class="workspace-home-actions" role="group" aria-label="Быстрые действия главной">
+  258:                     <button type="button" class="workspace-home-action-btn" data-home-open="files">Файлы</button>
+  259:                     <button type="button" class="workspace-home-action-btn" data-home-open="projects">Проекты</button>
+  260:                     <button type="button" class="workspace-home-action-btn" data-home-open="notes">Заметки</button>
+  261:                     <button type="button" class="workspace-home-action-btn" data-home-open="editor">Редактор</button>
+  262:                     <button type="button" class="workspace-home-action-btn secondary" data-home-open-cabinet="files">Файлы</button>
+  263:                   </div>
+  264: 
+  265:                 <div class="workspace-home-stat-grid">
+  266:                   <div class="workspace-home-stat-card">
+  267:                     <span class="workspace-home-stat-label">Файлы</span>
+
+--- index.html:258-268 ---
+  258:                     <button type="button" class="workspace-home-action-btn" data-home-open="files">Файлы</button>
+  259:                     <button type="button" class="workspace-home-action-btn" data-home-open="projects">Проекты</button>
+  260:                     <button type="button" class="workspace-home-action-btn" data-home-open="notes">Заметки</button>
+  261:                     <button type="button" class="workspace-home-action-btn" data-home-open="editor">Редактор</button>
+  262:                     <button type="button" class="workspace-home-action-btn secondary" data-home-open-cabinet="files">Файлы</button>
+  263:                   </div>
+  264: 
+  265:                 <div class="workspace-home-stat-grid">
+  266:                   <div class="workspace-home-stat-card">
+  267:                     <span class="workspace-home-stat-label">Файлы</span>
+  268:                     <strong class="workspace-home-stat-value" id="homeStatFiles">0</strong>
+
+--- index.html:297-307 ---
+  297:                   <div>
+  298:                     <h3>Недавние файлы</h3>
+  299:                     <span>Последние элементы библиотеки</span>
+  300:                   </div>
+  301:                   <button type="button" class="workspace-home-inline-btn" data-home-open="files">Открыть модуль</button>
+  302:                 </div>
+  303:                 <div class="workspace-home-list" id="homeFilesList"></div>
+  304:               </section>
+  305: 
+  306:               <section class="panel-card workspace-home-module-card">
+  307:                 <div class="panel-card-header workspace-home-card-header">
+
+--- index.html:308-318 ---
+  308:                   <div>
+  309:                     <h3>Недавние проекты</h3>
+  310:                     <span>Основные рабочие контейнеры</span>
+  311:                   </div>
+  312:                   <button type="button" class="workspace-home-inline-btn" data-home-open="projects">Открыть модуль</button>
+  313:                 </div>
+  314:                 <div class="workspace-home-list" id="homeProjectsList"></div>
+  315:               </section>
+  316: 
+  317:               <section class="panel-card workspace-home-module-card">
+  318:                 <div class="panel-card-header workspace-home-card-header">
+
+--- index.html:319-329 ---
+  319:                   <div>
+  320:                     <h3>Недавние заметки</h3>
+  321:                     <span>Связанные заметки и быстрый захват</span>
+  322:                   </div>
+  323:                   <button type="button" class="workspace-home-inline-btn" data-home-open="notes">Открыть модуль</button>
+  324:                 </div>
+  325:                 <div class="workspace-home-list" id="homeNotesList"></div>
+  326:               </section>
+  327: 
+  328: 
+  329:               <section class="panel-card workspace-home-quicknote-card">
+
+--- index.html:331-341 ---
+  331:                   <div>
+  332:                     <h3>Быстрый захват</h3>
+  333:                     <span>Временная локальная заметка, синхронизированная с текущим полем пространства</span>
+  334:                   </div>
+  335:                   <button type="button" class="workspace-home-inline-btn" data-home-open="notes">Открыть заметки</button>
+  336:                 </div>
+  337:                 <textarea class="notes-editor compact-editor workspace-home-quicknote" id="workspaceNotesCombined" placeholder="Быстрая заметка..."></textarea>
+  338:                 <div class="workspace-home-hint-row">
+  339:                   <span class="workspace-home-hint">Сначала локальный черновик</span>
+  340:                   <span class="workspace-home-hint">Заметки, чтобы превратить это в структурированную запись</span>
+  341:                 </div>
+
+--- index.html:344-354 ---
+  344:               <section class="panel-card workspace-home-workflow-card">
+  345:                 <div class="panel-card-header workspace-home-card-header">
+  346:                   <div>
+  347:                     <h3>Маршруты пространства</h3>
+  348:                     <span>Основная работа — сейчас, Шаблоны и Веб-мастерская — как реальные направления, а будущие модули ниже помечены как «в разработке».</span>
+  349:                   </div>
+  350:                 </div>
+  351: 
+  352:                 <div class="workspace-home-shortcut-grid workspace-home-shortcut-grid--layered">
+  353:                   <button type="button" class="workspace-home-shortcut workspace-home-shortcut--primary" data-home-open="marketplace">
+  354:                     <strong>Шаблоны</strong>
+
+--- index.html:349-359 ---
+  349:                   </div>
+  350:                 </div>
+  351: 
+  352:                 <div class="workspace-home-shortcut-grid workspace-home-shortcut-grid--layered">
+  353:                   <button type="button" class="workspace-home-shortcut workspace-home-shortcut--primary" data-home-open="marketplace">
+  354:                     <strong>Шаблоны</strong>
+  355:                     <span>Бесплатные официальные шаблоны для Web Studio и будущей публикации.</span>
+  356:                   </button>
+  357: 
+  358:                   <button type="button" class="workspace-home-shortcut workspace-home-shortcut--primary" data-home-open="codehub">
+  359:                     <strong>Веб-мастерская</strong>
+
+--- index.html:354-364 ---
+  354:                     <strong>Шаблоны</strong>
+  355:                     <span>Бесплатные официальные шаблоны для Web Studio и будущей публикации.</span>
+  356:                   </button>
+  357: 
+  358:                   <button type="button" class="workspace-home-shortcut workspace-home-shortcut--primary" data-home-open="codehub">
+  359:                     <strong>Веб-мастерская</strong>
+  360:                     <span>Реальное направление кода и публикации, а не просто будущая метка.</span>
+  361:                   </button>
+  362: 
+  363:                   <button type="button" class="workspace-home-shortcut" data-home-open="files">
+  364:                     <strong>Файлы</strong>
+
+--- index.html:355-365 ---
+  355:                     <span>Бесплатные официальные шаблоны для Web Studio и будущей публикации.</span>
+  356:                   </button>
+  357: 
+  358:                   <button type="button" class="workspace-home-shortcut workspace-home-shortcut--primary" data-home-open="codehub">
+  359:                     <strong>Веб-мастерская</strong>
+  360:                     <span>Реальное направление кода и публикации, а не просто будущая метка.</span>
+  361:                   </button>
+  362: 
+  363:                   <button type="button" class="workspace-home-shortcut" data-home-open="files">
+  364:                     <strong>Файлы</strong>
+  365:                     <span>Библиотека файлов, материалов и ассетов.</span>
+
+--- index.html:359-369 ---
+  359:                     <strong>Веб-мастерская</strong>
+  360:                     <span>Реальное направление кода и публикации, а не просто будущая метка.</span>
+  361:                   </button>
+  362: 
+  363:                   <button type="button" class="workspace-home-shortcut" data-home-open="files">
+  364:                     <strong>Файлы</strong>
+  365:                     <span>Библиотека файлов, материалов и ассетов.</span>
+  366:                   </button>
+  367: 
+  368:                   <button type="button" class="workspace-home-shortcut" data-home-open="projects">
+  369:                     <strong>Проекты</strong>
+
+--- index.html:364-374 ---
+  364:                     <strong>Файлы</strong>
+  365:                     <span>Библиотека файлов, материалов и ассетов.</span>
+  366:                   </button>
+  367: 
+  368:                   <button type="button" class="workspace-home-shortcut" data-home-open="projects">
+  369:                     <strong>Проекты</strong>
+  370:                     <span>Контейнеры, связывающие заметки, черновики и файлы.</span>
+  371:                   </button>
+  372: 
+  373:                   <button type="button" class="workspace-home-shortcut" data-home-open="notes">
+  374:                     <strong>Заметки</strong>
+
+--- index.html:369-379 ---
+  369:                     <strong>Проекты</strong>
+  370:                     <span>Контейнеры, связывающие заметки, черновики и файлы.</span>
+  371:                   </button>
+  372: 
+  373:                   <button type="button" class="workspace-home-shortcut" data-home-open="notes">
+  374:                     <strong>Заметки</strong>
+  375:                     <span>Сохранённые фрагменты и связанные ссылки.</span>
+  376:                   </button>
+  377: 
+  378:                   <button type="button" class="workspace-home-shortcut" data-home-open="editor">
+  379:                     <strong>Редактор</strong>
+
+--- index.html:374-384 ---
+  374:                     <strong>Заметки</strong>
+  375:                     <span>Сохранённые фрагменты и связанные ссылки.</span>
+  376:                   </button>
+  377: 
+  378:                   <button type="button" class="workspace-home-shortcut" data-home-open="editor">
+  379:                     <strong>Редактор</strong>
+  380:                     <span>Подготовка черновиков и публикации.</span>
+  381:                   </button>
+  382: 
+  383:                   <button type="button" class="workspace-home-shortcut workspace-home-shortcut--primary" data-home-open="site-pages">
+  384:                     <strong>Web Studio</strong>
+
+--- index.html:379-389 ---
+  379:                     <strong>Редактор</strong>
+  380:                     <span>Подготовка черновиков и публикации.</span>
+  381:                   </button>
+  382: 
+  383:                   <button type="button" class="workspace-home-shortcut workspace-home-shortcut--primary" data-home-open="site-pages">
+  384:                     <strong>Web Studio</strong>
+  385:                     <span>Site identity, pages manager, menu foundation и будущий build/export flow.</span>
+  386:                   </button>
+  387: 
+  388:                   <button type="button" class="workspace-home-shortcut" data-home-open="tools">
+  389:                     <strong>Инструменты</strong>
+
+--- index.html:384-394 ---
+  384:                     <strong>Web Studio</strong>
+  385:                     <span>Site identity, pages manager, menu foundation и будущий build/export flow.</span>
+  386:                   </button>
+  387: 
+  388:                   <button type="button" class="workspace-home-shortcut" data-home-open="tools">
+  389:                     <strong>Инструменты</strong>
+  390:                     <span>Служебные действия, сравнение, маршрутизация и извлечение.</span>
+  391:                   </button>
+  392: 
+  393:                   <button type="button" class="workspace-home-shortcut" data-home-open-cabinet="projects">
+  394:                     <strong>Пространство</strong>
+
+--- index.html:389-399 ---
+  389:                     <strong>Инструменты</strong>
+  390:                     <span>Служебные действия, сравнение, маршрутизация и извлечение.</span>
+  391:                   </button>
+  392: 
+  393:                   <button type="button" class="workspace-home-shortcut" data-home-open-cabinet="projects">
+  394:                     <strong>Пространство</strong>
+  395:                     <span>Расширенный рабочий вид для текущей оболочки.</span>
+  396:                   </button>
+  397:                 </div>
+  398: 
+  399:                  <div class="workspace-home-future-block workspace-home-future-block--ecosystem">
+
+--- index.html:398-408 ---
+  398: 
+  399:                  <div class="workspace-home-future-block workspace-home-future-block--ecosystem">
+  400:   <div class="workspace-home-future-title"></div>
+  401:   <div class="ecosystem-v0-card-grid ecosystem-v0-card-grid--workspace">
+  402:     <button type="button" class="workspace-home-shortcut ecosystem-v0-card" data-ecosystem-card="rooms" data-home-open="rooms" title="Открыть Чат">
+  403:       <strong>Чат</strong>
+  404:       <span>Локальные обсуждения и будущий слой коммуникации.</span>
+  405:     </button>
+  406:     <button type="button" class="workspace-home-shortcut ecosystem-v0-card" data-ecosystem-card="fili-store" data-home-open="fili-store" title="Открыть Fili Store v0">
+  407:       <strong>Fili Store v0</strong>
+  408:       <span>Шаблоны полезных файловых пакетов без оплат в v0.</span>
+
+--- index.html:402-412 ---
+  402:     <button type="button" class="workspace-home-shortcut ecosystem-v0-card" data-ecosystem-card="rooms" data-home-open="rooms" title="Открыть Чат">
+  403:       <strong>Чат</strong>
+  404:       <span>Локальные обсуждения и будущий слой коммуникации.</span>
+  405:     </button>
+  406:     <button type="button" class="workspace-home-shortcut ecosystem-v0-card" data-ecosystem-card="fili-store" data-home-open="fili-store" title="Открыть Fili Store v0">
+  407:       <strong>Fili Store v0</strong>
+  408:       <span>Шаблоны полезных файловых пакетов без оплат в v0.</span>
+  409:     </button>
+  410:     <button type="button" class="workspace-home-shortcut ecosystem-v0-card" data-ecosystem-card="fili-safe" data-home-open="fili-safe" title="Открыть Fili Safe v0">
+  411:       <strong>Fili Safe v0</strong>
+  412:       <span>Локальный профиль, подписи и будущий слой безопасности.</span>
+
+--- index.html:406-416 ---
+  406:     <button type="button" class="workspace-home-shortcut ecosystem-v0-card" data-ecosystem-card="fili-store" data-home-open="fili-store" title="Открыть Fili Store v0">
+  407:       <strong>Fili Store v0</strong>
+  408:       <span>Шаблоны полезных файловых пакетов без оплат в v0.</span>
+  409:     </button>
+  410:     <button type="button" class="workspace-home-shortcut ecosystem-v0-card" data-ecosystem-card="fili-safe" data-home-open="fili-safe" title="Открыть Fili Safe v0">
+  411:       <strong>Fili Safe v0</strong>
+  412:       <span>Локальный профиль, подписи и будущий слой безопасности.</span>
+  413:     </button>
+  414:     <button type="button" class="workspace-home-shortcut ecosystem-v0-card" data-ecosystem-card="analytics" data-home-open="analytics" title="Открыть Веб-аналитика">
+  415:       <strong>Веб-аналитика</strong>
+  416:       <span>Веб-аналитика сайта, экспортов и публикации.</span>
+
+--- index.html:410-420 ---
+  410:     <button type="button" class="workspace-home-shortcut ecosystem-v0-card" data-ecosystem-card="fili-safe" data-home-open="fili-safe" title="Открыть Fili Safe v0">
+  411:       <strong>Fili Safe v0</strong>
+  412:       <span>Локальный профиль, подписи и будущий слой безопасности.</span>
+  413:     </button>
+  414:     <button type="button" class="workspace-home-shortcut ecosystem-v0-card" data-ecosystem-card="analytics" data-home-open="analytics" title="Открыть Веб-аналитика">
+  415:       <strong>Веб-аналитика</strong>
+  416:       <span>Веб-аналитика сайта, экспортов и публикации.</span>
+  417:     </button>
+  418:   </div>
+  419: </div>
+  420:               </section>
+
+--- index.html:587-597 ---
+  587:       <div class="workspace-vitrina-lite-copy">
+  588:         <strong>Quick workspace browse</strong>
+  589:         <span>Откройте полный preview и поток установки через рабочее пространство.</span>
+  590:       </div>
+  591:       <button type="button" class="workspace-home-inline-btn" data-home-open-cabinet="marketplace">Открыть шаблоны</button>
+  592:     </div>
+  593: 
+  594:     <div class="ns-vitrina-host ns-vitrina-host--workspace" data-vitrina-root data-vitrina-surface="workspace"></div>
+  595:   </div>
+  596: </section>
+  597: 
+
+--- index.html:628-638 ---
+  628:               </div>
+  629:               <div class="module-shell-card module-shell-card--analytics standalone-shell ecosystem-v0-shell">
+  630:                 <div class="module-stage-row">
+  631:                   <span class="module-stage is-v0">v0 local analytics</span>
+  632:                   <span class="module-meta-chip">Файлы · Проекты · Экспорты · Веб-мастерская</span>
+  633:                 </div>
+  634:                 <div class="module-block-grid two-up">
+  635:                   <div class="module-block compact-block">
+  636:                     <div class="module-block-title">Локальные сигналы</div>
+  637:                     <div class="module-block-text">В будущем здесь будут сводки по файлам, проектам, документам, шаблонам, экспортам и публикациям.</div>
+  638:                   </div>
+
+--- index.html:649-659 ---
+  649:               </div>
+  650:             </div>
+  651:           </section>
+  652: 
+  653:           <section class="workspace-panel" data-panel="codehub">
+  654:             <div data-codehub-root data-codehub-surface="workspace"></div>
+  655:           </section>
+  656:         </div>
+  657:       </aside>
+  658:     </main>
+  659:   </div>
+
+--- index.html:650-660 ---
+  650:             </div>
+  651:           </section>
+  652: 
+  653:           <section class="workspace-panel" data-panel="codehub">
+  654:             <div data-codehub-root data-codehub-surface="workspace"></div>
+  655:           </section>
+  656:         </div>
+  657:       </aside>
+  658:     </main>
+  659:   </div>
+  660: 
+
+--- index.html:671-681 ---
+  671:           </div>
+  672:           <button class="cabinet-close-btn" id="cabinetCloseBtn" title="Закрыть">✕</button>
+  673:         </div>
+  674:         <div class="cabinet-grid-nav hidden" data-preview4-grid-nav="true" hidden aria-hidden="true" style="display:none !important;">
+  675:           <button type="button" data-open-section="workspace">Главная</button>
+  676:           <button type="button" data-open-section="files">Файлы</button>
+  677:           <button type="button" data-open-section="projects">Проекты</button>
+  678:           <button type="button" data-open-section="notes">Заметки</button>
+  679:           <button type="button" data-open-section="documents">Офис</button>
+  680:           <button type="button" data-open-section="site-pages">Веб-студия</button>
+  681:           <button type="button" data-open-section="tools">Инструменты</button>
+
+--- index.html:672-682 ---
+  672:           <button class="cabinet-close-btn" id="cabinetCloseBtn" title="Закрыть">✕</button>
+  673:         </div>
+  674:         <div class="cabinet-grid-nav hidden" data-preview4-grid-nav="true" hidden aria-hidden="true" style="display:none !important;">
+  675:           <button type="button" data-open-section="workspace">Главная</button>
+  676:           <button type="button" data-open-section="files">Файлы</button>
+  677:           <button type="button" data-open-section="projects">Проекты</button>
+  678:           <button type="button" data-open-section="notes">Заметки</button>
+  679:           <button type="button" data-open-section="documents">Офис</button>
+  680:           <button type="button" data-open-section="site-pages">Веб-студия</button>
+  681:           <button type="button" data-open-section="tools">Инструменты</button>
+  682:           <button type="button" data-open-section="codehub">Веб-мастерская</button>
+
+--- index.html:673-683 ---
+  673:         </div>
+  674:         <div class="cabinet-grid-nav hidden" data-preview4-grid-nav="true" hidden aria-hidden="true" style="display:none !important;">
+  675:           <button type="button" data-open-section="workspace">Главная</button>
+  676:           <button type="button" data-open-section="files">Файлы</button>
+  677:           <button type="button" data-open-section="projects">Проекты</button>
+  678:           <button type="button" data-open-section="notes">Заметки</button>
+  679:           <button type="button" data-open-section="documents">Офис</button>
+  680:           <button type="button" data-open-section="site-pages">Веб-студия</button>
+  681:           <button type="button" data-open-section="tools">Инструменты</button>
+  682:           <button type="button" data-open-section="codehub">Веб-мастерская</button>
+  683:           <button type="button" data-open-section="marketplace">Шаблоны</button>
+
+--- index.html:674-684 ---
+  674:         <div class="cabinet-grid-nav hidden" data-preview4-grid-nav="true" hidden aria-hidden="true" style="display:none !important;">
+  675:           <button type="button" data-open-section="workspace">Главная</button>
+  676:           <button type="button" data-open-section="files">Файлы</button>
+  677:           <button type="button" data-open-section="projects">Проекты</button>
+  678:           <button type="button" data-open-section="notes">Заметки</button>
+  679:           <button type="button" data-open-section="documents">Офис</button>
+  680:           <button type="button" data-open-section="site-pages">Веб-студия</button>
+  681:           <button type="button" data-open-section="tools">Инструменты</button>
+  682:           <button type="button" data-open-section="codehub">Веб-мастерская</button>
+  683:           <button type="button" data-open-section="marketplace">Шаблоны</button>
+  684:           <button type="button" data-open-section="rooms">Чат</button>
+
+--- index.html:675-685 ---
+  675:           <button type="button" data-open-section="workspace">Главная</button>
+  676:           <button type="button" data-open-section="files">Файлы</button>
+  677:           <button type="button" data-open-section="projects">Проекты</button>
+  678:           <button type="button" data-open-section="notes">Заметки</button>
+  679:           <button type="button" data-open-section="documents">Офис</button>
+  680:           <button type="button" data-open-section="site-pages">Веб-студия</button>
+  681:           <button type="button" data-open-section="tools">Инструменты</button>
+  682:           <button type="button" data-open-section="codehub">Веб-мастерская</button>
+  683:           <button type="button" data-open-section="marketplace">Шаблоны</button>
+  684:           <button type="button" data-open-section="rooms">Чат</button>
+  685:           <button type="button" data-open-section="analytics">Веб-аналитика</button>
+
+--- index.html:676-686 ---
+  676:           <button type="button" data-open-section="files">Файлы</button>
+  677:           <button type="button" data-open-section="projects">Проекты</button>
+  678:           <button type="button" data-open-section="notes">Заметки</button>
+  679:           <button type="button" data-open-section="documents">Офис</button>
+  680:           <button type="button" data-open-section="site-pages">Веб-студия</button>
+  681:           <button type="button" data-open-section="tools">Инструменты</button>
+  682:           <button type="button" data-open-section="codehub">Веб-мастерская</button>
+  683:           <button type="button" data-open-section="marketplace">Шаблоны</button>
+  684:           <button type="button" data-open-section="rooms">Чат</button>
+  685:           <button type="button" data-open-section="analytics">Веб-аналитика</button>
+  686:         </div>
+
+--- index.html:677-687 ---
+  677:           <button type="button" data-open-section="projects">Проекты</button>
+  678:           <button type="button" data-open-section="notes">Заметки</button>
+  679:           <button type="button" data-open-section="documents">Офис</button>
+  680:           <button type="button" data-open-section="site-pages">Веб-студия</button>
+  681:           <button type="button" data-open-section="tools">Инструменты</button>
+  682:           <button type="button" data-open-section="codehub">Веб-мастерская</button>
+  683:           <button type="button" data-open-section="marketplace">Шаблоны</button>
+  684:           <button type="button" data-open-section="rooms">Чат</button>
+  685:           <button type="button" data-open-section="analytics">Веб-аналитика</button>
+  686:         </div>
+  687: 
+
+--- index.html:678-688 ---
+  678:           <button type="button" data-open-section="notes">Заметки</button>
+  679:           <button type="button" data-open-section="documents">Офис</button>
+  680:           <button type="button" data-open-section="site-pages">Веб-студия</button>
+  681:           <button type="button" data-open-section="tools">Инструменты</button>
+  682:           <button type="button" data-open-section="codehub">Веб-мастерская</button>
+  683:           <button type="button" data-open-section="marketplace">Шаблоны</button>
+  684:           <button type="button" data-open-section="rooms">Чат</button>
+  685:           <button type="button" data-open-section="analytics">Веб-аналитика</button>
+  686:         </div>
+  687: 
+  688: 
+
+--- index.html:679-689 ---
+  679:           <button type="button" data-open-section="documents">Офис</button>
+  680:           <button type="button" data-open-section="site-pages">Веб-студия</button>
+  681:           <button type="button" data-open-section="tools">Инструменты</button>
+  682:           <button type="button" data-open-section="codehub">Веб-мастерская</button>
+  683:           <button type="button" data-open-section="marketplace">Шаблоны</button>
+  684:           <button type="button" data-open-section="rooms">Чат</button>
+  685:           <button type="button" data-open-section="analytics">Веб-аналитика</button>
+  686:         </div>
+  687: 
+  688: 
+  689:         <div class="cabinet-grid">
+
+--- index.html:680-690 ---
+  680:           <button type="button" data-open-section="site-pages">Веб-студия</button>
+  681:           <button type="button" data-open-section="tools">Инструменты</button>
+  682:           <button type="button" data-open-section="codehub">Веб-мастерская</button>
+  683:           <button type="button" data-open-section="marketplace">Шаблоны</button>
+  684:           <button type="button" data-open-section="rooms">Чат</button>
+  685:           <button type="button" data-open-section="analytics">Веб-аналитика</button>
+  686:         </div>
+  687: 
+  688: 
+  689:         <div class="cabinet-grid">
+  690:   <div class="cabinet-group cabinet-group--primary">
+
+--- index.html:681-691 ---
+  681:           <button type="button" data-open-section="tools">Инструменты</button>
+  682:           <button type="button" data-open-section="codehub">Веб-мастерская</button>
+  683:           <button type="button" data-open-section="marketplace">Шаблоны</button>
+  684:           <button type="button" data-open-section="rooms">Чат</button>
+  685:           <button type="button" data-open-section="analytics">Веб-аналитика</button>
+  686:         </div>
+  687: 
+  688: 
+  689:         <div class="cabinet-grid">
+  690:   <div class="cabinet-group cabinet-group--primary">
+  691:     <button class="cabinet-tile cabinet-tile--primary" data-open-section="workspace" type="button">
+
+--- index.html:687-697 ---
+  687: 
+  688: 
+  689:         <div class="cabinet-grid">
+  690:   <div class="cabinet-group cabinet-group--primary">
+  691:     <button class="cabinet-tile cabinet-tile--primary" data-open-section="workspace" type="button">
+  692:       <span class="cabinet-tile-title">Главная</span>
+  693:       <span class="cabinet-tile-text">Обзор пространства, недавние маршруты и чистая точка запуска для основных модулей.</span>
+  694:     </button>
+  695: 
+  696:     <button class="cabinet-tile cabinet-tile--primary" data-open-section="files" type="button">
+  697:       <span class="cabinet-tile-title">Файлы</span>
+
+--- index.html:692-702 ---
+  692:       <span class="cabinet-tile-title">Главная</span>
+  693:       <span class="cabinet-tile-text">Обзор пространства, недавние маршруты и чистая точка запуска для основных модулей.</span>
+  694:     </button>
+  695: 
+  696:     <button class="cabinet-tile cabinet-tile--primary" data-open-section="files" type="button">
+  697:       <span class="cabinet-tile-title">Файлы</span>
+  698:       <span class="cabinet-tile-text">Файлы, загрузки, документы и материалы workspace.</span>
+  699:     </button>
+  700: 
+  701:     <button class="cabinet-tile cabinet-tile--primary" data-open-section="projects" type="button">
+  702:       <span class="cabinet-tile-title">Проекты</span>
+
+--- index.html:697-707 ---
+  697:       <span class="cabinet-tile-title">Файлы</span>
+  698:       <span class="cabinet-tile-text">Файлы, загрузки, документы и материалы workspace.</span>
+  699:     </button>
+  700: 
+  701:     <button class="cabinet-tile cabinet-tile--primary" data-open-section="projects" type="button">
+  702:       <span class="cabinet-tile-title">Проекты</span>
+  703:       <span class="cabinet-tile-text">Контейнеры, связывающие файлы, черновики, заметки и рабочий поток.</span>
+  704:     </button>
+  705: 
+  706:     <button class="cabinet-tile cabinet-tile--primary" data-open-section="notes" type="button">
+  707:       <span class="cabinet-tile-title">Заметки</span>
+
+--- index.html:702-712 ---
+  702:       <span class="cabinet-tile-title">Проекты</span>
+  703:       <span class="cabinet-tile-text">Контейнеры, связывающие файлы, черновики, заметки и рабочий поток.</span>
+  704:     </button>
+  705: 
+  706:     <button class="cabinet-tile cabinet-tile--primary" data-open-section="notes" type="button">
+  707:       <span class="cabinet-tile-title">Заметки</span>
+  708:       <span class="cabinet-tile-text">Быстрый захват, связанные ссылки и рабочие фрагменты.</span>
+  709:     </button>
+  710: 
+  711:     <button class="cabinet-tile cabinet-tile--primary" data-open-section="documents" type="button">
+  712:       <span class="cabinet-tile-title">Офис</span>
+
+--- index.html:707-717 ---
+  707:       <span class="cabinet-tile-title">Заметки</span>
+  708:       <span class="cabinet-tile-text">Быстрый захват, связанные ссылки и рабочие фрагменты.</span>
+  709:     </button>
+  710: 
+  711:     <button class="cabinet-tile cabinet-tile--primary" data-open-section="documents" type="button">
+  712:       <span class="cabinet-tile-title">Офис</span>
+  713:       <span class="cabinet-tile-text">Лёгкий Writer для статей, отчётов, исследований и Markdown/HTML export.</span>
+  714:     </button>
+  715: 
+  716: 
+  717:     <button class="cabinet-tile cabinet-tile--primary" data-open-section="site-pages" type="button">
+
+--- index.html:713-723 ---
+  713:       <span class="cabinet-tile-text">Лёгкий Writer для статей, отчётов, исследований и Markdown/HTML export.</span>
+  714:     </button>
+  715: 
+  716: 
+  717:     <button class="cabinet-tile cabinet-tile--primary" data-open-section="site-pages" type="button">
+  718:       <span class="cabinet-tile-title">Веб-студия</span>
+  719:       <span class="cabinet-tile-text">Страницы, меню, предпросмотр, экспорт и подготовка публикации сайта.</span>
+  720:     </button>
+  721: 
+  722:     <button class="cabinet-tile cabinet-tile--primary" data-open-section="tools" type="button">
+  723:       <span class="cabinet-tile-title">Инструменты</span>
+
+--- index.html:718-728 ---
+  718:       <span class="cabinet-tile-title">Веб-студия</span>
+  719:       <span class="cabinet-tile-text">Страницы, меню, предпросмотр, экспорт и подготовка публикации сайта.</span>
+  720:     </button>
+  721: 
+  722:     <button class="cabinet-tile cabinet-tile--primary" data-open-section="tools" type="button">
+  723:       <span class="cabinet-tile-title">Инструменты</span>
+  724:       <span class="cabinet-tile-text">Служебные действия, сравнение, перевод, маршрутизация и извлечение.</span>
+  725:     </button>
+  726: 
+  727:     <button class="cabinet-tile cabinet-tile--primary" data-open-section="map" type="button">
+  728:       <span class="cabinet-tile-title">Карта</span>
+
+--- index.html:723-733 ---
+  723:       <span class="cabinet-tile-title">Инструменты</span>
+  724:       <span class="cabinet-tile-text">Служебные действия, сравнение, перевод, маршрутизация и извлечение.</span>
+  725:     </button>
+  726: 
+  727:     <button class="cabinet-tile cabinet-tile--primary" data-open-section="map" type="button">
+  728:       <span class="cabinet-tile-title">Карта</span>
+  729:       <span class="cabinet-tile-text">Canvas-карта для исследований, регионов, проектов и будущих связей с файлами.</span>
+  730:     </button>
+  731: 
+  732:     <button class="cabinet-tile cabinet-tile--primary" data-open-section="editor" type="button">
+  733:       <span class="cabinet-tile-title">Editor</span>
+
+--- index.html:728-738 ---
+  728:       <span class="cabinet-tile-title">Карта</span>
+  729:       <span class="cabinet-tile-text">Canvas-карта для исследований, регионов, проектов и будущих связей с файлами.</span>
+  730:     </button>
+  731: 
+  732:     <button class="cabinet-tile cabinet-tile--primary" data-open-section="editor" type="button">
+  733:       <span class="cabinet-tile-title">Editor</span>
+  734:       <span class="cabinet-tile-text">Создание страниц, preview, export и публикация сайта.</span>
+  735:     </button>
+  736: 
+  737: 
+  738:     <button class="cabinet-tile cabinet-tile--primary" data-open-section="codehub" type="button">
+
+--- index.html:734-744 ---
+  734:       <span class="cabinet-tile-text">Создание страниц, preview, export и публикация сайта.</span>
+  735:     </button>
+  736: 
+  737: 
+  738:     <button class="cabinet-tile cabinet-tile--primary" data-open-section="codehub" type="button">
+  739:       <span class="cabinet-tile-title">Веб-мастерская</span>
+  740:       <span class="cabinet-tile-text">Реальное направление кода и публикации, а не декоративная заглушка.</span>
+  741:     </button>
+  742: 
+  743:     <button class="cabinet-tile cabinet-tile--primary" data-open-section="marketplace" type="button">
+  744:       <span class="cabinet-tile-title">Шаблоны</span>
+
+--- index.html:735-745 ---
+  735:     </button>
+  736: 
+  737: 
+  738:     <button class="cabinet-tile cabinet-tile--primary" data-open-section="codehub" type="button">
+  739:       <span class="cabinet-tile-title">Веб-мастерская</span>
+  740:       <span class="cabinet-tile-text">Реальное направление кода и публикации, а не декоративная заглушка.</span>
+  741:     </button>
+  742: 
+  743:     <button class="cabinet-tile cabinet-tile--primary" data-open-section="marketplace" type="button">
+  744:       <span class="cabinet-tile-title">Шаблоны</span>
+  745:       <span class="cabinet-tile-text">Бесплатные официальные шаблоны IRGEZTNE для быстрого старта.</span>
+
+--- index.html:739-749 ---
+  739:       <span class="cabinet-tile-title">Веб-мастерская</span>
+  740:       <span class="cabinet-tile-text">Реальное направление кода и публикации, а не декоративная заглушка.</span>
+  741:     </button>
+  742: 
+  743:     <button class="cabinet-tile cabinet-tile--primary" data-open-section="marketplace" type="button">
+  744:       <span class="cabinet-tile-title">Шаблоны</span>
+  745:       <span class="cabinet-tile-text">Бесплатные официальные шаблоны IRGEZTNE для быстрого старта.</span>
+  746:     </button>
+  747:     <button class="cabinet-tile cabinet-tile--primary" data-open-section="rooms" type="button" data-preview4-card="rooms">
+  748:       <span class="cabinet-tile-title">Чат</span>
+  749:       <span class="cabinet-tile-text">Локальные комнаты проекта, решения, задачи, заметки и ссылки.</span>
+
+--- index.html:743-753 ---
+  743:     <button class="cabinet-tile cabinet-tile--primary" data-open-section="marketplace" type="button">
+  744:       <span class="cabinet-tile-title">Шаблоны</span>
+  745:       <span class="cabinet-tile-text">Бесплатные официальные шаблоны IRGEZTNE для быстрого старта.</span>
+  746:     </button>
+  747:     <button class="cabinet-tile cabinet-tile--primary" data-open-section="rooms" type="button" data-preview4-card="rooms">
+  748:       <span class="cabinet-tile-title">Чат</span>
+  749:       <span class="cabinet-tile-text">Локальные комнаты проекта, решения, задачи, заметки и ссылки.</span>
+  750:     </button>
+  751: 
+  752:     <button class="cabinet-tile cabinet-tile--primary" data-open-section="analytics" type="button" data-preview4-card="web-analytics">
+  753:       <span class="cabinet-tile-title">Веб-аналитика</span>
+
+--- index.html:748-758 ---
+  748:       <span class="cabinet-tile-title">Чат</span>
+  749:       <span class="cabinet-tile-text">Локальные комнаты проекта, решения, задачи, заметки и ссылки.</span>
+  750:     </button>
+  751: 
+  752:     <button class="cabinet-tile cabinet-tile--primary" data-open-section="analytics" type="button" data-preview4-card="web-analytics">
+  753:       <span class="cabinet-tile-title">Веб-аналитика</span>
+  754:       <span class="cabinet-tile-text">Веб-аналитика сайта, экспортов и публикации.</span>
+  755:     </button>
+  756: 
+  757:   </div>
+  758: 
+
+--- index.html:759-769 ---
+  759:   <div class="cabinet-group cabinet-group--future cabinet-group--ecosystem">
+  760:     <div class="cabinet-group-title"></div>
+  761: 
+  762:     <div class="ecosystem-v0-card-grid ecosystem-v0-card-grid--cabinet">
+  763:       <button class="cabinet-tile ecosystem-v0-card" data-ecosystem-card="rooms" data-open-section="rooms" type="button" title="Открыть Чат">
+  764:         <span class="cabinet-tile-title">Чат</span>
+  765:         <span class="cabinet-tile-text">Локальные обсуждения и будущий слой коммуникации.</span>
+  766:       </button>
+  767:       <button class="cabinet-tile ecosystem-v0-card" data-ecosystem-card="fili-store" data-open-section="fili-store" type="button" title="Открыть Fili Store v0">
+  768:         <span class="cabinet-tile-title">Fili Store v0</span>
+  769:         <span class="cabinet-tile-text">Шаблоны полезных файловых пакетов без оплат в v0.</span>
+
+--- index.html:763-773 ---
+  763:       <button class="cabinet-tile ecosystem-v0-card" data-ecosystem-card="rooms" data-open-section="rooms" type="button" title="Открыть Чат">
+  764:         <span class="cabinet-tile-title">Чат</span>
+  765:         <span class="cabinet-tile-text">Локальные обсуждения и будущий слой коммуникации.</span>
+  766:       </button>
+  767:       <button class="cabinet-tile ecosystem-v0-card" data-ecosystem-card="fili-store" data-open-section="fili-store" type="button" title="Открыть Fili Store v0">
+  768:         <span class="cabinet-tile-title">Fili Store v0</span>
+  769:         <span class="cabinet-tile-text">Шаблоны полезных файловых пакетов без оплат в v0.</span>
+  770:       </button>
+  771:       <button class="cabinet-tile ecosystem-v0-card" data-ecosystem-card="fili-safe" data-open-section="fili-safe" type="button" title="Открыть Fili Safe v0">
+  772:         <span class="cabinet-tile-title">Fili Safe v0</span>
+  773:         <span class="cabinet-tile-text">Локальный профиль, подписи и будущий слой безопасности.</span>
+
+--- index.html:767-777 ---
+  767:       <button class="cabinet-tile ecosystem-v0-card" data-ecosystem-card="fili-store" data-open-section="fili-store" type="button" title="Открыть Fili Store v0">
+  768:         <span class="cabinet-tile-title">Fili Store v0</span>
+  769:         <span class="cabinet-tile-text">Шаблоны полезных файловых пакетов без оплат в v0.</span>
+  770:       </button>
+  771:       <button class="cabinet-tile ecosystem-v0-card" data-ecosystem-card="fili-safe" data-open-section="fili-safe" type="button" title="Открыть Fili Safe v0">
+  772:         <span class="cabinet-tile-title">Fili Safe v0</span>
+  773:         <span class="cabinet-tile-text">Локальный профиль, подписи и будущий слой безопасности.</span>
+  774:       </button>
+  775:       <button class="cabinet-tile ecosystem-v0-card" data-ecosystem-card="analytics" data-open-section="analytics" type="button" title="Открыть Веб-аналитика">
+  776:         <span class="cabinet-tile-title">Веб-аналитика</span>
+  777:         <span class="cabinet-tile-text">Веб-аналитика сайта, экспортов и публикации.</span>
+
+--- index.html:771-781 ---
+  771:       <button class="cabinet-tile ecosystem-v0-card" data-ecosystem-card="fili-safe" data-open-section="fili-safe" type="button" title="Открыть Fili Safe v0">
+  772:         <span class="cabinet-tile-title">Fili Safe v0</span>
+  773:         <span class="cabinet-tile-text">Локальный профиль, подписи и будущий слой безопасности.</span>
+  774:       </button>
+  775:       <button class="cabinet-tile ecosystem-v0-card" data-ecosystem-card="analytics" data-open-section="analytics" type="button" title="Открыть Веб-аналитика">
+  776:         <span class="cabinet-tile-title">Веб-аналитика</span>
+  777:         <span class="cabinet-tile-text">Веб-аналитика сайта, экспортов и публикации.</span>
+  778:       </button>
+  779:     </div>
+  780:   </div>
+  781: </div>
+
+--- index.html:797-807 ---
+  797:           </div>
+  798:         </div>
+  799:         
+  800:         <div class="cabinet-inner-nav hidden" id="cabinetInnerNav" hidden aria-hidden="true" style="display:none !important;">
+  801:   <button class="cabinet-inner-nav-btn" data-section="workspace">Главная</button>
+  802:   <button class="cabinet-inner-nav-btn" data-section="files">Файлы</button>
+  803:   <button class="cabinet-inner-nav-btn" data-section="projects">Проекты</button>
+  804:   <button class="cabinet-inner-nav-btn" data-section="notes">Заметки</button>
+  805:   <button class="cabinet-inner-nav-btn" data-section="documents">Офис</button>
+  806:   <button class="cabinet-inner-nav-btn" data-section="site-pages">Web Studio</button>
+  807:   <button class="cabinet-inner-nav-btn" data-section="tools">Инструменты</button>
+
+--- index.html:798-808 ---
+  798:         </div>
+  799:         
+  800:         <div class="cabinet-inner-nav hidden" id="cabinetInnerNav" hidden aria-hidden="true" style="display:none !important;">
+  801:   <button class="cabinet-inner-nav-btn" data-section="workspace">Главная</button>
+  802:   <button class="cabinet-inner-nav-btn" data-section="files">Файлы</button>
+  803:   <button class="cabinet-inner-nav-btn" data-section="projects">Проекты</button>
+  804:   <button class="cabinet-inner-nav-btn" data-section="notes">Заметки</button>
+  805:   <button class="cabinet-inner-nav-btn" data-section="documents">Офис</button>
+  806:   <button class="cabinet-inner-nav-btn" data-section="site-pages">Web Studio</button>
+  807:   <button class="cabinet-inner-nav-btn" data-section="tools">Инструменты</button>
+  808:   <button class="cabinet-inner-nav-btn" data-section="map">Карта</button>
+
+--- index.html:799-809 ---
+  799:         
+  800:         <div class="cabinet-inner-nav hidden" id="cabinetInnerNav" hidden aria-hidden="true" style="display:none !important;">
+  801:   <button class="cabinet-inner-nav-btn" data-section="workspace">Главная</button>
+  802:   <button class="cabinet-inner-nav-btn" data-section="files">Файлы</button>
+  803:   <button class="cabinet-inner-nav-btn" data-section="projects">Проекты</button>
+  804:   <button class="cabinet-inner-nav-btn" data-section="notes">Заметки</button>
+  805:   <button class="cabinet-inner-nav-btn" data-section="documents">Офис</button>
+  806:   <button class="cabinet-inner-nav-btn" data-section="site-pages">Web Studio</button>
+  807:   <button class="cabinet-inner-nav-btn" data-section="tools">Инструменты</button>
+  808:   <button class="cabinet-inner-nav-btn" data-section="map">Карта</button>
+  809:   <button class="cabinet-inner-nav-btn" data-section="editor">Редактор</button>
+
+--- index.html:800-810 ---
+  800:         <div class="cabinet-inner-nav hidden" id="cabinetInnerNav" hidden aria-hidden="true" style="display:none !important;">
+  801:   <button class="cabinet-inner-nav-btn" data-section="workspace">Главная</button>
+  802:   <button class="cabinet-inner-nav-btn" data-section="files">Файлы</button>
+  803:   <button class="cabinet-inner-nav-btn" data-section="projects">Проекты</button>
+  804:   <button class="cabinet-inner-nav-btn" data-section="notes">Заметки</button>
+  805:   <button class="cabinet-inner-nav-btn" data-section="documents">Офис</button>
+  806:   <button class="cabinet-inner-nav-btn" data-section="site-pages">Web Studio</button>
+  807:   <button class="cabinet-inner-nav-btn" data-section="tools">Инструменты</button>
+  808:   <button class="cabinet-inner-nav-btn" data-section="map">Карта</button>
+  809:   <button class="cabinet-inner-nav-btn" data-section="editor">Редактор</button>
+  810:   <button class="cabinet-inner-nav-btn" data-section="codehub">Веб-мастерская</button>
+
+--- index.html:801-811 ---
+  801:   <button class="cabinet-inner-nav-btn" data-section="workspace">Главная</button>
+  802:   <button class="cabinet-inner-nav-btn" data-section="files">Файлы</button>
+  803:   <button class="cabinet-inner-nav-btn" data-section="projects">Проекты</button>
+  804:   <button class="cabinet-inner-nav-btn" data-section="notes">Заметки</button>
+  805:   <button class="cabinet-inner-nav-btn" data-section="documents">Офис</button>
+  806:   <button class="cabinet-inner-nav-btn" data-section="site-pages">Web Studio</button>
+  807:   <button class="cabinet-inner-nav-btn" data-section="tools">Инструменты</button>
+  808:   <button class="cabinet-inner-nav-btn" data-section="map">Карта</button>
+  809:   <button class="cabinet-inner-nav-btn" data-section="editor">Редактор</button>
+  810:   <button class="cabinet-inner-nav-btn" data-section="codehub">Веб-мастерская</button>
+  811:   <button class="cabinet-inner-nav-btn" data-section="marketplace">Шаблоны</button>
+
+--- index.html:802-812 ---
+  802:   <button class="cabinet-inner-nav-btn" data-section="files">Файлы</button>
+  803:   <button class="cabinet-inner-nav-btn" data-section="projects">Проекты</button>
+  804:   <button class="cabinet-inner-nav-btn" data-section="notes">Заметки</button>
+  805:   <button class="cabinet-inner-nav-btn" data-section="documents">Офис</button>
+  806:   <button class="cabinet-inner-nav-btn" data-section="site-pages">Web Studio</button>
+  807:   <button class="cabinet-inner-nav-btn" data-section="tools">Инструменты</button>
+  808:   <button class="cabinet-inner-nav-btn" data-section="map">Карта</button>
+  809:   <button class="cabinet-inner-nav-btn" data-section="editor">Редактор</button>
+  810:   <button class="cabinet-inner-nav-btn" data-section="codehub">Веб-мастерская</button>
+  811:   <button class="cabinet-inner-nav-btn" data-section="marketplace">Шаблоны</button>
+  812:   <button class="cabinet-inner-nav-btn" data-section="rooms">Чат</button>

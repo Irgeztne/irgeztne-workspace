@@ -1,0 +1,18 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: IRGEZTNE Workspace
+Source: https://github.com/Irgeztne/irgeztne-workspace
+
+Files: *
+Copyright: 2026 Irgeztne
+License: MPL-2.0
+
+Files: TRADEMARKS.md assets/icons/* build/icon.*
+Copyright: 2026 Irgeztne
+License: Brand-Assets-Reserved
+ The IRGEZTNE name, IRGEZTNE Workspace name, logos, icons, and brand assets
+ are not licensed for confusing or misleading use under the source-code license.
+ See TRADEMARKS.md.
+
+License: MPL-2.0
+ This package is licensed under the Mozilla Public License 2.0.
+ See the LICENSE file in the source distribution for the full license text.

@@ -1,0 +1,271 @@
+/* IRGEZTNE Workspace — Site Studio v5 layout polish SAFE
+   Scope is exact: only .ir-site-studio-v5-* elements are affected.
+   No Browser Shell, Workspace, module tabs, global buttons or old Editor styling. */
+
+.ir-site-studio-v5-overlay.is-open {
+  display: grid !important;
+  place-items: center !important;
+}
+
+.ir-site-studio-v5-modal {
+  width: calc(100vw - 14px) !important;
+  height: calc(100vh - 14px) !important;
+  max-width: none !important;
+  max-height: none !important;
+  border-radius: 22px !important;
+}
+
+.ir-site-studio-v5-head {
+  padding: 14px 18px !important;
+  min-height: 74px !important;
+}
+
+.ir-site-studio-v5-title strong {
+  font-size: 22px !important;
+}
+
+.ir-site-studio-v5-title span {
+  max-width: 680px !important;
+}
+
+.ir-site-studio-v5-head-actions {
+  gap: 8px !important;
+}
+
+.ir-site-studio-v5-body {
+  grid-template-columns: 245px minmax(0, 1fr) 300px !important;
+  gap: 12px !important;
+  padding: 12px !important;
+}
+
+.ir-site-studio-v5-overlay.is-left-collapsed .ir-site-studio-v5-body {
+  grid-template-columns: minmax(0, 1fr) 300px !important;
+}
+
+.ir-site-studio-v5-overlay.is-right-collapsed .ir-site-studio-v5-body {
+  grid-template-columns: 245px minmax(0, 1fr) !important;
+}
+
+.ir-site-studio-v5-overlay.is-left-collapsed.is-right-collapsed .ir-site-studio-v5-body {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+
+.ir-site-studio-v5-panel,
+.ir-site-studio-v5-main,
+.ir-site-studio-v5-settings {
+  border-radius: 22px !important;
+}
+
+.ir-site-studio-v5-panel-head,
+.ir-site-studio-v5-settings-head {
+  padding: 12px !important;
+}
+
+.ir-site-studio-v5-panel-head h3,
+.ir-site-studio-v5-settings-head h3 {
+  margin-bottom: 5px !important;
+}
+
+.ir-site-studio-v5-panel-actions {
+  gap: 7px !important;
+  margin-top: 10px !important;
+}
+
+.ir-site-studio-v5-page-list,
+.ir-site-studio-v5-settings-scroll {
+  padding: 8px !important;
+}
+
+.ir-site-studio-v5-page-row {
+  margin-bottom: 8px !important;
+  padding: 8px !important;
+  border-radius: 15px !important;
+}
+
+.ir-site-studio-v5-page-select {
+  padding-bottom: 6px !important;
+}
+
+.ir-site-studio-v5-page-select strong {
+  font-size: 13px !important;
+}
+
+.ir-site-studio-v5-page-select span {
+  font-size: 11px !important;
+}
+
+.ir-site-studio-v5-row-actions {
+  gap: 5px !important;
+}
+
+.ir-site-studio-v5-icon-btn {
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 10px !important;
+}
+
+.ir-site-studio-v5-btn--xs {
+  min-height: 28px !important;
+  padding: 6px 10px !important;
+  border-radius: 10px !important;
+}
+
+.ir-site-studio-v5-tabs {
+  padding: 10px !important;
+}
+
+.ir-site-studio-v5-tab {
+  padding: 10px 13px !important;
+}
+
+.ir-site-studio-v5-workspace {
+  padding: 12px !important;
+}
+
+.ir-site-studio-v5-editor-card,
+.ir-site-studio-v5-preview-card,
+.ir-site-studio-v5-publish-card,
+.ir-site-studio-v5-identity-card {
+  padding: 16px !important;
+  border-radius: 22px !important;
+}
+
+.ir-site-studio-v5-page-title {
+  font-size: 26px !important;
+}
+
+.ir-site-studio-v5-toolbar {
+  gap: 7px !important;
+  padding: 9px !important;
+  border-radius: 16px !important;
+}
+
+.ir-site-studio-v5-tool {
+  min-width: 36px !important;
+  padding: 8px 11px !important;
+}
+
+.ir-site-studio-v5-content {
+  min-height: calc(100vh - 390px) !important;
+  border-radius: 18px !important;
+  padding: 18px !important;
+}
+
+.ir-site-studio-v5-overlay.is-left-collapsed.is-right-collapsed .ir-site-studio-v5-content {
+  min-height: calc(100vh - 340px) !important;
+}
+
+.ir-site-studio-v5-preview-frame {
+  min-height: calc(100vh - 260px) !important;
+  border-radius: 20px !important;
+}
+
+.ir-site-studio-v5-code {
+  max-height: calc(100vh - 360px) !important;
+}
+
+.ir-site-studio-v5-identity-grid {
+  grid-template-columns: minmax(250px, 340px) minmax(0, 1fr) !important;
+}
+
+.ir-site-studio-v5-logo-tile {
+  width: 150px !important;
+  height: 150px !important;
+  border-radius: 32px !important;
+}
+
+.ir-site-studio-v5-logo-tile img {
+  width: 118px !important;
+  height: 118px !important;
+}
+
+/* Button polish: scoped only to Site Studio v5 controls. */
+.ir-site-studio-v5-btn,
+.ir-site-studio-v5-tab,
+.ir-site-studio-v5-tool,
+.ir-site-studio-v5-icon-btn,
+.ir-site-studio-v5-toolbar-btn,
+.ir-site-studio-v5-float-btn {
+  border-color: rgba(138, 199, 255, .42) !important;
+  background: radial-gradient(circle at 24% 0%, rgba(118, 201, 255, .22), transparent 42%), linear-gradient(180deg, rgba(28, 63, 105, .97), rgba(12, 31, 57, .98)) !important;
+  box-shadow: 0 12px 26px rgba(0, 44, 105, .20), inset 0 1px 0 rgba(255,255,255,.16) !important;
+}
+
+.ir-site-studio-v5-btn:hover,
+.ir-site-studio-v5-tab:hover,
+.ir-site-studio-v5-tool:hover,
+.ir-site-studio-v5-icon-btn:hover,
+.ir-site-studio-v5-toolbar-btn:hover,
+.ir-site-studio-v5-float-btn:hover {
+  transform: translateY(-1px) !important;
+  border-color: rgba(159, 220, 255, .80) !important;
+  box-shadow: 0 0 0 1px rgba(89, 173, 255, .16), 0 18px 38px rgba(42, 129, 232, .25), inset 0 1px 0 rgba(255,255,255,.24) !important;
+  filter: brightness(1.07) saturate(1.08) !important;
+}
+
+.ir-site-studio-v5-btn--primary,
+.ir-site-studio-v5-tab.is-active {
+  background: radial-gradient(circle at 22% 0%, rgba(178, 232, 255, .48), transparent 38%), linear-gradient(135deg, #69c5ff 0%, #2f7be6 48%, #174c98 100%) !important;
+  border-color: rgba(163, 224, 255, .88) !important;
+  color: #ffffff !important;
+}
+
+.ir-site-studio-v5-btn--danger {
+  background: linear-gradient(135deg, #d75e66 0%, #9b303d 100%) !important;
+  border-color: rgba(255, 154, 162, .58) !important;
+  color: #ffffff !important;
+}
+
+.ir-site-studio-v5-input[type="color"] {
+  min-height: 42px !important;
+  padding: 4px !important;
+  cursor: pointer !important;
+}
+
+@media (max-width: 1240px) {
+  .ir-site-studio-v5-body {
+    grid-template-columns: 230px minmax(0, 1fr) !important;
+  }
+  .ir-site-studio-v5-settings {
+    grid-column: 1 / -1 !important;
+    max-height: 290px !important;
+  }
+}
+
+@media (max-width: 840px) {
+  .ir-site-studio-v5-modal {
+    width: calc(100vw - 8px) !important;
+    height: calc(100vh - 8px) !important;
+    border-radius: 18px !important;
+  }
+  .ir-site-studio-v5-body {
+    grid-template-columns: 1fr !important;
+    padding: 8px !important;
+  }
+}
+
+
+/* 1.0.0: passive helper badge in Site Studio topbar */
+.ns-site-studio__top-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 2.25rem;
+  padding: 0.45rem 0.72rem;
+  border: 1px solid rgba(145, 190, 255, 0.24);
+  border-radius: 0.9rem;
+  color: rgba(226, 238, 255, 0.72);
+  background: rgba(12, 28, 52, 0.54);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  pointer-events: none;
+}
+
+.ns-site-studio__top-hint kbd {
+  padding: 0.12rem 0.36rem;
+  border-radius: 0.42rem;
+  border: 1px solid rgba(145, 190, 255, 0.28);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(245, 249, 255, 0.86);
+  font: inherit;
+  font-weight: 700;
+}

@@ -1,0 +1,14 @@
+name = "irgeztne-live-api"
+main = "worker.js"
+compatibility_date = "2026-05-30"
+
+# Create KV in Cloudflare dashboard or with wrangler,
+# then paste the IDs here.
+#
+# [[kv_namespaces]]
+# binding = "IRGEZTNE_LIVE_KV"
+# id = "PASTE_PRODUCTION_KV_NAMESPACE_ID"
+# preview_id = "PASTE_PREVIEW_KV_NAMESPACE_ID"
+
+[vars]
+IRGEZTNE_LIVE_ENV = "development"

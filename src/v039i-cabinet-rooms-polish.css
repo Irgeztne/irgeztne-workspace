@@ -1,0 +1,135 @@
+/* IRGEZTNE Workspace v039i — cabinet + rooms small polish */
+
+/* 1) Workspace compact home: keep clock and calendar toggle on one visual line. */
+.ir-wc-v07 .ir-wc-calendar-toggle {
+  min-height: 56px !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto 16px;
+  grid-template-rows: 1fr;
+  align-items: center !important;
+  gap: 10px;
+  padding: 10px 14px !important;
+}
+
+.ir-wc-v07 .ir-wc-calendar-toggle span {
+  grid-column: 1;
+  grid-row: 1;
+  align-self: center !important;
+  margin: 0 !important;
+  line-height: 1.15 !important;
+  transform: none !important;
+}
+
+.ir-wc-v07 .ir-wc-calendar-toggle strong {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: center !important;
+  margin: 0 !important;
+  line-height: 1.15 !important;
+  transform: none !important;
+  white-space: nowrap;
+}
+
+.ir-wc-v07 .ir-wc-calendar-toggle em,
+.ir-wc-v07 .ir-wc-calendar-toggle::after {
+  grid-column: 3;
+  grid-row: 1;
+  align-self: center !important;
+  justify-self: end;
+  margin: 0 !important;
+  transform: none !important;
+}
+
+.ir-wc-v07 .ir-wc-time-card,
+.ir-wc-v07 .ir-wc-clock-card,
+.ir-wc-v07 .ir-wc-calendar-toggle {
+  align-self: start !important;
+}
+
+/* Make the opened calendar attach under the full row, not push the toggle text down. */
+.ir-wc-v07 .ir-wc-calendar-wide {
+  margin-top: 10px !important;
+}
+
+/* 2) Rooms in right compact panel: less skinny/tall, more like a compact chat widget. */
+.workspace-panel[data-panel="rooms"] .rooms-live-v1,
+.workspace-shell .workspace-panel[data-panel="rooms"] .rooms-live-v1,
+.ir-wc-v07 [data-live-rooms-panel] {
+  width: 100% !important;
+  max-width: none !important;
+  padding: 12px !important;
+  gap: 10px !important;
+}
+
+.workspace-panel[data-panel="rooms"] .rooms-live-v1__top,
+.workspace-shell .workspace-panel[data-panel="rooms"] .rooms-live-v1__top,
+.ir-wc-v07 [data-live-rooms-panel] .rooms-live-v1__top {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+}
+
+.workspace-panel[data-panel="rooms"] .rooms-live-v1__top h3,
+.workspace-shell .workspace-panel[data-panel="rooms"] .rooms-live-v1__top h3,
+.ir-wc-v07 [data-live-rooms-panel] .rooms-live-v1__top h3 {
+  font-size: 18px !important;
+  line-height: 1.1 !important;
+}
+
+.workspace-panel[data-panel="rooms"] .rooms-live-v1__top p:not(.rooms-live-v1__eyebrow),
+.workspace-shell .workspace-panel[data-panel="rooms"] .rooms-live-v1__top p:not(.rooms-live-v1__eyebrow),
+.ir-wc-v07 [data-live-rooms-panel] .rooms-live-v1__top p:not(.rooms-live-v1__eyebrow) {
+  display: none !important;
+}
+
+.workspace-panel[data-panel="rooms"] .rooms-live-v1__main,
+.workspace-shell .workspace-panel[data-panel="rooms"] .rooms-live-v1__main,
+.ir-wc-v07 [data-live-rooms-panel] .rooms-live-v1__main {
+  grid-template-columns: 1fr !important;
+  gap: 8px !important;
+}
+
+.workspace-panel[data-panel="rooms"] .rooms-live-v1__setup,
+.workspace-panel[data-panel="rooms"] .rooms-live-v1__chat,
+.workspace-shell .workspace-panel[data-panel="rooms"] .rooms-live-v1__setup,
+.workspace-shell .workspace-panel[data-panel="rooms"] .rooms-live-v1__chat,
+.ir-wc-v07 [data-live-rooms-panel] .rooms-live-v1__setup,
+.ir-wc-v07 [data-live-rooms-panel] .rooms-live-v1__chat {
+  gap: 8px !important;
+}
+
+.workspace-panel[data-panel="rooms"] .rooms-live-v1__messages,
+.workspace-shell .workspace-panel[data-panel="rooms"] .rooms-live-v1__messages,
+.ir-wc-v07 [data-live-rooms-panel] .rooms-live-v1__messages {
+  min-height: 72px !important;
+  max-height: 112px !important;
+}
+
+.workspace-panel[data-panel="rooms"] .rooms-live-v1__compose textarea,
+.workspace-shell .workspace-panel[data-panel="rooms"] .rooms-live-v1__compose textarea,
+.ir-wc-v07 [data-live-rooms-panel] .rooms-live-v1__compose textarea {
+  min-height: 46px !important;
+  max-height: 70px !important;
+}
+
+.workspace-panel[data-panel="rooms"] .rooms-live-v1__status,
+.workspace-shell .workspace-panel[data-panel="rooms"] .rooms-live-v1__status,
+.ir-wc-v07 [data-live-rooms-panel] .rooms-live-v1__status {
+  min-height: 30px !important;
+  padding: 7px 9px !important;
+}
+
+/* 3) If the right panel is very narrow, keep the card compact but readable. */
+@media (max-width: 620px) {
+  .ir-wc-v07 .ir-wc-calendar-toggle {
+    grid-template-columns: minmax(0, 1fr) auto 14px;
+    padding-inline: 12px !important;
+  }
+
+  .ir-wc-v07 [data-live-rooms-panel] .rooms-live-v1__badge,
+  .workspace-panel[data-panel="rooms"] .rooms-live-v1__badge {
+    padding-inline: 8px !important;
+    min-height: 26px !important;
+  }
+}

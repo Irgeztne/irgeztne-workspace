@@ -1,0 +1,150 @@
+{
+  "version": "v083a",
+  "updatedAt": "2026-06-13T16:30:36.001Z",
+  "templates": [
+    {
+      "appId": "project-landing",
+      "labId": "landing-product",
+      "title": "Landing / Product",
+      "titleRu": "Landing / Product",
+      "description": {
+        "en": "A wide premium product landing template with hero, product mockup, benefits, workflow, proof, FAQ, CTA, EN/RU and light/dark themes.",
+        "ru": "Широкий премиум-лендинг для продукта: hero, product mockup, преимущества, сценарий, proof, FAQ, CTA, EN/RU и светлая/тёмная тема."
+      },
+      "descriptionRu": "",
+      "category": "landing",
+      "tags": [
+        "Landing",
+        "Product",
+        "Mockup",
+        "EN/RU"
+      ],
+      "previewPath": "template-lab/landing-product/index.html",
+      "metadataPath": "template-lab/landing-product/metadata.json",
+      "screenshotPath": "",
+      "hasPackage": true,
+      "hasMetadata": true,
+      "hasScreenshot": false
+    },
+    {
+      "appId": "business-product",
+      "labId": "business-product",
+      "title": "Business / Product",
+      "titleRu": "Business / Product",
+      "description": {
+        "en": "A wide premium company/product template with trust blocks, product sections, case metrics, light/dark themes and EN/RU localization.",
+        "ru": "Широкий премиум-шаблон для компании/продукта: доверие, продуктовые секции, метрики кейса, светлая/тёмная тема и EN/RU."
+      },
+      "descriptionRu": "",
+      "category": "business",
+      "tags": [
+        "Business",
+        "Product",
+        "Light/Dark",
+        "EN/RU"
+      ],
+      "previewPath": "template-lab/business-product/index.html",
+      "metadataPath": "template-lab/business-product/metadata.json",
+      "screenshotPath": "",
+      "hasPackage": true,
+      "hasMetadata": true,
+      "hasScreenshot": false
+    },
+    {
+      "appId": "blog-news",
+      "labId": "blog-news",
+      "title": "Blog / News",
+      "titleRu": "Blog / News",
+      "description": {
+        "en": "A wide editorial news and magazine template with light/dark themes, EN/RU localization, RSS link, footer navigation and social sharing icons.",
+        "ru": "Широкоформатный редакционный шаблон для новостей и журнала: светлая/тёмная тема, EN/RU, RSS-ссылка, footer-навигация и социальные иконки."
+      },
+      "descriptionRu": "",
+      "category": "publishing",
+      "tags": [
+        "Publishing",
+        "Light/Dark",
+        "EN/RU",
+        "RSS"
+      ],
+      "previewPath": "template-lab/blog-news/index.html",
+      "metadataPath": "template-lab/blog-news/metadata.json",
+      "screenshotPath": "",
+      "hasPackage": true,
+      "hasMetadata": true,
+      "hasScreenshot": false
+    },
+    {
+      "appId": "documentation-wide",
+      "labId": "documentation",
+      "title": "Documentation",
+      "titleRu": "Documentation",
+      "description": {
+        "en": "A wide documentation template with sidebar navigation, search, article content, code examples, callouts, API cards, FAQ, EN/RU and light/dark themes.",
+        "ru": "Широкий шаблон документации: боковая навигация, поиск, статья, примеры кода, callout-блоки, API-карточки, FAQ, EN/RU и светлая/тёмная тема."
+      },
+      "descriptionRu": "",
+      "category": "documentation",
+      "tags": [
+        "Docs",
+        "Knowledge Base",
+        "Code",
+        "EN/RU"
+      ],
+      "previewPath": "template-lab/documentation/index.html",
+      "metadataPath": "template-lab/documentation/metadata.json",
+      "screenshotPath": "",
+      "hasPackage": true,
+      "hasMetadata": true,
+      "hasScreenshot": false
+    },
+    {
+      "appId": "studio-portfolio",
+      "labId": "portfolio-personal",
+      "title": "Portfolio / Personal",
+      "titleRu": "Portfolio / Personal",
+      "description": {
+        "en": "A wide visual portfolio template with selected works, case hierarchy, about section, process and contact CTA.",
+        "ru": "Широкий визуальный шаблон портфолио: выбранные работы, иерархия кейсов, блок о себе, процесс и контактный CTA."
+      },
+      "descriptionRu": "",
+      "category": "portfolio",
+      "tags": [
+        "Portfolio",
+        "Personal",
+        "Works",
+        "EN/RU"
+      ],
+      "previewPath": "template-lab/portfolio-personal/index.html",
+      "metadataPath": "template-lab/portfolio-personal/metadata.json",
+      "screenshotPath": "",
+      "hasPackage": true,
+      "hasMetadata": true,
+      "hasScreenshot": false
+    },
+    {
+      "appId": "agency-studio",
+      "labId": "agency-studio",
+      "title": "Agency / Studio",
+      "titleRu": "Agency / Studio",
+      "description": {
+        "en": "A wide premium agency/studio template with hero, cases, services, process, manifesto, CTA, EN/RU and light/dark themes.",
+        "ru": "Широкий премиум-шаблон агентства/студии: hero, кейсы, услуги, процесс, manifesto, CTA, EN/RU и светлая/тёмная тема."
+      },
+      "descriptionRu": "",
+      "category": "agency",
+      "tags": [
+        "Agency",
+        "Studio",
+        "Cases",
+        "EN/RU"
+      ],
+      "previewPath": "template-lab/agency-studio/index.html",
+      "metadataPath": "template-lab/agency-studio/metadata.json",
+      "screenshotPath": "",
+      "hasPackage": true,
+      "hasMetadata": true,
+      "hasScreenshot": false
+    }
+  ]
+}

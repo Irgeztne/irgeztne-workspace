@@ -1,0 +1,53 @@
+    renderDraftList() {
+      const drafts = this.store.getDrafts();
+      const label = drafts.length + " " + t("drafts","черновиков");
+
+      if (this.refs.headerDraftCount) {
+        this.refs.headerDraftCount.textContent = label;
+      }
+
+      if (this.refs.sidebarDraftCount) {
+        this.refs.sidebarDraftCount.textContent = label;
+      }
+
+      const listRoot = this.refs.draftList;
+      if (!listRoot) return;
+
+      if (!drafts.length) {
+        listRoot.innerHTML = '<div class="ns-editor-shell__mini-empty">' + t("No drafts yet.","Черновиков пока нет.") + '</div>';
+        return;
+      }
+
+      const state = readEditorSitePagesState();
+      const sitePageDrafts = drafts.filter((draft) => draft.sitePageId || getEditorSitePageByDraftId(draft.id));
+      const regularDrafts = drafts.filter((draft) => !draft.sitePageId && !getEditorSitePageByDraftId(draft.id));
+
+      const row = (draft, kind) => {
+        const active = this.currentDraft?.id === draft.id ? "is-active" : "";
+        const template = getTemplate(draft.templateId);
+        const page = draft.sitePageId ? (state.pages || []).find((item) => item.id === draft.sitePageId) : getEditorSitePageByDraftId(draft.id);
+        const kindText = kind === "page" ? t("Site page", "Страница сайта") : t("Draft", "Черновик");
+        const detail = kind === "page"
+          ? kindText + (page && page.slug ? " · /" + page.slug : "") + " · " + formatDateTime(draft.updatedAt)
+          : getTemplateUiMeta(template).name + " · " + formatDateTime(draft.updatedAt);
+        return '<div class="ns-editor-shell__list-row ' + active + '" data-draft-kind="' + (kind === "page" ? "site-page" : "draft") + '">' +
+          '<button class="ns-editor-shell__list-button ' + active + '" type="button" data-draft-id="' + escapeHtml(draft.id) + '">' +
+            '<span class="ns-editor-shell__list-title">' + escapeHtml(draft.meta.title || t("Untitled draft","Черновик без названия")) + '</span>' +
+            '<span class="ns-editor-shell__list-subtitle">' + escapeHtml(detail) + '</span>' +
+            (kind === "page" ? '<span class="ns-editor-shell__site-page-pill">' + escapeHtml(t("Site page", "Страница сайта")) + '</span>' : '') +
+          '</button>' +
+          '<button class="ns-editor-shell__button ns-editor-shell__button--danger ns-editor-shell__list-delete" type="button" data-action="delete-draft-item" data-draft-id="' + escapeHtml(draft.id) + '">' + t('Delete','Удалить') + '</button>' +
+        '</div>';
+      };
+
+      const sections = [];
+      if (sitePageDrafts.length) {
+        sections.push('<div class="ns-editor-shell__list-section"><div class="ns-editor-shell__list-section-title">' + escapeHtml(t("Site pages", "Страницы сайта")) + '</div>' + sitePageDrafts.map((draft) => row(draft, "page")).join("") + '</div>');
+      }
+      if (regularDrafts.length) {
+        sections.push('<div class="ns-editor-shell__list-section"><div class="ns-editor-shell__list-section-title">' + escapeHtml(t("Drafts", "Черновики")) + '</div>' + regularDrafts.map((draft) => row(draft, "draft")).join("") + '</div>');
+      }
+      listRoot.innerHTML = sections.join("");
+    }
+
+    syncHeaderState() {

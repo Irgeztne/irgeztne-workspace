@@ -1,0 +1,7 @@
+/* IRGEZTNE v045: old Live room is disabled for user-facing Chat. */
+[data-live-rooms-panel],
+.rooms-live-v1,
+.rooms-live-v039d,
+.rooms-live-v039e {
+  display: none !important;
+}

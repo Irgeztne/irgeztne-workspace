@@ -1,0 +1,22 @@
+/* IRGEZTNE v043b - account placement and connected gates */
+
+#irgeztne-connected-account.ir-connected-account-btn.is-v043b-placed {
+  order: initial;
+  flex: 0 0 auto;
+  margin-left: 6px !important;
+  margin-right: 6px !important;
+}
+
+.ir-connected-account-btn {
+  position: relative;
+  z-index: 80;
+}
+
+/* When Chat is gated, old no-account technical pieces should not bleed through. */
+[data-v043b-chat-gate="1"] > :not(.ir-connected-gate) {
+  display: none !important;
+}
+
+[data-v043b-chat-gate="1"] .ir-connected-gate {
+  margin: 0;
+}

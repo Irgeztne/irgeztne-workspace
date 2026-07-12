@@ -1,0 +1,75 @@
+/* IRGEZTNE Workspace — Site Studio v5 Exit/Back Safe
+   Small scoped polish: make leaving Site Studio obvious. */
+
+.ir-site-studio-v5-overlay .ir-site-studio-v5-exit-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 30px;
+  padding: 6px 10px;
+  border-radius: 12px;
+  color: rgba(189, 208, 235, 0.82);
+  background: rgba(7, 18, 36, 0.34);
+  border: 1px solid rgba(126, 170, 235, 0.16);
+  font-size: 12px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.ir-site-studio-v5-overlay .ir-site-studio-v5-exit-hint kbd {
+  display: inline-grid;
+  place-items: center;
+  min-width: 23px;
+  height: 21px;
+  padding: 0 6px;
+  border-radius: 7px;
+  color: rgba(236, 246, 255, 0.96);
+  background: linear-gradient(180deg, rgba(31, 55, 94, 0.95), rgba(13, 28, 52, 0.95));
+  border: 1px solid rgba(126, 170, 235, 0.22);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+  font: inherit;
+  font-size: 11px;
+}
+
+.ir-site-studio-v5-overlay .ir-site-studio-v5-back-btn {
+  margin-right: 2px;
+}
+
+.ir-site-studio-v5-overlay .ir-site-studio-v5-back-btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+@media (max-width: 980px) {
+  .ir-site-studio-v5-overlay .ir-site-studio-v5-exit-hint {
+    display: none;
+  }
+}
+
+
+/* 1.0.0: passive helper badge in Site Studio topbar */
+.ns-site-studio__top-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 2.25rem;
+  padding: 0.45rem 0.72rem;
+  border: 1px solid rgba(145, 190, 255, 0.24);
+  border-radius: 0.9rem;
+  color: rgba(226, 238, 255, 0.72);
+  background: rgba(12, 28, 52, 0.54);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  pointer-events: none;
+}
+
+.ns-site-studio__top-hint kbd {
+  padding: 0.12rem 0.36rem;
+  border-radius: 0.42rem;
+  border: 1px solid rgba(145, 190, 255, 0.28);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(245, 249, 255, 0.86);
+  font: inherit;
+  font-weight: 700;
+}
