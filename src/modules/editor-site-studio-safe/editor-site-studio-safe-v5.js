@@ -3082,22 +3082,29 @@
 
     Object.assign(files, createFaviconPackage(state.site || {}));
 
-    var templateLabPathV083K = templateLabPathForSiteV083K(state);
-    if (templateLabPathV083K) {
-      files['index.html'] = renderTemplateLabBridgeHtmlV083K(state, home, templateLabPathV083K);
-      pages.forEach(function (item) {
-        if (!item) return;
-        var name = pageFileName(item);
-        files[name] = renderTemplateLabBridgeHtmlV083K(state, item, templateLabPathV083K);
-      });
-    } else {
-      files['index.html'] = renderSiteHtml(state, home, { linkMode: 'file' });
-      pages.forEach(function (item) {
-        if (!item) return;
-        var name = pageFileName(item);
-        files[name] = renderSiteHtml(state, item, { linkMode: 'file' });
-      });
-    }
+    /*
+       IRGEZTNE_WEBSTUDIO_GENERATED_BUILD_ONLY_V084G
+
+       Template Lab is the gallery/demo source only.
+       A real site preview and export must be generated from the
+       editable Web Studio state: pages, Editor content, Design,
+       logo, favicon, colors and navigation.
+    */
+    files['index.html'] = renderSiteHtml(
+      state,
+      home,
+      { linkMode: 'file' }
+    );
+
+    pages.forEach(function (item) {
+      if (!item) return;
+      var name = pageFileName(item);
+      files[name] = renderSiteHtml(
+        state,
+        item,
+        { linkMode: 'file' }
+      );
+    });
 
     var activeFileName = pageFileName(active || home);
     return {
