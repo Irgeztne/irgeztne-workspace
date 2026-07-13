@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>IRGEZTNE Editor Workbench</title>
-  <link rel="stylesheet" href="./editor-workbench.css?v=v084j">
+  <link rel="stylesheet" href="./editor-workbench.css?v=v084p">
 </head>
 <body>
   <main class="ewb-shell" data-theme="dark">
@@ -44,7 +44,16 @@
       <button data-action="link">🔗</button>
       <button data-cmd="unlink">⛓</button>
       <button data-action="image">🖼</button>
-      <button data-action="video">▶</button>
+      <button
+        data-action="video"
+        title="Видео с компьютера / Local video"
+        aria-label="Видео с компьютера"
+      >▶</button>
+      <button
+        data-action="video-url"
+        title="Видео по ссылке / Video URL"
+        aria-label="Видео по ссылке"
+      >▶ URL</button>
       <button data-action="emoji">🙂</button>
       <button data-action="divider">─</button>
       <button data-action="code">{}</button>
@@ -73,6 +82,6 @@
     </section>
   </main>
 
-  <script src="./editor-workbench.js?v=v084j"></script>
+  <script src="./editor-workbench.js?v=v084p"></script>
 </body>
 </html>

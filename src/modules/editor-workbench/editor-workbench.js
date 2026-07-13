@@ -17,6 +17,7 @@
   let pendingMediaRequestV084H = null;
   let selectedMediaBlockV084J = null;
   let mediaInspectorV084J = null;
+  let mediaKeyboardArmedV084N = false;
 
   const PALETTE = [
     '#ffffff', '#111827', '#60a5fa', '#38bdf8', '#34d399',
@@ -251,6 +252,12 @@
     const clone = editor.cloneNode(true);
 
     clone
+      .querySelectorAll('.ewb-media-edit-trigger')
+      .forEach((element) => {
+        element.remove();
+      });
+
+    clone
       .querySelectorAll('.is-media-selected')
       .forEach((element) => {
         element.classList.remove('is-media-selected');
@@ -262,11 +269,12 @@
     );
   }
 
-  function requestLocalVideoV084H() {
-    const captionField = dialogInput('caption');
+  // IRGEZTNE_WORKBENCH_VIDEO_ENTRY_V084N
+  function requestLocalVideoV084H(caption = '') {
+    saveSelection();
 
-    const caption = String(
-      captionField && captionField.value || ''
+    const normalizedCaption = String(
+      caption || ''
     ).trim() || 'Video';
 
     const requestId =
@@ -277,7 +285,7 @@
 
     pendingMediaRequestV084H = {
       requestId,
-      caption
+      caption: normalizedCaption
     };
 
     setStatus('choosing video…');
@@ -335,7 +343,6 @@
       )
     );
 
-    closeDialog();
     setStatus('video added');
   }
 
@@ -352,6 +359,44 @@
       : null;
   }
 
+  // IRGEZTNE_MEDIA_EDIT_TRIGGER_V084P
+  function decorateMediaBlocksV084P(root = editor) {
+    root
+      .querySelectorAll(
+        'figure.ewb-video, figure.ewb-video-card'
+      )
+      .forEach((block) => {
+        const exists = Array.from(
+          block.children
+        ).some((child) => {
+          return child.classList &&
+            child.classList.contains(
+              'ewb-media-edit-trigger'
+            );
+        });
+
+        if (exists) return;
+
+        const button =
+          document.createElement('button');
+
+        button.type = 'button';
+        button.className =
+          'ewb-media-edit-trigger';
+
+        button.dataset.mediaEditTrigger = '1';
+        button.contentEditable = 'false';
+        button.title = 'Настроить видео';
+        button.setAttribute(
+          'aria-label',
+          'Настроить видео'
+        );
+        button.textContent = '⋯';
+
+        block.appendChild(button);
+      });
+  }
+
   function clearMediaSelectionV084J() {
     if (selectedMediaBlockV084J) {
       selectedMediaBlockV084J.classList.remove(
@@ -360,6 +405,7 @@
     }
 
     selectedMediaBlockV084J = null;
+    mediaKeyboardArmedV084N = false;
 
     if (mediaInspectorV084J) {
       mediaInspectorV084J.hidden = true;
@@ -516,6 +562,74 @@
     return inspector;
   }
 
+  // IRGEZTNE_MEDIA_SELECTION_V084O
+  function positionMediaInspectorV084O() {
+    if (
+      !selectedMediaBlockV084J ||
+      !selectedMediaBlockV084J.isConnected ||
+      !mediaInspectorV084J ||
+      mediaInspectorV084J.hidden
+    ) {
+      return;
+    }
+
+    const blockRect =
+      selectedMediaBlockV084J.getBoundingClientRect();
+
+    const inspectorRect =
+      mediaInspectorV084J.getBoundingClientRect();
+
+    const margin = 12;
+    const gap = 10;
+
+    let left =
+      blockRect.left +
+      blockRect.width / 2;
+
+    const halfWidth =
+      inspectorRect.width / 2;
+
+    left = Math.max(
+      halfWidth + margin,
+      Math.min(
+        window.innerWidth -
+          halfWidth -
+          margin,
+        left
+      )
+    );
+
+    let top =
+      blockRect.bottom + gap;
+
+    if (
+      top +
+      inspectorRect.height >
+      window.innerHeight - margin
+    ) {
+      top =
+        blockRect.top -
+        inspectorRect.height -
+        gap;
+    }
+
+    top = Math.max(
+      margin,
+      Math.min(
+        window.innerHeight -
+          inspectorRect.height -
+          margin,
+        top
+      )
+    );
+
+    mediaInspectorV084J.style.left =
+      left + 'px';
+
+    mediaInspectorV084J.style.top =
+      top + 'px';
+  }
+
   function selectMediaBlockV084J(block) {
     if (
       selectedMediaBlockV084J &&
@@ -527,6 +641,8 @@
     }
 
     selectedMediaBlockV084J = block || null;
+    mediaKeyboardArmedV084N =
+      !!selectedMediaBlockV084J;
 
     const inspector = ensureMediaInspectorV084J();
 
@@ -540,6 +656,12 @@
     );
 
     inspector.hidden = false;
+
+    positionMediaInspectorV084O();
+
+    requestAnimationFrame(
+      positionMediaInspectorV084O
+    );
   }
 
   function scheduleSave() {
@@ -661,6 +783,7 @@
     focusEditor();
     try {
       document.execCommand('insertHTML', false, html);
+      decorateMediaBlocksV084P(editor);
       saveSelection();
       scheduleSave();
       return true;
@@ -731,15 +854,6 @@
       const close = event.target.closest('[data-dialog-close]');
       if (close) {
         closeDialog();
-        return;
-      }
-
-      const localVideo = event.target.closest(
-        '[data-video-file-pick]'
-      );
-
-      if (localVideo) {
-        requestLocalVideoV084H();
         return;
       }
 
@@ -818,27 +932,11 @@
 
     if (mode === 'video') {
       heading.textContent =
-        'Insert video / Вставить видео';
+        'Видео по ссылке / Video URL';
 
       body.innerHTML = `
-        <div class="ewb-media-file-row">
-          <button
-            type="button"
-            class="is-primary"
-            data-video-file-pick="1"
-          >
-            Choose file / Выбрать файл
-          </button>
-
-          <span>MP4, WebM, OGG</span>
-        </div>
-
-        <div class="ewb-dialog-or">
-          or / или
-        </div>
-
         <label>
-          Video URL
+          Video URL / Ссылка
           <input
             data-field="url"
             type="url"
@@ -847,7 +945,7 @@
         </label>
 
         <label>
-          Caption
+          Caption / Подпись
           <input
             data-field="caption"
             type="text"
@@ -856,8 +954,8 @@
         </label>
 
         <p class="ewb-dialog-note">
-          A local file is copied into this website.
-          YouTube and Vimeo remain online embeds.
+          YouTube, Vimeo и прямые ссылки остаются
+          внешними встраиваниями.
         </p>
       `;
     }
@@ -990,7 +1088,17 @@
 
     if (action === 'link') return openDialog('link');
     if (action === 'image') return openDialog('image');
-    if (action === 'video') return openDialog('video');
+
+    if (action === 'video') {
+      requestLocalVideoV084H();
+      return;
+    }
+
+    if (action === 'video-url') {
+      openDialog('video');
+      return;
+    }
+
     if (action === 'emoji') return openDialog('emoji');
     if (action === 'color') return openDialog('color');
     if (action === 'highlight') return openDialog('highlight');
@@ -1033,18 +1141,84 @@
     }
   });
 
-  editor.addEventListener('click', (event) => {
-    const block = mediaBlockFromTargetV084J(
-      event.target
-    );
+  document.addEventListener(
+    'pointerdown',
+    (event) => {
+      const inspector =
+        mediaInspectorV084J;
 
-    if (block) {
-      selectMediaBlockV084J(block);
-      return;
-    }
+      if (
+        inspector &&
+        inspector.contains(event.target)
+      ) {
+        return;
+      }
 
-    clearMediaSelectionV084J();
-  });
+      const trigger =
+        event.target &&
+        event.target.closest
+          ? event.target.closest(
+              '[data-media-edit-trigger]'
+            )
+          : null;
+
+      if (trigger) {
+        const block =
+          mediaBlockFromTargetV084J(trigger);
+
+        if (block) {
+          event.preventDefault();
+          event.stopPropagation();
+          selectMediaBlockV084J(block);
+        }
+
+        return;
+      }
+
+      const block =
+        mediaBlockFromTargetV084J(
+          event.target
+        );
+
+      if (block) {
+        /*
+         * URL/embed выбирается кликом по рамке.
+         * У локального MP4 клик остаётся управлением
+         * воспроизведением; инструменты открывает ⋯.
+         */
+        if (
+          block.matches(
+            'figure.ewb-video--embed,' +
+            'figure.ewb-video-card'
+          )
+        ) {
+          event.preventDefault();
+          selectMediaBlockV084J(block);
+          return;
+        }
+
+        if (
+          block === selectedMediaBlockV084J
+        ) {
+          positionMediaInspectorV084O();
+        }
+
+        return;
+      }
+
+      if (selectedMediaBlockV084J) {
+        clearMediaSelectionV084J();
+      }
+
+      if (
+        event.target &&
+        editor.contains(event.target)
+      ) {
+        saveSelection();
+      }
+    },
+    true
+  );
 
   document.addEventListener('keydown', (event) => {
     if (
@@ -1062,7 +1236,12 @@
       return;
     }
 
-    if (!selectedMediaBlockV084J) return;
+    if (
+      !selectedMediaBlockV084J ||
+      !mediaKeyboardArmedV084N
+    ) {
+      return;
+    }
 
     const target = event.target;
 
@@ -1088,7 +1267,19 @@
   editor.addEventListener('keyup', saveSelection);
   editor.addEventListener('mouseup', saveSelection);
   editor.addEventListener('focus', saveSelection);
-  editor.addEventListener('scroll', saveSelection);
+
+  editor.addEventListener(
+    'scroll',
+    () => {
+      saveSelection();
+      positionMediaInspectorV084O();
+    }
+  );
+
+  window.addEventListener(
+    'resize',
+    positionMediaInspectorV084O
+  );
 
   htmlField.addEventListener('input', () => {
     scheduleSave();
@@ -1124,6 +1315,8 @@
 
     editor.innerHTML =
       editorHtmlForViewV084H(html);
+
+    decorateMediaBlocksV084P(editor);
 
     htmlField.value = html;
     setStatus('ready');
