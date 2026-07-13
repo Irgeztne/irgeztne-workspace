@@ -2,12 +2,6 @@ import { SOURCES } from './sources-ui.js';
 
 const WORKSPACE_START_URL = 'irgeztne://workspace';
 
-  // IRGEZTNE_WORKSHOP_BROWSER_DOOR_V003
-  // IRGEZTNE_WORKSHOP_BROWSER_DOOR_V003C: also intercept legacy codehub entrances.
-  // Public Workshop preview door: the app opens the same Workshop surface
-  // inside the built-in browser. Later this should become the official SEO URL.
-  const WORKSHOP_SITE_URL_V003 = new URL('./workshop-site/index.html', window.location.href).href;
-
 const WORKSPACE_START_TITLE = 'IRGEZTNE Workspace';
 
 function makeTabId(state) {
@@ -135,7 +129,7 @@ function renderWorkspaceStartPane(state) {
           <strong>${startLang('Шаблоны', 'Templates')}</strong>
           <small>${startLang('Официальные бесплатные шаблоны и темы для старта.', 'Official free templates and themes to start with.')}</small>
         </button>
-        <button type="button" class="irgeztne-start-card irgeztne-start-card--workshop" data-open-workshop-site="1" title="Open Package Workshop site">
+        <button type="button" class="irgeztne-start-card irgeztne-start-card--workshop" data-home-open="codehub" title="Open Workshop">
           <span class="irgeztne-start-icon">◇</span>
           <strong>${startLang('Мастерская пакетов', 'Package Workshop')}</strong>
           <small>${startLang('Блоки, темы, секции, ассеты и заготовки для сайтов.', 'Blocks, themes, sections, assets and website materials.')}</small>
@@ -186,7 +180,7 @@ function renderWorkspaceStartPane(state) {
           <div class="irgeztne-start-actions">
             <button type="button" data-open-section="site-pages">${startLang('Создать сайт', 'Create site')}</button>
             <button type="button" data-home-open="marketplace">${startLang('Шаблоны', 'Templates')}</button>
-            <button type="button" data-open-workshop-site="1">${startLang('Мастерская', 'Workshop')}</button>
+            <button type="button" data-open-section="codehub">${startLang('Мастерская', 'Workshop')}</button>
             <button type="button" data-open-section="workspace">${startLang('Пространство', 'Workspace')}</button>
           </div>
         </section>
@@ -241,20 +235,6 @@ function renderWorkspaceStartPane(state) {
     if (sourcePicker && !sourcePicker.contains(event.target)) closeStartSourceMenu();
   });
   
-  document.addEventListener('click', function handleWorkshopSiteDoorV003(event) {
-    const button = event.target && event.target.closest ? event.target.closest('[data-open-workshop-site], [data-home-open="codehub"], [data-open-section="codehub"], [data-section="codehub"]') : null;
-    if (!button) return;
-
-    event.preventDefault();
-    event.stopPropagation();
-
-    try {
-      navigateActiveTab(WORKSHOP_SITE_URL_V003);
-    } catch (error) {
-      console.warn('[IRGEZTNE_WORKSHOP_BROWSER_DOOR_V003] failed to open Workshop site', error);
-    }
-  }, true);
-
 document.addEventListener('irg:source-changed', (event) => {
     const source = event && event.detail ? event.detail.source : '';
     refreshStartSources(source || state.currentSource);
