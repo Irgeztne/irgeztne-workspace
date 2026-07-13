@@ -15,6 +15,8 @@
   let dialogMode = '';
   let mediaAssetsV084H = [];
   let pendingMediaRequestV084H = null;
+  let selectedMediaBlockV084J = null;
+  let mediaInspectorV084J = null;
 
   const PALETTE = [
     '#ffffff', '#111827', '#60a5fa', '#38bdf8', '#34d399',
@@ -159,7 +161,7 @@
 
     if (isDirectVideo(url)) {
       return (
-        '<figure class="ewb-video ewb-video--direct">' +
+        '<figure class="ewb-video ewb-video--direct is-size-medium is-align-center">' +
           '<video controls preload="metadata" src="' +
             esc(url) +
           '"></video>' +
@@ -172,7 +174,7 @@
 
     if (embedUrl) {
       return (
-        '<figure class="ewb-video ewb-video--embed">' +
+        '<figure class="ewb-video ewb-video--embed is-size-medium is-align-center">' +
           '<div class="ewb-video-frame">' +
             '<iframe' +
               ' src="' + esc(embedUrl) + '"' +
@@ -190,7 +192,7 @@
     }
 
     return (
-      '<figure class="ewb-video-card">' +
+      '<figure class="ewb-video-card is-size-medium is-align-center">' +
         '<a href="' + esc(url) + '"' +
           ' target="_blank" rel="noopener">' +
           '▶ ' + esc(caption) +
@@ -246,8 +248,16 @@
   }
 
   function editorHtmlForSaveV084H() {
+    const clone = editor.cloneNode(true);
+
+    clone
+      .querySelectorAll('.is-media-selected')
+      .forEach((element) => {
+        element.classList.remove('is-media-selected');
+      });
+
     return replaceMediaPathsV084H(
-      editor.innerHTML || '',
+      clone.innerHTML || '',
       'save'
     );
   }
@@ -327,6 +337,209 @@
 
     closeDialog();
     setStatus('video added');
+  }
+
+  // IRGEZTNE_WORKBENCH_MEDIA_INSPECTOR_V084J
+  function mediaBlockFromTargetV084J(target) {
+    if (!target || !target.closest) return null;
+
+    const block = target.closest(
+      'figure.ewb-video, figure.ewb-video-card'
+    );
+
+    return block && editor.contains(block)
+      ? block
+      : null;
+  }
+
+  function clearMediaSelectionV084J() {
+    if (selectedMediaBlockV084J) {
+      selectedMediaBlockV084J.classList.remove(
+        'is-media-selected'
+      );
+    }
+
+    selectedMediaBlockV084J = null;
+
+    if (mediaInspectorV084J) {
+      mediaInspectorV084J.hidden = true;
+    }
+  }
+
+  function deleteSelectedMediaV084J() {
+    if (
+      !selectedMediaBlockV084J ||
+      !selectedMediaBlockV084J.isConnected
+    ) {
+      clearMediaSelectionV084J();
+      return false;
+    }
+
+    const block = selectedMediaBlockV084J;
+
+    clearMediaSelectionV084J();
+    block.remove();
+
+    scheduleSave();
+    setStatus('video deleted');
+
+    return true;
+  }
+
+  function setSelectedMediaSizeV084J(size) {
+    if (!selectedMediaBlockV084J) return;
+
+    selectedMediaBlockV084J.classList.remove(
+      'is-size-small',
+      'is-size-medium',
+      'is-size-large',
+      'is-size-full'
+    );
+
+    selectedMediaBlockV084J.classList.add(
+      'is-size-' + size
+    );
+
+    scheduleSave();
+    setStatus('video resized');
+  }
+
+  function setSelectedMediaAlignV084J(align) {
+    if (!selectedMediaBlockV084J) return;
+
+    selectedMediaBlockV084J.classList.remove(
+      'is-align-left',
+      'is-align-center',
+      'is-align-right'
+    );
+
+    selectedMediaBlockV084J.classList.add(
+      'is-align-' + align
+    );
+
+    scheduleSave();
+    setStatus('video aligned');
+  }
+
+  function ensureMediaInspectorV084J() {
+    if (
+      mediaInspectorV084J &&
+      mediaInspectorV084J.isConnected
+    ) {
+      return mediaInspectorV084J;
+    }
+
+    const inspector = document.createElement('div');
+
+    inspector.className = 'ewb-media-inspector';
+    inspector.hidden = true;
+
+    inspector.innerHTML = `
+      <button
+        type="button"
+        data-media-command="delete"
+        title="Удалить видео"
+      >Удалить</button>
+
+      <span class="ewb-media-inspector-separator"></span>
+
+      <button type="button" data-media-size="small">S</button>
+      <button type="button" data-media-size="medium">M</button>
+      <button type="button" data-media-size="large">L</button>
+      <button type="button" data-media-size="full">100%</button>
+
+      <span class="ewb-media-inspector-separator"></span>
+
+      <button
+        type="button"
+        data-media-align="left"
+        title="Слева"
+      >←</button>
+
+      <button
+        type="button"
+        data-media-align="center"
+        title="По центру"
+      >↔</button>
+
+      <button
+        type="button"
+        data-media-align="right"
+        title="Справа"
+      >→</button>
+
+      <button
+        type="button"
+        data-media-command="close"
+        title="Закрыть"
+      >×</button>
+    `;
+
+    inspector.addEventListener('click', (event) => {
+      const button = event.target.closest('button');
+
+      if (!button) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      const command =
+        button.dataset.mediaCommand || '';
+
+      if (command === 'close') {
+        clearMediaSelectionV084J();
+        return;
+      }
+
+      if (command === 'delete') {
+        deleteSelectedMediaV084J();
+        return;
+      }
+
+      const size = button.dataset.mediaSize || '';
+
+      if (size) {
+        setSelectedMediaSizeV084J(size);
+        return;
+      }
+
+      const align = button.dataset.mediaAlign || '';
+
+      if (align) {
+        setSelectedMediaAlignV084J(align);
+      }
+    });
+
+    document.body.appendChild(inspector);
+    mediaInspectorV084J = inspector;
+
+    return inspector;
+  }
+
+  function selectMediaBlockV084J(block) {
+    if (
+      selectedMediaBlockV084J &&
+      selectedMediaBlockV084J !== block
+    ) {
+      selectedMediaBlockV084J.classList.remove(
+        'is-media-selected'
+      );
+    }
+
+    selectedMediaBlockV084J = block || null;
+
+    const inspector = ensureMediaInspectorV084J();
+
+    if (!selectedMediaBlockV084J) {
+      inspector.hidden = true;
+      return;
+    }
+
+    selectedMediaBlockV084J.classList.add(
+      'is-media-selected'
+    );
+
+    inspector.hidden = false;
   }
 
   function scheduleSave() {
@@ -820,6 +1033,53 @@
     }
   });
 
+  editor.addEventListener('click', (event) => {
+    const block = mediaBlockFromTargetV084J(
+      event.target
+    );
+
+    if (block) {
+      selectMediaBlockV084J(block);
+      return;
+    }
+
+    clearMediaSelectionV084J();
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (
+      event.key === 'Escape' &&
+      selectedMediaBlockV084J
+    ) {
+      clearMediaSelectionV084J();
+      return;
+    }
+
+    if (
+      event.key !== 'Delete' &&
+      event.key !== 'Backspace'
+    ) {
+      return;
+    }
+
+    if (!selectedMediaBlockV084J) return;
+
+    const target = event.target;
+
+    if (
+      target &&
+      target.closest &&
+      target.closest(
+        'input, textarea, select, #ewbDialog'
+      )
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+    deleteSelectedMediaV084J();
+  });
+
   editor.addEventListener('input', () => {
     saveSelection();
     scheduleSave();
@@ -859,6 +1119,8 @@
     const html =
       String(data.bodyHtml || '').trim() ||
       '<p><br></p>';
+
+    clearMediaSelectionV084J();
 
     editor.innerHTML =
       editorHtmlForViewV084H(html);

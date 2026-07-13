@@ -500,3 +500,121 @@ body {
   font-size: 12px;
   opacity: .58;
 }
+
+
+/* IRGEZTNE_WORKBENCH_MEDIA_INSPECTOR_V084J */
+.ewb-editor {
+  overflow-x: hidden;
+}
+
+.ewb-editor figure.ewb-video,
+.ewb-editor figure.ewb-video-card {
+  position: relative;
+  box-sizing: border-box;
+  width: min(100%, 620px);
+  max-width: 100%;
+  margin: 28px auto;
+}
+
+.ewb-editor figure.ewb-video.is-size-small,
+.ewb-editor figure.ewb-video-card.is-size-small {
+  width: min(100%, 360px);
+}
+
+.ewb-editor figure.ewb-video.is-size-medium,
+.ewb-editor figure.ewb-video-card.is-size-medium {
+  width: min(100%, 620px);
+}
+
+.ewb-editor figure.ewb-video.is-size-large,
+.ewb-editor figure.ewb-video-card.is-size-large {
+  width: min(100%, 820px);
+}
+
+.ewb-editor figure.ewb-video.is-size-full,
+.ewb-editor figure.ewb-video-card.is-size-full {
+  width: 100%;
+}
+
+.ewb-editor figure.is-align-left {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+.ewb-editor figure.is-align-center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ewb-editor figure.is-align-right {
+  margin-left: auto;
+  margin-right: 0;
+}
+
+.ewb-editor figure.is-media-selected {
+  outline: 2px solid #fbbf24;
+  outline-offset: 5px;
+  box-shadow: 0 0 0 7px rgba(251, 191, 36, .12);
+}
+
+.ewb-editor figure.ewb-video video {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  max-height: min(68vh, 680px);
+  object-fit: contain;
+  outline: none;
+}
+
+.ewb-editor figure.ewb-video video:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.ewb-media-inspector {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  z-index: 10020;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  max-width: calc(100vw - 28px);
+  padding: 8px;
+  border: 1px solid rgba(147, 197, 253, .30);
+  border-radius: 16px;
+  background: rgba(7, 16, 29, .96);
+  box-shadow: 0 18px 60px rgba(0, 0, 0, .38);
+  transform: translateX(-50%);
+}
+
+.ewb-media-inspector[hidden] {
+  display: none;
+}
+
+.ewb-media-inspector button {
+  min-width: 34px;
+  min-height: 32px;
+  padding: 6px 10px;
+  border: 1px solid rgba(147, 197, 253, .24);
+  border-radius: 10px;
+  background: rgba(30, 58, 96, .66);
+  color: #eff6ff;
+  font: 800 12px/1 Inter, system-ui, sans-serif;
+  cursor: pointer;
+}
+
+.ewb-media-inspector button:hover {
+  background: rgba(45, 88, 145, .82);
+}
+
+.ewb-media-inspector button[data-media-command="delete"] {
+  color: #fecaca;
+}
+
+.ewb-media-inspector-separator {
+  width: 1px;
+  height: 22px;
+  background: rgba(148, 163, 184, .24);
+}

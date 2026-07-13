@@ -2083,8 +2083,17 @@
       'main figure.ir-site-studio-v5-content-image.is-align-right{float:right;margin:6px 0 18px 24px}' +
       'main p,main li,main blockquote{overflow-wrap:anywhere;white-space:normal}' +
       'main iframe{max-width:100%;border:0;border-radius:18px}' +
-      'main figure.ewb-video{display:block;width:min(100%,960px);margin:28px auto;clear:both}' +
-      'main figure.ewb-video video{display:block;width:100%;height:auto;max-height:78vh;border-radius:18px;background:#000}' +
+      'html,body{max-width:100%;overflow-x:hidden}' +
+      'main{min-width:0;max-width:100%;overflow-x:hidden}' +
+      'main figure.ewb-video,main figure.ewb-video-card{display:block;box-sizing:border-box;max-width:100%;width:min(100%,620px);margin:28px auto;clear:both}' +
+      'main figure.is-size-small{width:min(100%,360px)}' +
+      'main figure.is-size-medium{width:min(100%,620px)}' +
+      'main figure.is-size-large{width:min(100%,820px)}' +
+      'main figure.is-size-full{width:100%}' +
+      'main figure.is-align-left{margin-left:0;margin-right:auto}' +
+      'main figure.is-align-center{margin-left:auto;margin-right:auto}' +
+      'main figure.is-align-right{margin-left:auto;margin-right:0}' +
+      'main figure.ewb-video video{display:block;width:100%;max-width:100%;height:auto;max-height:min(78vh,760px);object-fit:contain;border-radius:18px;background:#000;outline:none}' +
       'main .ewb-video-frame{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;border-radius:18px;background:#000}' +
       'main .ewb-video-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}' +
       'main figure.ewb-video figcaption{margin-top:9px;font-size:13px;line-height:1.5;opacity:.72}';
@@ -4348,7 +4357,7 @@
       '<div class="ir-site-studio-v5-editor-context"><strong>' + escapeHtml(t('Editing page:', 'Редактируется страница:')) + ' ' + escapeHtml(pageLabel(page)) + '</strong><span>/' + escapeHtml(page.slug || 'page') + ' · ' + escapeHtml(t('Editor Workbench is isolated from old Web Studio editor layers.', 'Editor Workbench изолирован от старых слоёв редактора Web Studio.')) + '</span></div>' +
       '<label class="ir-site-studio-v5-label">' + escapeHtml(t('Template hero H1', 'Hero/H1 заголовок шаблона')) + '<input class="ir-site-studio-v5-input ir-site-studio-v5-page-title" data-v5-field="headline" value="' + escapeHtml(page.headline || '') + '"></label>' +
       '<input type="hidden" data-v5-content="1" data-v5-jodit-textarea="1" value="' + escapeHtml(safeHtml) + '">' +
-      '<iframe class="ir-site-studio-v5-editor-workbench-frame-v084b" data-v084b-editor-frame="1" title="IRGEZTNE Editor Workbench" src="./src/modules/editor-workbench/editor-workbench.html?v=v084h"></iframe>' +
+      '<iframe class="ir-site-studio-v5-editor-workbench-frame-v084b" data-v084b-editor-frame="1" title="IRGEZTNE Editor Workbench" src="./src/modules/editor-workbench/editor-workbench.html?v=v084j"></iframe>' +
       '<p class="ir-site-studio-v5-note">' + escapeHtml(t('This editor is a separate cabin: one document, one toolbar, one save bridge.', 'Этот редактор — отдельная кабина: один документ, одна панель, один мост сохранения.')) + '</p>' +
     '</div>';
   }
