@@ -16,6 +16,7 @@ contextBridge.exposeInMainWorld('nsAPI', {
     }
   },
   saveTemplateFile: (payload) => ipcRenderer.invoke('ns:templates:save', payload),
+  importSiteVideo: (payload) => ipcRenderer.invoke('ns:webstudio:media:importVideo', payload),
   materializeSitePreview: (payload) => ipcRenderer.invoke('ns:preview:materialize', payload),
   exportSiteZip: (payload) => ipcRenderer.invoke('ns:export:zip', payload),
   publishNetlifyZip: (payload) => ipcRenderer.invoke('ns:publish:netlifyZip', payload),

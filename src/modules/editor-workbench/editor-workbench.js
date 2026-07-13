@@ -13,6 +13,8 @@
   let saveTimer = null;
   let savedRange = null;
   let dialogMode = '';
+  let mediaAssetsV084H = [];
+  let pendingMediaRequestV084H = null;
 
   const PALETTE = [
     '#ffffff', '#111827', '#60a5fa', '#38bdf8', '#34d399',
@@ -68,29 +70,134 @@
   }
 
   function isDirectVideo(url) {
-    return /\.(mp4|webm|ogg)(\?.*)?$/i.test(String(url || ''));
+    return /\.(mp4|webm|ogg)(\?.*)?$/i.test(
+      String(url || '')
+    );
+  }
+
+  function youtubeEmbedUrl(url) {
+    try {
+      const parsed = new URL(url);
+      const host = parsed.hostname
+        .toLowerCase()
+        .replace(/^www\./, '');
+
+      let videoId = '';
+
+      if (host === 'youtu.be') {
+        videoId = parsed.pathname
+          .split('/')
+          .filter(Boolean)[0] || '';
+      }
+
+      if (
+        host === 'youtube.com' ||
+        host === 'm.youtube.com'
+      ) {
+        videoId =
+          parsed.searchParams.get('v') ||
+          (
+            parsed.pathname.match(
+              /^\/(?:shorts|embed)\/([^/?#]+)/
+            ) || []
+          )[1] ||
+          '';
+      }
+
+      if (!/^[0-9A-Za-z_-]{6,}$/.test(videoId)) {
+        return '';
+      }
+
+      return (
+        'https://www.youtube.com/embed/' +
+        encodeURIComponent(videoId)
+      );
+    } catch {
+      return '';
+    }
+  }
+
+  function vimeoEmbedUrl(url) {
+    try {
+      const parsed = new URL(url);
+      const host = parsed.hostname
+        .toLowerCase()
+        .replace(/^www\./, '');
+
+      if (
+        host !== 'vimeo.com' &&
+        host !== 'player.vimeo.com'
+      ) {
+        return '';
+      }
+
+      const match = parsed.pathname.match(
+        /(?:video\/)?(\d{5,})/
+      );
+
+      if (!match) return '';
+
+      return (
+        'https://player.vimeo.com/video/' +
+        encodeURIComponent(match[1])
+      );
+    } catch {
+      return '';
+    }
+  }
+
+  function videoEmbedUrl(url) {
+    return youtubeEmbedUrl(url) || vimeoEmbedUrl(url);
   }
 
   function isWebVideoService(url) {
-    try {
-      const u = new URL(url);
-      return /youtube\.com|youtu\.be|vimeo\.com/i.test(u.hostname);
-    } catch {
-      return false;
-    }
+    return !!videoEmbedUrl(url);
   }
 
   function videoMarkup(url, caption) {
-    caption = caption || 'Video';
+    caption = String(caption || '').trim() || 'Video';
+
     if (isDirectVideo(url)) {
-      return `<figure class="ewb-video"><video controls src="${esc(url)}"></video><figcaption>${esc(caption)}</figcaption></figure><p><br></p>`;
+      return (
+        '<figure class="ewb-video ewb-video--direct">' +
+          '<video controls preload="metadata" src="' +
+            esc(url) +
+          '"></video>' +
+          '<figcaption>' + esc(caption) + '</figcaption>' +
+        '</figure><p><br></p>'
+      );
     }
 
-    if (isWebVideoService(url)) {
-      return `<figure class="ewb-video-card"><a href="${esc(url)}" target="_blank" rel="noopener">▶ ${esc(caption)}</a><figcaption>${esc(url)}</figcaption></figure><p><br></p>`;
+    const embedUrl = videoEmbedUrl(url);
+
+    if (embedUrl) {
+      return (
+        '<figure class="ewb-video ewb-video--embed">' +
+          '<div class="ewb-video-frame">' +
+            '<iframe' +
+              ' src="' + esc(embedUrl) + '"' +
+              ' title="' + esc(caption) + '"' +
+              ' loading="lazy"' +
+              ' allow="accelerometer; autoplay; ' +
+                'clipboard-write; encrypted-media; ' +
+                'gyroscope; picture-in-picture; web-share"' +
+              ' allowfullscreen>' +
+            '</iframe>' +
+          '</div>' +
+          '<figcaption>' + esc(caption) + '</figcaption>' +
+        '</figure><p><br></p>'
+      );
     }
 
-    return `<figure class="ewb-video-card"><a href="${esc(url)}" target="_blank" rel="noopener">▶ ${esc(caption)}</a><figcaption>${esc(url)}</figcaption></figure><p><br></p>`;
+    return (
+      '<figure class="ewb-video-card">' +
+        '<a href="' + esc(url) + '"' +
+          ' target="_blank" rel="noopener">' +
+          '▶ ' + esc(caption) +
+        '</a>' +
+        '<figcaption>' + esc(url) + '</figcaption>' +
+      '</figure><p><br></p>'
+    );
   }
 
   function send(type, extra = {}) {
@@ -98,9 +205,128 @@
       source: SOURCE_CHILD,
       type,
       pageId,
-      bodyHtml: editor.innerHTML || '',
+      bodyHtml: editorHtmlForSaveV084H(),
       ...extra
     }, '*');
+  }
+
+  function replaceMediaPathsV084H(html, direction) {
+    let result = String(html || '');
+
+    mediaAssetsV084H.forEach((asset) => {
+      const publicPath = String(
+        asset.publicPath || ''
+      );
+
+      const previewUrl = String(
+        asset.previewUrl || ''
+      );
+
+      if (!publicPath || !previewUrl) return;
+
+      const from = direction === 'view'
+        ? publicPath
+        : previewUrl;
+
+      const to = direction === 'view'
+        ? previewUrl
+        : publicPath;
+
+      result = result.split(from).join(to);
+    });
+
+    return result;
+  }
+
+  function editorHtmlForViewV084H(html) {
+    return replaceMediaPathsV084H(
+      html,
+      'view'
+    );
+  }
+
+  function editorHtmlForSaveV084H() {
+    return replaceMediaPathsV084H(
+      editor.innerHTML || '',
+      'save'
+    );
+  }
+
+  function requestLocalVideoV084H() {
+    const captionField = dialogInput('caption');
+
+    const caption = String(
+      captionField && captionField.value || ''
+    ).trim() || 'Video';
+
+    const requestId =
+      'video_' +
+      Date.now() +
+      '_' +
+      Math.random().toString(36).slice(2, 8);
+
+    pendingMediaRequestV084H = {
+      requestId,
+      caption
+    };
+
+    setStatus('choosing video…');
+
+    send('media-pick-video', {
+      requestId
+    });
+  }
+
+  function handleMediaResultV084H(data) {
+    if (
+      !pendingMediaRequestV084H ||
+      data.requestId !==
+        pendingMediaRequestV084H.requestId
+    ) {
+      return;
+    }
+
+    const pending = pendingMediaRequestV084H;
+    pendingMediaRequestV084H = null;
+
+    if (!data.ok || !data.asset) {
+      if (data.canceled) {
+        setStatus('ready');
+        return;
+      }
+
+      setStatus('video import failed');
+
+      window.alert(
+        'Не удалось добавить видео с компьютера.' +
+        (
+          data.error
+            ? '\n' + data.error
+            : ''
+        )
+      );
+
+      return;
+    }
+
+    const exists = mediaAssetsV084H.some(
+      (asset) => asset &&
+        asset.id === data.asset.id
+    );
+
+    if (!exists) {
+      mediaAssetsV084H.push(data.asset);
+    }
+
+    insertHtml(
+      videoMarkup(
+        data.asset.previewUrl,
+        pending.caption
+      )
+    );
+
+    closeDialog();
+    setStatus('video added');
   }
 
   function scheduleSave() {
@@ -244,7 +470,9 @@
   }
 
   function applyHtmlToVisual() {
-    editor.innerHTML = htmlField.value || '<p><br></p>';
+    editor.innerHTML = editorHtmlForViewV084H(
+      htmlField.value || '<p><br></p>'
+    );
     htmlPanel.hidden = true;
     focusEditor();
     saveSelection();
@@ -254,7 +482,7 @@
 
   function toggleHtml() {
     if (htmlPanel.hidden) {
-      htmlField.value = editor.innerHTML || '';
+      htmlField.value = editorHtmlForSaveV084H();
       htmlPanel.hidden = false;
       htmlField.focus();
       setStatus('html');
@@ -290,6 +518,15 @@
       const close = event.target.closest('[data-dialog-close]');
       if (close) {
         closeDialog();
+        return;
+      }
+
+      const localVideo = event.target.closest(
+        '[data-video-file-pick]'
+      );
+
+      if (localVideo) {
+        requestLocalVideoV084H();
         return;
       }
 
@@ -367,11 +604,48 @@
     }
 
     if (mode === 'video') {
-      heading.textContent = 'Insert video / Вставить видео';
+      heading.textContent =
+        'Insert video / Вставить видео';
+
       body.innerHTML = `
-        <label>Video URL <input data-field="url" type="url" placeholder="https://youtube.com/watch?v=..."></label>
-        <label>Caption <input data-field="caption" type="text" placeholder="Video"></label>
-        <p class="ewb-dialog-note">YouTube/Vimeo are inserted as clean video links. Direct .mp4/.webm/.ogg are inserted as playable video.</p>
+        <div class="ewb-media-file-row">
+          <button
+            type="button"
+            class="is-primary"
+            data-video-file-pick="1"
+          >
+            Choose file / Выбрать файл
+          </button>
+
+          <span>MP4, WebM, OGG</span>
+        </div>
+
+        <div class="ewb-dialog-or">
+          or / или
+        </div>
+
+        <label>
+          Video URL
+          <input
+            data-field="url"
+            type="url"
+            placeholder="https://youtube.com/watch?v=..."
+          >
+        </label>
+
+        <label>
+          Caption
+          <input
+            data-field="caption"
+            type="text"
+            placeholder="Video"
+          >
+        </label>
+
+        <p class="ewb-dialog-note">
+          A local file is copied into this website.
+          YouTube and Vimeo remain online embeds.
+        </p>
       `;
     }
 
@@ -562,14 +836,33 @@
 
   window.addEventListener('message', (event) => {
     const data = event.data || {};
-    if (!data || data.source !== SOURCE_PARENT || data.type !== 'init') return;
+
+    if (!data || data.source !== SOURCE_PARENT) return;
+
+    if (data.type === 'media-result') {
+      handleMediaResultV084H(data);
+      return;
+    }
+
+    if (data.type !== 'init') return;
 
     pageId = String(data.pageId || '');
     title.textContent = data.pageLabel || 'Page';
     shell.dataset.theme = data.theme === 'light' ? 'light' : 'dark';
 
-    const html = String(data.bodyHtml || '').trim() || '<p><br></p>';
-    editor.innerHTML = html;
+    mediaAssetsV084H = Array.isArray(
+      data.mediaAssets
+    )
+      ? data.mediaAssets.slice()
+      : [];
+
+    const html =
+      String(data.bodyHtml || '').trim() ||
+      '<p><br></p>';
+
+    editor.innerHTML =
+      editorHtmlForViewV084H(html);
+
     htmlField.value = html;
     setStatus('ready');
 

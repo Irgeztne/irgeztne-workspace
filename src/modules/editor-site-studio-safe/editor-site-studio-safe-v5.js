@@ -2082,7 +2082,12 @@
       'main figure.ir-site-studio-v5-content-image.is-align-left{float:left;margin:6px 24px 18px 0}' +
       'main figure.ir-site-studio-v5-content-image.is-align-right{float:right;margin:6px 0 18px 24px}' +
       'main p,main li,main blockquote{overflow-wrap:anywhere;white-space:normal}' +
-      'main iframe{max-width:100%;border:0;border-radius:18px}';
+      'main iframe{max-width:100%;border:0;border-radius:18px}' +
+      'main figure.ewb-video{display:block;width:min(100%,960px);margin:28px auto;clear:both}' +
+      'main figure.ewb-video video{display:block;width:100%;height:auto;max-height:78vh;border-radius:18px;background:#000}' +
+      'main .ewb-video-frame{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;border-radius:18px;background:#000}' +
+      'main .ewb-video-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}' +
+      'main figure.ewb-video figcaption{margin-top:9px;font-size:13px;line-height:1.5;opacity:.72}';
   }
 
   function renderOfficialLandingProductV072A(state, page, options) {
@@ -3082,6 +3087,41 @@
 
     Object.assign(files, createFaviconPackage(state.site || {}));
 
+    // IRGEZTNE_GENERATED_MEDIA_PACKAGE_V084H
+    var generatedMediaAssetsV084H =
+      state &&
+      state.site &&
+      Array.isArray(state.site.mediaAssets)
+        ? state.site.mediaAssets
+        : [];
+
+    generatedMediaAssetsV084H.forEach(function (asset) {
+      if (!asset || asset.kind !== 'video') return;
+
+      var publicPath = String(
+        asset.publicPath || ''
+      )
+        .replace(/\\/g, '/')
+        .replace(/^\/+/, '');
+
+      if (
+        !/^assets\/media\/video\/[a-z0-9._-]+$/i.test(
+          publicPath
+        )
+      ) {
+        return;
+      }
+
+      if (!asset.sourcePath) return;
+
+      files[publicPath] = {
+        sourcePath: String(asset.sourcePath),
+        mimeType: String(
+          asset.mimeType || 'video/mp4'
+        )
+      };
+    });
+
     /*
        IRGEZTNE_WEBSTUDIO_GENERATED_BUILD_ONLY_V084G
 
@@ -4054,9 +4094,160 @@
     return overlay && overlay.querySelector ? overlay.querySelector('[data-v5-content="1"]') : null;
   }
 
+  // IRGEZTNE_EDITOR_LOCAL_VIDEO_BRIDGE_V084H
+  function editorWorkbenchPostMediaV084H(payload) {
+    var frame = editorWorkbenchFrameV084B();
+
+    if (!frame || !frame.contentWindow) return false;
+
+    try {
+      frame.contentWindow.postMessage(
+        Object.assign(
+          {
+            source: 'irgeztne-webstudio-v084b'
+          },
+          payload || {}
+        ),
+        '*'
+      );
+
+      return true;
+    } catch (error) {
+      log('Workbench media post failed', error);
+      return false;
+    }
+  }
+
+  function editorWorkbenchMediaAssetsV084H(state) {
+    var site = state &&
+      state.site &&
+      typeof state.site === 'object'
+        ? state.site
+        : {};
+
+    var assets = Array.isArray(site.mediaAssets)
+      ? site.mediaAssets
+      : [];
+
+    return assets
+      .filter(function (asset) {
+        return asset &&
+          asset.kind === 'video' &&
+          asset.publicPath &&
+          asset.sourceUrl;
+      })
+      .map(function (asset) {
+        return {
+          id: String(asset.id || ''),
+          kind: 'video',
+          name: String(asset.name || ''),
+          mimeType: String(asset.mimeType || ''),
+          publicPath: String(asset.publicPath || ''),
+          previewUrl: String(asset.sourceUrl || '')
+        };
+      });
+  }
+
+  async function editorWorkbenchImportVideoV084H(data) {
+    var api = window.nsAPI || null;
+    var requestId = data && data.requestId || '';
+
+    if (!api || typeof api.importSiteVideo !== 'function') {
+      editorWorkbenchPostMediaV084H({
+        type: 'media-result',
+        requestId: requestId,
+        ok: false,
+        error: 'media-import-unavailable'
+      });
+
+      return;
+    }
+
+    var state = readState();
+    state.site = state.site || {};
+
+    var siteId = '';
+
+    try {
+      var manager = JSON.parse(
+        localStorage.getItem(SITE_MANAGER_KEY) || 'null'
+      );
+
+      siteId = manager && manager.activeSiteId
+        ? String(manager.activeSiteId)
+        : '';
+    } catch (errorManager) {}
+
+    if (!siteId) {
+      siteId = String(
+        state.site.name || 'active-site'
+      );
+    }
+
+    try {
+      var result = await api.importSiteVideo({
+        siteId: siteId
+      });
+
+      if (!result || !result.ok || !result.asset) {
+        editorWorkbenchPostMediaV084H({
+          type: 'media-result',
+          requestId: requestId,
+          ok: false,
+          canceled: !!(result && result.canceled),
+          error: result && result.error || ''
+        });
+
+        return;
+      }
+
+      var assets = Array.isArray(state.site.mediaAssets)
+        ? state.site.mediaAssets.slice()
+        : [];
+
+      var alreadyExists = assets.some(function (asset) {
+        return asset &&
+          asset.id === result.asset.id;
+      });
+
+      if (!alreadyExists) {
+        assets.push(result.asset);
+      }
+
+      state.site.mediaAssets = assets;
+      writeState(state);
+
+      editorWorkbenchPostMediaV084H({
+        type: 'media-result',
+        requestId: requestId,
+        ok: true,
+        asset: {
+          id: String(result.asset.id || ''),
+          kind: 'video',
+          name: String(result.asset.name || ''),
+          mimeType: String(result.asset.mimeType || ''),
+          publicPath: String(result.asset.publicPath || ''),
+          previewUrl: String(result.asset.sourceUrl || '')
+        }
+      });
+    } catch (error) {
+      log('Workbench video import failed', error);
+
+      editorWorkbenchPostMediaV084H({
+        type: 'media-result',
+        requestId: requestId,
+        ok: false,
+        error: String(
+          error && error.message || error || ''
+        )
+      });
+    }
+  }
+
   function editorWorkbenchPostInitV084B(page) {
     var frame = editorWorkbenchFrameV084B();
     if (!frame || !frame.contentWindow || !page) return;
+    var stateV084H = readState();
     var payload = {
       source: 'irgeztne-webstudio-v084b',
       type: 'init',
@@ -4064,7 +4255,10 @@
       pageLabel: pageLabel(page),
       bodyHtml: sanitizeHtml(page.bodyHtml || '<p><br></p>'),
       theme: currentTheme() === 'light' ? 'light' : 'dark',
-      lang: currentLang()
+      lang: currentLang(),
+      mediaAssets: editorWorkbenchMediaAssetsV084H(
+        stateV084H
+      )
     };
     try { frame.contentWindow.postMessage(payload, '*'); } catch (error) { log('Editor Workbench init post failed', error); }
   }
@@ -4098,6 +4292,11 @@
 
     if (data.type === 'ready') {
       editorWorkbenchPostInitV084B(activePage(readState()));
+      return;
+    }
+
+    if (data.type === 'media-pick-video') {
+      editorWorkbenchImportVideoV084H(data);
       return;
     }
 
@@ -4149,7 +4348,7 @@
       '<div class="ir-site-studio-v5-editor-context"><strong>' + escapeHtml(t('Editing page:', 'Редактируется страница:')) + ' ' + escapeHtml(pageLabel(page)) + '</strong><span>/' + escapeHtml(page.slug || 'page') + ' · ' + escapeHtml(t('Editor Workbench is isolated from old Web Studio editor layers.', 'Editor Workbench изолирован от старых слоёв редактора Web Studio.')) + '</span></div>' +
       '<label class="ir-site-studio-v5-label">' + escapeHtml(t('Template hero H1', 'Hero/H1 заголовок шаблона')) + '<input class="ir-site-studio-v5-input ir-site-studio-v5-page-title" data-v5-field="headline" value="' + escapeHtml(page.headline || '') + '"></label>' +
       '<input type="hidden" data-v5-content="1" data-v5-jodit-textarea="1" value="' + escapeHtml(safeHtml) + '">' +
-      '<iframe class="ir-site-studio-v5-editor-workbench-frame-v084b" data-v084b-editor-frame="1" title="IRGEZTNE Editor Workbench" src="./src/modules/editor-workbench/editor-workbench.html?v=v084f"></iframe>' +
+      '<iframe class="ir-site-studio-v5-editor-workbench-frame-v084b" data-v084b-editor-frame="1" title="IRGEZTNE Editor Workbench" src="./src/modules/editor-workbench/editor-workbench.html?v=v084h"></iframe>' +
       '<p class="ir-site-studio-v5-note">' + escapeHtml(t('This editor is a separate cabin: one document, one toolbar, one save bridge.', 'Этот редактор — отдельная кабина: один документ, одна панель, один мост сохранения.')) + '</p>' +
     '</div>';
   }

@@ -11,6 +11,7 @@ const { createStorageCore } = require('./src/storage/storage-core-main');
 const DATA_DIR = app.isPackaged ? path.join(app.getPath('userData'), 'data') : path.join(__dirname, 'data');
 const PAGES_DIR = path.join(DATA_DIR, 'pages');
 const TEMPLATES_DIR = path.join(__dirname, 'templates');
+const WEBSTUDIO_MEDIA_DIR = path.join(DATA_DIR, 'webstudio-media');
 const INDEX_FILE = path.join(__dirname, 'index.html');
 const INDEX_URL = pathToFileURL(INDEX_FILE).toString();
 
@@ -85,6 +86,224 @@ function readJson(filePath, fallback) {
 async function writeJson(filePath, value) {
   ensureDir(path.dirname(filePath));
   await fsp.writeFile(filePath, JSON.stringify(value, null, 2), 'utf8');
+}
+
+/* IRGEZTNE_WEBSTUDIO_MEDIA_CORE_V084H
+   Heavy media files live outside localStorage.
+   Page HTML stores only assets/media/... paths. */
+
+function sanitizeMediaSegmentV084H(value, fallback = 'site') {
+  const clean = String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9_-]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 80);
+
+  return clean || fallback;
+}
+
+function videoMimeV084H(extension) {
+  const map = {
+    '.mp4': 'video/mp4',
+    '.webm': 'video/webm',
+    '.ogg': 'video/ogg',
+    '.ogv': 'video/ogg'
+  };
+
+  return map[String(extension || '').toLowerCase()] || '';
+}
+
+/* IRGEZTNE_VIDEO_SIGNATURE_DETECT_V084I
+   Detect real video type from file contents.
+   Downloaders may save MP4 with a hash instead of .mp4. */
+async function detectVideoTypeV084I(filePath, originalExtension) {
+  const fallbackMime = videoMimeV084H(originalExtension);
+  let handle = null;
+
+  try {
+    handle = await fsp.open(filePath, 'r');
+
+    const probe = Buffer.alloc(4096);
+    const result = await handle.read(
+      probe,
+      0,
+      probe.length,
+      0
+    );
+
+    const data = probe.subarray(0, result.bytesRead);
+
+    if (
+      data.length >= 12 &&
+      data.subarray(4, 8).toString('ascii') === 'ftyp'
+    ) {
+      return {
+        mimeType: 'video/mp4',
+        extension: '.mp4'
+      };
+    }
+
+    if (
+      data.length >= 4 &&
+      data[0] === 0x1a &&
+      data[1] === 0x45 &&
+      data[2] === 0xdf &&
+      data[3] === 0xa3
+    ) {
+      const headerText = data
+        .toString('latin1')
+        .toLowerCase();
+
+      if (headerText.includes('webm')) {
+        return {
+          mimeType: 'video/webm',
+          extension: '.webm'
+        };
+      }
+    }
+
+    if (
+      data.length >= 4 &&
+      data.subarray(0, 4).toString('ascii') === 'OggS'
+    ) {
+      return {
+        mimeType: 'video/ogg',
+        extension: '.ogg'
+      };
+    }
+  } catch (error) {
+    console.warn(
+      '[webstudio-media] video signature detection failed:',
+      error
+    );
+  } finally {
+    if (handle) {
+      try {
+        await handle.close();
+      } catch {}
+    }
+  }
+
+  return {
+    mimeType: fallbackMime,
+    extension: fallbackMime
+      ? originalExtension
+      : ''
+  };
+}
+
+async function importSiteVideoV084H(owner, payload = {}) {
+  const picked = await dialog.showOpenDialog(
+    owner || undefined,
+    {
+      title: 'Choose video / Выберите видео',
+      properties: ['openFile'],
+      filters: [
+        {
+          name: 'Video',
+          extensions: ['mp4', 'webm', 'ogg', 'ogv']
+        },
+        {
+          name: 'All files',
+          extensions: ['*']
+        }
+      ]
+    }
+  );
+
+  if (picked.canceled || !picked.filePaths?.[0]) {
+    return { ok: false, canceled: true };
+  }
+
+  const selectedPath = path.resolve(picked.filePaths[0]);
+  const originalExtension = path
+    .extname(selectedPath)
+    .toLowerCase();
+
+  const detectedType = await detectVideoTypeV084I(
+    selectedPath,
+    originalExtension
+  );
+
+  const extension = detectedType.extension;
+  const mimeType = detectedType.mimeType;
+
+  if (!mimeType || !extension) {
+    return {
+      ok: false,
+      error: 'unsupported-video-type'
+    };
+  }
+
+  const stat = await fsp.stat(selectedPath);
+
+  if (!stat.isFile()) {
+    return {
+      ok: false,
+      error: 'not-a-file'
+    };
+  }
+
+  if (stat.size > 1024 * 1024 * 1024) {
+    return {
+      ok: false,
+      error: 'video-too-large'
+    };
+  }
+
+  const siteId = sanitizeMediaSegmentV084H(
+    payload.siteId,
+    'active-site'
+  );
+
+  const baseName = sanitizeMediaSegmentV084H(
+    path.basename(selectedPath, originalExtension),
+    'video'
+  ).slice(0, 54);
+
+  const digest = crypto
+    .createHash('sha1')
+    .update(
+      selectedPath +
+      ':' +
+      stat.size +
+      ':' +
+      stat.mtimeMs +
+      ':' +
+      Date.now()
+    )
+    .digest('hex')
+    .slice(0, 12);
+
+  const fileName = `${baseName}-${digest}${extension}`;
+
+  const targetDir = path.join(
+    WEBSTUDIO_MEDIA_DIR,
+    siteId,
+    'video'
+  );
+
+  const targetPath = path.join(targetDir, fileName);
+
+  ensureDir(targetDir);
+  await fsp.copyFile(selectedPath, targetPath);
+
+  return {
+    ok: true,
+    asset: {
+      id: `media_${digest}`,
+      kind: 'video',
+      name: path.basename(selectedPath),
+      fileName,
+      mimeType,
+      size: stat.size,
+      sourcePath: targetPath,
+      sourceUrl: pathToFileURL(targetPath).toString(),
+      publicPath: `assets/media/video/${fileName}`,
+      createdAt: new Date().toISOString()
+    }
+  };
 }
 
 function getNotesPath() {
@@ -361,6 +580,45 @@ function normalizeZipEntryName(value) {
     .trim();
 }
 
+function packageEntryBufferV084H(entry) {
+  if (entry && entry.sourcePath) {
+    const sourcePath = path.resolve(
+      String(entry.sourcePath || '')
+    );
+
+    const mediaRoot = path.resolve(
+      WEBSTUDIO_MEDIA_DIR
+    );
+
+    if (
+      sourcePath !== mediaRoot &&
+      !sourcePath.startsWith(mediaRoot + path.sep)
+    ) {
+      throw new Error(
+        'Media source is outside Web Studio storage'
+      );
+    }
+
+    return fs.readFileSync(sourcePath);
+  }
+
+  if (entry && entry.contentBase64) {
+    return Buffer.from(
+      String(entry.contentBase64 || ''),
+      'base64'
+    );
+  }
+
+  return Buffer.from(
+    String(
+      entry && entry.content !== undefined
+        ? entry.content
+        : ''
+    ),
+    'utf8'
+  );
+}
+
 function createStoredZipBuffer(entries) {
   const localParts = [];
   const centralParts = [];
@@ -374,9 +632,7 @@ function createStoredZipBuffer(entries) {
     if (!name) continue;
 
     const fileName = Buffer.from(name, 'utf8');
-    const content = entry && entry.contentBase64
-      ? Buffer.from(String(entry.contentBase64 || ''), 'base64')
-      : Buffer.from(String(entry && entry.content !== undefined ? entry.content : ''), 'utf8');
+    const content = packageEntryBufferV084H(entry);
     const crc = crc32(content);
 
     const localHeader = Buffer.alloc(30);
@@ -447,6 +703,12 @@ function getExportZipDefaultPath(payload) {
 
 function normalizePackageEntryContent(value, fallback = '') {
   if (value && typeof value === 'object' && !Buffer.isBuffer(value)) {
+    if (value.sourcePath) {
+      return {
+        sourcePath: String(value.sourcePath || ''),
+        mimeType: String(value.mimeType || '')
+      };
+    }
     if (value.contentBase64) {
       return {
         contentBase64: String(value.contentBase64 || ''),
@@ -488,9 +750,7 @@ async function writePackageFilesToDir(packageFiles, targetDir, requiredFiles = [
     const target = path.join(targetDir, safeName);
     if (!target.startsWith(targetDir)) continue;
     ensureDir(path.dirname(target));
-    const content = entry.contentBase64
-      ? Buffer.from(String(entry.contentBase64 || ''), 'base64')
-      : Buffer.from(String(entry.content || ''), 'utf8');
+    const content = packageEntryBufferV084H(entry);
     await fsp.writeFile(target, content);
   }
   return entries.map((entry) => entry.name);
@@ -750,9 +1010,7 @@ function packageEntriesToCloudflareAssets(packageFiles) {
 
   return entries.map((entry) => {
     const name = normalizeZipEntryName(entry.name);
-    const content = entry.contentBase64
-      ? Buffer.from(String(entry.contentBase64 || ''), 'base64')
-      : Buffer.from(String(entry.content !== undefined ? entry.content : ''), 'utf8');
+    const content = packageEntryBufferV084H(entry);
     const hash = crypto.createHash('md5').update(content).update(name).digest('hex');
     return {
       name,
@@ -1238,6 +1496,19 @@ function registerIpcHandlers() {
   ipcMain.handle('ns:templates:save', async (event, payload) => {
     assertTrustedSender(event);
     return saveTemplateFileToDisk(payload);
+  });
+
+  ipcMain.handle('ns:webstudio:media:importVideo', async (event, payload) => {
+    assertTrustedSender(event);
+
+    const owner = BrowserWindow.fromWebContents(
+      event.sender
+    );
+
+    return importSiteVideoV084H(
+      owner,
+      payload || {}
+    );
   });
 
   ipcMain.handle('ns:preview:materialize', async (event, payload) => {
