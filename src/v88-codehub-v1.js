@@ -393,30 +393,93 @@
     else classes.push('ns-codehub-v1--workspace');
 
     const openButton = surface !== 'cabinet'
-      ? '<button type="button" class="ns-codehub-v1__btn ns-codehub-v1__btn--primary" data-codehub-action="open-cabinet">' + escapeHtml(t('Открыть обзор', 'Open overview')) + '</button>'
+      ? '<button type="button" class="ns-codehub-v1__btn ns-codehub-v1__btn--primary" data-codehub-action="open-cabinet">' + escapeHtml(t('Открыть полностью', 'Open full view')) + '</button>'
       : '';
 
     return [
       '<div class="' + classes.join(' ') + '" data-codehub-surface="' + escapeHtml(surface) + '">',
       context && context.notice ? '<div class="ns-codehub-v1__notice">' + escapeHtml(context.notice) + '</div>' : '',
+
       '<section class="panel-card ns-codehub-v1__cover-hero">',
       '<div class="ns-codehub-v1__cover-copy">',
-      '<div class="ns-codehub-v1__kicker">' + escapeHtml(t('Будущий раздел Web Studio', 'Future Web Studio section')) + '</div>',
-      '<h3 class="ns-codehub-v1__brand">' + escapeHtml(t('Мастерская пакетов', 'Package Workshop')) + '</h3>',
-      '<p>' + escapeHtml(t('Этот раздел станет местом подготовки переносимых пакетов Web Studio: шаблонов, тем, блоков, виджетов и ассетов.', 'This section will become a place to prepare portable Web Studio packages: templates, themes, blocks, widgets, and assets.')) + '</p>',
-      '<p class="ns-codehub-v1__cover-note">' + escapeHtml(t('В первом релизе используйте раздел «Шаблоны» для выбора готовых официальных шаблонов. Импорт, экспорт, проверка и каталог пакетов появятся позже.', 'For the first release, use Templates to choose ready official templates. Import, export, validation, and a package catalog will come later.')) + '</p>',
+
+      '<div class="ns-codehub-v1__kicker">' +
+        escapeHtml(t('Мастерская Web Studio', 'Web Studio Workshop')) +
+      '</div>',
+
+      '<h3 class="ns-codehub-v1__brand">' +
+        escapeHtml(t('Мастерская', 'Workshop')) +
+      '</h3>',
+
+      '<p>' +
+        escapeHtml(t(
+          'Здесь будут собираться полезные элементы для сайтов: готовые секции, блоки, темы, виджеты, иконки и другие ассеты Web Studio.',
+          'This space will bring together useful website elements: ready sections, blocks, themes, widgets, icons, and other Web Studio assets.'
+        )) +
+      '</p>',
+
+      '<p class="ns-codehub-v1__cover-note">' +
+        escapeHtml(t(
+          'В Workspace 1.0.0 Мастерская пока знакомит с будущим направлением. Официальные шаблоны уже доступны в разделе «Шаблоны», а собственные наборы и их проверка появятся позже.',
+          'In Workspace 1.0.0, Workshop introduces this future direction. Official templates are already available in Templates; custom reusable sets and validation will follow later.'
+        )) +
+      '</p>',
+
       '<div class="ns-codehub-v1__cover-actions">',
       openButton,
-      '<span class="ns-codehub-v1__cover-pill">' + escapeHtml(t('Локально', 'Local-first')) + '</span>',
-      '<span class="ns-codehub-v1__cover-pill">' + escapeHtml(t('Без магазина в релизе', 'No marketplace in release')) + '</span>',
+
+      '<span class="ns-codehub-v1__cover-pill">' +
+        escapeHtml(t('Связано с Web Studio', 'Connected to Web Studio')) +
+      '</span>',
+
+      '<span class="ns-codehub-v1__cover-pill">' +
+        escapeHtml(t('Готовится', 'In preparation')) +
+      '</span>',
+
       '</div>',
       '</div>',
-      '<div class="ns-codehub-v1__cover-visual" aria-hidden="true"><div class="ns-codehub-v1__cover-stack"><span></span><span></span><span></span></div><div class="ns-codehub-v1__cover-cube">◇</div></div>',
+
+      '<div class="ns-codehub-v1__cover-visual" aria-hidden="true">' +
+        '<div class="ns-codehub-v1__cover-stack">' +
+          '<span></span><span></span><span></span>' +
+        '</div>' +
+        '<div class="ns-codehub-v1__cover-cube">◇</div>' +
+      '</div>',
+
       '</section>',
+
       '<div class="ns-codehub-v1__cover-grid">',
-      '<section class="panel-card ns-codehub-v1__cover-card"><strong>' + escapeHtml(t('Сейчас', 'Now')) + '</strong><span>' + escapeHtml(t('Готовые официальные шаблоны остаются в разделе «Шаблоны». Обычному пользователю не нужно собирать пакеты вручную.', 'Ready official templates stay in Templates. Regular users do not need to build packages manually.')) + '</span></section>',
-      '<section class="panel-card ns-codehub-v1__cover-card"><strong>' + escapeHtml(t('Позже', 'Later')) + '</strong><span>' + escapeHtml(t('Мастерская будет помогать упаковывать готовые элементы Web Studio, добавлять метаданные, превью, совместимость и проверку.', 'The Workshop will help package ready Web Studio items with metadata, previews, compatibility, and validation.')) + '</span></section>',
-      '<section class="panel-card ns-codehub-v1__cover-card"><strong>' + escapeHtml(t('Каталог', 'Catalog')) + '</strong><span>' + escapeHtml(t('Внешний каталог и пользовательская экосистема будут рассматриваться отдельно, когда появятся реальный формат пакета и импорт/экспорт.', 'External catalog and user ecosystem will be considered separately after real package format and import/export exist.')) + '</span></section>',
+
+      '<section class="panel-card ns-codehub-v1__cover-card">' +
+        '<strong>' + escapeHtml(t('Уже доступно', 'Available now')) + '</strong>' +
+        '<span>' +
+          escapeHtml(t(
+            'Web Studio и галерея официальных шаблонов уже работают. Мастерская станет их естественным продолжением.',
+            'Web Studio and the official template gallery already work. Workshop will become their natural continuation.'
+          )) +
+        '</span>' +
+      '</section>',
+
+      '<section class="panel-card ns-codehub-v1__cover-card">' +
+        '<strong>' + escapeHtml(t('Следующий шаг', 'Next step')) + '</strong>' +
+        '<span>' +
+          escapeHtml(t(
+            'Собственные секции, темы и ассеты можно будет сохранять как аккуратные повторно используемые наборы.',
+            'Custom sections, themes, and assets will be saved as clean reusable sets.'
+          )) +
+        '</span>' +
+      '</section>',
+
+      '<section class="panel-card ns-codehub-v1__cover-card">' +
+        '<strong>' + escapeHtml(t('Позже', 'Later')) + '</strong>' +
+        '<span>' +
+          escapeHtml(t(
+            'Публичная библиотека появится только с понятным авторством, версиями, лицензиями и проверкой качества — без рекламного базара.',
+            'A public library will come only with clear authorship, versions, licenses, and quality checks — without an advertising bazaar.'
+          )) +
+        '</span>' +
+      '</section>',
+
       '</div>',
       '</div>'
     ].join('');

@@ -131,7 +131,7 @@ function renderWorkspaceStartPane(state) {
         </button>
         <button type="button" class="irgeztne-start-card irgeztne-start-card--workshop" data-home-open="codehub" title="Open Workshop">
           <span class="irgeztne-start-icon">◇</span>
-          <strong>${startLang('Мастерская пакетов', 'Package Workshop')}</strong>
+          <strong>${startLang('Мастерская', 'Workshop')}</strong>
           <small>${startLang('Блоки, темы, секции, ассеты и заготовки для сайтов.', 'Blocks, themes, sections, assets and website materials.')}</small>
         </button>
         <button type="button" class="irgeztne-start-card irgeztne-start-card--rooms" data-home-open="rooms" title="Open compact Rooms">
