@@ -517,7 +517,7 @@
     var meta = officialTemplateMetaV068C(id);
 
     state.site.activeTemplate = id;
-    state.site.tagline = meta.descriptionRu || state.site.tagline;
+    state.site.tagline = t(meta.description, meta.descriptionRu) || state.site.tagline;
 
     if (state.site.accentColor === '#2f7be6') {
       var accent = id === 'business-product' ? '#0f766e' : id === 'agency-studio' || id === 'studio-portfolio' ? '#8b5cf6' : id === 'blog-news' ? '#dc2626' : '#2f7be6';
@@ -2065,7 +2065,7 @@
       '(function(){' +
       'function setLang(lang){document.documentElement.lang=lang;document.querySelectorAll("[data-i18n-text]").forEach(function(el){el.textContent=el.getAttribute("data-"+lang)||el.textContent});document.querySelectorAll("[data-lang-toggle]").forEach(function(btn){btn.textContent=lang==="ru"?"EN":"RU"})}' +
       'function setTheme(theme){document.documentElement.setAttribute("data-theme",theme);document.querySelectorAll("[data-theme-toggle]").forEach(function(btn){btn.textContent=theme==="dark"?"☀":"☾"})}' +
-      'document.addEventListener("click",function(e){var l=e.target.closest("[data-lang-toggle]");if(l){e.preventDefault();setLang(document.documentElement.lang==="ru"?"en":"ru");return}var t=e.target.closest("[data-theme-toggle]");if(t){e.preventDefault();setTheme(document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark")}});' +
+      'document.addEventListener("click",function(e){var t=e.target.closest("[data-theme-toggle]");if(t){e.preventDefault();setTheme(document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark")}});' +
       'setLang(document.documentElement.lang==="en"?"en":"ru");setTheme(document.documentElement.getAttribute("data-theme")==="dark"?"dark":"light");' +
       '})();';
   }
@@ -2135,7 +2135,6 @@
       '<a class="nav-link is-active" href="' + escapeHtml(fileFor(home)) + '">' + i18nSpanV072A({en:'Product',ru:'Продукт'}) + '</a>' +
       '<a class="nav-link" href="' + escapeHtml(anchorOrFile(features || home, 'features')) + '">' + i18nSpanV072A({en:'Features',ru:'Возможности'}) + '</a>' +
       '<a class="nav-link" href="' + escapeHtml(anchorOrFile(faq || home, 'faq')) + '">FAQ</a>' +
-      '<button class="lang-toggle" data-lang-toggle="1" type="button">EN</button>' +
       '<button class="theme-toggle" data-theme-toggle="1" type="button">☾</button>';
 
     var css = landingCssV072A(accent) + '.logo{background:' + logoBgV074A + '!important;color:' + logoTextV074A + '!important;border-radius:' + logoRadiusV074A + '!important;width:' + logoSizeV074A + 'px!important;height:' + logoSizeV074A + 'px!important;font-size:' + logoFontSizeV074A + 'px!important}';
@@ -2166,7 +2165,11 @@
         '<section class="final-cta" id="cta"><div><p class="kicker">CTA</p><h2>' + i18nSpanV072A({en:'Turn interest into action.',ru:'Превратите интерес в действие.'}) + '</h2><p>' + i18nSpanV072A({en:'Replace this block with signup, download, preorder, contact or request access.',ru:'Замените этот блок на регистрацию, скачивание, предзаказ, контакт или запрос доступа.'}) + '</p></div><a class="btn" href="mailto:hello@example.com">' + i18nSpanV072A({en:'Get access',ru:'Получить доступ'}) + '</a></section>';
     }
 
-    return '<!doctype html><html lang="ru" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">' + faviconHeadTags() + '<title>' + escapeHtml(seoTitle) + '</title><meta name="description" content="' + escapeHtml(seoDescription) + '"><link rel="canonical" href="' + escapeHtml(canonicalUrl) + '"><meta property="og:type" content="website"><meta property="og:title" content="' + escapeHtml(seoTitle) + '"><meta property="og:description" content="' + escapeHtml(seoDescription) + '"><meta property="og:url" content="' + escapeHtml(canonicalUrl) + '"><meta property="og:image" content="' + escapeHtml(ogImage) + '"><meta name="twitter:card" content="summary"><meta name="theme-color" content="' + accent + '"><style>' + css + '</style><script>' + js + '</script></head><body><header class="site-header"><a class="brand" href="' + escapeHtml(fileFor(home)) + '"><div class="logo" style="background:' + logoBgV074A + ';color:' + logoTextV074A + ';border-radius:' + logoRadiusV074A + ';width:' + logoSizeV074A + 'px;height:' + logoSizeV074A + 'px;font-size:' + logoFontSizeV074A + 'px">' + escapeHtml(logoLetters) + '</div><div><strong>' + escapeHtml(siteName) + '</strong><span>' + escapeHtml(tagline) + '</span></div></a><nav class="site-nav" aria-label="Main navigation">' + nav + '</nav></header><main class="page">' + pageContent + '<footer class="site-footer"><div class="footer-brand"><strong>' + escapeHtml(siteName) + '</strong><span>' + escapeHtml(tagline) + '</span><span class="footer-copy">© ' + new Date().getFullYear() + ' ' + escapeHtml(siteName) + '</span></div><nav><a href="' + escapeHtml(fileFor(home)) + '">Product</a> · <a href="' + escapeHtml(anchorOrFile(features || home, 'features')) + '">Features</a> · <a href="' + escapeHtml(anchorOrFile(faq || home, 'faq')) + '">FAQ</a></nav></footer></main></body></html>';
+    var siteLangV084X = siteThemeLangCode();
+
+    return '<!doctype html><html lang="' +
+      escapeHtml(siteLangV084X) +
+      '" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">' + faviconHeadTags() + '<title>' + escapeHtml(seoTitle) + '</title><meta name="description" content="' + escapeHtml(seoDescription) + '"><link rel="canonical" href="' + escapeHtml(canonicalUrl) + '"><meta property="og:type" content="website"><meta property="og:title" content="' + escapeHtml(seoTitle) + '"><meta property="og:description" content="' + escapeHtml(seoDescription) + '"><meta property="og:url" content="' + escapeHtml(canonicalUrl) + '"><meta property="og:image" content="' + escapeHtml(ogImage) + '"><meta name="twitter:card" content="summary"><meta name="theme-color" content="' + accent + '"><style>' + css + '</style><script>' + js + '</script></head><body><header class="site-header"><a class="brand" href="' + escapeHtml(fileFor(home)) + '"><div class="logo" style="background:' + logoBgV074A + ';color:' + logoTextV074A + ';border-radius:' + logoRadiusV074A + ';width:' + logoSizeV074A + 'px;height:' + logoSizeV074A + 'px;font-size:' + logoFontSizeV074A + 'px">' + escapeHtml(logoLetters) + '</div><div><strong>' + escapeHtml(siteName) + '</strong><span>' + escapeHtml(tagline) + '</span></div></a><nav class="site-nav" aria-label="Main navigation">' + nav + '</nav></header><main class="page">' + pageContent + '<footer class="site-footer"><div class="footer-brand"><strong>' + escapeHtml(siteName) + '</strong><span>' + escapeHtml(tagline) + '</span><span class="footer-copy">© ' + new Date().getFullYear() + ' ' + escapeHtml(siteName) + '</span></div><nav><a href="' + escapeHtml(fileFor(home)) + '">Product</a> · <a href="' + escapeHtml(anchorOrFile(features || home, 'features')) + '">Features</a> · <a href="' + escapeHtml(anchorOrFile(faq || home, 'faq')) + '">FAQ</a></nav></footer></main></body></html>';
   }
 
   function renderSiteHtml(state, page, options) {
@@ -2294,7 +2297,7 @@
     var footerNav = footerLinks || '';
     var footerSocialNav = footerSocialLinks ? '<nav class="footer-social-links" aria-label="' + escapeHtml(t('Social links', 'Социальные ссылки')) + '">' + footerSocialLinks + '</nav>' : '';
     var footerClass = (footerLinks || footerSocialLinks) ? 'site-footer has-footer-links' : 'site-footer';
-    var langButtonV072B = isLandingTemplateV072B ? '<button class="lang-toggle" data-lang-toggle="1" type="button" aria-label="Language" title="Language">EN</button>' : '';
+    var langButtonV072B = '';
     var themeButton = langButtonV072B + '<button class="theme-toggle" data-theme-toggle="1" type="button" aria-label="' + escapeHtml(t('Dark mode', 'Тёмный режим')) + '" title="' + escapeHtml(t('Dark mode', 'Тёмный режим')) + '">☾</button>';
     var cssVars = ':root{--accent:' + escapeHtml(accent) + ';--nav-accent:' + escapeHtml(navAccent) + ';--button-accent:' + escapeHtml(buttonAccent) + ';--logo-bg:' + escapeHtml(logoBg) + ';--logo-text:' + escapeHtml(logoText) + ';--logo-radius:' + escapeHtml(logoRadius) + ';--logo-size:' + logoHeaderSize + 'px;--logo-header-font-size:' + logoHeaderFontSize + 'px;--ink:' + escapeHtml(textColor) + ';--muted:#64748b;--line:#e2e8f0;--site-bg:' + escapeHtml(backgroundColor) + ';--font-body:' + escapeHtml(bodyFont) + ';--font-heading:' + escapeHtml(headingFont) + '}';
     var pagePresetCss = '.hero.hero--content-page>div{width:min(1120px,100%);margin-left:auto;margin-right:auto}.hero.hero--content-page{padding-top:46px;padding-bottom:30px}.hero.hero--content-page h1{font-size:clamp(42px,5.2vw,72px);line-height:1.02;max-width:1120px}.hero.hero--content-page p{max-width:920px}.hero.hero--content-page+.content{width:min(1120px,100%);max-width:1120px;margin-left:auto!important;margin-right:auto!important}body[data-theme=light]{--ink:#0f172a;--muted:#475569;--line:#cbd5e1}body[data-theme=light] .content p,body[data-theme=light] .hero p{color:#475569}body[data-theme=light] .kicker{color:color-mix(in srgb,var(--button-accent) 82%,#166534)}/* IRGEZTNE_WEBSTUDIO_CONTENT_PAGE_WIDTH_CONTRAST_V061H *//* IRGEZTNE_WEBSTUDIO_PAGE_PRESETS_FOUNDATION_V061D IRGEZTNE_WEBSTUDIO_CONTACT_LEGAL_PRESETS_V061E */.hero.hero--content-page{padding-top:42px;padding-bottom:28px;min-height:auto}.hero.hero--content-page h1{font-size:clamp(36px,7vw,74px)}.hero.hero--content-page p:empty,.content:empty{display:none}.content-card{max-width:780px;border:1px solid var(--line);border-radius:28px;background:var(--panel);padding:24px 26px;color:var(--ink);box-shadow:0 22px 70px rgba(15,23,42,.08)}.content-card h2{margin:0 0 10px;font-size:clamp(24px,4vw,38px)}.content-card p{margin:0 0 14px;color:var(--muted);line-height:1.7}.content-card ul{margin:12px 0 0;padding-left:20px;color:var(--muted);line-height:1.8}body[data-theme=dark] .content-card{background:rgba(255,255,255,.035);border-color:rgba(148,163,184,.24);box-shadow:none}.content.content--preset{max-width:min(1120px,100%);margin:0 0 36px;padding:0;border:0;background:transparent;box-shadow:none}.content.content--preset .content-card{max-width:100%;padding:30px 34px}.content.content--empty{display:none}';
@@ -2383,7 +2386,7 @@
     var cssBlock = inlineAssets ? '<style>' + cssVars + '\n' + generatedSiteCssV5() + '\n' + pagePresetCss + '\n' + docsTemplateCssV068D + customCssBlock + '</style>' : '<style>' + cssVars + '\n' + pagePresetCss + '\n' + docsTemplateCssV068D + customCssBlock + '</style><link rel="stylesheet" href="assets/css/style.css">';
     var jsBlock = inlineAssets ? '<script>' + generatedSiteJsV5().replace(/<\/script/gi, '<\\/script') + '</script>' : '<script src="assets/js/site.js" defer></script>';
     if (isLandingTemplateV072B) {
-      var langJsV072B = '<script>(function(){function setLang(lang){document.documentElement.lang=lang;document.querySelectorAll("[data-i18n-text]").forEach(function(el){var v=el.getAttribute("data-"+lang);if(v!==null)el.textContent=v});document.querySelectorAll("[data-lang-toggle]").forEach(function(btn){btn.textContent=lang==="ru"?"EN":"RU"})}document.addEventListener("click",function(e){var btn=e.target.closest("[data-lang-toggle]");if(!btn)return;e.preventDefault();setLang(document.documentElement.lang==="ru"?"en":"ru")});setLang(document.documentElement.lang==="en"?"en":"ru")})();<\\/script>';
+      var langJsV072B = '<script>(function(){function setLang(lang){document.documentElement.lang=lang;document.querySelectorAll("[data-i18n-text]").forEach(function(el){var v=el.getAttribute("data-"+lang);if(v!==null)el.textContent=v})}setLang(document.documentElement.lang==="en"?"en":"ru")})();<\/script>';
       jsBlock += langJsV072B;
     }
 
@@ -5971,8 +5974,19 @@
     state.site.templatePreviewPath = templateLabPathForNewSiteV083K;
     state = applySiteProfileToState(state, profile);
 
-    var pages = starterPagesForTemplateV071A(templateId);
-    state.pages = pages;
+    /*
+       IRGEZTNE_CANONICAL_TEMPLATE_STARTER_V084X
+
+       Create new local sites from the existing canonical V068C
+       template owner. V071A remains historical code but no longer
+       owns newly created sites.
+    */
+    applyOfficialTemplateStarterV068C(state, templateId);
+
+    var pages = Array.isArray(state.pages)
+      ? state.pages
+      : [];
+
     state.activePageId = pages[0] ? pages[0].id : '';
     state.menuGroups = [
       { id: 'menu-main-header', name: 'Главное меню', position: 'header', items: pages.filter(function(page){ return page.inMenu; }).map(function(page, index){ return createMenuItemFromPage(page, index); }) },
@@ -5980,7 +5994,7 @@
     ];
     state.activeMenuGroupId = 'menu-main-header';
     state.menuGroupsSeeded = true;
-    state.__irgeztneOfficialTemplateStarterV071A = templateId;
+    state.__irgeztneOfficialTemplateStarterV068C = templateId;
     state.updatedAt = new Date().toISOString();
 
     manager.sites.push(Object.assign({}, profile, { state: state, template: templateId, templateSource: 'template-lab', templateLabPath: templateLabPathForNewSiteV083K }));

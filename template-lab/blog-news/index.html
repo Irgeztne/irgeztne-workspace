@@ -20,7 +20,7 @@
       <div class="header-actions">
         <a href="#">Subscribe</a>
         <button type="button" class="search-button">Search</button>
-        <button class="lang-toggle" type="button" aria-label="Toggle language" title="Toggle language">EN</button>
+
         <button class="theme-toggle" type="button" aria-label="Toggle theme" title="Toggle theme">☾</button>
       </div>
     </div>
@@ -546,7 +546,7 @@
   ];
 
   const langButton = document.querySelector('.lang-toggle');
-  const getInitialLang = () => localStorage.getItem('northline-lang') || (((navigator.language || '').toLowerCase().startsWith('ru')) ? 'ru' : 'en');
+  const getInitialLang = () => document.documentElement.lang === 'ru' ? 'ru' : 'en';
 
   function setLang(lang) {
     const dict = i18n[lang] || i18n.en;
@@ -567,16 +567,10 @@
       }
     });
     if (langButton) langButton.textContent = lang.toUpperCase();
-    localStorage.setItem('northline-lang', lang);
+
   }
 
   setLang(getInitialLang());
-
-
-
-  langButton?.addEventListener('click', () => {
-    setLang((document.documentElement.lang || 'en') === 'ru' ? 'en' : 'ru');
-  });
 </script>
 
 <script>
@@ -684,10 +678,6 @@
   }
 
   applyPremiumLangV014();
-
-  document.querySelector('.lang-toggle')?.addEventListener('click', () => {
-    setTimeout(applyPremiumLangV014, 0);
-  });
 </script>
 
 
@@ -721,10 +711,6 @@
   }
 
   applyEditorialRealV015();
-
-  document.querySelector('.lang-toggle')?.addEventListener('click', () => {
-    setTimeout(applyEditorialRealV015, 0);
-  });
 </script>
 
 </body>

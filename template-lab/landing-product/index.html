@@ -25,7 +25,7 @@
 
     <div class="header-actions">
       <a class="header-cta" href="#cta" data-i18n="headerCta">Get started</a>
-      <button class="lang-toggle" type="button" aria-label="Toggle language">EN</button>
+
       <button class="theme-toggle" type="button" aria-label="Toggle theme">☾</button>
     </div>
   </header>
@@ -348,8 +348,8 @@
         const key = node.dataset.i18n;
         if (t[key]) node.textContent = t[key];
       });
-      langButton.textContent = lang.toUpperCase();
-      localStorage.setItem('launchos-lang', lang);
+      if (langButton) langButton.textContent = lang.toUpperCase();
+
     }
 
     function setTheme(theme) {
@@ -358,12 +358,8 @@
       localStorage.setItem('launchos-theme', theme);
     }
 
-    setLang(localStorage.getItem('launchos-lang') || (((navigator.language || '').toLowerCase().startsWith('ru')) ? 'ru' : 'en'));
+    setLang(document.documentElement.lang === 'ru' ? 'ru' : 'en');
     setTheme(localStorage.getItem('launchos-theme') || 'light');
-
-    langButton.addEventListener('click', () => {
-      setLang(document.documentElement.lang === 'ru' ? 'en' : 'ru');
-    });
 
     themeButton.addEventListener('click', () => {
       setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
@@ -512,7 +508,7 @@
       });
 
       if (langButton) langButton.textContent = lang.toUpperCase();
-      localStorage.setItem('launchos-lang', lang);
+
     }
 
     function applyTheme(theme) {
@@ -521,19 +517,13 @@
       localStorage.setItem('launchos-theme', theme);
     }
 
-    if (langButton) {
-      langButton.onclick = function () {
-        applyLang((document.documentElement.lang || 'en') === 'ru' ? 'en' : 'ru');
-      };
-    }
-
     if (themeButton) {
       themeButton.onclick = function () {
         applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
       };
     }
 
-    applyLang(localStorage.getItem('launchos-lang') || (((navigator.language || '').toLowerCase().startsWith('ru')) ? 'ru' : 'en'));
+    applyLang(document.documentElement.lang === 'ru' ? 'ru' : 'en');
     applyTheme(localStorage.getItem('launchos-theme') || 'light');
   })();
 </script>

@@ -28,7 +28,7 @@
     </nav>
 
     <div class="header-actions">
-      <button class="lang-toggle" type="button" aria-label="Toggle language">EN</button>
+
       <button class="theme-toggle" type="button" aria-label="Toggle theme">☾</button>
     </div>
   </header>
@@ -355,8 +355,8 @@ features:
         if (t[key]) node.placeholder = t[key];
       });
 
-      langButton.textContent = lang.toUpperCase();
-      localStorage.setItem('arcdocs-lang', lang);
+      if (langButton) langButton.textContent = lang.toUpperCase();
+
     }
 
     function setTheme(theme) {
@@ -365,12 +365,8 @@ features:
       localStorage.setItem('arcdocs-theme', theme);
     }
 
-    setLang(localStorage.getItem('arcdocs-lang') || (((navigator.language || '').toLowerCase().startsWith('ru')) ? 'ru' : 'en'));
+    setLang(document.documentElement.lang === 'ru' ? 'ru' : 'en');
     setTheme(localStorage.getItem('arcdocs-theme') || 'light');
-
-    langButton.addEventListener('click', () => {
-      setLang(document.documentElement.lang === 'ru' ? 'en' : 'ru');
-    });
 
     themeButton.addEventListener('click', () => {
       setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');

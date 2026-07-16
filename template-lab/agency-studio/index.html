@@ -25,7 +25,7 @@
 
     <div class="header-actions">
       <a class="header-cta" href="#contact" data-i18n="headerCta">Leave a request</a>
-      <button class="lang-toggle" type="button" aria-label="Toggle language">EN</button>
+
       <button class="theme-toggle" type="button" aria-label="Toggle theme">☾</button>
     </div>
   </header>
@@ -200,8 +200,8 @@
         const key = node.dataset.i18n;
         if(t[key]) node.textContent = t[key];
       });
-      langButton.textContent = lang.toUpperCase();
-      localStorage.setItem('vector-lang', lang);
+      if (langButton) langButton.textContent = lang.toUpperCase();
+
     }
 
     function setTheme(theme){
@@ -210,10 +210,10 @@
       localStorage.setItem('vector-theme', theme);
     }
 
-    setLang(localStorage.getItem('vector-lang') || (((navigator.language || '').toLowerCase().startsWith('ru')) ? 'ru' : 'en'));
+    setLang(document.documentElement.lang === 'ru' ? 'ru' : 'en');
     setTheme(localStorage.getItem('vector-theme') || 'light');
 
-    langButton.addEventListener('click',()=>setLang(document.documentElement.lang === 'ru' ? 'en' : 'ru'));
+
     themeButton.addEventListener('click',()=>setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'));
   </script>
 </body>

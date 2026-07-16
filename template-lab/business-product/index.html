@@ -27,7 +27,7 @@
 
       <div class="header-actions">
         <a class="header-cta" href="#contact" data-i18n="headerCta">Book a call</a>
-        <button class="lang-toggle" type="button" aria-label="Toggle language">EN</button>
+
         <button class="theme-toggle" type="button" aria-label="Toggle theme">☾</button>
       </div>
     </div>
@@ -332,8 +332,8 @@
         const key = node.dataset.i18n;
         if (t[key]) node.textContent = t[key];
       });
-      langButton.textContent = lang.toUpperCase();
-      localStorage.setItem('meridian-lang', lang);
+      if (langButton) langButton.textContent = lang.toUpperCase();
+
     }
 
     function setTheme(theme) {
@@ -342,12 +342,8 @@
       localStorage.setItem('meridian-theme', theme);
     }
 
-    setLang(localStorage.getItem('meridian-lang') || (((navigator.language || '').toLowerCase().startsWith('ru')) ? 'ru' : 'en'));
+    setLang(document.documentElement.lang === 'ru' ? 'ru' : 'en');
     setTheme(localStorage.getItem('meridian-theme') || 'light');
-
-    langButton.addEventListener('click', () => {
-      setLang(document.documentElement.lang === 'ru' ? 'en' : 'ru');
-    });
 
     themeButton.addEventListener('click', () => {
       setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
@@ -448,7 +444,7 @@
     }
     document.documentElement.lang = next;
     document.documentElement.setAttribute('data-lang', next);
-    try { localStorage.setItem('irgeztne-business-template-lang', next); } catch (_) {}
+
 
     document.querySelectorAll('button, a, [role="button"]').forEach((el) => {
       const raw = (el.textContent || '').trim().toUpperCase();
@@ -457,20 +453,7 @@
     });
   }
 
-  document.addEventListener('click', (event) => {
-    const btn = event.target.closest('button, a, [role="button"]');
-    if (!btn) return;
-    const raw = (btn.textContent || '').trim().toUpperCase();
-    const isLangButton = raw === 'EN' || raw === 'RU' || (btn.dataset && (btn.dataset.lang === 'en' || btn.dataset.lang === 'ru'));
-    if (!isLangButton) return;
-    event.preventDefault();
-    event.stopPropagation();
-    const current = document.documentElement.lang === 'ru' ? 'ru' : 'en';
-    setLanguage(current === 'ru' ? 'en' : 'ru');
-  }, true);
 
-  const saved = (() => { try { return localStorage.getItem('irgeztne-business-template-lang'); } catch (_) { return null; } })();
-  if (saved === 'ru' || saved === 'en') setLanguage(saved);
 })();
 </script>
 
