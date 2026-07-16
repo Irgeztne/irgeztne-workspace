@@ -5536,7 +5536,19 @@
     overlay.classList.toggle('is-site-manager-tab', activeTab === 'sites' || activeTab === 'site-settings');
     overlay.classList.toggle('is-settings-irrelevant', !pageSettingsRelevant);
     overlay.classList.toggle('is-preview-wide', activeTab === 'preview' && previewWide);
-    var headerSitePill = '<button class="ir-site-studio-v5-header-site" data-v5-action="open-sites" type="button" title="' + escapeHtml(t('Switch website', 'Переключить сайт')) + '"><span class="ir-site-studio-v5-header-site-icon" style="--site-color:' + escapeHtml(state.site.siteColor || state.site.accentColor || '#2f7be6') + '">' + escapeHtml(state.site.icon || initialsFromName(state.site.name).slice(0, 1)) + '</span><span><strong>' + escapeHtml(state.site.name || 'Website') + '</strong><small>' + escapeHtml(state.site.author || t('Local site', 'Локальный сайт')) + '</small></span></button>';
+    /*
+       IRGEZTNE_WEBSTUDIO_HEADER_SITE_LOGO_V084T
+
+       site.icon belongs to the local Sites manager card.
+       The global Web Studio header shows the actual website logo.
+    */
+    var headerSiteMark = normalizeLooseLogoLettersV069E(
+      state.site.logoLetters ||
+      initialsFromName(state.site.name || 'Website')
+    ).slice(0, 3) || initialsFromName(state.site.name || 'Website').slice(0, 2);
+    var headerSiteMarkBg = state.site.logoBackgroundColor || state.site.accentColor || state.site.siteColor || '#2f7be6';
+    var headerSiteMarkText = state.site.logoTextColor || '#ffffff';
+    var headerSitePill = '<button class="ir-site-studio-v5-header-site" data-v5-action="open-sites" type="button" title="' + escapeHtml(t('Switch website', 'Переключить сайт')) + '"><span class="ir-site-studio-v5-header-site-icon" style="--site-color:' + escapeHtml(headerSiteMarkBg) + ';color:' + escapeHtml(headerSiteMarkText) + '">' + escapeHtml(headerSiteMark) + '</span><span><strong>' + escapeHtml(state.site.name || 'Website') + '</strong><small>' + escapeHtml(state.site.author || t('Local site', 'Локальный сайт')) + '</small></span></button>';
     var langLabel = currentLang() === 'ru' ? 'RU' : 'EN';
     var themeLabel = currentTheme() === 'light' ? '☀' : '☾';
     var settingsButton = ''; // v082-clean-2: page settings button does not belong in the global Web Studio header.
