@@ -5193,6 +5193,10 @@
       'сайты': 'sites',
       'сайт': 'sites',
 
+      'site-settings': 'site-settings',
+      'site settings': 'site-settings',
+      'настройки сайта': 'site-settings',
+
       templates: 'templates',
       template: 'templates',
       'шаблоны': 'templates',
@@ -5249,7 +5253,6 @@
   function renderSiteManagerTab(state) {
     var manager = readSiteManager();
     var activeSite = activeSiteEntry(manager);
-    if (siteManagerMode === 'cockpit') return renderSiteCockpitLayer(state, manager, activeSite);
     var draft = getSiteManagerDraft();
     var icons = siteIconOptions().map(function (icon) {
       return '<button class="ir-site-studio-v5-site-icon-choice' + (draft.icon === icon ? ' is-active' : '') + '" data-v5-action="site-draft-icon" data-v5-site-icon="' + escapeHtml(icon) + '" type="button">' + escapeHtml(icon) + '</button>';
@@ -5285,7 +5288,7 @@
     return '<div class="ir-site-studio-v5-sites-manager">' +
       '<section class="ir-site-studio-v5-sites-hero">' +
         '<div><div class="ir-site-studio-v5-kicker">Local Site Identity</div><h3>' + escapeHtml(t('Sites / local websites', 'Сайты / локальные сайты')) + '</h3><p>' + escapeHtml(t('Each website has its own pages, menu, template, colors and future publish settings. No cloud account is required.', 'У каждого сайта свои страницы, меню, шаблон, цвета и будущие настройки публикации. Облачный аккаунт не нужен.')) + '</p></div>' +
-        '<div class="ir-site-studio-v5-current-site-badge"><span style="--site-color:' + escapeHtml(activeSite ? activeSite.color : '#2f7be6') + '">' + escapeHtml(activeSite ? activeSite.icon : '◆') + '</span><strong>' + escapeHtml(activeSite ? activeSite.name : 'Website') + '</strong><small>' + escapeHtml(activeSite && activeSite.author ? activeSite.author : t('Local workspace', 'Локальный workspace')) + '</small><button class="ir-site-studio-v5-btn ir-site-studio-v5-btn--sm ir-site-studio-v5-btn--primary" data-v5-action="site-cockpit-open" type="button">' + escapeHtml(t('Site settings', 'Настройки сайта')) + '</button></div>' +
+        '<div class="ir-site-studio-v5-current-site-badge"><span style="--site-color:' + escapeHtml(activeSite ? activeSite.color : '#2f7be6') + '">' + escapeHtml(activeSite ? activeSite.icon : '◆') + '</span><strong>' + escapeHtml(activeSite ? activeSite.name : 'Website') + '</strong><small>' + escapeHtml(activeSite && activeSite.author ? activeSite.author : t('Local workspace', 'Локальный workspace')) + '</small></div>' +
       '</section>' +
       '<section class="ir-site-studio-v5-sites-grid">' +
         '<article class="ir-site-studio-v5-create-site-card">' +
@@ -5319,6 +5322,10 @@
       site: 'sites',
       'сайты': 'sites',
       'сайт': 'sites',
+
+      'site-settings': 'site-settings',
+      'site settings': 'site-settings',
+      'настройки сайта': 'site-settings',
 
       templates: 'templates',
       template: 'templates',
@@ -5376,6 +5383,7 @@
   function renderWorkspace(state, page) {
     activeTab = normalizeStudioTabId(activeTab, 'page');
     if (activeTab === 'sites') return renderSiteManagerTab(state);
+    if (activeTab === 'site-settings') return renderSiteCockpitLayer(state);
     if (activeTab === 'templates') return renderTemplatesTabV082Clean11(state);
     if (activeTab === 'preview') return renderПредпросмотрTab(state, page);
     if (activeTab === 'pages') return renderPagesManagerTab(state, page);
@@ -5394,7 +5402,8 @@
 
   function webStudioCurrentTopTabIdsV082Clean3() {
     // IRGEZTNE_V082_CLEAN_11_TEMPLATES_TAB_STABLE
-    return ['sites', 'templates', 'page', 'pages', 'menu', 'identity', 'preview', 'server'];
+    // IRGEZTNE_V084S_SITE_SETTINGS_TAB_STABLE
+    return ['sites', 'site-settings', 'templates', 'page', 'pages', 'menu', 'identity', 'preview', 'server'];
   }
 
   function webStudioCurrentTopTabsV082Clean3() {
@@ -5409,6 +5418,7 @@
     var ru = currentLang() === 'ru';
     var map = {
       sites: ru ? 'Сайты' : 'Sites',
+      'site-settings': ru ? 'Настройки' : 'Settings',
       templates: ru ? 'Шаблоны' : 'Templates',
       page: ru ? 'Редактор' : 'Editor',
       pages: ru ? 'Страницы' : 'Pages',
@@ -5523,7 +5533,7 @@
     var pageSettingsRelevant = isPageSettingsRelevant(activeTab);
     overlay.classList.toggle('is-preview-tab', activeTab === 'preview');
     overlay.classList.toggle('is-server-tab', activeTab === 'server' || activeTab === 'publish');
-    overlay.classList.toggle('is-site-manager-tab', activeTab === 'sites');
+    overlay.classList.toggle('is-site-manager-tab', activeTab === 'sites' || activeTab === 'site-settings');
     overlay.classList.toggle('is-settings-irrelevant', !pageSettingsRelevant);
     overlay.classList.toggle('is-preview-wide', activeTab === 'preview' && previewWide);
     var headerSitePill = '<button class="ir-site-studio-v5-header-site" data-v5-action="open-sites" type="button" title="' + escapeHtml(t('Switch website', 'Переключить сайт')) + '"><span class="ir-site-studio-v5-header-site-icon" style="--site-color:' + escapeHtml(state.site.siteColor || state.site.accentColor || '#2f7be6') + '">' + escapeHtml(state.site.icon || initialsFromName(state.site.name).slice(0, 1)) + '</span><span><strong>' + escapeHtml(state.site.name || 'Website') + '</strong><small>' + escapeHtml(state.site.author || t('Local site', 'Локальный сайт')) + '</small></span></button>';
@@ -8204,9 +8214,9 @@
     }
 
     if (action === 'open-sites') { activeTab = 'sites'; siteManagerMode = 'list'; collapsedRight = true; renderStudio(); return; }
-    if (action === 'site-cockpit-open') { activeTab = 'sites'; siteManagerMode = 'cockpit'; siteSettingsSection = 'general'; collapsedRight = true; renderStudio(); return; }
+    if (action === 'site-cockpit-open') { activeTab = 'site-settings'; siteManagerMode = 'cockpit'; siteSettingsSection = 'general'; collapsedRight = true; renderStudio(); return; }
     if (action === 'site-cockpit-back') { activeTab = 'sites'; siteManagerMode = 'list'; collapsedRight = true; renderStudio(); return; }
-    if (action === 'site-settings-section') { siteSettingsSection = actionEl.dataset.v5SettingsSection || 'general'; activeTab = 'sites'; siteManagerMode = 'cockpit'; collapsedRight = true; renderStudio(); return; }
+    if (action === 'site-settings-section') { siteSettingsSection = actionEl.dataset.v5SettingsSection || 'general'; activeTab = 'site-settings'; siteManagerMode = 'cockpit'; collapsedRight = true; renderStudio(); return; }
     if (action === 'site-settings-save') { saveSiteSettingsFromPanel(); return; }
     if (action === 'quick-publish') {
       saveAllFromDom(false);
