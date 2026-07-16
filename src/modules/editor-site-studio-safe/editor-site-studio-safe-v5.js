@@ -18,6 +18,7 @@
   var previewRequestId = 0;
   var siteManagerDraft = null;
   var siteManagerError = '';
+  var siteManagerErrorField = '';
   var siteManagerMode = 'list';
   var siteSettingsSection = 'general';
   var STUDIO_LANG_KEY = 'irgeztne.webStudio.lang.v1';
@@ -5302,8 +5303,8 @@
         '<article class="ir-site-studio-v5-create-site-card">' +
           '<h4>' + escapeHtml(t('Create website', 'Создать сайт')) + '</h4>' +
           '<div class="ir-site-studio-v5-site-create-top"><div class="ir-site-studio-v5-site-big-icon" style="--site-color:' + escapeHtml(draft.color || '#2f7be6') + '">' + escapeHtml(draft.icon || '☕') + '</div><div class="ir-site-studio-v5-site-icon-grid">' + icons + '</div></div>' +
-          '<label class="ir-site-studio-v5-setting-row"><span>' + escapeHtml(t('Website name', 'Название сайта')) + '</span><input class="ir-site-studio-v5-input" data-v5-site-manager-field="name" placeholder="' + escapeHtml(t('Example: Project Studio', 'Например: Project Studio')) + '" value="' + escapeHtml(draft.name || '') + '"></label>' +
-          '<label class="ir-site-studio-v5-setting-row"><span>' + escapeHtml(t('Author / owner *', 'Автор / владелец *')) + '</span><input class="ir-site-studio-v5-input' + (siteManagerError ? ' is-invalid' : '') + '" data-v5-site-manager-field="author" placeholder="' + escapeHtml(t('Write the site owner name', 'Напишите имя владельца сайта')) + '" value="' + escapeHtml(draft.author || '') + '"></label>' +
+          '<label class="ir-site-studio-v5-setting-row"><span>' + escapeHtml(t('Website name', 'Название сайта')) + '</span><input class="ir-site-studio-v5-input' + (siteManagerError && siteManagerErrorField === 'name' ? ' is-invalid' : '') + '" data-v5-site-manager-field="name" placeholder="' + escapeHtml(t('Example: Project Studio', 'Например: Project Studio')) + '" value="' + escapeHtml(draft.name || '') + '"></label>' +
+          '<label class="ir-site-studio-v5-setting-row"><span>' + escapeHtml(t('Author / owner *', 'Автор / владелец *')) + '</span><input class="ir-site-studio-v5-input' + (siteManagerError && siteManagerErrorField === 'author' ? ' is-invalid' : '') + '" data-v5-site-manager-field="author" placeholder="' + escapeHtml(t('Write the site owner name', 'Напишите имя владельца сайта')) + '" value="' + escapeHtml(draft.author || '') + '"></label>' +
           '<label class="ir-site-studio-v5-setting-row"><span>' + escapeHtml(t('Template', 'Шаблон')) + '</span><select class="ir-site-studio-v5-select" data-v5-site-manager-field="template">' + templateOptions + '</select></label>' +
           '<div class="ir-site-studio-v5-site-color-row">' + colors + '<input class="ir-site-studio-v5-color-picker" type="color" data-v5-site-manager-field="color" value="' + escapeHtml(normalizeHexColor(draft.color, '#2f7be6')) + '"></div>' +
           (siteManagerError ? '<p class="ir-site-studio-v5-form-error">' + escapeHtml(siteManagerError) + '</p>' : '') +
@@ -5723,22 +5724,53 @@
   }
 
 
-  // IRGEZTNE_SITE_CREATE_AUTHOR_FOCUS_V068J
-  function focusSiteCreateAuthorFieldV068J() {
+  // IRGEZTNE_SITE_CREATE_FIELD_FOCUS_V084W
+  function focusSiteCreateFieldV084W(fieldName) {
     function run() {
       if (!overlay) return;
-      var input = overlay.querySelector('[data-v5-site-manager-field="author"]');
+
+      var input = overlay.querySelector(
+        '[data-v5-site-manager-field="' + fieldName + '"]'
+      );
+
       if (!input || typeof input.focus !== 'function') return;
+
       input.focus();
+
       try {
         var len = String(input.value || '').length;
         input.setSelectionRange(len, len);
       } catch (error) {}
     }
+
     run();
     setTimeout(run, 40);
     setTimeout(run, 140);
-    if (typeof requestAnimationFrame === 'function') requestAnimationFrame(run);
+
+    if (typeof requestAnimationFrame === 'function') {
+      requestAnimationFrame(run);
+    }
+  }
+
+  function focusSiteCreateAuthorFieldV068J() {
+    focusSiteCreateFieldV084W('author');
+  }
+
+  function focusSiteCreateNameFieldV084W() {
+    focusSiteCreateFieldV084W('name');
+  }
+
+  function normalizeLocalSiteNameV084W(value) {
+    var normalized = String(value || '');
+
+    try {
+      normalized = normalized.normalize('NFKC');
+    } catch (error) {}
+
+    return normalized
+      .replace(/\s+/g, ' ')
+      .trim()
+      .toLowerCase();
   }
 
   function createLocalSite() {
@@ -5869,6 +5901,7 @@
     var author = String(draft.author || '').trim();
     if (!author) {
       siteManagerError = t('Write the author / owner name before creating the website.', 'Перед созданием сайта напишите автора / владельца.');
+      siteManagerErrorField = 'author';
       activeTab = 'sites';
       renderStudio();
       /*
@@ -5877,6 +5910,26 @@
          focus helper so late UI work cannot steal the caret.
       */
       focusSiteCreateAuthorFieldV068J();
+      return;
+    }
+
+    var manager = readSiteManager();
+    var normalizedNameV084W = normalizeLocalSiteNameV084W(name);
+
+    var duplicateNameV084W = manager.sites.some(function (site) {
+      return normalizeLocalSiteNameV084W(site && site.name) ===
+        normalizedNameV084W;
+    });
+
+    if (duplicateNameV084W) {
+      siteManagerError = t(
+        'A website with this name already exists.',
+        'Сайт с таким названием уже существует.'
+      );
+      siteManagerErrorField = 'name';
+      activeTab = 'sites';
+      renderStudio();
+      focusSiteCreateNameFieldV084W();
       return;
     }
 
@@ -5930,12 +5983,12 @@
     state.__irgeztneOfficialTemplateStarterV071A = templateId;
     state.updatedAt = new Date().toISOString();
 
-    var manager = readSiteManager();
     manager.sites.push(Object.assign({}, profile, { state: state, template: templateId, templateSource: 'template-lab', templateLabPath: templateLabPathForNewSiteV083K }));
     manager.activeSiteId = profile.id;
     writeSiteManager(manager);
     resetSiteManagerDraft();
     siteManagerError = '';
+    siteManagerErrorField = '';
     activeTab = 'page';
     collapsedRight = false;
     renderStudio();
@@ -8403,23 +8456,25 @@
       var draftKeyV074A = siteManagerFieldEl.dataset.v5SiteManagerField;
       draft[draftKeyV074A] = siteManagerFieldEl.value;
 
-      if (siteManagerError) {
+      if (
+        siteManagerError &&
+        draftKeyV074A === siteManagerErrorField
+      ) {
         siteManagerError = '';
+        siteManagerErrorField = '';
 
-        if (draftKeyV074A === 'author') {
-          siteManagerFieldEl.classList.remove('is-invalid');
+        siteManagerFieldEl.classList.remove('is-invalid');
 
-          var createCardV084V = siteManagerFieldEl.closest(
-            '.ir-site-studio-v5-create-site-card'
+        var createCardV084W = siteManagerFieldEl.closest(
+          '.ir-site-studio-v5-create-site-card'
+        );
+
+        var formErrorV084W = createCardV084W &&
+          createCardV084W.querySelector(
+            '.ir-site-studio-v5-form-error'
           );
 
-          var formErrorV084V = createCardV084V &&
-            createCardV084V.querySelector(
-              '.ir-site-studio-v5-form-error'
-            );
-
-          if (formErrorV084V) formErrorV084V.remove();
-        }
+        if (formErrorV084W) formErrorV084W.remove();
       }
 
       if (draftKeyV074A === 'color') {
