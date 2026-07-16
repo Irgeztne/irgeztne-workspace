@@ -5871,11 +5871,12 @@
       siteManagerError = t('Write the author / owner name before creating the website.', 'Перед созданием сайта напишите автора / владельца.');
       activeTab = 'sites';
       renderStudio();
-      setTimeout(function () {
-        if (!overlay) return;
-        var input = overlay.querySelector('[data-v5-site-manager-field="author"]');
-        if (input && typeof input.focus === 'function') input.focus();
-      }, 0);
+      /*
+         IRGEZTNE_SITE_CREATE_AUTHOR_FOCUS_V084V
+         renderStudio rebuilds the form. Use the existing multi-stage
+         focus helper so late UI work cannot steal the caret.
+      */
+      focusSiteCreateAuthorFieldV068J();
       return;
     }
 
@@ -8401,7 +8402,26 @@
       var draft = getSiteManagerDraft();
       var draftKeyV074A = siteManagerFieldEl.dataset.v5SiteManagerField;
       draft[draftKeyV074A] = siteManagerFieldEl.value;
-      if (siteManagerError) siteManagerError = '';
+
+      if (siteManagerError) {
+        siteManagerError = '';
+
+        if (draftKeyV074A === 'author') {
+          siteManagerFieldEl.classList.remove('is-invalid');
+
+          var createCardV084V = siteManagerFieldEl.closest(
+            '.ir-site-studio-v5-create-site-card'
+          );
+
+          var formErrorV084V = createCardV084V &&
+            createCardV084V.querySelector(
+              '.ir-site-studio-v5-form-error'
+            );
+
+          if (formErrorV084V) formErrorV084V.remove();
+        }
+      }
+
       if (draftKeyV074A === 'color') {
         var color = normalizeHexColor(siteManagerFieldEl.value, '#2f7be6');
         var big = overlay.querySelector('.ir-site-studio-v5-site-big-icon');
