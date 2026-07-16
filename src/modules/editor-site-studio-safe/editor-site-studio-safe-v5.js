@@ -1443,10 +1443,11 @@
       2
     );
 
-    if (!letters && /[0-9A-Za-zА-Яа-яЁё]/.test(String(site.icon || ''))) {
-      letters = cleanLetters(site.icon, 2);
-    }
-
+    /*
+       IRGEZTNE_FAVICON_LETTERS_ONLY_V084U
+       site.icon is a local Sites-manager marker only.
+       Empty favicon override follows the website logo.
+    */
     if (!letters) letters = cleanLetters(site.logoLetters, 2);
     if (!letters) letters = cleanLetters(initialsFromName(site.name || 'Project Studio'), 2);
 
@@ -4611,8 +4612,15 @@
     var faviconText = site.faviconTextColor || logoText;
     var logoShape = site.logoShape || 'rounded';
     var faviconShape = site.faviconShape || logoShape;
-    var faviconInitials = normalizeLooseLogoLettersV069E(site.faviconLetters || site.faviconText || site.faviconSymbol || site.faviconIcon || (/[0-9A-Za-zА-Яа-яЁё]/.test(String(site.icon || '')) ? site.icon : '') || '');
-    var siteIconValue = /[0-9A-Za-zА-Яа-яЁё]/.test(String(site.icon || '')) ? faviconInitials : (site.icon || faviconInitials);
+    var faviconInitials = normalizeLooseLogoLettersV069E(
+      site.faviconLetters ||
+      site.faviconText ||
+      site.faviconSymbol ||
+      site.faviconIcon ||
+      site.logoLetters ||
+      initialsFromName(site.name || 'Project Studio')
+    ).slice(0, 2);
+    var siteIconValue = faviconInitials;
     var logoBlock = '<article class="ir-site-studio-v5-compact-generator ir-site-studio-v5-compact-generator--logo"><div class="ir-site-studio-v5-compact-generator-head"><strong>' + escapeHtml(t('Logo', 'Логотип')) + '</strong><span>' + escapeHtml(t('Header mark', 'Знак в шапке')) + '</span></div><div class="ir-site-studio-v5-compact-row">' +
       fieldMiniInput('logoLetters', t('Letters / mark', 'Буквы / знак'), normalizeLooseLogoLettersV069E(site.logoLetters || ''), 3) +
       colorControl('logoBackgroundColor', t('Background', 'Фон'), logoBg, '#2f7be6') +
@@ -5892,10 +5900,14 @@
     state.site.logoBackgroundColor = profile.color;
     state.site.faviconBackgroundColor = profile.color;
     state.site.logoLetters = initialsFromName(profile.name);
-    state.site.faviconSymbol = state.site.logoLetters;
-    state.site.faviconLetters = state.site.logoLetters;
-    state.site.faviconText = state.site.logoLetters;
-    state.site.faviconIcon = state.site.logoLetters;
+    /*
+       Empty values mean: follow logoLetters automatically.
+       A user-entered favicon letter remains an explicit override.
+    */
+    state.site.faviconSymbol = '';
+    state.site.faviconLetters = '';
+    state.site.faviconText = '';
+    state.site.faviconIcon = '';
     state.site.tagline = meta.tagline;
     state.site.activeTemplate = templateId;
     state.site.template = templateId;
@@ -8539,6 +8551,23 @@
       var state2 = readState();
       var key2 = siteEl.dataset.v5SiteField;
       var siteValue = siteEl.value;
+
+      var previousLogoLettersV084U = normalizeLooseLogoLettersV069E(
+        state2.site.logoLetters || ''
+      ).slice(0, 3);
+
+      var previousFaviconLettersV084U = normalizeLooseLogoLettersV069E(
+        state2.site.faviconLetters ||
+        state2.site.faviconText ||
+        state2.site.faviconSymbol ||
+        state2.site.faviconIcon ||
+        ''
+      ).slice(0, 2);
+
+      var faviconWasFollowingLogoV084U =
+        !previousFaviconLettersV084U ||
+        previousFaviconLettersV084U === previousLogoLettersV084U.slice(0, 2);
+
       if (key2 === 'logoLetters' || key2 === 'faviconLetters' || key2 === 'faviconSymbol' || key2 === 'faviconText' || key2 === 'faviconIcon' || key2 === 'icon') {
         var maxLettersV073B = key2 === 'logoLetters' ? 3 : 2;
         siteValue = String(siteValue || '').toUpperCase().replace(/[^0-9A-ZА-ЯЁ]/gi, '').slice(0, maxLettersV073B);
@@ -8552,6 +8581,23 @@
         state2.site.faviconText = siteValue;
         state2.site.faviconIcon = siteValue;
       }
+
+      if (key2 === 'logoLetters' && faviconWasFollowingLogoV084U) {
+        state2.site.faviconLetters = '';
+        state2.site.faviconSymbol = '';
+        state2.site.faviconText = '';
+        state2.site.faviconIcon = '';
+
+        var liveFaviconFieldV084U = overlay && overlay.querySelector(
+          '[data-v5-site-field="faviconLetters"]'
+        );
+
+        if (liveFaviconFieldV084U) {
+          liveFaviconFieldV084U.value =
+            normalizeLooseLogoLettersV069E(siteValue).slice(0, 2);
+        }
+      }
+
       writeState(state2);
       if (/(accentColor|backgroundColor|textColor|logoBackgroundColor|logoTextColor|faviconBackgroundColor|faviconTextColor|menuColor|buttonColor)/.test(key2)) {
         var colorFallback = key2 === 'textColor' ? '#101827' : (key2 === 'logoTextColor' ? '#ffffff' : (key2 === 'backgroundColor' ? '#ffffff' : '#2f7be6'));
