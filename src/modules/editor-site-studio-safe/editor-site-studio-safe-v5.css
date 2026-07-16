@@ -6596,3 +6596,22 @@ button.ir-site-studio-v5-btn--danger[
       rgba(22, 51, 99, .98)
     ) !important;
 }
+
+/* IRGEZTNE_WORKBENCH_LIGHT_CONTEXT_V084R */
+
+.ir-site-studio-v5-theme-light
+.ir-site-studio-v5-editor-context {
+  background: #eef5ff !important;
+  border-color: rgba(47, 123, 230, .24) !important;
+  color: #20344e !important;
+}
+
+.ir-site-studio-v5-theme-light
+.ir-site-studio-v5-editor-context strong {
+  color: #102033 !important;
+}
+
+.ir-site-studio-v5-theme-light
+.ir-site-studio-v5-editor-context span {
+  color: #5f7188 !important;
+}

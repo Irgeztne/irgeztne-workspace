@@ -1299,7 +1299,18 @@
 
     pageId = String(data.pageId || '');
     title.textContent = data.pageLabel || 'Page';
-    shell.dataset.theme = data.theme === 'light' ? 'light' : 'dark';
+    const nextThemeV084R =
+      data.theme === 'light' ? 'light' : 'dark';
+
+    shell.dataset.theme = nextThemeV084R;
+    document.documentElement.dataset.theme =
+      nextThemeV084R;
+    document.documentElement.style.background =
+      nextThemeV084R === 'light'
+        ? '#f7fbff'
+        : '#0b1421';
+    document.documentElement.style.colorScheme =
+      nextThemeV084R;
 
     mediaAssetsV084H = Array.isArray(
       data.mediaAssets

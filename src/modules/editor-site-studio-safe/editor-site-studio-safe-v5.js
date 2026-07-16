@@ -4359,7 +4359,7 @@
       '<div class="ir-site-studio-v5-editor-context"><strong>' + escapeHtml(t('Editing page:', 'Редактируется страница:')) + ' ' + escapeHtml(pageLabel(page)) + '</strong><span>/' + escapeHtml(page.slug || 'page') + ' · ' + escapeHtml(t('Editor Workbench is isolated from old Web Studio editor layers.', 'Editor Workbench изолирован от старых слоёв редактора Web Studio.')) + '</span></div>' +
       '<label class="ir-site-studio-v5-label">' + escapeHtml(t('Template hero H1', 'Hero/H1 заголовок шаблона')) + '<input class="ir-site-studio-v5-input ir-site-studio-v5-page-title" data-v5-field="headline" value="' + escapeHtml(page.headline || '') + '"></label>' +
       '<input type="hidden" data-v5-content="1" data-v5-jodit-textarea="1" value="' + escapeHtml(safeHtml) + '">' +
-      '<iframe class="ir-site-studio-v5-editor-workbench-frame-v084b" data-v084b-editor-frame="1" title="IRGEZTNE Editor Workbench" src="./src/modules/editor-workbench/editor-workbench.html?v=v084p"></iframe>' +
+      '<iframe class="ir-site-studio-v5-editor-workbench-frame-v084b" data-v084b-editor-frame="1" title="IRGEZTNE Editor Workbench" style="background:' + (currentTheme() === 'light' ? '#f7fbff' : '#0b1421') + '" src="./src/modules/editor-workbench/editor-workbench.html?v=v084r&amp;theme=' + (currentTheme() === 'light' ? 'light' : 'dark') + '"></iframe>' +
       '<p class="ir-site-studio-v5-note">' + escapeHtml(t('This editor is a separate cabin: one document, one toolbar, one save bridge.', 'Этот редактор — отдельная кабина: один документ, одна панель, один мост сохранения.')) + '</p>' +
     '</div>';
   }

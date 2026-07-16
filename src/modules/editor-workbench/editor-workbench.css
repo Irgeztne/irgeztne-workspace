@@ -689,3 +689,39 @@ body {
 .ewb-media-edit-trigger:hover {
   background: rgba(30, 64, 110, .96);
 }
+
+/* IRGEZTNE_WORKBENCH_THEME_BOOTSTRAP_CSS_V084R
+   Prevent a dark first frame before the parent sends init. */
+
+html[data-theme="light"],
+html[data-theme="light"] body {
+  background: #f7fbff;
+  color: #111827;
+}
+
+html[data-theme="light"] .ewb-shell {
+  background: #f7fbff;
+  color: #111827;
+}
+
+html[data-theme="light"] .ewb-top,
+html[data-theme="light"] .ewb-toolbar {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, .12);
+}
+
+html[data-theme="light"] .ewb-toolbar button {
+  background: #f2f7ff;
+  color: #111827;
+  border-color: rgba(15, 23, 42, .14);
+}
+
+html[data-theme="light"] .ewb-editor-wrap {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, .14);
+}
+
+html[data-theme="light"] .ewb-editor {
+  color: #111827;
+  scrollbar-color: #9bb8d8 #eef4fb;
+}

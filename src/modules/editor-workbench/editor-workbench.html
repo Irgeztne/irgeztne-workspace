@@ -4,7 +4,26 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>IRGEZTNE Editor Workbench</title>
-  <link rel="stylesheet" href="./editor-workbench.css?v=v084p">
+  <script>
+    /* IRGEZTNE_WORKBENCH_THEME_BOOTSTRAP_V084R */
+    (function () {
+      var theme = 'dark';
+
+      try {
+        theme = new URLSearchParams(
+          window.location.search
+        ).get('theme') === 'light'
+          ? 'light'
+          : 'dark';
+      } catch (error) {}
+
+      document.documentElement.dataset.theme = theme;
+      document.documentElement.style.background =
+        theme === 'light' ? '#f7fbff' : '#0b1421';
+      document.documentElement.style.colorScheme = theme;
+    })();
+  </script>
+  <link rel="stylesheet" href="./editor-workbench.css?v=v084r">
 </head>
 <body>
   <main class="ewb-shell" data-theme="dark">
@@ -82,6 +101,6 @@
     </section>
   </main>
 
-  <script src="./editor-workbench.js?v=v084p"></script>
+  <script src="./editor-workbench.js?v=v084r"></script>
 </body>
 </html>
