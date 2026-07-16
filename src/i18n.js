@@ -1018,6 +1018,14 @@ function translateTemplatesOuterShell(state) {
 
 
 function translateGenericUi(state) {
+  /*
+   * IRGEZTNE_WEBSTUDIO_INDEPENDENT_LANGUAGE_V084R
+   *
+   * Web Studio owns its language through irgeztne.webStudio.lang.v1.
+   * The global Workspace translator must not rewrite its independently
+   * rendered controls after MutationObserver-driven DOM updates.
+   */
+  if (document.querySelector('.ir-site-studio-v5-overlay')) return;
   const lang = getLanguage(state);
   const ruMap = {
     'Files': 'Файлы',
