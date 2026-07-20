@@ -2968,7 +2968,7 @@
     var logoFontSizeV074A = logoHeaderFontSizePx(logoLetters, site.logoHeaderSize);
     var linkMode = options.linkMode || 'file';
     function fileFor(p){ return linkMode === 'hash' ? ('#' + ((p && p.slug) || 'index')) : pageFileName(p); }
-    function anchorOrFile(p, anchor){ return isHome ? ('#' + anchor) : fileFor(p); }
+    function anchorOrFile(p, anchor){ return (isHome || linkMode === 'hash') ? ('#' + anchor) : (fileFor(home) + '#' + anchor); }
 
     var heroTitle = textPairV072A(home.headline, 'Turn first impression into action.', 'Превратите первое впечатление в действие.');
     var heroSummary = textPairV072A(home.summary, 'A product landing starter with hero, features, scenarios, FAQ and a clear access CTA.', 'Стартовый лендинг продукта: первый экран, возможности, сценарии, FAQ и понятный CTA доступа.');
@@ -2977,20 +2977,115 @@
     var faqTitle = textPairV072A(faq && faq.headline, 'Answer doubts before the user leaves.', 'Ответьте на сомнения до того, как пользователь уйдёт.');
     var faqSummary = textPairV072A(faq && faq.summary, 'Use this area for access, price, download, support or product questions.', 'Используйте этот блок для вопросов о доступе, цене, скачивании, поддержке или продукте.');
 
+    /* IRGEZTNE_LANDING_PAGES_BRIDGE_V087A */
+    /* IRGEZTNE_LANDING_MENU_FLAGS_V087D
+       Header and footer placement are independent page flags. */
+    var landingMenuPagesV087A = orderedPageList(state).filter(function (candidate) {
+      var candidateSlug = String(
+        candidate && candidate.slug || ''
+      ).toLowerCase();
+
+      return candidate &&
+        candidate.id !== home.id &&
+        candidate.status === 'published' &&
+        candidate.inMenu === true &&
+        !candidate.parentId &&
+        ['product', 'features', 'faq'].indexOf(candidateSlug) === -1;
+    });
+
+    var landingPageNavV087A = landingMenuPagesV087A.map(function (candidate) {
+      var children = childPagesOf(state, candidate.id).filter(function (child) {
+        return child &&
+          child.status === 'published' &&
+          child.inMenu === true;
+      });
+
+      var hasActiveChild = children.some(function (child) {
+        return child.id === current.id;
+      });
+
+      var activeClass =
+        candidate.id === current.id || hasActiveChild
+          ? ' is-active'
+          : '';
+
+      var childLinks = children.length
+        ? '<span class="submenu">' +
+            children.map(function (child) {
+              var childClass =
+                child.id === current.id
+                  ? ' class="is-active-child"'
+                  : '';
+
+              return '<a' + childClass +
+                ' href="' + escapeHtml(fileFor(child)) + '">' +
+                escapeHtml(pageLabel(child)) +
+              '</a>';
+            }).join('') +
+          '</span>'
+        : '';
+
+      if (childLinks) {
+        return '<span class="nav-parent has-children">' +
+          '<a class="nav-link' + activeClass +
+            '" href="' + escapeHtml(fileFor(candidate)) + '">' +
+            escapeHtml(pageLabel(candidate)) +
+            '<span class="nav-caret">▾</span>' +
+          '</a>' +
+          childLinks +
+        '</span>';
+      }
+
+      return '<a class="nav-link' + activeClass +
+        '" href="' + escapeHtml(fileFor(candidate)) + '">' +
+        escapeHtml(pageLabel(candidate)) +
+      '</a>';
+    }).join('');
+
     var nav = '' +
-      '<a class="nav-link is-active" href="' + escapeHtml(fileFor(home)) + '">' + i18nSpanV072A({en:'Product',ru:'Продукт'}) + '</a>' +
-      '<a class="nav-link" href="' + escapeHtml(anchorOrFile(features || home, 'features')) + '">' + i18nSpanV072A({en:'Features',ru:'Возможности'}) + '</a>' +
-      '<a class="nav-link" href="' + escapeHtml(anchorOrFile(faq || home, 'faq')) + '">FAQ</a>' +
-            '<button class="theme-toggle" data-theme-toggle="1" type="button">☾</button>';
+      '<a class="nav-link' + (isHome ? ' is-active' : '') +
+        '" href="' + escapeHtml(fileFor(home)) + '">' +
+        i18nSpanV072A({en:'Product',ru:'Продукт'}) +
+      '</a>' +
+      '<a class="nav-link" href="' +
+        escapeHtml(anchorOrFile(home, 'features')) + '">' +
+        i18nSpanV072A({en:'Features',ru:'Возможности'}) +
+      '</a>' +
+      '<a class="nav-link" href="' +
+        escapeHtml(anchorOrFile(home, 'faq')) +
+      '">FAQ</a>' +
+      landingPageNavV087A +
+      '<button class="theme-toggle" data-theme-toggle="1" type="button">☾</button>';
 
     var css = landingCssV072A(accent) + '.logo{background:' + logoBgV074A + '!important;color:' + logoTextV074A + '!important;border-radius:' + logoRadiusV074A + '!important;width:' + logoSizeV074A + 'px!important;height:' + logoSizeV074A + 'px!important;font-size:' + logoFontSizeV074A + 'px!important}';
     css += siteGeneratedEditorContentCssV076C();
+    css +=
+      '/* IRGEZTNE_LANDING_PAGES_BRIDGE_V087A */' +
+      '.nav-parent{position:relative;display:inline-flex;align-items:center}' +
+      '.nav-caret{margin-left:7px;font-size:11px;opacity:.72}' +
+      '.submenu{position:absolute;right:0;top:calc(100% + 8px);z-index:140;display:grid;gap:6px;min-width:max-content;padding:8px;border:1px solid var(--line);border-radius:17px;background:color-mix(in srgb,var(--paper) 97%,transparent);box-shadow:var(--shadow);opacity:0;visibility:hidden;transform:translateY(4px);pointer-events:none;transition:.14s ease}' +
+      '.submenu a{display:block;padding:10px 13px;border-radius:11px;font-weight:850;white-space:nowrap}' +
+      '.submenu a:hover,.submenu a.is-active-child{background:var(--ink);color:var(--bg)}' +
+      '.nav-parent:hover .submenu,.nav-parent:focus-within .submenu{opacity:1;visibility:visible;transform:translateY(0);pointer-events:auto}' +
+      '.site-footer{flex-wrap:wrap;align-items:flex-start}' +
+      '.site-footer .footer-column{display:grid;gap:8px;min-width:150px}' +
+      '.site-footer .footer-title{margin:0;color:var(--ink);font-size:12px;letter-spacing:.12em;text-transform:uppercase}' +
+      '.site-footer .footer-links{display:grid;gap:7px}' +
+      '.site-footer .footer-service-link{font-weight:760}';
     css += [
       '/* IRGEZTNE_LANDING_TEMPLATE_PARITY_V086A */',
       'html,body{overflow-x:clip!important;overflow-y:visible!important}',
       '.site-header{position:sticky!important;top:0!important;z-index:100!important}',
       'section[id]{scroll-margin-top:112px}',
       '.landing-home-v086a{display:block}',
+      '/* IRGEZTNE_LANDING_CONTENT_PAGE_V088A */',
+      '.landing-content-page-v088a{width:min(100%,1180px);margin:0 auto;padding:clamp(12px,1.5vw,24px) 0 56px}',
+      '.landing-content-header-v088a{max-width:920px;padding:clamp(28px,4.5vw,72px) 0 clamp(22px,3vw,42px)}',
+      '.landing-content-header-v088a h1{margin:0 0 18px;font-size:clamp(48px,7vw,104px);line-height:.92;letter-spacing:-.06em}',
+      '.landing-content-summary-v088a{max-width:780px;margin:0;color:var(--muted);font-size:clamp(18px,1.55vw,24px);line-height:1.55}',
+      '/* IRGEZTNE_LANDING_BODY_ONLY_PAGE_V088C */.landing-content-body-v088a{min-width:0;padding:clamp(40px,5vw,80px) 0 0;border-top:0}',
+      '.landing-content-body-v088a>:first-child{margin-top:0}',
+      '.landing-content-body-v088a>:last-child{margin-bottom:0}',
       '.landing-feature-visual-v086a{min-height:360px;position:relative;overflow:hidden}',
       '.landing-interface-v086a{margin-top:28px;padding:22px;border:1px solid rgba(255,255,255,.22);border-radius:24px;background:rgba(255,255,255,.10)}',
       '.landing-interface-v086a div{display:flex;align-items:end;justify-content:space-between;gap:18px;margin-bottom:18px}',
@@ -3015,10 +3110,48 @@
     var seoDescription = siteMetaDescription(state, current, description);
     var canonicalUrl = absolutePageUrl(state, current);
     var ogImage = currentSitePublicBaseUrl(state) ? (currentSitePublicBaseUrl(state) + '/android-chrome-512x512.png') : 'android-chrome-512x512.png';
+    var landingFooterStateV087A = Object.assign({}, state, {
+      pages: orderedPageList(state).filter(function (candidate) {
+        return candidate &&
+          candidate.status !== 'draft';
+      })
+    });
+
+    var landingFooterNavV087A = footerNavHtml(
+      landingFooterStateV087A,
+      linkMode
+    );
 
     var pageContent = '';
     if (!isHome) {
-      pageContent = '<section class="hero"><div class="hero-copy"><p class="kicker">' + escapeHtml(pageLabel(current)) + '</p><h1>' + escapeHtml(current.headline || pageLabel(current)) + '</h1>' + (current.summary ? '<p>' + escapeHtml(current.summary) + '</p>' : '') + '</div><div class="section-card">' + sanitizeHtml(current.bodyHtml || '') + '</div></section>';
+      /* IRGEZTNE_LANDING_CONTENT_PAGE_V088A
+         Ordinary pages use one editorial canvas.
+         Do not manufacture an empty media/card column. */
+      var landingPageBodyV088A =
+        sanitizeHtml(current.bodyHtml || '');
+
+      var landingPageSummaryV088A = current.summary
+        ? '<p class="landing-content-summary-v088a">' +
+            escapeHtml(current.summary) +
+          '</p>'
+        : '';
+
+      var landingPageArticleV088A =
+        String(landingPageBodyV088A || '').trim()
+          ? '<section class="landing-content-body-v088a">' +
+              landingPageBodyV088A +
+            '</section>'
+          : '';
+
+      /* IRGEZTNE_LANDING_CONTENT_TITLE_ONLY_V088B
+         Ordinary page title is rendered once, as H1 only. */
+      /* IRGEZTNE_LANDING_BODY_ONLY_PAGE_V088C
+         Page name belongs to navigation, settings and metadata.
+         Public page body contains only editor-authored content. */
+      pageContent =
+        '<article class="landing-content-page-v088a">' +
+          landingPageArticleV088A +
+        '</article>';
     } else {
       var editableLandingBodyV086A = sanitizeHtml(home.bodyHtml || '');
 
@@ -3048,7 +3181,7 @@
 
     return '<!doctype html><html lang="' +
       escapeHtml(siteLangV084X) +
-      '" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">' + faviconHeadTags() + '<title>' + escapeHtml(seoTitle) + '</title><meta name="description" content="' + escapeHtml(seoDescription) + '"><link rel="canonical" href="' + escapeHtml(canonicalUrl) + '"><meta property="og:type" content="website"><meta property="og:title" content="' + escapeHtml(seoTitle) + '"><meta property="og:description" content="' + escapeHtml(seoDescription) + '"><meta property="og:url" content="' + escapeHtml(canonicalUrl) + '"><meta property="og:image" content="' + escapeHtml(ogImage) + '"><meta name="twitter:card" content="summary"><meta name="theme-color" content="' + accent + '"><style>' + css + '</style><script>' + js + '</script></head><body><header class="site-header"><a class="brand" href="' + escapeHtml(fileFor(home)) + '"><div class="logo" style="background:' + logoBgV074A + ';color:' + logoTextV074A + ';border-radius:' + logoRadiusV074A + ';width:' + logoSizeV074A + 'px;height:' + logoSizeV074A + 'px;font-size:' + logoFontSizeV074A + 'px">' + escapeHtml(logoLetters) + '</div><div><strong>' + escapeHtml(siteName) + '</strong><span>' + escapeHtml(tagline) + '</span></div></a><nav class="site-nav" aria-label="Main navigation">' + nav + '</nav></header><main class="page">' + pageContent + '<footer class="site-footer"><div class="footer-brand"><strong>' + escapeHtml(siteName) + '</strong><span>' + escapeHtml(tagline) + '</span><span class="footer-copy">© ' + new Date().getFullYear() + ' ' + escapeHtml(siteName) + '</span></div><nav><a href="' + escapeHtml(fileFor(home)) + '">' + i18nSpanV072A({en:'Product',ru:'Продукт'}) + '</a> · <a href="' + escapeHtml(anchorOrFile(features || home, 'features')) + '">' + i18nSpanV072A({en:'Features',ru:'Возможности'}) + '</a> · <a href="' + escapeHtml(anchorOrFile(faq || home, 'faq')) + '">FAQ</a></nav></footer></main></body></html>';
+      '" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">' + faviconHeadTags() + '<title>' + escapeHtml(seoTitle) + '</title><meta name="description" content="' + escapeHtml(seoDescription) + '"><link rel="canonical" href="' + escapeHtml(canonicalUrl) + '"><meta property="og:type" content="website"><meta property="og:title" content="' + escapeHtml(seoTitle) + '"><meta property="og:description" content="' + escapeHtml(seoDescription) + '"><meta property="og:url" content="' + escapeHtml(canonicalUrl) + '"><meta property="og:image" content="' + escapeHtml(ogImage) + '"><meta name="twitter:card" content="summary"><meta name="theme-color" content="' + accent + '"><style>' + css + '</style><script>' + js + '</script></head><body><header class="site-header"><a class="brand" href="' + escapeHtml(fileFor(home)) + '"><div class="logo" style="background:' + logoBgV074A + ';color:' + logoTextV074A + ';border-radius:' + logoRadiusV074A + ';width:' + logoSizeV074A + 'px;height:' + logoSizeV074A + 'px;font-size:' + logoFontSizeV074A + 'px">' + escapeHtml(logoLetters) + '</div><div><strong>' + escapeHtml(siteName) + '</strong><span>' + escapeHtml(tagline) + '</span></div></a><nav class="site-nav" aria-label="Main navigation">' + nav + '</nav></header><main class="page">' + pageContent + '<footer class="site-footer"><div class="footer-brand"><strong>' + escapeHtml(siteName) + '</strong><span>' + escapeHtml(tagline) + '</span><span class="footer-copy">© ' + new Date().getFullYear() + ' ' + escapeHtml(siteName) + '</span></div><nav><a href="' + escapeHtml(fileFor(home)) + '">' + i18nSpanV072A({en:'Product',ru:'Продукт'}) + '</a> · <a href="' + escapeHtml(anchorOrFile(features || home, 'features')) + '">' + i18nSpanV072A({en:'Features',ru:'Возможности'}) + '</a> · <a href="' + escapeHtml(anchorOrFile(home, 'faq')) + '">FAQ</a></nav>' + landingFooterNavV087A + '</footer></main></body></html>';
   }
 
   function renderSiteHtml(state, page, options) {
