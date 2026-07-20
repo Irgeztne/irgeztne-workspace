@@ -351,7 +351,7 @@
   function officialTemplateMetaV068C(templateId) {
     var id = normalizeOfficialTemplateIdV068C(templateId);
     var map = {
-      'project-landing': { title: 'Landing', titleRu: 'Лендинг', description: 'A modern landing page template.', descriptionRu: 'Современный лендинг.' },
+      'project-landing': { title: 'Landing / Product', titleRu: 'Лендинг / продукт', description: 'A wide product landing page template.', descriptionRu: 'Широкий продуктовый лендинг.' },
       'studio-portfolio': { title: 'Portfolio', titleRu: 'Портфолио', description: 'A portfolio and showcase template.', descriptionRu: 'Шаблон портфолио и showcase.' },
       'documentation-wide': { title: 'Documentation', titleRu: 'Документация', description: 'A wide documentation template.', descriptionRu: 'Широкий шаблон документации.' },
       'business-product': { title: 'Business / Product', titleRu: 'Бизнес / продукт', description: 'A business and product website template.', descriptionRu: 'Шаблон для бизнеса и продукта.' },
@@ -402,6 +402,438 @@
 
   function starterPagesForTemplateV068C(templateId) {
     var id = normalizeOfficialTemplateIdV068C(templateId);
+
+
+
+    // IRGEZTNE_LANDING_TEMPLATE_PARITY_V086A
+    if (id === 'project-landing') {
+      function landingI18nV086A(en, ru, tagName, className) {
+        var tag = tagName || 'span';
+        var classAttr = className
+          ? ' class="' + escapeHtml(className) + '"'
+          : '';
+
+        return '<' + tag + classAttr +
+          ' data-i18n-text="1"' +
+          ' data-en="' + escapeHtml(en) + '"' +
+          ' data-ru="' + escapeHtml(ru) + '">' +
+          escapeHtml(t(en, ru)) +
+          '</' + tag + '>';
+      }
+
+      var landingHomeV086A =
+        '<div class="landing-home-v086a" data-landing-starter-v086a="1">' +
+
+          '<section class="hero" id="product">' +
+            '<div class="hero-copy">' +
+              '<p class="kicker">Landing / Product</p>' +
+
+              landingI18nV086A(
+                'Turn first impression into action.',
+                'Превратите первое впечатление в действие.',
+                'h1'
+              ) +
+
+              landingI18nV086A(
+                'A wide product landing for apps, tools, SaaS products and digital launches.',
+                'Широкий продуктовый лендинг для приложений, инструментов, SaaS-продуктов и цифровых запусков.',
+                'p'
+              ) +
+
+              '<div class="hero-actions">' +
+                '<a class="btn" href="#cta">' +
+                  landingI18nV086A(
+                    'Get access',
+                    'Получить доступ'
+                  ) +
+                '</a>' +
+
+                '<a class="btn secondary" href="#features">' +
+                  landingI18nV086A(
+                    'View features',
+                    'Смотреть возможности'
+                  ) +
+                '</a>' +
+              '</div>' +
+            '</div>' +
+
+            '<aside class="hero-visual"' +
+              ' data-template-slot="hero.productMockup"' +
+              ' data-slot="hero.productMockup"' +
+              ' data-slot-kind="image">' +
+
+              '<div class="product-panel">' +
+                landingI18nV086A(
+                  'Launch panel',
+                  'Панель запуска',
+                  'h3'
+                ) +
+
+                '<div class="metric-row">' +
+                  '<div class="metric"><strong>01</strong>' +
+                    landingI18nV086A('Start', 'Старт') +
+                  '</div>' +
+
+                  '<div class="metric"><strong>02</strong>' +
+                    landingI18nV086A('Build', 'Сборка') +
+                  '</div>' +
+
+                  '<div class="metric"><strong>03</strong>' +
+                    landingI18nV086A('Launch', 'Запуск') +
+                  '</div>' +
+                '</div>' +
+              '</div>' +
+
+              '<div class="visual-footer">' +
+                '<div class="visual-pill">' +
+                  landingI18nV086A('Signup', 'Регистрация') +
+                '</div>' +
+
+                '<div class="visual-pill">' +
+                  landingI18nV086A('Download', 'Скачивание') +
+                '</div>' +
+
+                '<div class="visual-pill">' +
+                  landingI18nV086A('Demo', 'Демо') +
+                '</div>' +
+              '</div>' +
+            '</aside>' +
+          '</section>' +
+
+          '<div class="strip">' +
+            '<b>' +
+              landingI18nV086A(
+                'Demo visuals can be replaced before publishing.',
+                'Демо-визуалы можно заменить перед публикацией.'
+              ) +
+            '</b>' +
+
+            landingI18nV086A(
+              'Product, SaaS, app or service landing.',
+              'Лендинг продукта, SaaS, приложения или услуги.'
+            ) +
+          '</div>' +
+
+          '<section id="features">' +
+            '<div class="section-head">' +
+              '<div>' +
+                '<p class="kicker">Features</p>' +
+
+                landingI18nV086A(
+                  'A landing page needs rhythm, proof and one clear action.',
+                  'Лендингу нужен ритм, доказательства и одно понятное действие.',
+                  'h2'
+                ) +
+              '</div>' +
+
+              landingI18nV086A(
+                'Every section explains the product, shows value and guides the visitor forward.',
+                'Каждая секция объясняет продукт, показывает пользу и ведёт посетителя дальше.',
+                'p'
+              ) +
+            '</div>' +
+
+            '<div class="feature-grid">' +
+              '<article class="section-card">' +
+                '<div class="num">01</div>' +
+
+                landingI18nV086A(
+                  'Hero with purpose',
+                  'Hero с задачей',
+                  'h3'
+                ) +
+
+                landingI18nV086A(
+                  'Explain the product clearly on the first screen.',
+                  'Понятно объясните продукт уже на первом экране.',
+                  'p'
+                ) +
+              '</article>' +
+
+              '<article class="section-card">' +
+                '<div class="num">02</div>' +
+
+                landingI18nV086A(
+                  'Benefits, not noise',
+                  'Польза, а не шум',
+                  'h3'
+                ) +
+
+                landingI18nV086A(
+                  'Focus sections on real outcomes instead of decorative filler.',
+                  'Сфокусируйте секции на результате, а не на декоративном наполнении.',
+                  'p'
+                ) +
+              '</article>' +
+
+              '<article class="section-card">' +
+                '<div class="num">03</div>' +
+
+                landingI18nV086A(
+                  'Ready for conversion',
+                  'Готов к действию',
+                  'h3'
+                ) +
+
+                landingI18nV086A(
+                  'Make signup, download, demo or request access easy to find.',
+                  'Сделайте регистрацию, скачивание, демо или запрос доступа заметными.',
+                  'p'
+                ) +
+              '</article>' +
+            '</div>' +
+          '</section>' +
+
+          '<section class="scenario landing-showcase-v086a">' +
+            '<article class="section-card landing-feature-visual-v086a"' +
+              ' data-template-slot="feature.productVisual"' +
+              ' data-slot="feature.productVisual"' +
+              ' data-slot-kind="image">' +
+
+              '<p class="kicker">Product visual</p>' +
+
+              landingI18nV086A(
+                'Show the product before visitors have to imagine it.',
+                'Покажите продукт раньше, чем посетителю придётся его воображать.',
+                'h2'
+              ) +
+
+              '<div class="landing-interface-v086a">' +
+                '<div><strong>84%</strong><span>Tasks organised</span></div>' +
+                '<i></i><i></i><i></i>' +
+              '</div>' +
+            '</article>' +
+
+            '<article class="section-card">' +
+              '<p class="kicker">Product story</p>' +
+
+              landingI18nV086A(
+                'Connect the problem, the interface and the result.',
+                'Свяжите проблему, интерфейс и результат.',
+                'h2'
+              ) +
+
+              landingI18nV086A(
+                'A believable product visual helps visitors understand what they are looking at and how it fits into their workflow.',
+                'Убедительный визуал помогает посетителю понять, что перед ним и как продукт встраивается в рабочий процесс.',
+                'p'
+              ) +
+            '</article>' +
+          '</section>' +
+
+          '<section id="workflow">' +
+            '<div class="section-head">' +
+              '<div>' +
+                '<p class="kicker">Workflow</p>' +
+
+                landingI18nV086A(
+                  'Guide the visitor from interest to a useful result.',
+                  'Проведите посетителя от интереса к полезному результату.',
+                  'h2'
+                ) +
+              '</div>' +
+
+              landingI18nV086A(
+                'Keep the path simple and visible.',
+                'Сделайте путь простым и заметным.',
+                'p'
+              ) +
+            '</div>' +
+
+            '<div class="feature-grid">' +
+              '<article class="section-card">' +
+                '<div class="num">01</div>' +
+
+                landingI18nV086A(
+                  'Understand',
+                  'Понять',
+                  'h3'
+                ) +
+
+                landingI18nV086A(
+                  'Explain what the product is and who it is for.',
+                  'Объясните, что это за продукт и для кого он создан.',
+                  'p'
+                ) +
+              '</article>' +
+
+              '<article class="section-card">' +
+                '<div class="num">02</div>' +
+
+                landingI18nV086A(
+                  'Evaluate',
+                  'Оценить',
+                  'h3'
+                ) +
+
+                landingI18nV086A(
+                  'Show benefits, use cases and proof.',
+                  'Покажите преимущества, сценарии и доказательства.',
+                  'p'
+                ) +
+              '</article>' +
+
+              '<article class="section-card">' +
+                '<div class="num">03</div>' +
+
+                landingI18nV086A(
+                  'Act',
+                  'Действовать',
+                  'h3'
+                ) +
+
+                landingI18nV086A(
+                  'Offer one calm and clear next step.',
+                  'Предложите один спокойный и понятный следующий шаг.',
+                  'p'
+                ) +
+              '</article>' +
+            '</div>' +
+          '</section>' +
+
+          '<section class="scenario landing-proof-v086a" id="proof">' +
+            '<article class="section-card">' +
+              '<p class="kicker">Proof</p>' +
+
+              landingI18nV086A(
+                'Use facts instead of empty promises.',
+                'Используйте факты вместо пустых обещаний.',
+                'h2'
+              ) +
+
+              landingI18nV086A(
+                'Add metrics, customer results, release status or verified examples.',
+                'Добавьте метрики, результаты клиентов, статус релиза или проверенные примеры.',
+                'p'
+              ) +
+            '</article>' +
+
+            '<article class="section-card landing-proof-metrics-v086a">' +
+              '<div><strong>3×</strong>' +
+                landingI18nV086A(
+                  'Clearer onboarding',
+                  'Понятнее знакомство'
+                ) +
+              '</div>' +
+
+              '<div><strong>24/7</strong>' +
+                landingI18nV086A(
+                  'Product access',
+                  'Доступ к продукту'
+                ) +
+              '</div>' +
+
+              '<div><strong>1</strong>' +
+                landingI18nV086A(
+                  'Primary action',
+                  'Главное действие'
+                ) +
+              '</div>' +
+            '</article>' +
+          '</section>' +
+
+          '<section id="faq">' +
+            '<div class="section-head">' +
+              '<div>' +
+                '<p class="kicker">FAQ</p>' +
+
+                landingI18nV086A(
+                  'Answer doubts before the visitor leaves.',
+                  'Ответьте на сомнения до того, как посетитель уйдёт.',
+                  'h2'
+                ) +
+              '</div>' +
+
+              landingI18nV086A(
+                'Use this section for access, price, support and product questions.',
+                'Используйте этот раздел для вопросов о доступе, цене, поддержке и продукте.',
+                'p'
+              ) +
+            '</div>' +
+
+            '<div class="faq-list">' +
+              '<details class="faq-item" open>' +
+                landingI18nV086A(
+                  'Can users replace the product visual?',
+                  'Можно ли заменить визуал продукта?',
+                  'summary'
+                ) +
+
+                landingI18nV086A(
+                  'Yes. Demo visuals are placeholders for your own screenshots, product images or interface mockups.',
+                  'Да. Демо-визуалы — это заглушки для собственных скриншотов, изображений продукта или макетов интерфейса.',
+                  'p'
+                ) +
+              '</details>' +
+
+              '<details class="faq-item">' +
+                landingI18nV086A(
+                  'Is this template only for SaaS?',
+                  'Этот шаблон только для SaaS?',
+                  'summary'
+                ) +
+
+                landingI18nV086A(
+                  'No. It also works for apps, tools, services, launches and single-product campaigns.',
+                  'Нет. Он также подходит для приложений, инструментов, сервисов, запусков и кампаний одного продукта.',
+                  'p'
+                ) +
+              '</details>' +
+
+              '<details class="faq-item">' +
+                landingI18nV086A(
+                  'Does a landing page need RSS?',
+                  'Нужен ли лендингу RSS?',
+                  'summary'
+                ) +
+
+                landingI18nV086A(
+                  'No. RSS is not required for a product landing by default.',
+                  'Нет. Продуктовому лендингу RSS по умолчанию не требуется.',
+                  'p'
+                ) +
+              '</details>' +
+            '</div>' +
+          '</section>' +
+
+          '<section class="final-cta" id="cta">' +
+            '<div>' +
+              '<p class="kicker">CTA</p>' +
+
+              landingI18nV086A(
+                'Give visitors a clear next step.',
+                'Дайте посетителям понятный следующий шаг.',
+                'h2'
+              ) +
+
+              landingI18nV086A(
+                'Replace this action with signup, download, demo, preorder or an access request.',
+                'Замените действие на регистрацию, скачивание, демо, предзаказ или запрос доступа.',
+                'p'
+              ) +
+            '</div>' +
+
+            '<a class="btn" href="mailto:hello@example.com">' +
+              landingI18nV086A(
+                'Get access',
+                'Получить доступ'
+              ) +
+            '</a>' +
+          '</section>' +
+        '</div>';
+
+      return [
+        {
+          title: t('Home', 'Главная'),
+          slug: 'index',
+          summary: t(
+            'A wide product landing with hero, product visual, benefits, workflow, proof, FAQ and CTA.',
+            'Широкий продуктовый лендинг с hero, визуалом продукта, преимуществами, сценарием, доказательствами, FAQ и CTA.'
+          ),
+          bodyHtml: landingHomeV086A
+        }
+      ];
+    }
 
 
     if (id === 'documentation-wide') {
@@ -2454,8 +2886,8 @@
       ':root{--bg:#f4efe8;--paper:#fffaf2;--panel:#eee4d8;--ink:#101010;--muted:#665f58;--line:#dccfc1;--accent:' + accent + ';--shadow:0 28px 80px rgba(46,30,18,.14)}' +
       'html[data-theme="dark"]{--bg:#0b1013;--paper:#12191f;--panel:#18222a;--ink:#f7f0e8;--muted:#b7afa6;--line:#2c3843;--shadow:0 28px 80px rgba(0,0,0,.38)}' +
       '*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 72% 8%,color-mix(in srgb,var(--accent) 18%,transparent),transparent 38%),var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif}' +
-      'a{color:inherit;text-decoration:none}.page{width:min(1680px,100%);margin:0 auto;padding:34px 34px 54px}' +
-      '/* IRGEZTNE_LANDING_HEADER_STRUCTURE_V072F */.site-header{position:sticky;top:0;z-index:80;display:flex;align-items:center;justify-content:space-between;gap:24px;width:100%;padding:18px max(34px,calc((100vw - 1680px)/2 + 34px));border-bottom:1px solid var(--line);backdrop-filter:blur(18px);background:color-mix(in srgb,var(--bg) 94%,transparent);box-shadow:0 12px 38px rgba(16,16,16,.055)}' +
+      'a{color:inherit;text-decoration:none}/* IRGEZTNE_LANDING_FULL_WIDTH_V086B *//* IRGEZTNE_LANDING_SINGLE_LANGUAGE_V086C */.page{width:100%;max-width:none;margin:0;padding:34px clamp(22px,2.2vw,44px) 54px}' +
+      '/* IRGEZTNE_LANDING_HEADER_STRUCTURE_V072F */.site-header{position:sticky;top:0;z-index:80;display:flex;align-items:center;justify-content:space-between;gap:24px;width:100%;padding:18px clamp(22px,2.2vw,44px);border-bottom:1px solid var(--line);backdrop-filter:blur(18px);background:color-mix(in srgb,var(--bg) 94%,transparent);box-shadow:0 12px 38px rgba(16,16,16,.055)}' +
       '.brand{display:flex;align-items:center;gap:13px}.logo{width:54px;height:54px;border-radius:17px;display:grid;place-items:center;background:var(--ink);color:var(--bg);font-weight:950;font-size:22px}.brand strong{display:block;font-size:20px}.brand span{display:block;color:var(--muted);font-weight:700;font-size:13px}' +
       '.site-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}.nav-link,.theme-toggle,.lang-toggle{border:1px solid var(--line);background:color-mix(in srgb,var(--paper) 74%,transparent);color:var(--ink);border-radius:999px;padding:11px 17px;font-weight:900;cursor:pointer}.nav-link.is-active,.nav-link:hover{background:var(--ink);color:var(--bg)}.theme-toggle,.lang-toggle{width:44px;height:44px;padding:0;display:grid;place-items:center}' +
       '.hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(420px,.82fr);gap:28px;align-items:stretch;margin:0 0 30px}.hero-copy,.hero-visual,.section-card,.final-cta{border:1px solid var(--line);border-radius:32px;background:color-mix(in srgb,var(--paper) 82%,transparent);box-shadow:var(--shadow)}' +
@@ -2549,10 +2981,33 @@
       '<a class="nav-link is-active" href="' + escapeHtml(fileFor(home)) + '">' + i18nSpanV072A({en:'Product',ru:'Продукт'}) + '</a>' +
       '<a class="nav-link" href="' + escapeHtml(anchorOrFile(features || home, 'features')) + '">' + i18nSpanV072A({en:'Features',ru:'Возможности'}) + '</a>' +
       '<a class="nav-link" href="' + escapeHtml(anchorOrFile(faq || home, 'faq')) + '">FAQ</a>' +
-      '<button class="theme-toggle" data-theme-toggle="1" type="button">☾</button>';
+            '<button class="theme-toggle" data-theme-toggle="1" type="button">☾</button>';
 
     var css = landingCssV072A(accent) + '.logo{background:' + logoBgV074A + '!important;color:' + logoTextV074A + '!important;border-radius:' + logoRadiusV074A + '!important;width:' + logoSizeV074A + 'px!important;height:' + logoSizeV074A + 'px!important;font-size:' + logoFontSizeV074A + 'px!important}';
     css += siteGeneratedEditorContentCssV076C();
+    css += [
+      '/* IRGEZTNE_LANDING_TEMPLATE_PARITY_V086A */',
+      'html,body{overflow-x:clip!important;overflow-y:visible!important}',
+      '.site-header{position:sticky!important;top:0!important;z-index:100!important}',
+      'section[id]{scroll-margin-top:112px}',
+      '.landing-home-v086a{display:block}',
+      '.landing-feature-visual-v086a{min-height:360px;position:relative;overflow:hidden}',
+      '.landing-interface-v086a{margin-top:28px;padding:22px;border:1px solid rgba(255,255,255,.22);border-radius:24px;background:rgba(255,255,255,.10)}',
+      '.landing-interface-v086a div{display:flex;align-items:end;justify-content:space-between;gap:18px;margin-bottom:18px}',
+      '.landing-interface-v086a strong{font-size:52px}',
+      '.landing-interface-v086a span{font-weight:850;opacity:.8}',
+      '.landing-interface-v086a i{display:block;height:12px;margin-top:10px;border-radius:999px;background:rgba(255,255,255,.20)}',
+      '.landing-interface-v086a i:nth-of-type(1){width:92%}',
+      '.landing-interface-v086a i:nth-of-type(2){width:68%}',
+      '.landing-interface-v086a i:nth-of-type(3){width:81%}',
+      '.landing-proof-metrics-v086a{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}',
+      '.landing-proof-metrics-v086a>div{padding:18px;border:1px solid var(--line);border-radius:18px;background:color-mix(in srgb,var(--paper) 72%,transparent)}',
+      '.landing-proof-metrics-v086a strong{display:block;margin-bottom:7px;font-size:34px;color:var(--accent)}',
+      '.faq-item summary{cursor:pointer;color:var(--ink);font-weight:950;list-style:none}',
+      '.faq-item summary::-webkit-details-marker{display:none}',
+      '.faq-item[open] summary{margin-bottom:10px}',
+      '@media(max-width:980px){section[id]{scroll-margin-top:168px}.landing-proof-metrics-v086a{grid-template-columns:1fr}}'
+    ].join('');
     var js = landingJsV072A().replace(/<\/script/gi, '<\\/script');
     var title = isHome ? langTextV072A(heroTitle, 'ru') : String(current.headline || pageLabel(current) || siteName);
     var description = isHome ? langTextV072A(heroSummary, 'ru') : String(current.summary || '');
@@ -2565,25 +3020,35 @@
     if (!isHome) {
       pageContent = '<section class="hero"><div class="hero-copy"><p class="kicker">' + escapeHtml(pageLabel(current)) + '</p><h1>' + escapeHtml(current.headline || pageLabel(current)) + '</h1>' + (current.summary ? '<p>' + escapeHtml(current.summary) + '</p>' : '') + '</div><div class="section-card">' + sanitizeHtml(current.bodyHtml || '') + '</div></section>';
     } else {
-      pageContent = '' +
-        '<section class="hero" id="product"><div class="hero-copy"><p class="kicker">Landing / Product</p>' +
-          i18nSpanV072A(heroTitle, '', 'h1') +
-          i18nSpanV072A(heroSummary, '', 'p') +
-          '<div class="hero-actions"><a class="btn" href="#cta">' + i18nSpanV072A({en:'Get access',ru:'Получить доступ'}) + '</a><a class="btn secondary" href="#features">' + i18nSpanV072A({en:'View features',ru:'Смотреть возможности'}) + '</a></div>' +
-        '</div><div class="hero-visual" aria-label="Product visual"><div class="product-panel"><h3>Launch panel</h3><div class="metric-row"><div class="metric"><strong>01</strong><span>Start</span></div><div class="metric"><strong>02</strong><span>Build</span></div><div class="metric"><strong>03</strong><span>Launch</span></div></div></div><div class="visual-footer"><div class="visual-pill">Signup</div><div class="visual-pill">Download</div><div class="visual-pill">Demo</div></div></div></section>' +
-        '<div class="strip"><b>' + i18nSpanV072A({en:'Demo content can be replaced before publishing.',ru:'Демо-контент можно заменить перед публикацией.'}) + '</b><span>' + i18nSpanV072A({en:'Product, SaaS, app or service landing.',ru:'Лендинг продукта, SaaS, приложения или услуги.'}) + '</span></div>' +
-        '<section id="features"><div class="section-head"><div><p class="kicker">Features</p>' + i18nSpanV072A(featuresTitle, '', 'h2') + '</div>' + i18nSpanV072A(featuresSummary, '', 'p') + '</div>' +
-          '<div class="feature-grid"><article class="section-card"><div class="num">01</div><h3>' + i18nSpanV072A({en:'Explain fast',ru:'Объяснить быстро'}) + '</h3><p>' + i18nSpanV072A({en:'Make the product clear in the first screen.',ru:'Сделайте продукт понятным уже на первом экране.'}) + '</p></article><article class="section-card"><div class="num">02</div><h3>' + i18nSpanV072A({en:'Show value',ru:'Показать пользу'}) + '</h3><p>' + i18nSpanV072A({en:'Use feature blocks, scenarios and proof.',ru:'Используйте блоки возможностей, сценарии и доказательства.'}) + '</p></article><article class="section-card"><div class="num">03</div><h3>' + i18nSpanV072A({en:'Give next step',ru:'Дать следующий шаг'}) + '</h3><p>' + i18nSpanV072A({en:'Access, download, preorder, request demo or signup.',ru:'Доступ, скачивание, предзаказ, демо или регистрация.'}) + '</p></article></div></section>' +
-        '<section class="scenario"><article class="section-card"><p class="kicker">Scenario</p><h2>' + i18nSpanV072A({en:'Use it as a product story.',ru:'Используйте как историю продукта.'}) + '</h2><p>' + i18nSpanV072A({en:'Lead the visitor from problem to decision.',ru:'Проведите посетителя от проблемы к решению.'}) + '</p></article><article class="section-card"><p class="kicker">Content</p>' + sanitizeHtml(home.bodyHtml || '') + '</article></section>' +
-        '<section id="faq"><div class="section-head"><div><p class="kicker">FAQ</p>' + i18nSpanV072A(faqTitle, '', 'h2') + '</div>' + i18nSpanV072A(faqSummary, '', 'p') + '</div><div class="faq-list"><article class="faq-item"><strong>' + i18nSpanV072A({en:'Can I replace visuals?',ru:'Можно ли заменить визуалы?'}) + '</strong><p>' + i18nSpanV072A({en:'Yes. Demo visuals are placeholders for screenshots, product images or interface previews.',ru:'Да. Демо-визуалы — заглушки для скриншотов, изображений продукта или интерфейса.'}) + '</p></article><article class="faq-item"><strong>' + i18nSpanV072A({en:'What can the CTA be?',ru:'Каким может быть CTA?'}) + '</strong><p>' + i18nSpanV072A({en:'Signup, download, preorder, request access or contact form.',ru:'Регистрация, скачивание, предзаказ, запрос доступа или форма связи.'}) + '</p></article></div></section>' +
-        '<section class="final-cta" id="cta"><div><p class="kicker">CTA</p><h2>' + i18nSpanV072A({en:'Turn interest into action.',ru:'Превратите интерес в действие.'}) + '</h2><p>' + i18nSpanV072A({en:'Replace this block with signup, download, preorder, contact or request access.',ru:'Замените этот блок на регистрацию, скачивание, предзаказ, контакт или запрос доступа.'}) + '</p></div><a class="btn" href="mailto:hello@example.com">' + i18nSpanV072A({en:'Get access',ru:'Получить доступ'}) + '</a></section>';
+      var editableLandingBodyV086A = sanitizeHtml(home.bodyHtml || '');
+
+      if (
+        editableLandingBodyV086A.indexOf(
+          'data-landing-starter-v086a'
+        ) !== -1
+      ) {
+        pageContent = editableLandingBodyV086A;
+      } else {
+        pageContent = '' +
+          '<section class="hero" id="product"><div class="hero-copy"><p class="kicker">Landing / Product</p>' +
+            i18nSpanV072A(heroTitle, '', 'h1') +
+            i18nSpanV072A(heroSummary, '', 'p') +
+            '<div class="hero-actions"><a class="btn" href="#cta">' + i18nSpanV072A({en:'Get access',ru:'Получить доступ'}) + '</a><a class="btn secondary" href="#features">' + i18nSpanV072A({en:'View features',ru:'Смотреть возможности'}) + '</a></div>' +
+          '</div><div class="hero-visual" aria-label="Product visual"><div class="product-panel"><h3>Launch panel</h3><div class="metric-row"><div class="metric"><strong>01</strong><span>Start</span></div><div class="metric"><strong>02</strong><span>Build</span></div><div class="metric"><strong>03</strong><span>Launch</span></div></div></div><div class="visual-footer"><div class="visual-pill">Signup</div><div class="visual-pill">Download</div><div class="visual-pill">Demo</div></div></div></section>' +
+          '<div class="strip"><b>' + i18nSpanV072A({en:'Demo content can be replaced before publishing.',ru:'Демо-контент можно заменить перед публикацией.'}) + '</b><span>' + i18nSpanV072A({en:'Product, SaaS, app or service landing.',ru:'Лендинг продукта, SaaS, приложения или услуги.'}) + '</span></div>' +
+          '<section id="features"><div class="section-head"><div><p class="kicker">Features</p>' + i18nSpanV072A(featuresTitle, '', 'h2') + '</div>' + i18nSpanV072A(featuresSummary, '', 'p') + '</div>' +
+            '<div class="feature-grid"><article class="section-card"><div class="num">01</div><h3>' + i18nSpanV072A({en:'Explain fast',ru:'Объяснить быстро'}) + '</h3><p>' + i18nSpanV072A({en:'Make the product clear in the first screen.',ru:'Сделайте продукт понятным уже на первом экране.'}) + '</p></article><article class="section-card"><div class="num">02</div><h3>' + i18nSpanV072A({en:'Show value',ru:'Показать пользу'}) + '</h3><p>' + i18nSpanV072A({en:'Use feature blocks, scenarios and proof.',ru:'Используйте блоки возможностей, сценарии и доказательства.'}) + '</p></article><article class="section-card"><div class="num">03</div><h3>' + i18nSpanV072A({en:'Give next step',ru:'Дать следующий шаг'}) + '</h3><p>' + i18nSpanV072A({en:'Access, download, preorder, request demo or signup.',ru:'Доступ, скачивание, предзаказ, демо или регистрация.'}) + '</p></article></div></section>' +
+          '<section class="scenario"><article class="section-card"><p class="kicker">Scenario</p><h2>' + i18nSpanV072A({en:'Use it as a product story.',ru:'Используйте как историю продукта.'}) + '</h2><p>' + i18nSpanV072A({en:'Lead the visitor from problem to decision.',ru:'Проведите посетителя от проблемы к решению.'}) + '</p></article><article class="section-card"><p class="kicker">Content</p>' + sanitizeHtml(home.bodyHtml || '') + '</article></section>' +
+          '<section id="faq"><div class="section-head"><div><p class="kicker">FAQ</p>' + i18nSpanV072A(faqTitle, '', 'h2') + '</div>' + i18nSpanV072A(faqSummary, '', 'p') + '</div><div class="faq-list"><article class="faq-item"><strong>' + i18nSpanV072A({en:'Can I replace visuals?',ru:'Можно ли заменить визуалы?'}) + '</strong><p>' + i18nSpanV072A({en:'Yes. Demo visuals are placeholders for screenshots, product images or interface previews.',ru:'Да. Демо-визуалы — заглушки для скриншотов, изображений продукта или интерфейса.'}) + '</p></article><article class="faq-item"><strong>' + i18nSpanV072A({en:'What can the CTA be?',ru:'Каким может быть CTA?'}) + '</strong><p>' + i18nSpanV072A({en:'Signup, download, preorder, request access or contact form.',ru:'Регистрация, скачивание, предзаказ, запрос доступа или форма связи.'}) + '</p></article></div></section>' +
+          '<section class="final-cta" id="cta"><div><p class="kicker">CTA</p><h2>' + i18nSpanV072A({en:'Turn interest into action.',ru:'Превратите интерес в действие.'}) + '</h2><p>' + i18nSpanV072A({en:'Replace this block with signup, download, preorder, contact or request access.',ru:'Замените этот блок на регистрацию, скачивание, предзаказ, контакт или запрос доступа.'}) + '</p></div><a class="btn" href="mailto:hello@example.com">' + i18nSpanV072A({en:'Get access',ru:'Получить доступ'}) + '</a></section>';
+      }
     }
 
     var siteLangV084X = siteThemeLangCode();
 
     return '<!doctype html><html lang="' +
       escapeHtml(siteLangV084X) +
-      '" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">' + faviconHeadTags() + '<title>' + escapeHtml(seoTitle) + '</title><meta name="description" content="' + escapeHtml(seoDescription) + '"><link rel="canonical" href="' + escapeHtml(canonicalUrl) + '"><meta property="og:type" content="website"><meta property="og:title" content="' + escapeHtml(seoTitle) + '"><meta property="og:description" content="' + escapeHtml(seoDescription) + '"><meta property="og:url" content="' + escapeHtml(canonicalUrl) + '"><meta property="og:image" content="' + escapeHtml(ogImage) + '"><meta name="twitter:card" content="summary"><meta name="theme-color" content="' + accent + '"><style>' + css + '</style><script>' + js + '</script></head><body><header class="site-header"><a class="brand" href="' + escapeHtml(fileFor(home)) + '"><div class="logo" style="background:' + logoBgV074A + ';color:' + logoTextV074A + ';border-radius:' + logoRadiusV074A + ';width:' + logoSizeV074A + 'px;height:' + logoSizeV074A + 'px;font-size:' + logoFontSizeV074A + 'px">' + escapeHtml(logoLetters) + '</div><div><strong>' + escapeHtml(siteName) + '</strong><span>' + escapeHtml(tagline) + '</span></div></a><nav class="site-nav" aria-label="Main navigation">' + nav + '</nav></header><main class="page">' + pageContent + '<footer class="site-footer"><div class="footer-brand"><strong>' + escapeHtml(siteName) + '</strong><span>' + escapeHtml(tagline) + '</span><span class="footer-copy">© ' + new Date().getFullYear() + ' ' + escapeHtml(siteName) + '</span></div><nav><a href="' + escapeHtml(fileFor(home)) + '">Product</a> · <a href="' + escapeHtml(anchorOrFile(features || home, 'features')) + '">Features</a> · <a href="' + escapeHtml(anchorOrFile(faq || home, 'faq')) + '">FAQ</a></nav></footer></main></body></html>';
+      '" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">' + faviconHeadTags() + '<title>' + escapeHtml(seoTitle) + '</title><meta name="description" content="' + escapeHtml(seoDescription) + '"><link rel="canonical" href="' + escapeHtml(canonicalUrl) + '"><meta property="og:type" content="website"><meta property="og:title" content="' + escapeHtml(seoTitle) + '"><meta property="og:description" content="' + escapeHtml(seoDescription) + '"><meta property="og:url" content="' + escapeHtml(canonicalUrl) + '"><meta property="og:image" content="' + escapeHtml(ogImage) + '"><meta name="twitter:card" content="summary"><meta name="theme-color" content="' + accent + '"><style>' + css + '</style><script>' + js + '</script></head><body><header class="site-header"><a class="brand" href="' + escapeHtml(fileFor(home)) + '"><div class="logo" style="background:' + logoBgV074A + ';color:' + logoTextV074A + ';border-radius:' + logoRadiusV074A + ';width:' + logoSizeV074A + 'px;height:' + logoSizeV074A + 'px;font-size:' + logoFontSizeV074A + 'px">' + escapeHtml(logoLetters) + '</div><div><strong>' + escapeHtml(siteName) + '</strong><span>' + escapeHtml(tagline) + '</span></div></a><nav class="site-nav" aria-label="Main navigation">' + nav + '</nav></header><main class="page">' + pageContent + '<footer class="site-footer"><div class="footer-brand"><strong>' + escapeHtml(siteName) + '</strong><span>' + escapeHtml(tagline) + '</span><span class="footer-copy">© ' + new Date().getFullYear() + ' ' + escapeHtml(siteName) + '</span></div><nav><a href="' + escapeHtml(fileFor(home)) + '">' + i18nSpanV072A({en:'Product',ru:'Продукт'}) + '</a> · <a href="' + escapeHtml(anchorOrFile(features || home, 'features')) + '">' + i18nSpanV072A({en:'Features',ru:'Возможности'}) + '</a> · <a href="' + escapeHtml(anchorOrFile(faq || home, 'faq')) + '">FAQ</a></nav></footer></main></body></html>';
   }
 
   function renderSiteHtml(state, page, options) {
