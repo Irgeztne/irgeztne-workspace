@@ -78,7 +78,7 @@
       "appId": "documentation-wide",
       "labId": "documentation",
       "title": "Documentation",
-      "titleRu": "Documentation",
+      "titleRu": "Документация",
       "description": {
         "en": "A wide documentation template with sidebar navigation, search, article content, code examples, callouts, API cards, FAQ, EN/RU and light/dark themes.",
         "ru": "Широкий шаблон документации: боковая навигация, поиск, статья, примеры кода, callout-блоки, API-карточки, FAQ, EN/RU и светлая/тёмная тема."

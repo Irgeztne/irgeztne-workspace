@@ -403,22 +403,436 @@
   function starterPagesForTemplateV068C(templateId) {
     var id = normalizeOfficialTemplateIdV068C(templateId);
 
-    if (id === 'documentation-wide') return [
-      { title: t('Documentation', 'Документация'), slug: 'index', summary: t('A calm wide documentation structure with sections, guides and references.', 'Спокойная широкая структура документации с разделами, гайдами и справкой.'), bodyHtml: '<div class="ir-starter-docs"><aside><strong>' + escapeHtml(t('Sections', 'Разделы')) + '</strong><a>' + escapeHtml(t('Getting started', 'Начало')) + '</a><a>' + escapeHtml(t('Guides', 'Гайды')) + '</a><a>' + escapeHtml(t('Reference', 'Справка')) + '</a></aside><section><h2>' + escapeHtml(t('Product documentation', 'Документация продукта')) + '</h2><p>' + escapeHtml(t('Use this layout for manuals, guides, product docs and structured help pages.', 'Используйте этот макет для руководств, гайдов, документации продукта и структурированной справки.')) + '</p><div class="ir-starter-grid"><div class="ir-starter-card"><strong>01</strong>' + escapeHtml(t('Introduction', 'Введение')) + '</div><div class="ir-starter-card"><strong>02</strong>' + escapeHtml(t('Setup', 'Настройка')) + '</div><div class="ir-starter-card"><strong>03</strong>' + escapeHtml(t('Reference', 'Справка')) + '</div></div></section></div>' },
-      { title: t('Getting started', 'Начало'), slug: 'getting-started', summary: t('First steps and basic setup.', 'Первые шаги и базовая настройка.'), bodyHtml: '<h2>' + escapeHtml(t('First steps', 'Первые шаги')) + '</h2>' +
-        '<p>' + escapeHtml(t('Use this page for installation, setup and the first successful result.', 'Используйте эту страницу для установки, настройки и первого успешного результата.')) + '</p>' +
-        '<div class="docs-callout-v068i"><strong>' + escapeHtml(t('Before you start', 'Перед началом')) + '</strong><p>' + escapeHtml(t('Keep the first page short: explain the goal, requirements and the fastest path to success.', 'Держите первую страницу короткой: цель, требования и самый быстрый путь к результату.')) + '</p></div>' +
-        '<ol class="docs-steps-v068i"><li><strong>' + escapeHtml(t('Prepare the workspace', 'Подготовьте рабочее пространство')) + '</strong><span>' + escapeHtml(t('Create a project folder and collect the required assets.', 'Создайте папку проекта и соберите нужные материалы.')) + '</span></li><li><strong>' + escapeHtml(t('Open the project', 'Откройте проект')) + '</strong><span>' + escapeHtml(t('Start with the main page, then add guides and reference pages.', 'Начните с главной страницы, затем добавьте гайды и справку.')) + '</span></li><li><strong>' + escapeHtml(t('Preview and publish', 'Проверьте и опубликуйте')) + '</strong><span>' + escapeHtml(t('Use preview before export or publishing.', 'Используйте предпросмотр перед экспортом или публикацией.')) + '</span></li></ol>' +
-        '<pre class="docs-code-v068i"><code>' + escapeHtml('cd ./project\\nnpm start') + '</code></pre>' },
-      { title: t('Guides', 'Гайды'), slug: 'guides', summary: t('Practical guides and workflows.', 'Практические гайды и рабочие процессы.'), bodyHtml: '<h2>' + escapeHtml(t('Guides', 'Гайды')) + '</h2>' +
-        '<p>' + escapeHtml(t('Use guide pages for practical tasks, workflows and examples.', 'Используйте страницы гайдов для практических задач, рабочих процессов и примеров.')) + '</p>' +
-        '<div class="docs-mini-grid-v068i"><div><strong>' + escapeHtml(t('Workflow guide', 'Рабочий процесс')) + '</strong><span>' + escapeHtml(t('Explain a complete path from start to result.', 'Объясните полный путь от старта до результата.')) + '</span></div><div><strong>' + escapeHtml(t('Troubleshooting', 'Проблемы и решения')) + '</strong><span>' + escapeHtml(t('Collect common issues and short fixes.', 'Соберите частые проблемы и короткие решения.')) + '</span></div><div><strong>' + escapeHtml(t('Examples', 'Примеры')) + '</strong><span>' + escapeHtml(t('Show real usage patterns and small snippets.', 'Покажите реальные сценарии и небольшие фрагменты.')) + '</span></div></div>' +
-        '<div class="docs-callout-v068i"><strong>' + escapeHtml(t('Guide style', 'Стиль гайда')) + '</strong><p>' + escapeHtml(t('Each guide should answer one practical question and avoid unnecessary theory.', 'Каждый гайд должен отвечать на один практический вопрос и избегать лишней теории.')) + '</p></div>' },
-      { title: t('Reference', 'Справка'), slug: 'reference', summary: t('Reference materials and details.', 'Справочные материалы и детали.'), bodyHtml: '<h2>' + escapeHtml(t('Reference', 'Справка')) + '</h2>' +
-        '<p>' + escapeHtml(t('Use reference pages for settings, commands, fields and exact technical details.', 'Используйте справочные страницы для настроек, команд, полей и точных технических деталей.')) + '</p>' +
-        '<table class="docs-table-v068i"><thead><tr><th>' + escapeHtml(t('Item', 'Элемент')) + '</th><th>' + escapeHtml(t('Description', 'Описание')) + '</th></tr></thead><tbody><tr><td><code>site.name</code></td><td>' + escapeHtml(t('Public site name used in the header and metadata.', 'Публичное имя сайта в шапке и метаданных.')) + '</td></tr><tr><td><code>site.url</code></td><td>' + escapeHtml(t('Canonical public URL for sitemap, OpenGraph and sharing.', 'Публичный URL для sitemap, OpenGraph и шаринга.')) + '</td></tr><tr><td><code>theme</code></td><td>' + escapeHtml(t('Light or dark visual mode for the generated site.', 'Светлый или тёмный режим сгенерированного сайта.')) + '</td></tr></tbody></table>' +
-        '<pre class="docs-code-v068i"><code>' + escapeHtml('{\\n  "site": "Project Docs",\\n  "theme": "dark"\\n}') + '</code></pre>' }
-    ];
+
+    if (id === 'documentation-wide') {
+      function docsTextV085A(en, ru) {
+        return escapeHtml(t(en, ru));
+      }
+
+      var docsHomeV085A =
+        '<div class="docs-home-v085a">' +
+          '<section class="docs-hero-v085a">' +
+            '<div class="docs-hero-copy-v085a">' +
+              '<span class="docs-eyebrow-v085a">' +
+                docsTextV085A('Documentation template', 'Шаблон документации') +
+              '</span>' +
+              '<h2>' +
+                docsTextV085A(
+                  'A wide knowledge base for products, tools and technical guides.',
+                  'Широкая база знаний для продуктов, инструментов и технических руководств.'
+                ) +
+              '</h2>' +
+              '<p>' +
+                docsTextV085A(
+                  'Clean navigation, readable articles, code examples, callouts, API cards and a real documentation rhythm.',
+                  'Чистая навигация, читаемые статьи, примеры кода, callout-блоки, API-карточки и настоящий ритм документации.'
+                ) +
+              '</p>' +
+              '<div class="docs-hero-actions-v085a">' +
+                '<a href="#quick-start">' +
+                  docsTextV085A('Quick start', 'Быстрый старт') +
+                '</a>' +
+                '<a class="is-secondary" href="#api">' +
+                  docsTextV085A('View API', 'Смотреть API') +
+                '</a>' +
+              '</div>' +
+            '</div>' +
+
+            '<aside class="docs-code-visual-v085a" ' +
+              'data-template-slot="hero.codeVisual" ' +
+              'data-slot="hero.codeVisual">' +
+              '<div class="docs-window-dots-v085a"><i></i><i></i><i></i></div>' +
+              '<pre><code>' +
+                escapeHtml(
+                  'site:\n' +
+                  '  template: documentation\n' +
+                  '  theme: light-dark\n' +
+                  '  locale:\n' +
+                  '    - en\n' +
+                  '    - ru\n\n' +
+                  'features:\n' +
+                  '  search: true\n' +
+                  '  codeBlocks: true\n' +
+                  '  callouts: true'
+                ) +
+              '</code></pre>' +
+            '</aside>' +
+          '</section>' +
+
+          '<section id="quick-start" class="docs-article-v085a">' +
+            '<span class="docs-eyebrow-v085a">' +
+              docsTextV085A('Quick start', 'Быстрый старт') +
+            '</span>' +
+            '<h2>' +
+              docsTextV085A(
+                'Give readers the answer first, then details.',
+                'Сначала дайте читателю ответ, затем детали.'
+              ) +
+            '</h2>' +
+            '<p>' +
+              docsTextV085A(
+                'A good documentation page starts with orientation: what it explains, who it is for and what the reader can do next.',
+                'Хорошая страница сначала объясняет, о чём она, для кого предназначена и что читатель может сделать дальше.'
+              ) +
+            '</p>' +
+
+            '<div class="docs-steps-v085a">' +
+              '<article><span>01</span><h3>' +
+                docsTextV085A('Install', 'Установка') +
+              '</h3><p>' +
+                docsTextV085A(
+                  'Show the minimum setup without overwhelming the reader.',
+                  'Покажите минимальную настройку, не перегружая читателя.'
+                ) +
+              '</p></article>' +
+
+              '<article><span>02</span><h3>' +
+                docsTextV085A('Configure', 'Настройка') +
+              '</h3><p>' +
+                docsTextV085A(
+                  'Explain the important settings and safe defaults.',
+                  'Объясните важные параметры и безопасные значения по умолчанию.'
+                ) +
+              '</p></article>' +
+
+              '<article><span>03</span><h3>' +
+                docsTextV085A('Publish', 'Публикация') +
+              '</h3><p>' +
+                docsTextV085A(
+                  'Point the reader toward preview, export or deployment.',
+                  'Направьте читателя к предпросмотру, экспорту или публикации.'
+                ) +
+              '</p></article>' +
+            '</div>' +
+          '</section>' +
+
+          '<section class="docs-callout-v085a">' +
+            '<strong>' +
+              docsTextV085A(
+                'Documentation should feel calm, not empty.',
+                'Документация должна быть спокойной, но не пустой.'
+              ) +
+            '</strong>' +
+            '<p>' +
+              docsTextV085A(
+                'Wide layouts work when navigation, article content, examples and context remain visible together.',
+                'Широкий макет работает, когда навигация, статья, примеры и контекст видны вместе.'
+              ) +
+            '</p>' +
+          '</section>' +
+
+          '<section id="api" class="docs-article-v085a">' +
+            '<span class="docs-eyebrow-v085a">' +
+              docsTextV085A('API / Reference', 'API / Справочник') +
+            '</span>' +
+            '<h2>' +
+              docsTextV085A(
+                'Reference blocks should be structured and scannable.',
+                'Справочные блоки должны быть структурными и быстрыми для чтения.'
+              ) +
+            '</h2>' +
+
+            '<div class="docs-api-grid-v085a">' +
+              '<article><small>GET</small><h3>/sites</h3><p>' +
+                docsTextV085A(
+                  'Returns available sites and metadata.',
+                  'Возвращает доступные сайты и метаданные.'
+                ) +
+              '</p></article>' +
+
+              '<article><small>POST</small><h3>/publish</h3><p>' +
+                docsTextV085A(
+                  'Starts export or publishing for the selected project.',
+                  'Запускает экспорт или публикацию выбранного проекта.'
+                ) +
+              '</p></article>' +
+
+              '<article><small>PATCH</small><h3>/settings</h3><p>' +
+                docsTextV085A(
+                  'Updates SEO, OpenGraph, robots and custom settings.',
+                  'Обновляет SEO, OpenGraph, robots и пользовательские настройки.'
+                ) +
+              '</p></article>' +
+            '</div>' +
+
+            '<div class="docs-code-block-v085a">' +
+              '<div><strong>' +
+                docsTextV085A('Example request', 'Пример запроса') +
+              '</strong><span>JSON</span></div>' +
+              '<pre><code>' +
+                escapeHtml(
+                  '{\n' +
+                  '  "siteId": "project-docs",\n' +
+                  '  "template": "documentation",\n' +
+                  '  "locale": "ru"\n' +
+                  '}'
+                ) +
+              '</code></pre>' +
+            '</div>' +
+          '</section>' +
+
+          '<section id="faq" class="docs-article-v085a">' +
+            '<span class="docs-eyebrow-v085a">FAQ</span>' +
+            '<h2>' +
+              docsTextV085A(
+                'Answer common questions before they become friction.',
+                'Ответьте на частые вопросы до того, как они станут препятствием.'
+              ) +
+            '</h2>' +
+
+            '<div class="docs-faq-v085a">' +
+              '<details open><summary>' +
+                docsTextV085A(
+                  'Can this template use images?',
+                  'Можно ли использовать изображения?'
+                ) +
+              '</summary><p>' +
+                docsTextV085A(
+                  'Yes. Product screenshots, interface examples, diagrams and tables work best.',
+                  'Да. Лучше всего подходят скриншоты продукта, примеры интерфейса, схемы и таблицы.'
+                ) +
+              '</p></details>' +
+
+              '<details><summary>' +
+                docsTextV085A(
+                  'Is RSS required?',
+                  'Нужен ли RSS?'
+                ) +
+              '</summary><p>' +
+                docsTextV085A(
+                  'It is optional and useful mainly for changelogs or product updates.',
+                  'Он необязателен и полезен прежде всего для changelog или обновлений продукта.'
+                ) +
+              '</p></details>' +
+
+              '<details><summary>' +
+                docsTextV085A(
+                  'Can demo content be replaced?',
+                  'Можно ли заменить демо-контент?'
+                ) +
+              '</summary><p>' +
+                docsTextV085A(
+                  'Yes. Demo content is a starting point and should be replaced with real documentation.',
+                  'Да. Демо-контент — это отправная точка, его нужно заменить реальной документацией.'
+                ) +
+              '</p></details>' +
+            '</div>' +
+          '</section>' +
+        '</div>';
+
+      return [
+        {
+          title: t('Documentation', 'Документация'),
+          slug: 'index',
+          summary: t(
+            'A wide documentation home with quick start, API examples and FAQ.',
+            'Широкая главная документации с быстрым стартом, API-примерами и FAQ.'
+          ),
+          bodyHtml: docsHomeV085A
+        },
+        {
+          title: t('Getting started', 'Начало'),
+          slug: 'getting-started',
+          summary: t(
+            'Installation, setup and the first successful result.',
+            'Установка, настройка и первый успешный результат.'
+          ),
+          bodyHtml:
+            '<section id="overview" class="docs-article-v085a">' +
+              '<span class="docs-eyebrow-v085a">' +
+                docsTextV085A('Getting started', 'Начало') +
+              '</span>' +
+              '<h2>' +
+                docsTextV085A(
+                  'Start with the shortest path to a working result.',
+                  'Начните с кратчайшего пути к рабочему результату.'
+                ) +
+              '</h2>' +
+              '<p>' +
+                docsTextV085A(
+                  'Explain requirements, installation and the first successful preview before advanced details.',
+                  'Объясните требования, установку и первый успешный предпросмотр до сложных деталей.'
+                ) +
+              '</p>' +
+            '</section>' +
+            '<section id="steps" class="docs-article-v085a">' +
+              '<div class="docs-steps-v085a">' +
+                '<article><span>01</span><h3>' +
+                  docsTextV085A('Prepare', 'Подготовка') +
+                '</h3><p>' +
+                  docsTextV085A(
+                    'Collect the required files and access details.',
+                    'Соберите необходимые файлы и данные доступа.'
+                  ) +
+                '</p></article>' +
+                '<article><span>02</span><h3>' +
+                  docsTextV085A('Open', 'Открытие') +
+                '</h3><p>' +
+                  docsTextV085A(
+                    'Open the project and verify the main page.',
+                    'Откройте проект и проверьте главную страницу.'
+                  ) +
+                '</p></article>' +
+                '<article><span>03</span><h3>' +
+                  docsTextV085A('Preview', 'Предпросмотр') +
+                '</h3><p>' +
+                  docsTextV085A(
+                    'Check the result before export or publishing.',
+                    'Проверьте результат перед экспортом или публикацией.'
+                  ) +
+                '</p></article>' +
+              '</div>' +
+            '</section>' +
+            '<section id="next" class="docs-callout-v085a">' +
+              '<strong>' + docsTextV085A('Next step', 'Следующий шаг') + '</strong>' +
+              '<p>' +
+                docsTextV085A(
+                  'Move advanced workflows into guides and exact fields into reference pages.',
+                  'Перенесите сложные процессы в гайды, а точные поля — в справочные страницы.'
+                ) +
+              '</p>' +
+            '</section>'
+        },
+        {
+          title: t('Guides', 'Гайды'),
+          slug: 'guides',
+          summary: t(
+            'Practical workflows, troubleshooting and examples.',
+            'Практические процессы, решение проблем и примеры.'
+          ),
+          bodyHtml:
+            '<section id="workflow" class="docs-article-v085a">' +
+              '<span class="docs-eyebrow-v085a">' +
+                docsTextV085A('Workflow', 'Рабочий процесс') +
+              '</span>' +
+              '<h2>' +
+                docsTextV085A(
+                  'Explain one practical task from start to finish.',
+                  'Объясните одну практическую задачу от начала до результата.'
+                ) +
+              '</h2>' +
+              '<p>' +
+                docsTextV085A(
+                  'Keep every guide focused on a real outcome and show the safest path.',
+                  'Пусть каждый гайд ведёт к конкретному результату и показывает безопасный путь.'
+                ) +
+              '</p>' +
+            '</section>' +
+            '<section id="troubleshooting" class="docs-callout-v085a">' +
+              '<strong>' +
+                docsTextV085A('Troubleshooting', 'Проблемы и решения') +
+              '</strong>' +
+              '<p>' +
+                docsTextV085A(
+                  'Collect common symptoms, causes and short verified fixes.',
+                  'Соберите частые симптомы, причины и короткие проверенные решения.'
+                ) +
+              '</p>' +
+            '</section>' +
+            '<section id="examples" class="docs-article-v085a">' +
+              '<div class="docs-api-grid-v085a">' +
+                '<article><small>01</small><h3>' +
+                  docsTextV085A('Example', 'Пример') +
+                '</h3><p>' +
+                  docsTextV085A(
+                    'Show a complete small example.',
+                    'Покажите небольшой законченный пример.'
+                  ) +
+                '</p></article>' +
+                '<article><small>02</small><h3>' +
+                  docsTextV085A('Variation', 'Вариант') +
+                '</h3><p>' +
+                  docsTextV085A(
+                    'Explain what changes in another scenario.',
+                    'Объясните, что меняется в другом сценарии.'
+                  ) +
+                '</p></article>' +
+                '<article><small>03</small><h3>' +
+                  docsTextV085A('Result', 'Результат') +
+                '</h3><p>' +
+                  docsTextV085A(
+                    'Show the expected final state.',
+                    'Покажите ожидаемое итоговое состояние.'
+                  ) +
+                '</p></article>' +
+              '</div>' +
+            '</section>'
+        },
+        {
+          title: t('Reference', 'Справка'),
+          slug: 'reference',
+          summary: t(
+            'Settings, endpoints and exact technical details.',
+            'Настройки, endpoints и точные технические детали.'
+          ),
+          bodyHtml:
+            '<section id="settings" class="docs-article-v085a">' +
+              '<span class="docs-eyebrow-v085a">' +
+                docsTextV085A('Reference', 'Справка') +
+              '</span>' +
+              '<h2>' +
+                docsTextV085A(
+                  'Keep exact fields easy to scan.',
+                  'Сделайте точные поля удобными для просмотра.'
+                ) +
+              '</h2>' +
+              '<table class="docs-table-v068i">' +
+                '<thead><tr><th>' +
+                  docsTextV085A('Item', 'Элемент') +
+                '</th><th>' +
+                  docsTextV085A('Description', 'Описание') +
+                '</th></tr></thead>' +
+                '<tbody>' +
+                  '<tr><td><code>site.name</code></td><td>' +
+                    docsTextV085A(
+                      'Public site name used in the header and metadata.',
+                      'Публичное имя сайта в шапке и метаданных.'
+                    ) +
+                  '</td></tr>' +
+                  '<tr><td><code>site.url</code></td><td>' +
+                    docsTextV085A(
+                      'Canonical URL used for sitemap and sharing.',
+                      'Канонический URL для sitemap и публикации ссылок.'
+                    ) +
+                  '</td></tr>' +
+                  '<tr><td><code>theme</code></td><td>' +
+                    docsTextV085A(
+                      'Light or dark generated-site mode.',
+                      'Светлый или тёмный режим созданного сайта.'
+                    ) +
+                  '</td></tr>' +
+                '</tbody>' +
+              '</table>' +
+            '</section>' +
+            '<section id="endpoints" class="docs-article-v085a">' +
+              '<div class="docs-api-grid-v085a">' +
+                '<article><small>GET</small><h3>/sites</h3><p>' +
+                  docsTextV085A('List sites.', 'Список сайтов.') +
+                '</p></article>' +
+                '<article><small>POST</small><h3>/publish</h3><p>' +
+                  docsTextV085A('Start publishing.', 'Запуск публикации.') +
+                '</p></article>' +
+                '<article><small>PATCH</small><h3>/settings</h3><p>' +
+                  docsTextV085A('Update settings.', 'Обновление настроек.') +
+                '</p></article>' +
+              '</div>' +
+            '</section>' +
+            '<section id="schema" class="docs-code-block-v085a">' +
+              '<div><strong>' +
+                docsTextV085A('Configuration example', 'Пример конфигурации') +
+              '</strong><span>JSON</span></div>' +
+              '<pre><code>' +
+                escapeHtml(
+                  '{\n' +
+                  '  "site": "Project Docs",\n' +
+                  '  "theme": "dark"\n' +
+                  '}'
+                ) +
+              '</code></pre>' +
+            '</section>'
+        }
+      ];
+    }
 
     // IRGEZTNE_BUSINESS_PRODUCT_STARTER_V069A
     if (id === 'business-product') return [
@@ -2323,40 +2737,91 @@
     if (selectedTemplateIdV068D === 'business-product') {
       pagePresetCss += '.page{width:min(100% - 64px,1760px)!important}.hero{display:none!important}.content{width:min(100%,1440px)!important;max-width:1440px!important;margin:clamp(54px,7vw,96px) auto 70px!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}.content>section:first-child{width:100%!important;margin-top:0!important}.content h2{letter-spacing:-.055em}.content article{background:color-mix(in srgb,var(--panel-bg) 72%,transparent)!important}.site-footer{max-width:1440px!important;margin-left:auto!important;margin-right:auto!important}body[data-theme=light]{--panel-bg:#ffffff;--soft-bg:#f6faf8}body[data-theme=dark]{--panel-bg:rgba(255,255,255,.035);--soft-bg:rgba(255,255,255,.055)}@media(max-width:860px){.page{width:min(100% - 28px,1760px)!important}.content{margin-top:34px!important}.content>section:first-child{grid-template-columns:1fr!important}}';
     }
+
     var docsTemplateCssV068D = variant === 'documentation' ? [
-      '/* IRGEZTNE_DOCS_TEMPLATE_POLISH_V068E */body.template-documentation .page{width:min(1880px,calc(100vw - 56px));padding-top:14px}',
-      'body.template-documentation .site-header{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--site-bg) 92%,transparent);backdrop-filter:blur(16px);padding:12px 0}',
-      'body.template-documentation .brand{min-width:250px}.template-documentation .brand strong{font-size:16px}.template-documentation .brand span{font-size:12px}',
-      'body.template-documentation .site-nav{gap:7px}.template-documentation .nav-link{min-height:30px;padding:6px 10px;font-size:12px;border-radius:12px;background:transparent}.template-documentation .nav-link.is-active{background:var(--soft-bg);color:var(--button-accent)}',
-      '.docs-layout-v068d{display:grid;grid-template-columns:280px minmax(0,1fr);gap:46px;align-items:start;padding:26px 0 28px}',
-      '.docs-sidebar-v068d{position:sticky;top:76px;min-height:calc(100vh - 118px);border-right:1px solid var(--line);padding:4px 22px 24px 0}',
-      '.docs-search-v068d{border:1px solid var(--line);border-radius:12px;background:var(--soft-bg);padding:10px 12px;margin:0 0 18px;color:var(--muted);font-size:12px;font-weight:850}',
-      '.docs-sidebar-title-v068d{display:block;margin:0 0 10px;color:var(--ink);font-size:12px;letter-spacing:.13em;text-transform:uppercase;font-weight:950}',
-      '.docs-sidebar-v068d a{display:flex;align-items:center;min-height:34px;padding:8px 10px;margin:2px 0;border-radius:12px;color:var(--muted);text-decoration:none;font-weight:850}',
+      '/* IRGEZTNE_DOCUMENTATION_TEMPLATE_PARITY_V085A */',
+      'body.template-documentation .page{width:min(1880px,calc(100vw - 48px));padding-top:12px}',
+      'body.template-documentation .site-header{position:sticky;top:0;z-index:30;padding:12px 0;background:color-mix(in srgb,var(--site-bg) 92%,transparent);backdrop-filter:blur(16px)}',
+      'body.template-documentation .brand{min-width:250px}',
+      'body.template-documentation .site-nav{gap:7px}',
+      'body.template-documentation .nav-link{min-height:32px;padding:7px 11px;border-radius:12px;font-size:12px;background:transparent}',
+      'body.template-documentation .nav-link:hover,body.template-documentation .nav-link.is-active{background:var(--soft-bg);color:var(--button-accent)}',
+
+      '.docs-layout-v068d{display:grid;grid-template-columns:250px minmax(0,1fr) 210px;gap:38px;align-items:start;padding:28px 0 34px}',
+      '.docs-sidebar-v068d{position:sticky;top:76px;min-height:calc(100vh - 118px);padding:4px 22px 24px 0;border-right:1px solid var(--line)}',
+      '.docs-search-v068d{margin:0 0 18px;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:var(--soft-bg);color:var(--muted);font-size:12px;font-weight:850}',
+      '.docs-sidebar-title-v068d{display:block;margin:0 0 10px;color:var(--ink);font-size:12px;font-weight:950;letter-spacing:.13em;text-transform:uppercase}',
+      '.docs-sidebar-v068d a{display:flex;align-items:center;min-height:34px;margin:2px 0;padding:8px 10px;border-radius:12px;color:var(--muted);font-weight:850;text-decoration:none}',
       '.docs-sidebar-v068d a:hover,.docs-sidebar-v068d a.is-active{background:var(--soft-bg);color:var(--button-accent)}',
-      '/* IRGEZTNE_DOCS_TEMPLATE_PAGE_FOOTER_V068H */.docs-content-v068d{max-width:1120px;min-height:calc(100vh - 190px);padding:8px 0 64px;display:flex;flex-direction:column}',
-      '.docs-content-v068d h1{font-size:clamp(34px,4.2vw,58px);line-height:1.04;margin:10px 0 16px;letter-spacing:-.045em}',
-      '.docs-content-v068d>.docs-lead-v068d{max-width:860px;margin:0 0 26px;color:var(--muted);font-size:17px;line-height:1.68}',
-      '.docs-content-v068d .content{max-width:none;margin:0;padding:0;border:0;background:transparent;box-shadow:none}',
-      '.docs-content-v068d h2{font-size:clamp(24px,2.4vw,34px);line-height:1.15;margin:28px 0 12px}',
-      '.docs-content-v068d p{font-size:16px;line-height:1.75;color:var(--muted)}',
-      '/* IRGEZTNE_DOCS_STARTER_ARTICLE_BLOCKS_V068I */.docs-callout-v068i{border:1px solid color-mix(in srgb,var(--button-accent) 34%,var(--line));border-radius:18px;padding:18px 20px;margin:22px 0;background:color-mix(in srgb,var(--button-accent) 10%,var(--panel-bg))}',
-      '.docs-callout-v068i strong{display:block;margin-bottom:7px;color:var(--ink);font-size:15px}.docs-callout-v068i p{margin:0!important;font-size:15px!important}',
-      '.docs-code-v068i{margin:22px 0;padding:18px 20px;border-radius:18px;background:#111827;color:#dbeafe;overflow:auto;border:1px solid rgba(148,163,184,.24)}.docs-code-v068i code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:14px;line-height:1.7}',
-      '.docs-steps-v068i{display:grid;gap:12px;margin:22px 0;padding:0;list-style:none}.docs-steps-v068i li{border:1px solid var(--line);border-radius:16px;padding:15px 17px;background:var(--panel-bg)}.docs-steps-v068i strong{display:block;color:var(--ink);margin-bottom:5px}.docs-steps-v068i span{display:block;color:var(--muted);font-size:14px;line-height:1.6}',
-      '.docs-table-v068i{width:100%;border-collapse:separate;border-spacing:0;margin:22px 0;border:1px solid var(--line);border-radius:18px;overflow:hidden}.docs-table-v068i th,.docs-table-v068i td{padding:13px 15px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}.docs-table-v068i th{background:var(--soft-bg);color:var(--ink);font-size:13px;text-transform:uppercase;letter-spacing:.08em}.docs-table-v068i tr:last-child td{border-bottom:0}',
-      '.docs-mini-grid-v068i{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:22px 0}.docs-mini-grid-v068i div{border:1px solid var(--line);border-radius:16px;padding:16px 18px;background:var(--panel-bg)}.docs-mini-grid-v068i strong{display:block;color:var(--ink);margin-bottom:6px}.docs-mini-grid-v068i span{display:block;color:var(--muted);font-size:14px;line-height:1.55}',
-      '/* IRGEZTNE_DOCS_TEMPLATE_CLEANUP_V068F */.docs-content-v068d .ir-starter-grid{grid-template-columns:repeat(3,minmax(0,1fr))}',
-      '.docs-index-grid-v068f{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin-top:18px}',
-      '.docs-index-card-v068f{display:block;border:1px solid var(--line);border-radius:18px;padding:18px 20px;background:var(--panel-bg);text-decoration:none;color:var(--ink);box-shadow:0 16px 42px rgba(15,23,42,.055)}',
-      '.docs-index-card-v068f:hover{border-color:color-mix(in srgb,var(--button-accent) 45%,var(--line));transform:translateY(-1px)}',
-      '.docs-index-card-v068f strong{display:block;font-size:18px;margin-bottom:8px;color:var(--ink)}',
-      '.docs-index-card-v068f span{display:block;color:var(--muted);font-size:14px;line-height:1.55}',
-      '/* IRGEZTNE_DOCS_TEMPLATE_SHARE_NAV_V068G */.docs-bottom-v068g{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:end;margin-top:auto;padding-top:34px;border-top:1px solid var(--line)}',
-      '.docs-page-nav-v068g{display:flex;gap:12px;flex-wrap:wrap}.docs-page-nav-v068g a{display:inline-flex;flex-direction:column;gap:4px;min-width:180px;border:1px solid var(--line);border-radius:16px;padding:13px 15px;background:var(--soft-bg);color:var(--ink);text-decoration:none;font-weight:900}.docs-page-nav-v068g span{color:var(--muted);font-size:12px;font-weight:850;text-transform:uppercase;letter-spacing:.08em}',
-      '.docs-share-v068g{display:flex;align-items:center;gap:9px;flex-wrap:wrap;justify-content:flex-end}.docs-share-v068g strong{color:var(--muted);font-size:12px;letter-spacing:.12em;text-transform:uppercase;margin-right:2px}.docs-share-v068g a{display:inline-flex;align-items:center;justify-content:center;min-height:32px;padding:7px 10px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--nav-accent);font-size:12px;font-weight:950;text-decoration:none}.docs-share-v068g a:hover,.docs-page-nav-v068g a:hover{border-color:color-mix(in srgb,var(--button-accent) 45%,var(--line));color:var(--button-accent)}',
-      '@media(max-width:900px){.docs-bottom-v068g{grid-template-columns:1fr}.docs-share-v068g{justify-content:flex-start}}',
-      '@media(max-width:900px){.docs-layout-v068d{grid-template-columns:1fr}.docs-sidebar-v068d{position:relative;top:auto;min-height:0;border-right:0;border-bottom:1px solid var(--line);padding:0 0 18px}.docs-content-v068d{max-width:none}}'
+
+      '.docs-content-v068d{min-width:0;max-width:1080px;min-height:calc(100vh - 190px);padding:8px 0 62px;display:flex;flex-direction:column}',
+      '.docs-content-v068d>h1{margin:10px 0 14px;font-size:clamp(34px,4.2vw,60px);line-height:1.03;letter-spacing:-.05em}',
+      '.docs-content-v068d>.docs-lead-v068d{max-width:840px;margin:0 0 25px;color:var(--muted);font-size:17px;line-height:1.68}',
+      '.docs-content-v068d>.content{max-width:none;margin:0;padding:0;border:0;background:transparent;box-shadow:none}',
+
+      '.docs-right-toc-v085a{position:sticky;top:86px;padding:4px 0 22px 20px;border-left:1px solid var(--line)}',
+      '.docs-right-toc-v085a>strong{display:block;margin:0 0 12px;color:var(--ink);font-size:12px;font-weight:950;letter-spacing:.12em;text-transform:uppercase}',
+      '.docs-right-toc-v085a>a{display:block;padding:7px 0;color:var(--muted);font-size:13px;font-weight:800;text-decoration:none}',
+      '.docs-right-toc-v085a>a:hover{color:var(--button-accent)}',
+      '.docs-version-v085a{margin-top:22px;padding:15px;border:1px solid var(--line);border-radius:16px;background:var(--soft-bg)}',
+      '.docs-version-v085a span,.docs-version-v085a small{display:block;color:var(--muted);font-size:11px}',
+      '.docs-version-v085a strong{display:block;margin:4px 0;color:var(--ink);font-size:20px}',
+
+      '.docs-hero-v085a{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,.72fr);gap:24px;align-items:stretch;margin:0 0 42px}',
+      '.docs-hero-copy-v085a{padding:30px 0}',
+      '.docs-eyebrow-v085a{display:block;margin:0 0 12px;color:var(--button-accent);font-size:12px;font-weight:950;letter-spacing:.13em;text-transform:uppercase}',
+      '.docs-hero-copy-v085a h2{margin:0 0 18px;font-size:clamp(38px,5vw,68px);line-height:.98;letter-spacing:-.065em}',
+      '.docs-hero-copy-v085a p{max-width:720px;margin:0;color:var(--muted);font-size:17px;line-height:1.7}',
+      '.docs-hero-actions-v085a{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}',
+      '.docs-hero-actions-v085a a{display:inline-flex;padding:12px 16px;border:1px solid var(--button-accent);border-radius:999px;background:var(--button-accent);color:#fff;font-weight:900;text-decoration:none}',
+      '.docs-hero-actions-v085a a.is-secondary{background:transparent;color:var(--ink);border-color:var(--line)}',
+
+      '.docs-code-visual-v085a{min-width:0;padding:18px;border:1px solid rgba(148,163,184,.26);border-radius:24px;background:#111827;color:#dbeafe;box-shadow:0 28px 70px rgba(15,23,42,.20)}',
+      '.docs-code-visual-v085a pre{margin:14px 0 0;overflow:auto}',
+      '.docs-code-visual-v085a code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:13px;line-height:1.65}',
+      '.docs-window-dots-v085a{display:flex;gap:7px}.docs-window-dots-v085a i{width:10px;height:10px;border-radius:50%;background:#64748b}.docs-window-dots-v085a i:first-child{background:#fb7185}.docs-window-dots-v085a i:nth-child(2){background:#fbbf24}.docs-window-dots-v085a i:nth-child(3){background:#34d399}',
+
+      '.docs-article-v085a{margin:34px 0;padding-top:6px}',
+      '.docs-article-v085a h2{margin:0 0 13px;font-size:clamp(26px,3vw,40px);line-height:1.12;letter-spacing:-.04em}',
+      '.docs-article-v085a>p{max-width:820px;color:var(--muted);font-size:16px;line-height:1.75}',
+
+      '.docs-steps-v085a,.docs-api-grid-v085a{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:22px 0}',
+      '.docs-steps-v085a article,.docs-api-grid-v085a article{padding:18px;border:1px solid var(--line);border-radius:18px;background:var(--panel)}',
+      '.docs-steps-v085a article>span,.docs-api-grid-v085a small{display:block;margin-bottom:10px;color:var(--button-accent);font-weight:950}',
+      '.docs-steps-v085a h3,.docs-api-grid-v085a h3{margin:0 0 8px;color:var(--ink);font-size:19px}',
+      '.docs-steps-v085a p,.docs-api-grid-v085a p{margin:0;color:var(--muted);font-size:14px;line-height:1.6}',
+
+      '.docs-callout-v085a{margin:26px 0;padding:20px 22px;border:1px solid color-mix(in srgb,var(--button-accent) 34%,var(--line));border-radius:18px;background:color-mix(in srgb,var(--button-accent) 9%,var(--panel))}',
+      '.docs-callout-v085a strong{display:block;margin-bottom:7px;color:var(--ink)}',
+      '.docs-callout-v085a p{margin:0;color:var(--muted);line-height:1.65}',
+
+      '.docs-code-block-v085a{margin:22px 0;border:1px solid rgba(148,163,184,.26);border-radius:20px;overflow:hidden;background:#111827;color:#dbeafe}',
+      '.docs-code-block-v085a>div{display:flex;justify-content:space-between;padding:13px 17px;border-bottom:1px solid rgba(148,163,184,.22)}',
+      '.docs-code-block-v085a pre{margin:0;padding:18px;overflow:auto}',
+      '.docs-code-block-v085a code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:13px;line-height:1.7}',
+
+      '.docs-faq-v085a{display:grid;gap:10px;margin-top:20px}',
+      '.docs-faq-v085a details{padding:16px 18px;border:1px solid var(--line);border-radius:16px;background:var(--panel)}',
+      '.docs-faq-v085a summary{cursor:pointer;color:var(--ink);font-weight:900}',
+      '.docs-faq-v085a p{margin:12px 0 0;color:var(--muted);line-height:1.65}',
+
+      '.docs-table-v068i{width:100%;margin:22px 0;border:1px solid var(--line);border-collapse:separate;border-spacing:0;border-radius:18px;overflow:hidden}',
+      '.docs-table-v068i th,.docs-table-v068i td{padding:13px 15px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}',
+      '.docs-table-v068i th{background:var(--soft-bg);color:var(--ink);font-size:12px;letter-spacing:.08em;text-transform:uppercase}',
+      '.docs-table-v068i tr:last-child td{border-bottom:0}',
+
+      '.docs-bottom-v068g{margin-top:auto;padding-top:34px;border-top:1px solid var(--line)}',
+      '.docs-page-nav-v068g{display:grid;grid-template-columns:1fr 1fr;gap:12px}',
+      '.docs-page-nav-v068g a{display:flex;flex-direction:column;gap:4px;padding:14px 16px;border:1px solid var(--line);border-radius:16px;background:var(--soft-bg);color:var(--ink);font-weight:900;text-decoration:none}',
+      '.docs-page-nav-v068g a:last-child{text-align:right}',
+      '.docs-page-nav-v068g span{color:var(--muted);font-size:11px;font-weight:850;letter-spacing:.08em;text-transform:uppercase}',
+      '.docs-page-nav-v068g a:hover{border-color:color-mix(in srgb,var(--button-accent) 45%,var(--line));color:var(--button-accent)}',
+
+      'body.template-documentation .site-footer{margin-top:10px;padding-top:22px;border-top:1px solid var(--line)}',
+
+      '@media(max-width:1300px){.docs-layout-v068d{grid-template-columns:230px minmax(0,1fr)}.docs-right-toc-v085a{display:none}}',
+      '@media(max-width:900px){body.template-documentation .page{width:min(100% - 28px,1880px)}.docs-layout-v068d{grid-template-columns:1fr}.docs-sidebar-v068d{position:relative;top:auto;min-height:0;padding:0 0 18px;border-right:0;border-bottom:1px solid var(--line)}.docs-content-v068d{max-width:none}.docs-hero-v085a{grid-template-columns:1fr}}',
+      '@media(max-width:680px){.docs-steps-v085a,.docs-api-grid-v085a{grid-template-columns:1fr}.docs-page-nav-v068g{grid-template-columns:1fr}.docs-page-nav-v068g a:last-child{text-align:left}.docs-hero-copy-v085a h2{font-size:38px}}'
     ].join('\n') : '';
 
     var customCssBlock = customCss ? '\n/* IRGEZTNE custom site CSS */\n' + customCss : '';
@@ -2415,82 +2880,187 @@
       contentSectionHtml = '<section class="landing-v072b-content"><article class="landing-v072b-card">' + (hasBody ? body : '') + '</article><aside class="landing-v072b-side"><div class="landing-v072b-mini"><b>EN/RU</b><span>Localised demo copy</span></div><div class="landing-v072b-mini"><b>Light</b><span>Theme-ready layout</span></div><div class="landing-v072b-mini"><b>CTA</b><span>Access, download or request</span></div></aside></section>';
     }
 
+
     if (variant === 'documentation') {
       var docsPagesV068D = orderedPageList(state).filter(function (candidate) {
         return candidate && candidate.status !== 'draft';
       });
+
       if (!docsPagesV068D.length && page) docsPagesV068D = [page];
 
       var docsSidebarLinksV068D = docsPagesV068D.map(function (candidate) {
-        var activeClass = candidate && page && candidate.id === page.id ? ' class="is-active"' : '';
-        var docsHref = linkMode === 'hash' ? ('#' + (candidate.slug || 'page')) : pageFileName(candidate);
-        return '<a' + activeClass + ' href="' + escapeHtml(docsHref) + '">' + escapeHtml(pageLabel(candidate)) + '</a>';
+        var activeClass = candidate && page && candidate.id === page.id
+          ? ' class="is-active"'
+          : '';
+
+        var href = linkMode === 'hash'
+          ? ('#' + (candidate.slug || 'page'))
+          : pageFileName(candidate);
+
+        return '<a' + activeClass + ' href="' + escapeHtml(href) + '">' +
+          escapeHtml(pageLabel(candidate)) +
+        '</a>';
       }).join('');
 
-      nav = '';
+      nav = docsPagesV068D.slice(1, 4).map(function (candidate) {
+        var href = linkMode === 'hash'
+          ? ('#' + (candidate.slug || 'page'))
+          : pageFileName(candidate);
 
-      var docsIndexCardsV068F = docsPagesV068D.filter(function (candidate) {
-        return candidate && page && candidate.id !== page.id;
-      }).map(function (candidate) {
-        var href = linkMode === 'hash' ? ('#' + (candidate.slug || 'page')) : pageFileName(candidate);
-        var summary = String(candidate.summary || '').trim();
-        return '<a class="docs-index-card-v068f" href="' + escapeHtml(href) + '"><strong>' + escapeHtml(pageLabel(candidate)) + '</strong><span>' + escapeHtml(summary || t('Open this documentation section.', 'Открыть раздел документации.')) + '</span></a>';
+        var activeClass = candidate && page && candidate.id === page.id
+          ? ' nav-link is-active'
+          : ' nav-link';
+
+        return '<a class="' + activeClass.trim() + '" href="' +
+          escapeHtml(href) + '">' +
+          escapeHtml(pageLabel(candidate)) +
+        '</a>';
       }).join('');
 
       var docsBodyV068D = body || '';
-      if (docsBodyV068D.indexOf('ir-starter-docs') !== -1) {
-        docsBodyV068D = docsIndexCardsV068F ? '<div class="docs-index-grid-v068f">' + docsIndexCardsV068F + '</div>' : '';
-      }
-      if (!String(docsBodyV068D || '').trim()) {
-        docsBodyV068D = '<p>' + escapeHtml(description || siteMetaDescription(state, page, '')) + '</p>';
+
+      if (!String(docsBodyV068D).trim()) {
+        docsBodyV068D =
+          '<p>' +
+            escapeHtml(description || siteMetaDescription(state, page, '')) +
+          '</p>';
       }
 
-      var docsTitleV068D = String(page.headline || '').trim() || pageLabel(page);
-      var docsLeadV068D = description ? '<p class="docs-lead-v068d">' + escapeHtml(description) + '</p>' : '';
+      var docsTitleV068D =
+        String(page.headline || '').trim() ||
+        pageLabel(page);
+
+      var docsLeadV068D = description
+        ? '<p class="docs-lead-v068d">' + escapeHtml(description) + '</p>'
+        : '';
 
       var currentDocsIndexV068G = docsPagesV068D.findIndex(function (candidate) {
         return candidate && page && candidate.id === page.id;
       });
-      var prevDocsPageV068G = currentDocsIndexV068G > 0 ? docsPagesV068D[currentDocsIndexV068G - 1] : null;
-      var nextDocsPageV068G = currentDocsIndexV068G >= 0 && currentDocsIndexV068G < docsPagesV068D.length - 1 ? docsPagesV068D[currentDocsIndexV068G + 1] : null;
+
+      var prevDocsPageV068G = currentDocsIndexV068G > 0
+        ? docsPagesV068D[currentDocsIndexV068G - 1]
+        : null;
+
+      var nextDocsPageV068G =
+        currentDocsIndexV068G >= 0 &&
+        currentDocsIndexV068G < docsPagesV068D.length - 1
+          ? docsPagesV068D[currentDocsIndexV068G + 1]
+          : null;
+
       function docsPageLinkV068G(candidate, label) {
-        if (!candidate) return '';
-        var href = linkMode === 'hash' ? ('#' + (candidate.slug || 'page')) : pageFileName(candidate);
-        return '<a href="' + escapeHtml(href) + '"><span>' + escapeHtml(label) + '</span>' + escapeHtml(pageLabel(candidate)) + '</a>';
+        if (!candidate) return '<span></span>';
+
+        var href = linkMode === 'hash'
+          ? ('#' + (candidate.slug || 'page'))
+          : pageFileName(candidate);
+
+        return '<a href="' + escapeHtml(href) + '">' +
+          '<span>' + escapeHtml(label) + '</span>' +
+          escapeHtml(pageLabel(candidate)) +
+        '</a>';
       }
+
       var docsPrevNextV068G =
-        '<nav class="docs-page-nav-v068g" aria-label="' + escapeHtml(t('Documentation page navigation', 'Навигация по документации')) + '">' +
+        '<nav class="docs-page-nav-v068g" aria-label="' +
+          escapeHtml(t(
+            'Documentation page navigation',
+            'Навигация по документации'
+          )) +
+        '">' +
           docsPageLinkV068G(prevDocsPageV068G, t('Previous', 'Назад')) +
           docsPageLinkV068G(nextDocsPageV068G, t('Next', 'Дальше')) +
         '</nav>';
 
-      var docsShareUrlV068G = canonicalUrl || pageFileName(page);
-      var docsShareTitleV068G = seoTitle || docsTitleV068D;
-      var docsShareV068G =
-        '<nav class="docs-share-v068g" aria-label="' + escapeHtml(t('Share page', 'Поделиться страницей')) + '">' +
-          '<strong>' + escapeHtml(t('Share', 'Поделиться')) + '</strong>' +
-          '<a href="https://t.me/share/url?url=' + encodeURIComponent(docsShareUrlV068G) + '&text=' + encodeURIComponent(docsShareTitleV068G) + '" target="_blank" rel="noopener">Telegram</a>' +
-          '<a href="https://twitter.com/intent/tweet?url=' + encodeURIComponent(docsShareUrlV068G) + '&text=' + encodeURIComponent(docsShareTitleV068G) + '" target="_blank" rel="noopener">X</a>' +
-          '<a href="https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(docsShareUrlV068G) + '" target="_blank" rel="noopener">LinkedIn</a>' +
-          '<a href="mailto:?subject=' + encodeURIComponent(docsShareTitleV068G) + '&body=' + encodeURIComponent(docsShareUrlV068G) + '">Email</a>' +
-        '</nav>';
+      var slugV085A = String(page && page.slug || 'index');
 
-      var docsBottomV068G = '<footer class="docs-bottom-v068g">' + docsPrevNextV068G + docsShareV068G + '</footer>';
+      var docsTocMapV085A = {
+        index: [
+          ['quick-start', t('Quick start', 'Быстрый старт')],
+          ['api', t('API reference', 'API справочник')],
+          ['faq', 'FAQ']
+        ],
+        'getting-started': [
+          ['overview', t('Overview', 'Обзор')],
+          ['steps', t('Steps', 'Шаги')],
+          ['next', t('Next step', 'Следующий шаг')]
+        ],
+        guides: [
+          ['workflow', t('Workflow', 'Рабочий процесс')],
+          ['troubleshooting', t('Troubleshooting', 'Проблемы и решения')],
+          ['examples', t('Examples', 'Примеры')]
+        ],
+        reference: [
+          ['settings', t('Settings', 'Настройки')],
+          ['endpoints', 'Endpoints'],
+          ['schema', t('Schema', 'Схема')]
+        ]
+      };
+
+      var docsTocLinksV085A =
+        (docsTocMapV085A[slugV085A] || []).map(function (item) {
+          return '<a href="#' + escapeHtml(item[0]) + '">' +
+            escapeHtml(item[1]) +
+          '</a>';
+        }).join('');
+
+      var docsRightTocV085A =
+        '<aside class="docs-right-toc-v085a">' +
+          '<strong>' +
+            escapeHtml(t('On this page', 'На этой странице')) +
+          '</strong>' +
+          docsTocLinksV085A +
+          '<div class="docs-version-v085a">' +
+            '<span>' + escapeHtml(t('Version', 'Версия')) + '</span>' +
+            '<strong>0.1.0</strong>' +
+            '<small>' +
+              escapeHtml(t(
+                'Documentation starter',
+                'Стартовый шаблон документации'
+              )) +
+            '</small>' +
+          '</div>' +
+        '</aside>';
 
       pageHeroHtml = '';
+
       contentSectionHtml =
         '<section class="docs-layout-v068d">' +
           '<aside class="docs-sidebar-v068d">' +
-            '<div class="docs-search-v068d">' + escapeHtml(t('Search documentation…', 'Поиск по документации…')) + '</div>' +
-            '<strong class="docs-sidebar-title-v068d">' + escapeHtml(t('Sections', 'Разделы')) + '</strong>' +
-            '<nav aria-label="' + escapeHtml(t('Documentation sections', 'Разделы документации')) + '">' + docsSidebarLinksV068D + '</nav>' +
+            '<div class="docs-search-v068d">' +
+              escapeHtml(t(
+                'Search documentation…',
+                'Поиск по документации…'
+              )) +
+            '</div>' +
+            '<strong class="docs-sidebar-title-v068d">' +
+              escapeHtml(t('Sections', 'Разделы')) +
+            '</strong>' +
+            '<nav aria-label="' +
+              escapeHtml(t(
+                'Documentation sections',
+                'Разделы документации'
+              )) +
+            '">' +
+              docsSidebarLinksV068D +
+            '</nav>' +
           '</aside>' +
+
           '<article class="docs-content-v068d">' +
-            '<div class="kicker">' + escapeHtml(t('Documentation', 'Документация')) + '</div>' +
+            '<div class="kicker">' +
+              escapeHtml(t('Documentation', 'Документация')) +
+            '</div>' +
             '<h1>' + escapeHtml(docsTitleV068D) + '</h1>' +
             docsLeadV068D +
-            '<section class="content">' + docsBodyV068D + '</section>' + docsBottomV068G +
+            '<section class="content">' +
+              docsBodyV068D +
+            '</section>' +
+            '<footer class="docs-bottom-v068g">' +
+              docsPrevNextV068G +
+            '</footer>' +
           '</article>' +
+
+          docsRightTocV085A +
         '</section>';
     }
 
