@@ -2907,16 +2907,31 @@
   }
 
   function landingJsV072A() {
-    return '' +
-      '(function(){' +
-      'function setLang(lang){document.documentElement.lang=lang;document.querySelectorAll("[data-i18n-text]").forEach(function(el){el.textContent=el.getAttribute("data-"+lang)||el.textContent});document.querySelectorAll("[data-lang-toggle]").forEach(function(btn){btn.textContent=lang==="ru"?"EN":"RU"})}' +
-      'function setTheme(theme){document.documentElement.setAttribute("data-theme",theme);document.querySelectorAll("[data-theme-toggle]").forEach(function(btn){btn.textContent=theme==="dark"?"☀":"☾"})}' +
-      'document.addEventListener("click",function(e){var t=e.target.closest("[data-theme-toggle]");if(t){e.preventDefault();setTheme(document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark")}});' +
-      'setLang(document.documentElement.lang==="en"?"en":"ru");setTheme(document.documentElement.getAttribute("data-theme")==="dark"?"dark":"light");' +
-      '})();';
+    /* IRGEZTNE_LANDING_SITE_THEME_V089A
+       One theme state across hosted pages and local file previews. */
+    return [
+      '(function(){',
+      '/* IRGEZTNE_LANDING_SITE_THEME_V089A */',
+      'var storageKey="irgeztne.site.theme";',
+      'var activeTheme="light";',
+      'function normalizeTheme(theme){return theme==="dark"?"dark":"light";}',
+      'function setLang(lang){document.documentElement.lang=lang;document.querySelectorAll("[data-i18n-text]").forEach(function(el){var value=el.getAttribute("data-"+lang);if(value!==null)el.textContent=value;});}',
+      'function themeIcon(theme){return theme==="dark"?"☀":"☾";}',
+      'function themeLabel(theme){var ru=(document.documentElement.lang||"").toLowerCase().indexOf("ru")===0;return theme==="dark"?(ru?"Светлый режим":"Light mode"):(ru?"Тёмный режим":"Dark mode");}',
+      'function themeFromUrl(){try{var value=new URL(window.location.href).searchParams.get("theme");return value==="dark"||value==="light"?value:"";}catch(error){return "";}}',
+      'function themeFromStorage(){try{var value=localStorage.getItem(storageKey);return value==="dark"||value==="light"?value:"";}catch(error){return "";}}',
+      'function saveTheme(theme){try{localStorage.setItem(storageKey,theme);}catch(error){}}',
+      'function decorateInternalLinks(theme){document.querySelectorAll("a[href]").forEach(function(link){var raw=link.getAttribute("href")||"";if(!raw||raw.charAt(0)==="#"||/^(mailto:|tel:|javascript:|data:)/i.test(raw))return;try{var url=new URL(raw,window.location.href);var sameOrigin=url.origin===window.location.origin;var sameFile=window.location.protocol==="file:"&&url.protocol==="file:";if(!sameOrigin&&!sameFile)return;if(!/\\.html?$/i.test(url.pathname))return;url.searchParams.set("theme",theme);link.setAttribute("href",url.href);}catch(error){}});}',
+      'function applyTheme(theme,persist){activeTheme=normalizeTheme(theme);document.documentElement.setAttribute("data-theme",activeTheme);if(persist)saveTheme(activeTheme);document.querySelectorAll("[data-theme-toggle]").forEach(function(btn){var label=themeLabel(activeTheme);btn.textContent=themeIcon(activeTheme);btn.setAttribute("aria-label",label);btn.setAttribute("title",label);});decorateInternalLinks(activeTheme);}',
+      'var initialTheme=themeFromUrl()||themeFromStorage()||normalizeTheme(document.documentElement.getAttribute("data-theme"));',
+      'applyTheme(initialTheme,true);',
+      'document.addEventListener("DOMContentLoaded",function(){setLang(document.documentElement.lang==="en"?"en":"ru");applyTheme(activeTheme,false);});',
+      'document.addEventListener("click",function(event){var toggle=event.target.closest&&event.target.closest("[data-theme-toggle]");if(!toggle)return;event.preventDefault();var next=activeTheme==="dark"?"light":"dark";applyTheme(next,true);});',
+      'window.addEventListener("storage",function(event){if(event.key===storageKey&&(event.newValue==="dark"||event.newValue==="light"))applyTheme(event.newValue,false);});',
+      '})();'
+    ].join('');
   }
 
-  /* IRGEZTNE_TINYMCE_MEDIA_LAYOUT_V076C */
   function siteGeneratedEditorContentCssV076C() {
     return '' +
       'main figure.ir-site-studio-v5-content-image{max-width:100%;clear:both;margin:28px 0}' +
