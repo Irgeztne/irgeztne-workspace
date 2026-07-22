@@ -3516,20 +3516,10 @@
         '</a>';
       }).join('');
 
-      nav = docsPagesV068D.slice(1, 4).map(function (candidate) {
-        var href = linkMode === 'hash'
-          ? ('#' + (candidate.slug || 'page'))
-          : pageFileName(candidate);
-
-        var activeClass = candidate && page && candidate.id === page.id
-          ? ' nav-link is-active'
-          : ' nav-link';
-
-        return '<a class="' + activeClass.trim() + '" href="' +
-          escapeHtml(href) + '">' +
-          escapeHtml(pageLabel(candidate)) +
-        '</a>';
-      }).join('');
+      /* IRGEZTNE_DOCUMENTATION_SINGLE_NAV_V090C
+         Documentation uses the complete left sidebar as its only page menu.
+         The top header keeps branding and the theme control. */
+      nav = '';
 
       var docsBodyV068D = body || '';
 
