@@ -3532,20 +3532,59 @@
 
       var docsBodyV068D = body || '';
 
-      if (!String(docsBodyV068D).trim()) {
+      /* IRGEZTNE_DOCUMENTATION_CUSTOM_BODY_ONLY_V090A
+         Preserve the accepted starter pages.
+         User-created documentation pages render editor content only. */
+      var docsSlugV090A =
+        String(page && page.slug || '');
+
+      var docsStarterSlugsV090A = [
+        'index',
+        'getting-started',
+        'guides',
+        'reference'
+      ];
+
+      var docsIsStarterPageV090A =
+        docsStarterSlugsV090A.indexOf(docsSlugV090A) !== -1;
+
+      if (
+        docsIsStarterPageV090A &&
+        !String(docsBodyV068D).trim()
+      ) {
         docsBodyV068D =
           '<p>' +
-            escapeHtml(description || siteMetaDescription(state, page, '')) +
+            escapeHtml(
+              description ||
+              siteMetaDescription(state, page, '')
+            ) +
           '</p>';
       }
 
-      var docsTitleV068D =
-        String(page.headline || '').trim() ||
-        pageLabel(page);
+      var docsPageIntroV090A = '';
 
-      var docsLeadV068D = description
-        ? '<p class="docs-lead-v068d">' + escapeHtml(description) + '</p>'
-        : '';
+      if (docsIsStarterPageV090A) {
+        var docsTitleV068D =
+          String(page.headline || '').trim() ||
+          pageLabel(page);
+
+        var docsLeadV068D = description
+          ? '<p class="docs-lead-v068d">' +
+              escapeHtml(description) +
+            '</p>'
+          : '';
+
+        docsPageIntroV090A =
+          '<div class="kicker">' +
+            escapeHtml(
+              t('Documentation', 'Документация')
+            ) +
+          '</div>' +
+          '<h1>' +
+            escapeHtml(docsTitleV068D) +
+          '</h1>' +
+          docsLeadV068D;
+      }
 
       var currentDocsIndexV068G = docsPagesV068D.findIndex(function (candidate) {
         return candidate && page && candidate.id === page.id;
@@ -3660,11 +3699,7 @@
           '</aside>' +
 
           '<article class="docs-content-v068d">' +
-            '<div class="kicker">' +
-              escapeHtml(t('Documentation', 'Документация')) +
-            '</div>' +
-            '<h1>' + escapeHtml(docsTitleV068D) + '</h1>' +
-            docsLeadV068D +
+            docsPageIntroV090A +
             '<section class="content">' +
               docsBodyV068D +
             '</section>' +
