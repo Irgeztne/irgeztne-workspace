@@ -292,6 +292,17 @@
     };
   }
 
+  /* Missing status predates page visibility and migrates to published.
+     Archived was the only supported legacy value and remains non-public as draft. */
+  function normalizePageStatusV091B(status, missingStatusFallback) {
+    var normalized = String(status == null ? '' : status).trim().toLowerCase();
+    if (normalized === 'draft') return 'draft';
+    if (normalized === 'published') return 'published';
+    if (normalized === 'archived') return 'draft';
+    if (!normalized) return missingStatusFallback === 'published' ? 'published' : 'draft';
+    return 'draft';
+  }
+
   function initialState() {
     var page = defaultPage(t('Home', 'Главная'), 'index', 'published');
     page.summary = t('Main landing page for this local site.', 'Главная страница локального сайта.');
@@ -1013,7 +1024,7 @@
             '</h2>' +
 
             '<div class="docs-faq-v085a">' +
-              '<details open><summary>' +
+              '<details><summary>' +
                 docsTextV085A(
                   'Can this template use images?',
                   'Можно ли использовать изображения?'
@@ -1792,7 +1803,7 @@
     /* Header navigation is controlled from page settings.
        Top-level pages with “inMenu” enabled appear in the header;
        child pages with “inMenu” enabled appear in dropdowns under their parent. */
-    var pages = orderedPageList(state).filter(Boolean);
+    var pages = publicPagesV091A(state);
     var items = [];
     var used = {};
 
@@ -1909,7 +1920,7 @@
       page.seoDescription = page.seoDescription == null ? '' : String(page.seoDescription);
       // IRGEZTNE_V081C_SAFE_PAGE_BODY_CLEAN
       page.bodyHtml = emergencyCleanBodyHtmlV081C(page.bodyHtml || '');
-      page.status = page.status || 'draft';
+      page.status = normalizePageStatusV091B(page.status, 'published');
       page.inFooter = page.inFooter === true;
       page.footerGroup = normalizeFooterGroup(page.footerGroup, page);
       /* v7g1h-fix: ordinary pages are shown in the header by default.
@@ -1923,6 +1934,7 @@
       page.__preview4SeparatedFields = true;
       return page;
     });
+    migrateDocumentationHomeV092A(state);
     if (!state.activePageId || !state.pages.some(function (page) { return page.id === state.activePageId; })) {
       state.activePageId = state.pages[0].id;
     }
@@ -1935,6 +1947,60 @@
     return state;
   }
 
+
+  function closeFirstDocumentationStarterFaqV092A(bodyHtml) {
+    var html = String(bodyHtml || '');
+    var faqStart = html.search(/<div\b[^>]*class=(["'])[^"']*\bdocs-faq-v085a\b[^"']*\1[^>]*>/i);
+    if (faqStart < 0) return html;
+    var detailsStart = html.indexOf('<details', faqStart);
+    if (detailsStart < 0) return html;
+    var detailsEnd = html.indexOf('>', detailsStart);
+    if (detailsEnd < 0) return html;
+    var opening = html.slice(detailsStart, detailsEnd + 1);
+    var closed = opening.replace(/\sopen(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+))?/i, '');
+    return closed === opening
+      ? html
+      : html.slice(0, detailsStart) + closed + html.slice(detailsEnd + 1);
+  }
+
+  /* Repair only the known Documentation starter-home metadata corruption.
+     The page identity, timestamps and complete editor body remain intact. */
+  function migrateDocumentationHomeV092A(state) {
+    if (!state || !state.site || !Array.isArray(state.pages)) return state;
+    var templateId = normalizeOfficialTemplateIdV068C(
+      state.site.activeTemplate || state.site.template || state.site.templateId || ''
+    );
+    if (templateId !== 'documentation-wide') return state;
+
+    var hasCorrectHome = state.pages.some(function (page) {
+      return page && page.type === 'home' && page.slug === 'index';
+    });
+    if (hasCorrectHome) return state;
+
+    var damagedHome = state.pages.find(function (page) {
+      return page &&
+        page.type === 'home' &&
+        page.pagePreset === 'landing' &&
+        page.slug === 'getting-started-2' &&
+        String(page.bodyHtml || '').indexOf('docs-home-v085a') !== -1;
+    });
+    var gettingStarted = state.pages.find(function (page) {
+      return page && page.slug === 'getting-started';
+    });
+    if (!damagedHome || !gettingStarted || damagedHome.id === gettingStarted.id) return state;
+
+    damagedHome.pageName = t('Documentation', 'Документация');
+    damagedHome.title = damagedHome.pageName;
+    damagedHome.slug = 'index';
+    damagedHome.summary = t(
+      'A wide documentation home with quick start, API examples and FAQ.',
+      'Широкая главная документации с быстрым стартом, API-примерами и FAQ.'
+    );
+    damagedHome.type = 'home';
+    damagedHome.pagePreset = 'landing';
+    damagedHome.bodyHtml = closeFirstDocumentationStarterFaqV092A(damagedHome.bodyHtml);
+    return state;
+  }
   function readLegacyСтраницы() {
     var legacy = safeJsonParse(localStorage.getItem(LEGACY_PAGES_KEY), null);
     if (!legacy || !Array.isArray(legacy.pages) || !legacy.pages.length) return [];
@@ -1951,7 +2017,7 @@
         seoTitle: item.seoTitle || '',
         seoDescription: item.seoDescription || item.summary || '',
         bodyHtml: item.bodyHtml || item.contentHtml || item.html || '',
-        status: item.status || 'draft',
+        status: normalizePageStatusV091B(item.status, 'published'),
         inMenu: item.inMenu !== false,
         parentId: item.parentId || '',
         order: Number.isFinite(Number(item.order)) ? Number(item.order) : index,
@@ -2667,7 +2733,7 @@
   }
 
   function footerNavHtml(state, linkMode) {
-    var pages = orderedPageList(state).filter(function (page) { return page && page.inFooter === true; });
+    var pages = publicPagesV091A(state).filter(function (page) { return page.inFooter === true; });
     if (!pages.length) return '';
 
     var buckets = {};
@@ -2760,8 +2826,7 @@
   function sitemapXmlV5(state) {
     var site = state && state.site ? state.site : {};
     if (generatedSiteSettingV067F(site, 'sitemap.enabled', true) === false) return '';
-    var pages = orderedPageList(state).filter(Boolean);
-    if (!pages.length && findHomePage(state)) pages = [findHomePage(state)];
+    var pages = publicPagesV091A(state);
     var base = currentSitePublicBaseUrl(state) || 'https://example.com';
     var now = new Date().toISOString();
     var urls = pages.map(function (page) {
@@ -4293,17 +4358,31 @@
       '</body></html>';
   }
 
-  function createPreviewPayload(state, page) {
-    var pages = Array.isArray(state.pages) && state.pages.length ? state.pages : [page].filter(Boolean);
-    var home = findHomePage(state) || pages[0] || page;
-    var active = page || home;
+  function createPreviewPayload(state, page, options) {
+    options = options || {};
+
+    /*
+       IRGEZTNE_PUBLIC_PAGE_CONTRACT_V091A
+       Public builds contain published pages only. Editor Preview may add
+       exactly its selected draft as a temporary, non-public file.
+    */
+    var publicPages = publicPagesV091A(state);
+    var selectedDraft = options.includeSelectedDraft === true && page && page.status === 'draft' ? page : null;
+    var buildPages = publicPages.slice();
+    if (selectedDraft && !buildPages.some(function (candidate) { return candidate && candidate.id === selectedDraft.id; })) {
+      buildPages.push(selectedDraft);
+    }
+    var renderState = Object.assign({}, state, { pages: buildPages });
+    var publicState = Object.assign({}, state, { pages: publicPages });
+    var home = findHomePage(publicState) || publicPages[0] || null;
+    var active = selectedDraft || (page && page.status === 'published' ? page : home);
     var files = {
       'styles.css': '@import url("assets/css/style.css");\n',
       'assets/css/style.css': generatedSiteCssV5(),
       'assets/js/site.js': generatedSiteJsV5(),
       'assets/images/.keep': '',
-      'sitemap.xml': sitemapXmlV5(state),
-      'robots.txt': robotsTxtV5(state),
+      'sitemap.xml': sitemapXmlV5(publicState),
+      'robots.txt': robotsTxtV5(publicState),
       'content/page.json': JSON.stringify(active || {}, null, 2),
       'meta.json': JSON.stringify({ site: publicSiteExportMeta(state.site), activePageId: active && active.id || '', generatedAt: new Date().toISOString(), structure: 'v7g3g-public-export-safe' }, null, 2)
     };
@@ -4354,16 +4433,16 @@
        logo, favicon, colors and navigation.
     */
     files['index.html'] = renderSiteHtml(
-      state,
+      renderState,
       home,
       { linkMode: 'file' }
     );
 
-    pages.forEach(function (item) {
+    buildPages.forEach(function (item) {
       if (!item) return;
       var name = pageFileName(item);
       files[name] = renderSiteHtml(
-        state,
+        renderState,
         item,
         { linkMode: 'file' }
       );
@@ -4378,9 +4457,42 @@
     };
   }
 
-  async function materializePreviewPackage(state, page) {
+  function createPublicSitePayloadV091B(state, page) {
+    return createPreviewPayload(state, page);
+  }
+
+  function createZipPayloadV091B(state, page) {
+    return createPublicSitePayloadV091B(state, page);
+  }
+
+  function createPublicationPayloadV091B(state, page) {
+    return createPublicSitePayloadV091B(state, page);
+  }
+
+  function createEditorPreviewPayloadV091B(state, page) {
+    return createPreviewPayload(state, page, { includeSelectedDraft: true });
+  }
+
+  function publicRenderTargetV091B(state, page) {
+    var pages = publicPagesV091A(state);
+    var publicState = Object.assign({}, state, { pages: pages });
+    var publicPage = page && page.status === 'published'
+      ? pages.find(function (candidate) { return candidate.id === page.id; })
+      : null;
+    publicPage = publicPage || findHomePage(publicState) || pages[0] || null;
+    return { state: publicState, page: publicPage };
+  }
+
+  function renderPublicSiteHtmlV091B(state, page, options) {
+    var target = publicRenderTargetV091B(state, page);
+    return target.page ? renderSiteHtml(target.state, target.page, options) : '';
+  }
+
+  async function materializePreviewPackage(state, page, options) {
     var api = window.nsAPI || null;
-    var payload = createPreviewPayload(state, page);
+    var payload = options && options.includeSelectedDraft === true
+      ? createEditorPreviewPayloadV091B(state, page)
+      : createPublicSitePayloadV091B(state, page);
     if (api && typeof api.materializeSitePreview === 'function') {
       var preview = await api.materializeSitePreview(payload);
       if (preview && preview.ok) {
@@ -4469,7 +4581,7 @@
       }
     }
 
-    var html = renderSiteHtml(state, home, { linkMode: 'hash', inlineAssets: true });
+    var html = renderPublicSiteHtmlV091B(state, home, { linkMode: 'hash', inlineAssets: true });
     var win = null;
     try { win = window.open('', '_blank', 'width=1440,height=980'); } catch (error2) {}
     if (!win) {
@@ -4503,11 +4615,13 @@
       }
     }
 
-    var html = renderSiteHtml(state, page, { linkMode: 'hash', inlineAssets: true });
+    var publicTarget = publicRenderTargetV091B(state, page);
+    var publicPage = publicTarget.page || findHomePage(publicTarget.state);
+    var html = renderPublicSiteHtmlV091B(state, publicPage, { linkMode: 'hash', inlineAssets: true });
     var win = null;
     try { win = window.open('', '_blank', 'width=1440,height=980'); } catch (error2) {}
     if (!win) {
-      downloadText((page.slug || 'page') + '.html', html, 'text/html;charset=utf-8');
+      downloadText(((publicPage && publicPage.slug) || 'index') + '.html', html, 'text/html;charset=utf-8');
       alert(t('Popup was blocked. Current page HTML was downloaded instead.', 'Окно было заблокировано. HTML текущей страницы скачан вместо открытия окна.'));
       return;
     }
@@ -4516,7 +4630,7 @@
       win.document.write(html);
       win.document.close();
     } catch (error3) {
-      downloadText((page.slug || 'page') + '.html', html, 'text/html;charset=utf-8');
+      downloadText(((publicPage && publicPage.slug) || 'index') + '.html', html, 'text/html;charset=utf-8');
     }
   }
 
@@ -4531,7 +4645,7 @@
     var state = readState();
     var page = activePage(state);
     try {
-      var preview = await materializePreviewPackage(state, page);
+      var preview = await materializePreviewPackage(state, page, { includeSelectedDraft: true });
       if (requestId !== previewRequestId || !overlay || activeTab !== 'preview') return;
       if (preview && preview.ok && preview.activePageUrl) {
         frame.src = preview.activePageUrl;
@@ -4553,15 +4667,16 @@
   function downloadCurrentHtml() {
     var state = readState();
     var page = activePage(state);
-    var filename = (page.slug || 'index') + '.html';
-    downloadText(filename, renderSiteHtml(state, page, { linkMode: 'file', inlineAssets: true }), 'text/html;charset=utf-8');
+    var target = publicRenderTargetV091B(state, page);
+    var filename = ((target.page && target.page.slug) || 'index') + '.html';
+    downloadText(filename, renderPublicSiteHtmlV091B(state, target.page, { linkMode: 'file', inlineAssets: true }), 'text/html;charset=utf-8');
     try { alert(t('HTML saved as ', 'HTML сохранён как ') + filename); } catch (error) {}
   }
 
   async function downloadSiteZip() {
     var state = readState();
     var page = activePage(state);
-    var payload = createPreviewPayload(state, page);
+    var payload = createZipPayloadV091B(state, page);
     payload.fileName = slugify(state.site && state.site.name || 'irgeztne-site') + '.zip';
     payload.title = state.site && state.site.name || payload.title || 'IRGEZTNE Site';
     var api = window.nsAPI || null;
@@ -4577,7 +4692,7 @@
         log('Site ZIP export failed', error);
       }
     }
-    downloadText('site-preview.html', renderSiteHtml(state, findHomePage(state) || page, { linkMode: 'file' }), 'text/html;charset=utf-8');
+    downloadText('site-preview.html', renderPublicSiteHtmlV091B(state, findHomePage(state) || page, { linkMode: 'file' }), 'text/html;charset=utf-8');
     try { alert(t('ZIP export is unavailable. index HTML was downloaded instead.', 'ZIP export недоступен. Вместо него скачан index HTML.')); } catch (error2) {}
   }
 
@@ -4923,7 +5038,7 @@
       return;
     }
     setPublishProgress(35, t('Collecting pages and files…', 'Собираем страницы и файлы…'), activeTab === 'server' || activeTab === 'publish');
-    var payload = createPreviewPayload(state, activePage(state));
+    var payload = createPublicationPayloadV091B(state, activePage(state));
     if (providerId === 'netlify') {
       if (!netlifyConnectionLooksVerified(config)) {
         setPublishProgress(55, t('Checking Netlify connection…', 'Проверяем подключение Netlify…'), activeTab === 'server' || activeTab === 'publish');
@@ -5044,8 +5159,19 @@
     return orderedPageEntries(state).map(function (entry) { return entry.page; });
   }
 
+  /* IRGEZTNE_PUBLIC_PAGE_CONTRACT_V091A */
+  function editorPagesV091A(state) {
+    return orderedPageList(state).filter(Boolean);
+  }
+
+  function publicPagesV091A(state) {
+    return editorPagesV091A(state).filter(function (page) {
+      return page.status === 'published';
+    });
+  }
+
   function childPagesOf(state, parentId) {
-    return orderedPageList(state).filter(function (page) { return page.parentId === parentId; });
+    return publicPagesV091A(state).filter(function (page) { return page.parentId === parentId; });
   }
 
   function setPageParent(state, pageId, parentId) {
@@ -5759,7 +5885,7 @@
     var isManualProvider = selected === 'manual';
     var config = settings.providers[selected] || defaultPublishProviderConfig(selected);
     var meta = publishProviderMeta(selected);
-    var payload = createPreviewPayload(state, page || activePage(state));
+    var payload = createPublicationPayloadV091B(state, page || activePage(state));
     var fileCount = Object.keys(payload.package || {}).length;
     var providerCards = publishProviderOrder().map(function (id) { return publishProviderCard(state, id); }).join('');
     var fields = publishFieldsForProvider(selected, config);
@@ -10238,6 +10364,26 @@
       version: VERSION
     };
     log('loaded');
+  }
+
+  if (window.__IRGEZTNE_WEBSTUDIO_TEST__ === true) {
+    window.__IRGEZTNE_WEBSTUDIO_TEST_HOOKS__ = {
+      normalizePageStatus: normalizePageStatusV091B,
+      normalizeState: normalizeState,
+      migrateDocumentationHome: migrateDocumentationHomeV092A,
+      starterPagesForTemplate: starterPagesForTemplateV068C,
+      editorPages: editorPagesV091A,
+      publicPages: publicPagesV091A,
+      createPreviewPayload: createPreviewPayload,
+      createPublicSitePayload: createPublicSitePayloadV091B,
+      createZipPayload: createZipPayloadV091B,
+      createPublicationPayload: createPublicationPayloadV091B,
+      materializePreviewPackage: materializePreviewPackage,
+      createEditorPreviewPayload: createEditorPreviewPayloadV091B,
+      publicRenderTarget: publicRenderTargetV091B,
+      renderPublicSiteHtml: renderPublicSiteHtmlV091B,
+      renderSiteHtml: renderSiteHtml
+    };
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, { once: true });
