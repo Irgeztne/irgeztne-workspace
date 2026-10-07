@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Consulting, product pages, company websites, and launch support.">
+    <meta name="theme-color" content="#17694b">
+    <title>Ways to work together · Meridian</title>
+    <script>
+      try {
+        const urlTheme = new URLSearchParams(location.search).get("theme");
+        const savedTheme = localStorage.getItem("irgeztne-business-canon-theme");
+        const initialTheme =
+          urlTheme === "dark" || urlTheme === "light" ? urlTheme : savedTheme;
+        if (initialTheme === "dark" || initialTheme === "light") {
+          document.documentElement.dataset.theme = initialTheme;
+        }
+      } catch {}
+    </script>
+    <link rel="stylesheet" href="../shared/styles.css">
+    <script defer src="../shared/site.js"></script>
+  </head>
+  <body data-page="services" data-nav-open="false">
+    
+    <header class="site-header">
+      <div class="header-shell">
+        <a class="brand" href="index.html" data-brand-text-fallback="true">
+          <strong>Meridian</strong>
+          <span>Business and product systems</span>
+        </a>
+        <nav class="site-nav" aria-label="Main navigation"><a href="index.html">Home</a><a href="services.html" aria-current="page">Services</a><a href="about.html">Company</a><a href="contacts.html">Contact</a></nav>
+        <div class="header-actions">
+          <a class="header-cta" href="contacts.html">Discuss a project</a>
+          <button
+            class="theme-toggle"
+            type="button"
+            data-theme-toggle
+            data-label-dark="Use dark theme"
+            data-label-light="Use light theme"
+            aria-label="Use dark theme"
+          >☾</button>
+          <button
+            class="menu-toggle"
+            type="button"
+            data-menu-toggle
+            aria-label="Open menu"
+            aria-expanded="false"
+          >☰</button>
+        </div>
+      </div>
+    </header>
+    
+    <main class="main-shell subpage">
+      <section class="subpage-hero">
+        <article class="content-panel">
+          <div><span class="eyebrow">Ways to work</span><h1>From a real challenge to a working system — without unnecessary loops.</h1><p>Start with one product, a single page, or the complete company structure. The scope changes; the principle stays the same: clarity, verifiable outcomes, and a clean handoff.</p></div>
+          <div class="subpage-index"><div><b>01</b><span>Diagnosis and journey</span></div><div><b>02</b><span>System and delivery</span></div><div><b>03</b><span>Launch and growth</span></div></div>
+        </article>
+        <figure class="subpage-media" data-template-slot="services.image">
+          <img src="../assets/process-team.webp" alt="A team workshop" width="880" height="252">
+          <figcaption class="media-note"><strong>One owner for the outcome</strong><span>From the first structure to the published release.</span></figcaption>
+        </figure>
+      </section>
+
+      <section class="section service-grid">
+        <article class="service-card"><b>01 · Foundation</b><h2>Strategy and structure</h2><p>For a product or company that needs a clearer story and customer journey.</p><ul><li>Audience and challenge map</li><li>Page architecture</li><li>Content priorities</li></ul></article>
+        <article class="service-card"><b>02 · Website</b><h2>Product presentation</h2><p>A wide site with a clear offer, proof, and fully independent pages.</p><ul><li>Home and inner pages</li><li>Light and dark themes</li><li>Responsive layouts and route checks</li></ul></article>
+        <article class="service-card"><b>03 · Growth</b><h2>Launch support</h2><p>For teams that need calm product development after publication, not a one-off handoff.</p><ul><li>Real-behaviour review</li><li>Weak-point improvement</li><li>New sections without a rebuild</li></ul></article>
+      </section>
+
+      <section class="section statement"><div><span class="eyebrow">Principle</span><h2>Accept the product itself first. Connect it to the system second.</h2></div><p>This keeps visual work separate from integration and makes the cause of every defect understandable.</p></section>
+
+      <section class="section timeline">
+        <article><b>Phase 01</b><h2>X-ray</h2><p>Review existing owners, pages, data, and constraints before making changes.</p></article>
+        <article><b>Phase 02</b><h2>Canon</h2><p>Build an independent reference and accept its composition, themes, content, and length.</p></article>
+        <article><b>Phase 03</b><h2>Integration</h2><p>Connect the accepted reference to one route and one build pipeline.</p></article>
+        <article><b>Phase 04</b><h2>Verification</h2><p>Compare preview, browser, export, and actual internal navigation.</p></article>
+      </section>
+
+      <section class="cta-band"><div><span class="eyebrow">Conversation</span><h2>Describe the challenge — we’ll propose the structure after a short call.</h2></div><a class="button-primary" href="contacts.html">Start a conversation</a></section>
+    </main>
+    
+    <footer class="site-footer">
+      <div class="footer-shell">
+        <div class="footer-brand">
+          <strong>Meridian</strong>
+          <p>A calm business structure for companies, products, and services.</p>
+        </div>
+        <div class="footer-column">
+          <b>Sections</b>
+          <a href="services.html">Services</a>
+          <a href="about.html">Company</a>
+          <a href="contacts.html">Contact</a>
+        </div>
+        <div class="footer-column">
+          <b>Contact</b>
+          <a href="mailto:hello@example.com">hello@example.com</a>
+          <a href="tel:+994000000000">+994 00 000 00 00</a>
+        </div>
+      </div>
+      <div class="footer-bottom">© 2026 Meridian · Business Canon v1 demonstration content</div>
+    </footer>
+  </body>
+</html>

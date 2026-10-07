@@ -1,0 +1,24 @@
+/* IRGEZTNE Office Diagram v1 — large local vector canvas. */
+.ns-office-diagram { display:grid; gap:12px; min-width:0; color:var(--text-1,#eaf2ff); }
+.ns-office-diagram * { box-sizing:border-box; }
+.ns-office-diagram input,.ns-office-diagram button { min-height:34px; border:1px solid rgba(112,170,255,.26); border-radius:10px; background:rgba(8,24,47,.92); color:var(--text-1,#eaf2ff); font:inherit; }
+.ns-office-diagram input { padding:7px 9px; outline:none; }
+.ns-office-diagram button { padding:0 11px; font-size:12px; font-weight:750; cursor:pointer; }
+.ns-office-diagram button:hover { border-color:rgba(93,175,255,.65); background:rgba(31,69,122,.92); }
+.ns-office-diagram button:disabled { opacity:.44; cursor:not-allowed; }
+.ns-office-diagram input:focus,.ns-office-diagram button:focus-visible { outline:none; border-color:#4c8dff; box-shadow:0 0 0 3px rgba(76,141,255,.16); }
+.ns-office-diagram__toolbar,.ns-office-diagram__foot { display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+.ns-office-diagram__object-title { flex:1 1 240px; min-width:220px; max-width:420px; }
+.ns-office-diagram__toolbar>span { min-width:52px; text-align:center; color:#a9c2e3; font-size:12px; font-weight:800; }
+.ns-office-diagram__viewport { width:100%; min-height:560px; max-height:68vh; overflow:auto; border:1px solid rgba(112,170,255,.24); border-radius:17px; background:#061224; scrollbar-color:rgba(80,145,235,.62) rgba(6,18,36,.82); }
+.ns-office-diagram__viewport svg { display:block; max-width:none; background:#f8fbff; touch-action:none; }
+.ns-office-diagram__viewport [data-diagram-element] { cursor:move; }
+.ns-office-diagram__selection { fill:none; stroke:#16a3ff; stroke-width:3; stroke-dasharray:10 6; pointer-events:none; }
+.ns-office-diagram__handle { fill:#2f7be6; stroke:#fff; stroke-width:3; cursor:nwse-resize; }
+.ns-office-diagram__foot { justify-content:space-between; color:var(--text-2,#aebbd0); font-size:12px; }
+
+html[data-theme="light"] .ns-office-diagram,body[data-theme="light"] .ns-office-diagram { color:#10243d; }
+html[data-theme="light"] .ns-office-diagram input,html[data-theme="light"] .ns-office-diagram button,body[data-theme="light"] .ns-office-diagram input,body[data-theme="light"] .ns-office-diagram button { background:#e7f1fd; border-color:rgba(67,104,151,.34); color:#173957; }
+html[data-theme="light"] .ns-office-diagram__viewport,body[data-theme="light"] .ns-office-diagram__viewport { background:#dfe8f3; border-color:rgba(67,104,151,.36); }
+
+@media (max-width:900px) { .ns-office-diagram__viewport { min-height:440px; } }

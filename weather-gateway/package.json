@@ -1,0 +1,15 @@
+{
+  "name": "@irgeztne/weather-gateway",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node ../scripts/test-weather-provider-layer-v1.mjs",
+    "dev:cloudflare": "wrangler dev --config wrangler.toml",
+    "deploy:cloudflare": "wrangler deploy --config wrangler.toml",
+    "start:node": "node node/server.mjs"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}

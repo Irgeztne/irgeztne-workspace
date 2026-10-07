@@ -1,613 +1,967 @@
+/* IRGEZTNE Green Lightning v0.4P1 — Workspace seating + side panels */
+[data-live-rooms-panel], .rooms-live-v1, .rooms-live-v039d, .rooms-live-v039e { display:none !important; }
+.gl-p1,.gl-p1 *{box-sizing:border-box}
+.gl-p1{
+  --gl-bg:#07111f;--gl-panel:#0a1727;--gl-panel2:#0d1d31;--gl-line:#1b3554;--gl-line2:#234564;
+  --gl-text:#e9f1fb;--gl-muted:#8aa1b9;--gl-muted2:#617b95;--gl-accent:#4ea1ff;--gl-good:#55d2ad;--gl-danger:#ff7f90;
+  position:relative;width:100%;min-width:0;height:clamp(590px,calc(100vh - 118px),880px);min-height:590px;overflow:hidden;
+  display:grid;grid-template-columns:280px minmax(0,1fr) 0;background:var(--gl-bg);color:var(--gl-text);
+  border:1px solid rgba(59,101,143,.45);border-radius:18px;box-shadow:0 16px 44px rgba(0,0,0,.18);
+  transition:grid-template-columns .18s ease;
+}
+body.is-workspace-full-module-open .cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1{
+  height:calc(100vh - 58px);min-height:620px;border-radius:14px;
+}
+.gl-p1.is-rail-collapsed{grid-template-columns:72px minmax(0,1fr) 0}
+.gl-p1.is-info-open{grid-template-columns:280px minmax(0,1fr) minmax(292px,332px)}
+.gl-p1.is-rail-collapsed.is-info-open{grid-template-columns:72px minmax(0,1fr) minmax(292px,332px)}
+.gl-p1 button,.gl-p1 input,.gl-p1 textarea{font:inherit}.gl-p1 button{color:inherit}
+.gl-p1 button:focus-visible,.gl-p1 input:focus-visible,.gl-p1 textarea:focus-visible{outline:2px solid rgba(78,161,255,.62);outline-offset:2px}
+.gl-p1-rail{min-width:0;min-height:0;display:flex;flex-direction:column;background:linear-gradient(180deg,#0a1727,#081321);border-right:1px solid #142b44;overflow:hidden}
+.gl-p1-rail-head{min-height:62px;padding:11px 10px;display:flex;align-items:center;gap:9px;border-bottom:1px solid rgba(27,53,84,.62)}
+.gl-p1-bolt{width:38px;height:38px;flex:0 0 38px;display:grid;place-items:center;border-radius:12px;border:1px solid rgba(85,210,173,.28);background:rgba(85,210,173,.10);color:#75e5be;font-size:22px}
+.gl-p1-rail-title{min-width:0;flex:1}.gl-p1-rail-title strong{display:block;font-size:14px}.gl-p1-rail-title span{display:block;margin-top:2px;color:var(--gl-muted);font-size:10px;white-space:nowrap}
+.gl-p1-icon-btn{width:36px;height:36px;min-width:36px;display:grid;place-items:center;border:1px solid #1b3554;border-radius:10px;background:#0c1b2c;color:#bcd4ea;cursor:pointer}
+.gl-p1-icon-btn:hover{background:#10263d;border-color:#28527a}.gl-p1-icon-btn:disabled{opacity:.35;cursor:default}
+.gl-p1-rail-search{position:relative;margin:11px 10px 8px}.gl-p1-rail-search span{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#718ba4}
+.gl-p1-rail-search input{width:100%;height:34px;padding:0 10px 0 30px;border:1px solid #183754;border-radius:10px;background:#081522;color:var(--gl-text);font-size:11px}
+.gl-p1-filters{display:flex;gap:5px;padding:0 10px 9px}.gl-p1-filters button{border:1px solid transparent;border-radius:8px;padding:5px 8px;background:transparent;color:#7e95ad;font-size:10px}.gl-p1-filters button.is-active{background:#10263d;border-color:#214361;color:#dceeff}.gl-p1-filters button:disabled{opacity:.5}
+.gl-p1-conversation{margin:0 7px;padding:9px 8px;display:grid;grid-template-columns:42px minmax(0,1fr);gap:9px;align-items:center;border:1px solid transparent;border-radius:12px;background:transparent;text-align:left;cursor:default}
+.gl-p1-conversation.is-active{background:#112741;border-color:#1f456a}.gl-p1-avatar{width:40px;height:40px;flex:0 0 40px;display:grid;place-items:center;border-radius:50%;background:#15395e;border:1px solid #2a5e8f;color:#e9f6ff;font-size:11px;font-weight:800}.gl-p1-avatar.is-large{width:58px;height:58px;font-size:14px}
+.gl-p1-conv-copy{min-width:0}.gl-p1-conv-copy strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px}.gl-p1-conv-copy span{display:block;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--gl-muted);font-size:10px}
+.gl-p1-rail-foot{margin-top:auto;min-height:38px;padding:9px 11px;border-top:1px solid #142b44;display:flex;align-items:center;gap:7px;color:#70879e;font-size:10px}.gl-p1-rail-foot i{width:7px;height:7px;border-radius:50%;background:#e9be5e}.gl-p1-rail-foot i.is-ready{background:var(--gl-good);box-shadow:0 0 12px rgba(85,210,173,.45)}.gl-p1-rail-foot i.is-error{background:var(--gl-danger)}
+.gl-p1.is-rail-collapsed .gl-p1-rail-title,.gl-p1.is-rail-collapsed .gl-p1-rail-search,.gl-p1.is-rail-collapsed .gl-p1-filters,.gl-p1.is-rail-collapsed .gl-p1-conv-copy,.gl-p1.is-rail-collapsed .gl-p1-rail-foot span{display:none}
+.gl-p1.is-rail-collapsed .gl-p1-rail-head{justify-content:center;display:grid}.gl-p1.is-rail-collapsed .gl-p1-bolt{margin:auto}.gl-p1.is-rail-collapsed .gl-p1-conversation{grid-template-columns:1fr;margin:6px;padding:8px 7px}.gl-p1.is-rail-collapsed .gl-p1-avatar{margin:auto}
+.gl-p1-chat{min-width:0;min-height:0;display:flex;flex-direction:column;background:#0a1624}
+.gl-p1-chat-head{min-height:62px;padding:9px 12px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #142b44;background:rgba(9,22,37,.94)}
+.gl-p1-rail-open{display:none}.gl-p1.is-rail-collapsed .gl-p1-rail-open{display:grid}
+.gl-p1-chat-title{min-width:0;flex:1}.gl-p1-chat-title strong{display:block;font-size:13.5px}.gl-p1-chat-title span{display:block;margin-top:2px;color:#7f96ad;font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gl-p1-head-actions{display:flex;align-items:center;gap:7px}.gl-p1-status{min-height:30px;padding:5px 9px;display:flex;align-items:center;gap:6px;border:1px solid #1a3955;border-radius:999px;background:#0a1a2a;color:#a9bfd4;font-size:10px;white-space:nowrap}.gl-p1-status i{width:7px;height:7px;border-radius:50%;background:#e9be5e}.gl-p1-status.is-ready i{background:var(--gl-good);box-shadow:0 0 13px rgba(85,210,173,.45)}.gl-p1-status.is-error{color:#ffc0c8;border-color:rgba(255,127,144,.26)}.gl-p1-status.is-error i{background:var(--gl-danger)}
+.gl-p1-messages{flex:1;min-height:0;overflow:auto;padding:22px 18px 18px;display:flex;flex-direction:column;gap:9px;background:radial-gradient(circle at 95% 4%,rgba(30,85,139,.10),transparent 30%),#07131f}
+.gl-p1-empty{margin:auto;max-width:520px;padding:24px;text-align:center;color:var(--gl-muted)}.gl-p1-empty strong{display:block;color:var(--gl-text);font-size:14px}.gl-p1-empty span{display:block;margin-top:7px;font-size:11px;line-height:1.5}
+.gl-p1-message{align-self:flex-end;width:min(74%,650px);padding:10px 12px;border:1px solid #275b83;border-radius:16px 16px 5px 16px;background:linear-gradient(145deg,#143f68,#113758);box-shadow:0 8px 18px rgba(0,0,0,.10)}.gl-p1-message-meta{display:flex;justify-content:space-between;gap:8px;color:#88a2bb;font-size:9.5px}.gl-p1-message-meta strong{color:#dceeff}.gl-p1-message p{margin:5px 0 0;font-size:12.5px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere}.gl-p1-message-state{margin-top:5px;color:#7590aa;font-size:9px}.gl-p1-message-state.is-delivered{color:#72d8b7}
+.gl-p1-compose{padding:9px 11px 10px;display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:7px;align-items:end;border-top:1px solid #142b44;background:#091624}.gl-p1-compose textarea{width:100%;min-height:40px;max-height:130px;resize:none;padding:10px 11px;border:1px solid #1d3b59;border-radius:12px;background:#0d1d2f;color:var(--gl-text);outline:none}.gl-p1-compose textarea:focus{border-color:#3577ad}.gl-p1-send{width:40px;height:40px;border:1px solid #2d6fa3;border-radius:11px;background:linear-gradient(145deg,#1b6ba8,#2f88c9);color:white;cursor:pointer}.gl-p1-send:disabled{opacity:.5}
+.gl-p1-info{min-width:0;width:0;overflow:hidden;background:#0a1726;border-left:1px solid transparent}.gl-p1.is-info-open .gl-p1-info{width:auto;border-left-color:#142b44}.gl-p1-info-inner{width:100%;height:100%;overflow:auto;padding:13px}.gl-p1-info-head{display:flex;align-items:center;justify-content:space-between;gap:9px;margin-bottom:14px}.gl-p1-info-head strong{font-size:13px}.gl-p1-profile{display:grid;justify-items:center;gap:5px;padding:7px 0 14px;text-align:center}.gl-p1-profile strong{font-size:13px}.gl-p1-profile span{color:var(--gl-muted);font-size:10px}
+.gl-p1-info-section{padding:12px 0;border-top:1px solid #142b44}.gl-p1-info-section h5{margin:0 0 8px;color:#69849e;font-size:9px;text-transform:uppercase;letter-spacing:.08em}.gl-p1-info-section-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.gl-p1-info-section-head button{border:1px solid #1b3a57;border-radius:8px;background:#0b1d30;color:#aac0d4;padding:5px 7px;font-size:9px;cursor:pointer}.gl-p1-info-row{min-height:31px;display:flex;align-items:center;justify-content:space-between;gap:8px;color:#8fa7be;font-size:10px}.gl-p1-info-row strong{color:#d4e5f4;font-weight:650;text-align:right}
+.gl-p1-security-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}.gl-p1-security-grid>div{min-width:0;padding:7px;border:1px solid #193651;border-radius:9px;background:#081522}.gl-p1-security-grid span{display:block;color:#6d879f;font-size:8.5px}.gl-p1-security-grid strong{display:block;margin-top:3px;color:#d6e8f8;font-size:9.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.gl-p1-security-error{padding:9px;border:1px solid rgba(255,127,144,.22);border-radius:9px;background:rgba(255,84,105,.06);color:#ffc0c8;font-size:10px;line-height:1.4;overflow-wrap:anywhere}
+.workspace-shell .workspace-panel .gl-p1{height:auto;min-height:560px;grid-template-columns:1fr;grid-template-rows:auto minmax(430px,1fr);border-radius:14px}
+.workspace-shell .workspace-panel .gl-p1-rail{border-right:0;border-bottom:1px solid #142b44;max-height:168px}.workspace-shell .workspace-panel .gl-p1-rail-head{min-height:52px;padding:7px 8px}.workspace-shell .workspace-panel .gl-p1-bolt{width:34px;height:34px;flex-basis:34px}.workspace-shell .workspace-panel .gl-p1-rail-search,.workspace-shell .workspace-panel .gl-p1-filters,.workspace-shell .workspace-panel .gl-p1-rail-foot{display:none}.workspace-shell .workspace-panel .gl-p1-conversation{margin-bottom:7px}.workspace-shell .workspace-panel .gl-p1.is-rail-collapsed .gl-p1-rail{display:none}.workspace-shell .workspace-panel .gl-p1-rail-open{display:grid}
+.workspace-shell .workspace-panel .gl-p1-info{position:absolute;z-index:8;top:0;right:0;bottom:0;width:min(88%,330px);border-left:1px solid #142b44;transform:translateX(102%);transition:transform .18s ease;box-shadow:-18px 0 42px rgba(0,0,0,.30)}.workspace-shell .workspace-panel .gl-p1.is-info-open .gl-p1-info{width:min(88%,330px);transform:translateX(0)}
+.workspace-shell .workspace-panel .gl-p1-chat-head{padding:8px}.workspace-shell .workspace-panel .gl-p1-status span{display:none}.workspace-shell .workspace-panel .gl-p1-message{width:88%}.workspace-shell .workspace-panel .gl-p1-compose{grid-template-columns:auto minmax(0,1fr) auto}.workspace-shell .workspace-panel .gl-p1-compose>.gl-p1-icon-btn:nth-of-type(2){display:none}
+@media(max-width:980px){.gl-p1{grid-template-columns:230px minmax(0,1fr) 0}.gl-p1.is-info-open{grid-template-columns:230px minmax(0,1fr) 292px}.gl-p1.is-rail-collapsed.is-info-open{grid-template-columns:72px minmax(0,1fr) 292px}.gl-p1-status span{display:none}}
+@media(max-width:760px){.gl-p1{grid-template-columns:1fr;height:calc(100vh - 40px)}.gl-p1-rail{position:absolute;z-index:7;inset:0 auto 0 0;width:min(86%,300px);box-shadow:18px 0 42px rgba(0,0,0,.30)}.gl-p1.is-rail-collapsed .gl-p1-rail{transform:translateX(-102%)}.gl-p1-rail-open{display:grid}.gl-p1-info{position:absolute;z-index:8;top:0;right:0;bottom:0;width:min(88%,330px);transform:translateX(102%);transition:transform .18s ease}.gl-p1.is-info-open .gl-p1-info{width:min(88%,330px);transform:translateX(0)}.gl-p1-message{width:88%}}
+
 /* =========================================================
-   IRGEZTNE v042d - Light Chat / Чат UX
-   Internal module key remains "rooms".
+   IRGEZTNE Green Lightning v0.4P3
+   Full/Compact geometry + Messenger Sandbox v1.1 surface recovery
    ========================================================= */
 
-[data-live-rooms-panel],
-.rooms-live-v1,
-.rooms-live-v039d,
-.rooms-live-v039e {
-  display: none !important;
+/* Full Chat is an application surface, not a scrolling document. */
+body.is-workspace-full-module-open[data-workspace-full-module="rooms"] .cabinet-expanded-view:not(.hidden) {
+  min-height: 0 !important;
+  overflow: hidden !important;
 }
 
-.ir-chat-v1,
-.ir-chat-v1 * {
-  box-sizing: border-box;
+body.is-workspace-full-module-open[data-workspace-full-module="rooms"] .cabinet-expanded-body {
+  flex: 1 1 auto !important;
+  height: auto !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  padding: 12px !important;
 }
 
-.ir-chat-v1 {
-  display: grid;
-  grid-template-columns: minmax(280px, 0.42fr) minmax(0, 1fr);
-  grid-template-areas:
-    "start main"
-    "bottom bottom";
-  gap: 14px;
-  align-items: start;
+body.is-workspace-full-module-open[data-workspace-full-module="rooms"] .cabinet-section-panel[data-cabinet-panel="rooms"] {
+  height: 100% !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+body.is-workspace-full-module-open[data-workspace-full-module="rooms"] .cabinet-section-panel[data-cabinet-panel="rooms"] > [data-rooms-root],
+body.is-workspace-full-module-open[data-workspace-full-module="rooms"] .cabinet-section-panel[data-cabinet-panel="rooms"] > [data-module-root],
+body.is-workspace-full-module-open[data-workspace-full-module="rooms"] .cabinet-section-panel[data-cabinet-panel="rooms"] > div {
+  height: 100%;
+  min-height: 0;
+}
+
+body.is-workspace-full-module-open[data-workspace-full-module="rooms"] .cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1 {
   width: 100%;
-  min-width: 0;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: hidden !important;
+  border-radius: 14px;
 }
 
-.ir-chat-panel,
-.ir-chat-bottom {
-  min-width: 0;
-  border: 1px solid rgba(126, 184, 255, 0.16);
-  border-radius: 20px;
+.gl-p1.is-info-open {
+  grid-template-columns: 280px minmax(0,1fr) var(--gl-info-w,320px);
+}
+.gl-p1.is-rail-collapsed.is-info-open {
+  grid-template-columns: 72px minmax(0,1fr) var(--gl-info-w,320px);
+}
+.gl-p1-info { position: relative; }
+.gl-p1-info-resize {
+  position: absolute;
+  left: -4px;
+  top: 0;
+  bottom: 0;
+  width: 8px;
+  z-index: 5;
+  cursor: col-resize;
+}
+.gl-p1-info-resize::after {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 42%;
+  width: 2px;
+  height: 58px;
+  border-radius: 2px;
+  background: #24425e;
+  opacity: .68;
+}
+.gl-p1-future-action:disabled { opacity: .56; cursor: default; }
+
+/* Only message history and long side lists may scroll. Composer stays anchored. */
+.gl-p1-chat,
+.gl-p1-rail,
+.gl-p1-info { min-height: 0; overflow: hidden; }
+.gl-p1-messages { min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+.gl-p1-info-inner { min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+
+/* Compact: same Messenger Core, full height of the right Workspace surface. */
+.workspace-shell .workspace-panel[data-panel="rooms"] {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+.workspace-shell .workspace-panel[data-panel="rooms"] > [data-rooms-root],
+.workspace-shell .workspace-panel[data-panel="rooms"] > [data-module-root],
+.workspace-shell .workspace-panel[data-panel="rooms"] > div {
+  height: 100%;
+  min-height: 0;
+}
+.workspace-shell .workspace-panel[data-panel="rooms"] .gl-p1 {
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: hidden !important;
+  grid-template-rows: minmax(120px,168px) minmax(0,1fr);
+}
+.workspace-shell .workspace-panel[data-panel="rooms"] .gl-p1.is-rail-collapsed {
+  grid-template-rows: minmax(0,1fr);
+}
+.workspace-shell .workspace-panel[data-panel="rooms"] .gl-p1-chat {
+  height: 100%;
+  min-height: 0;
+}
+.workspace-shell .workspace-panel[data-panel="rooms"] .gl-p1-info-resize { display:none; }
+
+@media(max-width:980px){
+  .gl-p1.is-info-open{grid-template-columns:230px minmax(0,1fr) minmax(280px,var(--gl-info-w,320px))}
+  .gl-p1.is-rail-collapsed.is-info-open{grid-template-columns:72px minmax(0,1fr) minmax(280px,var(--gl-info-w,320px))}
+}
+
+/* =========================================================
+   IRGEZTNE Green Lightning v0.4P4
+   Visual fidelity pass from Messenger Sandbox v1.1
+   ========================================================= */
+
+.gl-p1-svg {
+  width:18px;
+  height:18px;
+  display:block;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.8;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  pointer-events:none;
+}
+
+.gl-p1-head-actions .gl-p1-icon-btn {
+  position:relative;
+  transition:background .16s ease,border-color .16s ease,color .16s ease,box-shadow .16s ease,transform .16s ease;
+}
+.gl-p1-head-actions .gl-p1-icon-btn:not(:disabled):hover,
+.gl-p1-head-actions .gl-p1-icon-btn:not(:disabled):focus-visible {
+  color:#e9f6ff;
+  border-color:#2b5275;
+  background:#12304c;
+  box-shadow:0 0 18px rgba(78,161,255,.14);
+}
+.gl-p1-future-action:disabled { opacity:.68; }
+
+.gl-p1-send {
+  display:grid;
+  place-items:center;
+  background:linear-gradient(180deg,#144a73,#113c60);
+  color:#bfe5ff;
+  border-color:#2a6fa5;
+  box-shadow:inset 0 0 16px rgba(76,169,255,.05);
+  transition:color .16s ease,border-color .16s ease,background .16s ease,box-shadow .16s ease,transform .16s ease;
+}
+.gl-p1-send:hover:not(:disabled),
+.gl-p1-send:focus-visible:not(:disabled) {
+  color:#ecfaff;
+  border-color:#4da6e8;
+  background:linear-gradient(180deg,#185986,#14486f);
+  box-shadow:0 0 0 1px rgba(91,175,239,.10),0 0 18px rgba(53,147,219,.20),inset 0 0 16px rgba(107,190,255,.08);
+  transform:translateY(-1px);
+}
+.gl-p1-send:active:not(:disabled) { transform:translateY(0); }
+
+.gl-p1-info-inner { padding:14px; }
+.gl-p1-info-head { margin-bottom:15px; }
+.gl-p1-info-head strong { font-size:14px; }
+.gl-p1-profile { padding:8px 0 16px; }
+.gl-p1-profile strong { font-size:14px; }
+.gl-p1-profile span { font-size:11.5px; line-height:1.35; }
+.gl-p1-info-section { padding:13px 0; }
+.gl-p1-info-section h5 { font-size:10px; margin-bottom:9px; }
+.gl-p1-info-row { min-height:34px; font-size:11.5px; line-height:1.3; }
+.gl-p1-info-row strong { font-size:10.5px; }
+.gl-p1-security-grid > div { padding:8px; }
+.gl-p1-security-grid span { font-size:9.5px; }
+.gl-p1-security-grid strong { font-size:10.5px; margin-top:3px; }
+.gl-p1-info-section-head button { font-size:10px; padding:6px 8px; }
+
+.workspace-shell .workspace-panel[data-panel="rooms"] .gl-p1-info-row { font-size:11px; }
+.workspace-shell .workspace-panel[data-panel="rooms"] .gl-p1-security-grid span { font-size:9px; }
+.workspace-shell .workspace-panel[data-panel="rooms"] .gl-p1-security-grid strong { font-size:10px; }
+
+/* =========================================================
+   IRGEZTNE Green Lightning v0.4P5
+   Right info panel readability pass.
+   Keeps v0.4P3/P4 geometry and interaction contract unchanged.
+   ========================================================= */
+.gl-p1-info-inner{
+  padding:16px 16px 18px;
+}
+.gl-p1-info-head{
+  margin-bottom:16px;
+}
+.gl-p1-info-head strong{
+  font-size:15px;
+  line-height:1.2;
+}
+.gl-p1-profile{
+  gap:7px;
+  padding:9px 0 16px;
+}
+.gl-p1-profile .gl-p1-avatar.is-large{
+  width:62px;
+  height:62px;
+  font-size:15px;
+}
+.gl-p1-profile strong{
+  font-size:15px;
+  line-height:1.25;
+}
+.gl-p1-profile span{
+  font-size:12px;
+  line-height:1.4;
+}
+.gl-p1-info-section{
+  padding:14px 0;
+}
+.gl-p1-info-section h5{
+  margin:0 0 10px;
+  font-size:11px;
+  line-height:1.2;
+  letter-spacing:.075em;
+}
+.gl-p1-info-row{
+  min-height:38px;
+  font-size:13px;
+  line-height:1.35;
+}
+.gl-p1-info-row strong{
+  font-size:12px;
+  line-height:1.25;
+}
+.gl-p1-info-section-head button{
+  padding:6px 9px;
+  font-size:11px;
+}
+.gl-p1-security-grid{
+  gap:7px;
+}
+.gl-p1-security-grid>div{
+  padding:8px;
+}
+.gl-p1-security-grid span{
+  font-size:10px;
+  line-height:1.25;
+}
+.gl-p1-security-grid strong{
+  margin-top:4px;
+  font-size:11.5px;
+  line-height:1.25;
+}
+.gl-p1-security-error{
+  font-size:11.5px;
+  line-height:1.45;
+}
+
+/* Compact drawer gets the same readable hierarchy without changing its width. */
+.workspace-shell .workspace-panel[data-panel="rooms"] .gl-p1-info-inner{
+  padding:14px;
+}
+.workspace-shell .workspace-panel[data-panel="rooms"] .gl-p1-info-head strong{
+  font-size:14px;
+}
+.workspace-shell .workspace-panel[data-panel="rooms"] .gl-p1-profile strong{
+  font-size:14px;
+}
+.workspace-shell .workspace-panel[data-panel="rooms"] .gl-p1-profile span{
+  font-size:11.5px;
+}
+.workspace-shell .workspace-panel[data-panel="rooms"] .gl-p1-info-section h5{
+  font-size:10.5px;
+}
+.workspace-shell .workspace-panel[data-panel="rooms"] .gl-p1-info-row{
+  min-height:36px;
+  font-size:12px;
+}
+.workspace-shell .workspace-panel[data-panel="rooms"] .gl-p1-info-row strong{
+  font-size:11px;
+}
+.workspace-shell .workspace-panel[data-panel="rooms"] .gl-p1-security-grid span{
+  font-size:9.5px;
+}
+.workspace-shell .workspace-panel[data-panel="rooms"] .gl-p1-security-grid strong{
+  font-size:10.5px;
+}
+
+/* =========================================================
+   IRGEZTNE Green Lightning v0.4P6
+   Right panel depth + contrast pass.
+   Adds separation and visual relief without changing geometry.
+   ========================================================= */
+.gl-p1-info{
   background:
-    radial-gradient(circle at 0 0, rgba(59, 130, 246, 0.12), transparent 42%),
-    linear-gradient(180deg, rgba(13, 30, 58, 0.94), rgba(6, 14, 29, 0.96));
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
-  color: rgba(232, 242, 255, 0.94);
+    linear-gradient(180deg,rgba(12,27,45,.985),rgba(8,21,35,.992));
+  box-shadow:
+    -14px 0 30px rgba(0,0,0,.22),
+    inset 1px 0 0 rgba(116,174,226,.07);
+}
+.gl-p1.is-info-open .gl-p1-info{
+  border-left-color:#1d3c59;
+}
+.gl-p1-info-inner{
+  background:
+    radial-gradient(circle at 100% 0%,rgba(67,132,190,.055),transparent 32%),
+    transparent;
 }
 
-.ir-chat-start {
-  grid-area: start;
+.gl-p1-profile{
+  margin:0 0 11px;
+  padding:13px 12px 16px;
+  border:1px solid rgba(45,83,118,.56);
+  border-radius:13px;
+  background:linear-gradient(180deg,rgba(15,35,57,.82),rgba(10,26,43,.76));
+  box-shadow:
+    0 8px 22px rgba(0,0,0,.16),
+    inset 0 1px 0 rgba(255,255,255,.025);
+}
+.gl-p1-profile strong{color:#eef7ff;}
+.gl-p1-profile span{color:#9fb5c9;}
+
+.gl-p1-info-section{
+  margin:10px 0 0;
+  padding:12px 12px 10px;
+  border:1px solid rgba(42,77,108,.52);
+  border-radius:12px;
+  background:linear-gradient(180deg,rgba(13,31,50,.78),rgba(9,24,39,.74));
+  box-shadow:
+    0 7px 18px rgba(0,0,0,.12),
+    inset 0 1px 0 rgba(255,255,255,.02);
+}
+.gl-p1-info-section h5{
+  color:#8faec9;
+  text-shadow:0 1px 0 rgba(0,0,0,.35);
+}
+.gl-p1-info-row{
+  padding:2px 6px;
+  margin:0 -6px;
+  border-radius:8px;
+  color:#b2c6d8;
+  transition:background .14s ease,color .14s ease;
+}
+.gl-p1-info-row:hover{
+  background:rgba(43,88,126,.12);
+  color:#d4e5f4;
+}
+.gl-p1-info-row strong{
+  color:#eef7ff;
+  text-shadow:0 1px 0 rgba(0,0,0,.28);
+}
+.gl-p1-info-section-head button{
+  border-color:#2a4f70;
+  background:linear-gradient(180deg,#102a43,#0c2136);
+  color:#c8dceb;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.025),0 4px 10px rgba(0,0,0,.10);
+}
+.gl-p1-info-section-head button:hover{
+  border-color:#3b688f;
+  background:linear-gradient(180deg,#153651,#102a43);
+  color:#edf7ff;
 }
 
-.ir-chat-main {
-  grid-area: main;
+.gl-p1-security-grid>div{
+  border-color:#244963;
+  background:linear-gradient(180deg,#0c2135,#091929);
+  box-shadow:
+    0 5px 12px rgba(0,0,0,.13),
+    inset 0 1px 0 rgba(255,255,255,.02);
+}
+.gl-p1-security-grid span{color:#86a1b8;}
+.gl-p1-security-grid strong{color:#eef7ff;}
+
+/* Keep compact drawer calmer: retain separation, reduce heavy drop shadow. */
+.workspace-shell .workspace-panel[data-panel="rooms"] .gl-p1-info{
+  box-shadow:-8px 0 18px rgba(0,0,0,.18),inset 1px 0 0 rgba(116,174,226,.06);
+}
+.workspace-shell .workspace-panel[data-panel="rooms"] .gl-p1-profile{
+  box-shadow:0 5px 14px rgba(0,0,0,.12),inset 0 1px 0 rgba(255,255,255,.02);
+}
+.workspace-shell .workspace-panel[data-panel="rooms"] .gl-p1-info-section{
+  box-shadow:0 4px 12px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.018);
 }
 
-.ir-chat-bottom {
-  grid-area: bottom;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 10px;
-  align-items: start;
-  padding: 10px 12px;
+/* =========================================================
+   IRGEZTNE Green Lightning v0.4P7
+   Whole-chat depth hierarchy pass.
+   Extends the accepted P6 relief language across rail, header,
+   composer and controls while keeping the message canvas calm.
+   ========================================================= */
+.gl-p1{
+  background:
+    radial-gradient(circle at 84% 0%,rgba(50,111,168,.055),transparent 30%),
+    linear-gradient(180deg,#081522,#07121e);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.018);
 }
 
-.ir-chat-start,
-.ir-chat-main {
-  display: grid;
-  gap: 12px;
-  padding: 14px;
+/* Left conversation rail: one visual plane above the canvas. */
+.gl-p1-rail{
+  background:
+    radial-gradient(circle at 0 0,rgba(55,116,170,.065),transparent 34%),
+    linear-gradient(180deg,#0b1a2b,#081522 72%,#07131f);
+  border-right-color:#1a3854;
+  box-shadow:
+    10px 0 24px rgba(0,0,0,.12),
+    inset -1px 0 0 rgba(117,174,226,.025);
+}
+.gl-p1-rail-head{
+  background:linear-gradient(180deg,rgba(15,36,59,.88),rgba(10,27,45,.82));
+  border-bottom-color:#1b3a57;
+  box-shadow:0 7px 18px rgba(0,0,0,.11),inset 0 1px 0 rgba(255,255,255,.02);
+}
+.gl-p1-bolt{
+  background:linear-gradient(180deg,rgba(45,133,111,.18),rgba(24,76,69,.14));
+  border-color:rgba(91,211,176,.32);
+  box-shadow:0 5px 14px rgba(0,0,0,.14),inset 0 1px 0 rgba(255,255,255,.035);
+}
+.gl-p1-rail-search input{
+  background:linear-gradient(180deg,#0b1b2d,#081522);
+  border-color:#1e405e;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.018),0 4px 12px rgba(0,0,0,.09);
+}
+.gl-p1-conversation{
+  transition:background .15s ease,border-color .15s ease,box-shadow .15s ease,transform .15s ease;
+}
+.gl-p1-conversation.is-active{
+  background:linear-gradient(180deg,#14304e,#102740);
+  border-color:#28567c;
+  box-shadow:0 7px 18px rgba(0,0,0,.13),inset 0 1px 0 rgba(255,255,255,.02);
 }
 
-.ir-chat-title-row {
+/* Conversation header: raised navigation plane, matching the right panel. */
+.gl-p1-chat-head{
+  background:
+    radial-gradient(circle at 80% 0,rgba(70,137,197,.06),transparent 30%),
+    linear-gradient(180deg,rgba(15,35,57,.985),rgba(10,27,45,.975));
+  border-bottom-color:#1d3d5a;
+  box-shadow:
+    0 9px 24px rgba(0,0,0,.16),
+    inset 0 1px 0 rgba(255,255,255,.025);
+  position:relative;
+  z-index:3;
+}
+.gl-p1-chat-title strong{color:#f1f7ff;text-shadow:0 1px 0 rgba(0,0,0,.28)}
+.gl-p1-chat-title span{color:#93abc0}
+.gl-p1-status{
+  background:linear-gradient(180deg,#0e263b,#0a1c2d);
+  border-color:#244967;
+  box-shadow:0 4px 12px rgba(0,0,0,.11),inset 0 1px 0 rgba(255,255,255,.02);
+}
+.gl-p1-head-actions .gl-p1-icon-btn{
+  background:linear-gradient(180deg,#10273e,#0c1d30);
+  border-color:#244763;
+  box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.02);
+}
+.gl-p1-head-actions .gl-p1-icon-btn:not(:disabled):hover,
+.gl-p1-head-actions .gl-p1-icon-btn:not(:disabled):focus-visible{
+  background:linear-gradient(180deg,#173653,#102a43);
+  border-color:#3b6b93;
+  box-shadow:0 0 0 1px rgba(91,175,239,.07),0 8px 20px rgba(0,0,0,.14),0 0 18px rgba(78,161,255,.13);
+  transform:translateY(-1px);
+}
+
+/* Keep the message field visually quiet: depth comes from edges, not cards everywhere. */
+.gl-p1-messages{
+  background:
+    radial-gradient(circle at 50% 0%,rgba(38,91,143,.065),transparent 34%),
+    radial-gradient(circle at 100% 18%,rgba(28,76,123,.045),transparent 30%),
+    linear-gradient(180deg,#081522,#07131f 58%,#07121e);
+  box-shadow:inset 0 14px 24px rgba(0,0,0,.035);
+}
+.gl-p1-empty strong{color:#eef7ff;text-shadow:0 1px 0 rgba(0,0,0,.28)}
+.gl-p1-empty span{color:#94abc0}
+
+/* Composer: a separate lower plane, like the card rows on Workspace Home. */
+.gl-p1-compose{
+  background:
+    linear-gradient(180deg,rgba(12,30,49,.985),rgba(8,22,37,.992));
+  border-top-color:#1d3d59;
+  box-shadow:
+    0 -10px 24px rgba(0,0,0,.15),
+    inset 0 1px 0 rgba(255,255,255,.025);
+  position:relative;
+  z-index:3;
+}
+.gl-p1-compose textarea{
+  background:linear-gradient(180deg,#10243a,#0c1d30);
+  border-color:#244963;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.018),0 4px 12px rgba(0,0,0,.08);
+}
+.gl-p1-compose textarea:focus{
+  border-color:#3c78a7;
+  box-shadow:0 0 0 1px rgba(78,161,255,.07),0 0 16px rgba(53,147,219,.10),inset 0 1px 0 rgba(255,255,255,.02);
+}
+.gl-p1-compose>.gl-p1-icon-btn{
+  background:linear-gradient(180deg,#10263d,#0b1d30);
+  border-color:#234762;
+  box-shadow:0 4px 11px rgba(0,0,0,.09),inset 0 1px 0 rgba(255,255,255,.018);
+}
+.gl-p1-compose>.gl-p1-icon-btn:not(:disabled):hover{
+  background:linear-gradient(180deg,#153550,#102940);
+  border-color:#37668c;
+}
+
+/* Compact panel: retain the same hierarchy, with lighter shadows. */
+.workspace-shell .workspace-panel[data-panel="rooms"] .gl-p1-rail{
+  box-shadow:0 7px 16px rgba(0,0,0,.10),inset 0 -1px 0 rgba(117,174,226,.025);
+}
+.workspace-shell .workspace-panel[data-panel="rooms"] .gl-p1-chat-head{
+  box-shadow:0 6px 16px rgba(0,0,0,.12),inset 0 1px 0 rgba(255,255,255,.02);
+}
+.workspace-shell .workspace-panel[data-panel="rooms"] .gl-p1-compose{
+  box-shadow:0 -6px 16px rgba(0,0,0,.11),inset 0 1px 0 rgba(255,255,255,.02);
+}
+
+
+/* =========================================================
+   IRGEZTNE Green Lightning v0.4P8
+   Final release-polish pass before workspace-wide Full rollout.
+   Clarifies hierarchy, active controls and user-facing security UI.
+   ========================================================= */
+
+/* Stronger shared control language: active controls lift, future/disabled controls stay quiet. */
+.gl-p1 .gl-p1-icon-btn:not(:disabled){
+  transition:background .16s ease,border-color .16s ease,color .16s ease,box-shadow .16s ease,transform .16s ease;
+}
+.gl-p1 .gl-p1-icon-btn:not(:disabled):hover,
+.gl-p1 .gl-p1-icon-btn:not(:disabled):focus-visible{
+  color:#eef9ff;
+  border-color:#3b6b93;
+  background:linear-gradient(180deg,#173653,#102a43);
+  box-shadow:0 0 0 1px rgba(91,175,239,.07),0 7px 18px rgba(0,0,0,.14),0 0 16px rgba(78,161,255,.12);
+  transform:translateY(-1px);
+}
+.gl-p1 .gl-p1-icon-btn:not(:disabled):active{transform:translateY(0)}
+.gl-p1 .gl-p1-icon-btn[aria-pressed="true"]{
+  color:#eaf8ff;
+  border-color:#4380ad;
+  background:linear-gradient(180deg,#1a4264,#12314c);
+  box-shadow:0 0 0 1px rgba(96,181,244,.10),0 0 20px rgba(58,153,224,.16),inset 0 1px 0 rgba(255,255,255,.035);
+}
+
+/* Make the three main planes readable without turning the messenger into a card wall. */
+.gl-p1-rail-head,
+.gl-p1-chat-head,
+.gl-p1-compose{
+  box-shadow:
+    0 9px 22px rgba(0,0,0,.17),
+    inset 0 1px 0 rgba(133,190,239,.055),
+    inset 0 -1px 0 rgba(0,0,0,.22);
+}
+.gl-p1-chat-head{
+  background:
+    radial-gradient(circle at 82% 0,rgba(82,151,211,.075),transparent 31%),
+    linear-gradient(180deg,#102b45,#0b1e32);
+}
+.gl-p1-compose{
+  background:linear-gradient(180deg,#0e253c,#091b2e);
+}
+.gl-p1-rail-head{
+  background:linear-gradient(180deg,#102a44,#0b1f34);
+}
+
+/* Active conversation gets one restrained accent edge, like Workspace Home cards. */
+.gl-p1-conversation{position:relative;overflow:hidden}
+.gl-p1-conversation.is-active::before{
+  content:"";
+  position:absolute;
+  left:0;top:10px;bottom:10px;
+  width:2px;
+  border-radius:2px;
+  background:linear-gradient(180deg,#65b9f4,#4f8fc4);
+  box-shadow:0 0 10px rgba(83,165,226,.24);
+}
+.gl-p1-conversation.is-active{
+  border-color:#2b5c83;
+  box-shadow:0 8px 20px rgba(0,0,0,.15),inset 0 1px 0 rgba(255,255,255,.025);
+}
+
+/* Ready state should read as a status, not another blue pill. */
+.gl-p1-status.is-ready{
+  border-color:rgba(85,210,173,.30);
+  background:linear-gradient(180deg,rgba(19,55,55,.88),rgba(10,34,39,.92));
+  box-shadow:0 4px 12px rgba(0,0,0,.11),0 0 14px rgba(85,210,173,.055),inset 0 1px 0 rgba(255,255,255,.02);
+}
+
+/* Slightly clearer right-panel section headers; keep the accepted P6 card depth. */
+.gl-p1-info-section h5{
+  color:#9db9d0;
+  font-weight:750;
+}
+.gl-p1-info-section-head h5{margin-bottom:0}
+.gl-p1-security-grid>div{
+  border-color:#2a526f;
+}
+
+/* The empty state is release-facing now; give it a quiet protected-status marker. */
+.gl-p1-empty strong::before{
+  content:"";
+  display:inline-block;
+  width:7px;height:7px;
+  margin-right:8px;
+  border-radius:50%;
+  vertical-align:1px;
+  background:#55d2ad;
+  box-shadow:0 0 12px rgba(85,210,173,.32);
+}
+
+/* Compact inherits the same hierarchy with softer elevation. */
+.workspace-shell .workspace-panel[data-panel="rooms"] .gl-p1-rail-head,
+.workspace-shell .workspace-panel[data-panel="rooms"] .gl-p1-chat-head,
+.workspace-shell .workspace-panel[data-panel="rooms"] .gl-p1-compose{
+  box-shadow:0 6px 15px rgba(0,0,0,.12),inset 0 1px 0 rgba(133,190,239,.045),inset 0 -1px 0 rgba(0,0,0,.18);
+}
+
+/* =========================================================
+   IRGEZTNE Green Lightning v0.4P9
+   Compact list-gap cleanup.
+   The compact conversation rail hugs its real content instead
+   of reserving a 120–168px track that leaves a blue dead strip.
+   ========================================================= */
+.workspace-shell .workspace-panel[data-panel="rooms"] .gl-p1:not(.is-rail-collapsed){
+  grid-template-rows:auto minmax(0,1fr);
+}
+.workspace-shell .workspace-panel[data-panel="rooms"] .gl-p1:not(.is-rail-collapsed) .gl-p1-rail{
+  height:auto;
+  align-self:start;
+}
+
+/* =========================================================
+   IRGEZTNE Green Lightning v0.4P10
+   Compact Conversation Info = true full-width drawer.
+   Compact must not reserve a second grid column behind the
+   info surface; the drawer overlays the same Messenger Core.
+   ========================================================= */
+.workspace-shell .workspace-panel[data-panel="rooms"] .gl-p1.is-info-open,
+.workspace-shell .workspace-panel[data-panel="rooms"] .gl-p1.is-rail-collapsed.is-info-open{
+  grid-template-columns:1fr !important;
+}
+
+.workspace-shell .workspace-panel[data-panel="rooms"] .gl-p1-info{
+  position:absolute !important;
+  z-index:20 !important;
+  inset:0 !important;
+  width:100% !important;
+  max-width:none !important;
+  min-width:0 !important;
+  border-left:0 !important;
+  transform:translateX(100%) !important;
+  transition:transform .18s ease !important;
+  box-shadow:-12px 0 30px rgba(0,0,0,.24) !important;
+}
+
+.workspace-shell .workspace-panel[data-panel="rooms"] .gl-p1.is-info-open .gl-p1-info{
+  width:100% !important;
+  transform:translateX(0) !important;
+}
+
+
+/* IRGEZTNE_CHAT_ATTACHMENTS_V1 */
+.gl-p25-attachment {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
-}
-
-.ir-chat-title-row h4 {
-  margin: 0;
-  color: rgba(244, 249, 255, 0.98);
-  font-size: 18px;
-  line-height: 1.2;
-}
-
-.ir-chat-title-row p {
-  margin: 4px 0 0;
-  color: rgba(190, 211, 239, 0.72);
-  font-size: 12px;
-}
-
-.ir-chat-pill {
-  display: inline-flex;
   align-items: center;
-  gap: 7px;
-  min-height: 28px;
-  padding: 5px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(126, 184, 255, 0.18);
-  background: rgba(255,255,255,0.05);
-  color: rgba(226,238,255,0.82);
-  font-size: 12px;
+  gap: 10px;
+  min-width: 0;
+  margin-top: 4px;
+  padding: 10px 12px;
+  border: 1px solid rgba(127, 127, 127, 0.24);
+  border-radius: 12px;
+  background: rgba(127, 127, 127, 0.08);
+}
+
+.gl-p25-attachment-icon {
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+}
+
+.gl-p25-attachment-copy {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.gl-p25-attachment-copy strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.ir-chat-pill i {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #f6c85f;
-  box-shadow: 0 0 14px rgba(246, 200, 95, 0.42);
+.gl-p25-attachment-copy span {
+  opacity: 0.72;
+  font-size: 0.82em;
 }
 
-.ir-chat-pill.is-ready i {
-  background: #57df9b;
-  box-shadow: 0 0 14px rgba(87, 223, 155, 0.55);
+.gl-p25-attachment.is-error {
+  opacity: 0.72;
 }
 
-.ir-chat-small-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 8px;
+
+/* IRGEZTNE_CHAT_ATTACHMENT_RECIPIENT_ACTIONS_V1 */
+.gl-p25-attachment-actions {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-left: auto;
 }
 
-.ir-chat-v1 label {
-  display: grid;
-  gap: 5px;
-  min-width: 0;
-  color: rgba(190, 211, 239, 0.72);
-  font-size: 12px;
-}
-
-.ir-chat-v1 input,
-.ir-chat-v1 textarea {
-  width: 100%;
-  min-width: 0;
-  border-radius: 14px;
-  border: 1px solid rgba(126, 184, 255, 0.18);
-  background: rgba(3, 10, 22, 0.56);
-  color: rgba(238, 246, 255, 0.96);
-  outline: none;
+.gl-p25-attachment-action {
+  appearance: none;
+  border: 1px solid rgba(127, 127, 127, 0.28);
+  border-radius: 9px;
+  background: rgba(127, 127, 127, 0.08);
+  color: inherit;
+  padding: 6px 9px;
   font: inherit;
-}
-
-.ir-chat-v1 input {
-  min-height: 38px;
-  padding: 9px 10px;
-}
-
-.ir-chat-v1 textarea {
-  resize: vertical;
-  padding: 10px;
-}
-
-.ir-chat-v1 input:focus,
-.ir-chat-v1 textarea:focus {
-  border-color: rgba(122, 190, 255, 0.62);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.14);
-}
-
-.ir-chat-join-box textarea {
-  min-height: 58px;
-  max-height: 100px;
-  font-size: 12px;
-}
-
-.ir-chat-link-row {
-  display: none;
-  grid-template-columns: minmax(0, 1fr) 112px;
-  gap: 8px;
-}
-
-.ir-chat-link-row.is-visible {
-  display: grid;
-}
-
-.ir-chat-link-row textarea {
-  min-height: 42px;
-  max-height: 74px;
-  font-size: 11px;
-}
-
-.ir-chat-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.ir-chat-actions--two {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.ir-chat-actions--three {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.ir-chat-actions .ecosystem-v0-btn {
-  min-width: 0;
-}
-
-.ir-chat-messages,
-.ir-chat-empty {
-  min-height: 360px;
-  max-height: min(58vh, 620px);
-  overflow: auto;
-  padding: 12px;
-  border-radius: 18px;
-  border: 1px solid rgba(126, 184, 255, 0.14);
-  background: rgba(3, 10, 22, 0.36);
-}
-
-.ir-chat-empty {
-  display: grid;
-  place-items: center;
-  gap: 7px;
-  text-align: center;
-  color: rgba(190, 211, 239, 0.72);
-  border-style: dashed;
-}
-
-.ir-chat-empty strong {
-  color: rgba(238, 246, 255, 0.92);
-}
-
-.ir-chat-messages {
-  display: grid;
-  align-content: start;
-  gap: 10px;
-}
-
-.ir-chat-message {
-  display: grid;
-  gap: 5px;
-  width: min(84%, 620px);
-  padding: 10px 12px;
-  border-radius: 16px;
-  border: 1px solid rgba(126, 184, 255, 0.14);
-  background: rgba(255,255,255,0.055);
-}
-
-.ir-chat-message.is-mine {
-  justify-self: end;
-  background:
-    radial-gradient(circle at 100% 0, rgba(91, 196, 170, 0.14), transparent 46%),
-    rgba(59, 130, 246, 0.14);
-  border-color: rgba(91, 196, 170, 0.24);
-}
-
-.ir-chat-message-meta {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  color: rgba(190, 211, 239, 0.66);
-  font-size: 11px;
-}
-
-.ir-chat-message-meta strong {
-  color: rgba(238, 246, 255, 0.92);
-}
-
-.ir-chat-message p {
-  margin: 0;
-  color: rgba(244, 249, 255, 0.94);
-  line-height: 1.42;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-}
-
-.ir-chat-compose {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 120px;
-  gap: 10px;
-  align-items: stretch;
-}
-
-.ir-chat-compose textarea {
-  min-height: 84px;
-  max-height: 180px;
-}
-
-.ir-chat-status-line {
-  min-width: 0;
-  color: rgba(190, 211, 239, 0.74);
-  font-size: 12px;
-}
-
-.ir-chat-settings {
-  min-width: 220px;
-  border-radius: 14px;
-  border: 1px solid rgba(126, 184, 255, 0.14);
-  background: rgba(255,255,255,0.035);
-  overflow: hidden;
-}
-
-.ir-chat-settings summary {
+  font-size: 0.78em;
   cursor: pointer;
-  padding: 8px 10px;
-  color: rgba(226,238,255,0.78);
-  font-weight: 700;
-  font-size: 12px;
 }
 
-.ir-chat-settings label,
-.ir-chat-settings .ir-chat-actions {
-  padding: 0 10px 10px;
+.gl-p25-attachment-action:hover,
+.gl-p25-attachment-action:focus-visible {
+  background: rgba(127, 127, 127, 0.16);
 }
 
-/* Compact right Workspace panel: no heavy technical UX. */
-.workspace-shell .workspace-panel .ir-chat-v1 {
-  grid-template-columns: 1fr !important;
-  grid-template-areas:
-    "start"
-    "main"
-    "bottom" !important;
-  gap: 10px !important;
-}
-
-.workspace-shell .workspace-panel .ir-chat-v1 .ir-chat-start,
-.workspace-shell .workspace-panel .ir-chat-v1 .ir-chat-main {
-  padding: 12px !important;
-  gap: 8px !important;
-  border-radius: 16px !important;
-}
-
-.workspace-shell .workspace-panel .ir-chat-v1 .ir-chat-title-row {
-  display: grid !important;
-  gap: 8px !important;
-}
-
-.workspace-shell .workspace-panel .ir-chat-v1 .ir-chat-title-row h4 {
-  font-size: 16px !important;
-}
-
-.workspace-shell .workspace-panel .ir-chat-v1 .ir-chat-title-row p,
-.workspace-shell .workspace-panel .ir-chat-v1 label span,
-.workspace-shell .workspace-panel .ir-chat-v1 .ir-chat-status-line {
-  font-size: 12px !important;
-}
-
-.workspace-shell .workspace-panel .ir-chat-v1 input {
-  min-height: 34px !important;
-  padding: 7px 9px !important;
-  border-radius: 12px !important;
-}
-
-.workspace-shell .workspace-panel .ir-chat-v1 .ir-chat-join-box textarea {
-  min-height: 46px !important;
-  max-height: 70px !important;
-  border-radius: 12px !important;
-}
-
-.workspace-shell .workspace-panel .ir-chat-v1 .ir-chat-link-row {
-  grid-template-columns: 1fr !important;
-}
-
-.workspace-shell .workspace-panel .ir-chat-v1 .ir-chat-actions,
-.workspace-shell .workspace-panel .ir-chat-v1 .ir-chat-actions--two,
-.workspace-shell .workspace-panel .ir-chat-v1 .ir-chat-actions--three {
-  display: grid !important;
-  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  gap: 8px !important;
-}
-
-.workspace-shell .workspace-panel .ir-chat-v1 .ir-chat-actions--three {
-  grid-template-columns: 1fr !important;
-}
-
-.workspace-shell .workspace-panel .ir-chat-v1 .ir-chat-messages,
-.workspace-shell .workspace-panel .ir-chat-v1 .ir-chat-empty {
-  min-height: 150px !important;
-  max-height: 230px !important;
-  padding: 10px !important;
-  border-radius: 15px !important;
-}
-
-.workspace-shell .workspace-panel .ir-chat-v1 .ir-chat-message {
-  width: 96% !important;
-  padding: 9px 10px !important;
-  border-radius: 14px !important;
-}
-
-.workspace-shell .workspace-panel .ir-chat-v1 .ir-chat-compose {
-  grid-template-columns: 1fr !important;
-  gap: 8px !important;
-}
-
-.workspace-shell .workspace-panel .ir-chat-v1 .ir-chat-compose textarea {
-  min-height: 72px !important;
-  max-height: 130px !important;
-  padding: 10px !important;
-}
-
-.workspace-shell .workspace-panel .ir-chat-v1 .ir-chat-bottom {
-  grid-template-columns: 1fr !important;
-  padding: 10px 12px !important;
-  border-radius: 16px !important;
-}
-
-.workspace-shell .workspace-panel .ir-chat-v1 .ir-chat-settings {
-  display: none !important;
-}
-
-@media (max-width: 1040px) {
-  .ir-chat-v1 {
-    grid-template-columns: 1fr;
-    grid-template-areas:
-      "start"
-      "main"
-      "bottom";
-  }
-
-  .ir-chat-compose,
-  .ir-chat-link-row,
-  .ir-chat-bottom {
-    grid-template-columns: 1fr;
-  }
-
-  .ir-chat-actions--three {
-    grid-template-columns: 1fr;
-  }
-}
-
-
-
-/* IRGEZTNE v045 chat connected gate */
-.ir-chat-account-v045 {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 360px;
-  gap: 14px;
-  align-items: stretch;
-}
-
-.ir-chat-account-v045__main,
-.ir-chat-account-v045__side {
-  border: 1px solid rgba(86, 142, 220, 0.28);
-  border-radius: 22px;
-  background:
-    radial-gradient(circle at 16% 0%, rgba(49, 116, 245, 0.18), transparent 45%),
-    linear-gradient(180deg, rgba(13, 31, 62, 0.94), rgba(5, 14, 31, 0.96));
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.055),
-    0 18px 44px rgba(0,0,0,0.18);
-}
-
-.ir-chat-account-v045__main {
-  min-height: 420px;
-  padding: 18px;
-  display: grid;
-  align-content: center;
-  justify-items: center;
+/* IRGEZTNE_CHAT_SEARCH_V1 */
+.gl-p26-conversation-empty {
+  margin: 10px 12px;
+  padding: 10px 12px;
+  border: 1px dashed rgba(127, 151, 177, 0.24);
+  border-radius: 10px;
+  color: #8195a8;
+  font-size: 11px;
   text-align: center;
 }
 
-.ir-chat-account-v045__side {
-  padding: 14px;
-  display: grid;
-  gap: 10px;
-  align-content: start;
-}
-
-.ir-chat-account-v045__icon {
-  width: 72px;
-  height: 72px;
-  border-radius: 24px;
-  display: grid;
-  place-items: center;
-  margin-bottom: 8px;
-  color: rgba(248, 252, 255, 0.98);
-  background:
-    radial-gradient(circle at 32% 18%, rgba(135, 196, 255, 0.48), transparent 42%),
-    linear-gradient(180deg, rgba(35, 88, 202, 0.98), rgba(18, 49, 138, 0.98));
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.13),
-    0 16px 34px rgba(23, 75, 180, 0.30);
-}
-
-.ir-chat-account-v045__icon svg {
-  width: 36px;
-  height: 36px;
-  fill: currentColor;
-}
-
-.ir-chat-account-v045 h3 {
-  margin: 0;
-  color: rgba(248, 252, 255, 0.98);
-  font-size: 26px;
-  line-height: 1.18;
-}
-
-.ir-chat-account-v045 p {
-  max-width: 720px;
-  margin: 8px 0 0;
-  color: rgba(194, 215, 245, 0.82);
-  font-size: 14px;
-  line-height: 1.58;
-}
-
-.ir-chat-account-v045__actions {
+.gl-p26-message-search {
+  min-height: 46px;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 18px;
-}
-
-.ir-chat-account-v045__pill-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 16px;
-  justify-content: center;
-}
-
-.ir-chat-account-v045__pill,
-.ir-chat-account-v045__status {
-  display: inline-flex;
   align-items: center;
   gap: 7px;
-  border-radius: 999px;
-  border: 1px solid rgba(126, 184, 255, 0.16);
-  background: rgba(255, 255, 255, 0.045);
-  color: rgba(218, 234, 255, 0.86);
-  padding: 7px 10px;
+  padding: 7px 12px;
+  border-bottom: 1px solid #142b44;
+  background: rgba(8, 21, 34, 0.96);
+}
+
+.gl-p26-message-search[hidden] {
+  display: none !important;
+}
+
+.gl-p26-message-search-icon {
+  flex: 0 0 auto;
+  color: #7f98b1;
+  font-size: 15px;
+}
+
+.gl-p26-message-search input {
+  min-width: 0;
+  flex: 1 1 auto;
+  height: 32px;
+  border: 1px solid #234461;
+  border-radius: 9px;
+  background: #091827;
+  color: var(--gl-text);
+  padding: 0 10px;
+  outline: none;
+  font: inherit;
   font-size: 12px;
 }
 
-.ir-chat-account-v045__status {
-  justify-content: flex-start;
-  width: 100%;
+.gl-p26-message-search input:focus {
+  border-color: #3c78aa;
+  box-shadow: 0 0 0 2px rgba(59, 130, 196, 0.12);
 }
 
-.ir-chat-account-v045__status i {
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-  background: #f6c85f;
-  box-shadow: 0 0 10px rgba(246, 200, 95, 0.55);
+.gl-p26-message-search-count {
+  flex: 0 0 auto;
+  min-width: 46px;
+  color: #8ea4b9;
+  font-size: 11px;
+  text-align: center;
 }
 
-.ir-chat-account-v045__status.is-connected i {
-  background: #57df9b;
-  box-shadow: 0 0 10px rgba(87, 223, 155, 0.65);
-}
-
-.ir-chat-account-v045__card {
-  border: 1px solid rgba(126, 184, 255, 0.14);
-  border-radius: 16px;
-  padding: 12px;
-  background: rgba(255,255,255,0.035);
-}
-
-.ir-chat-account-v045__card strong {
-  display: block;
-  color: rgba(248, 252, 255, 0.96);
-  font-size: 14px;
-  margin-bottom: 4px;
-}
-
-.ir-chat-account-v045__card span {
-  display: block;
-  color: rgba(185, 207, 237, 0.74);
-  font-size: 12px;
-  line-height: 1.45;
-}
-
-.ir-chat-account-v045 .ecosystem-v0-btn {
-  min-height: 38px;
-}
-
-.workspace-shell .workspace-panel .ir-chat-account-v045 {
-  grid-template-columns: 1fr;
-  gap: 10px;
-}
-
-.workspace-shell .workspace-panel .ir-chat-account-v045__main {
-  min-height: 250px;
-  padding: 16px 12px;
-}
-
-.workspace-shell .workspace-panel .ir-chat-account-v045__side {
-  padding: 12px;
-}
-
-.workspace-shell .workspace-panel .ir-chat-account-v045 h3 {
-  font-size: 21px;
-}
-
-.workspace-shell .workspace-panel .ir-chat-account-v045__actions {
+.gl-p26-message-search-nav {
+  width: 30px;
+  height: 30px;
   display: grid;
+  place-items: center;
+  border: 1px solid #234461;
+  border-radius: 8px;
+  background: rgba(22, 47, 72, 0.72);
+  color: var(--gl-text);
+  cursor: pointer;
+}
+
+.gl-p26-message-search-nav:hover:not(:disabled),
+.gl-p26-message-search-nav:focus-visible:not(:disabled) {
+  background: rgba(42, 82, 118, 0.86);
+}
+
+.gl-p26-message-search-nav:disabled {
+  opacity: 0.38;
+  cursor: default;
+}
+
+.gl-p1-message.is-search-match {
+  box-shadow: 0 0 0 1px rgba(89, 176, 235, 0.58), 0 8px 24px rgba(0, 0, 0, 0.18);
+}
+
+.gl-p1-message.is-search-current {
+  box-shadow: 0 0 0 2px rgba(116, 211, 255, 0.92), 0 0 24px rgba(71, 168, 229, 0.22);
+}
+
+.workspace-shell .workspace-panel[data-panel="rooms"] .gl-p26-message-search {
+  padding-inline: 8px;
+}
+
+/* IRGEZTNE_CHAT_REMOTE_CLOSURE_V1 */
+.gl-remote-start {
+  width: min(680px, calc(100% - 36px));
+  margin: auto;
+  padding: 24px;
+  display: grid;
+  gap: 18px;
+  border: 1px solid rgba(78, 161, 255, .28);
+  border-radius: 18px;
+  background: linear-gradient(145deg, rgba(16, 39, 64, .96), rgba(9, 25, 42, .96));
+  box-shadow: 0 20px 46px rgba(0, 0, 0, .22);
+}
+.gl-remote-start-copy { display: grid; gap: 7px; }
+.gl-remote-start-copy strong { color: #eef7ff; font-size: 17px; }
+.gl-remote-start-copy span { color: #9bb1c7; font-size: 12px; line-height: 1.55; }
+.gl-remote-start-actions { display: grid; gap: 12px; }
+.gl-remote-start button,
+.gl-remote-start input {
+  min-height: 42px;
+  border: 1px solid #2b5377;
+  border-radius: 11px;
+  font: inherit;
+}
+.gl-remote-start button {
+  padding: 0 16px;
+  background: #173653;
+  color: #eaf5ff;
+  cursor: pointer;
+}
+.gl-remote-start button.is-primary {
+  justify-self: start;
+  border-color: #3181bd;
+  background: linear-gradient(145deg, #1d70ad, #2f8dce);
+  color: #fff;
+  font-weight: 750;
+}
+.gl-remote-start button:disabled { opacity: .55; cursor: wait; }
+.gl-remote-start input {
+  min-width: 0;
   width: 100%;
+  padding: 0 12px;
+  background: #091928;
+  color: #eef7ff;
+  outline: none;
 }
-
-.workspace-shell .workspace-panel .ir-chat-account-v045__actions .ecosystem-v0-btn {
-  width: 100%;
+.gl-remote-start input:focus { border-color: #4ea1ff; box-shadow: 0 0 0 3px rgba(78, 161, 255, .14); }
+.gl-remote-join { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }
+.gl-remote-invite-code {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: stretch;
 }
-
-@media (max-width: 980px) {
-  .ir-chat-account-v045 {
-    grid-template-columns: 1fr;
-  }
+.gl-remote-invite-code code {
+  min-width: 0;
+  padding: 12px 14px;
+  border: 1px solid #244765;
+  border-radius: 11px;
+  background: #061522;
+  color: #a9d7ff;
+  overflow-wrap: anywhere;
+  user-select: all;
 }
+.gl-remote-wait { display: flex; align-items: center; gap: 9px; color: #9db3c8; font-size: 11px; }
+.gl-remote-wait i { width: 9px; height: 9px; border-radius: 50%; background: #e9be5e; box-shadow: 0 0 14px rgba(233, 190, 94, .38); }
+.gl-remote-start.is-handshake { max-width: 600px; }
 
-
-
-/* IRGEZTNE v045c chat clean UI */
-.ir-chat-account-v045__pill-row,
-.ir-chat-account-v045__pill {
-  display: none !important;
+:is(html,body)[data-theme="light"] .gl-remote-start,
+body.theme-light .gl-remote-start,
+body.is-light-theme .gl-remote-start {
+  border-color: rgba(55, 105, 164, .34);
+  background: linear-gradient(145deg, #f8fbff, #eaf2fb);
+  box-shadow: 0 18px 42px rgba(50, 79, 116, .14);
 }
+:is(html,body)[data-theme="light"] .gl-remote-start-copy strong,
+body.theme-light .gl-remote-start-copy strong,
+body.is-light-theme .gl-remote-start-copy strong { color: #10243d; }
+:is(html,body)[data-theme="light"] .gl-remote-start-copy span,
+:is(html,body)[data-theme="light"] .gl-remote-wait,
+body.theme-light .gl-remote-start-copy span,
+body.theme-light .gl-remote-wait,
+body.is-light-theme .gl-remote-start-copy span,
+body.is-light-theme .gl-remote-wait { color: #506b88; }
+:is(html,body)[data-theme="light"] .gl-remote-start input,
+body.theme-light .gl-remote-start input,
+body.is-light-theme .gl-remote-start input { background: #fff; border-color: #9ab4d0; color: #10243d; }
+:is(html,body)[data-theme="light"] .gl-remote-invite-code code,
+body.theme-light .gl-remote-invite-code code,
+body.is-light-theme .gl-remote-invite-code code { background: #fff; border-color: #9ab4d0; color: #1a568c; }
 
-
-
-/* IRGEZTNE v045d chat no account menu */
-[data-chat-account-action="account-menu"],
-[data-chat-account-action="logout"] {
-  display: none !important;
+@media (max-width: 720px) {
+  .gl-remote-start { width: calc(100% - 20px); padding: 18px; }
+  .gl-remote-join,
+  .gl-remote-invite-code { grid-template-columns: 1fr; }
 }

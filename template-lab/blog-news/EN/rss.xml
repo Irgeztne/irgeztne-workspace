@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Northline Journal — stories</title>
+    <link>index.html</link>
+    <description>Demonstration RSS feed for the Northline Journal template.</description>
+    <language>en</language>
+    
+    <item>
+      <title>How modern web products are changing small editorial teams</title>
+      <link>article-modern-web-products.html</link>
+      <description>A long read about new tools, clear structure and a calmer publishing process.</description>
+      <guid>northline-en-1</guid>
+    </item>
+    <item>
+      <title>New tools make publishing faster and calmer</title>
+      <link>article-publishing-tools.html</link>
+      <description>How automation removes repetitive work and leaves more time for the story.</description>
+      <guid>northline-en-2</guid>
+    </item>
+    <item>
+      <title>Why product pages need a clearer structure</title>
+      <link>article-clear-product-pages.html</link>
+      <description>A compact analysis for teams, writers and digital product makers.</description>
+      <guid>northline-en-3</guid>
+    </item>
+  </channel>
+</rss>

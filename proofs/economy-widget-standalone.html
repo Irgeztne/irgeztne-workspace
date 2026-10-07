@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>IRGEZTNE Economy</title>
+  <link rel="stylesheet" href="../src/modules/economy/economy-widget-v1.css">
+  <style>
+    :root { color-scheme: dark; font-family: Inter, ui-sans-serif, system-ui, sans-serif; background: #061122; }
+    body { min-height: 100vh; margin: 0; padding: 32px; background: radial-gradient(circle at 55% 0, #183e79 0, #081629 36%, #050d19 100%); color: #eef6ff; }
+    body.theme-light { color-scheme: light; background: radial-gradient(circle at 55% 0, #d8e7f8 0, #edf3fa 40%, #e4edf7 100%); color: #10233d; }
+    .proof-head { max-width: 1040px; margin: 0 auto 18px; }
+    .proof-head h1 { margin: 0 0 6px; font-size: 28px; }
+    .proof-head p { margin: 0; color: #a9bfdc; }
+    body.theme-light .proof-head p { color: #526b8b; }
+    #economyProof { margin: 0 auto; }
+  </style>
+</head>
+<body>
+  <header class="proof-head"><h1 id="proofTitle">IRGEZTNE Economy</h1><p id="proofDescription"></p></header>
+  <main id="economyProof"></main>
+  <script src="../src/modules/economy/economy-bootstrap-v1.js"></script>
+  <script src="../src/modules/economy/economy-data-core-v1.js"></script>
+  <script src="../src/modules/economy/economy-widget-core-v1.js"></script>
+  <script>
+    var params = new URLSearchParams(location.search);
+    var proofLang = params.get('lang') === 'en' ? 'en' : 'ru';
+    var proofTheme = params.get('theme') === 'light' ? 'light' : 'dark';
+    document.documentElement.lang = proofLang;
+    document.documentElement.dataset.theme = proofTheme;
+    document.body.dataset.theme = proofTheme;
+    document.body.classList.toggle('theme-light', proofTheme === 'light');
+    document.title = proofLang === 'en' ? 'IRGEZTNE Economy' : 'Экономика';
+    document.getElementById('proofTitle').textContent = proofLang === 'en' ? 'IRGEZTNE Economy' : 'Экономика';
+    document.getElementById('proofDescription').textContent = proofLang === 'en'
+      ? 'Official economic data and historical indicators.'
+      : 'Официальные экономические данные и исторические показатели.';
+    window.IRGEZTNEEconomyWidgetCoreV1.mount(document.getElementById('economyProof'), {
+      mode: 'standalone',
+      initialCountry: params.get('country') || undefined,
+      initialTab: params.get('tab') || 'world',
+      initialMetric: params.get('metric') || null,
+      initialInstrument: params.get('instrument') || null,
+      initialRange: params.get('range') || null,
+      locale: proofLang,
+      onOpenFull: function () {}
+    });
+  </script>
+</body>
+</html>

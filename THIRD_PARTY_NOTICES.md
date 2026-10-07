@@ -29,3 +29,27 @@ Recommended rule:
 
 The IRGEZTNE name, IRGEZTNE Workspace name, logos, icons, and brand assets are not part of third-party templates and are not licensed for confusing or misleading use under the source-code license.
 See `TRADEMARKS.md`.
+
+## Remote publishing transports
+
+The Web Studio remote publishing path uses these third-party Node.js packages:
+
+- `basic-ftp` 6.2.0 — MIT License — FTP and FTPS transport.
+- `ssh2-sftp-client` 12.1.1 — Apache-2.0 License — SFTP transport over SSH2.
+
+These packages and their transitive dependencies keep their own license terms and notices.
+
+## Weather forecast data
+
+The Weather module credits forecast data from the Norwegian Meteorological Institute (MET Norway),
+Locationforecast 2.0. The applicable open-data licences are the Norwegian Licence for Open
+Government Data (NLOD) 2.0 and/or Creative Commons Attribution 4.0 (CC BY 4.0), as specified by
+MET Norway for the relevant dataset.
+
+- Attribution: Data source: MET Norway
+- Product: Locationforecast 2.0
+- Licence information: https://api.met.no/doc/License
+- Terms of service: https://api.met.no/doc/TermsOfService
+
+The Weather UI presents these values truthfully as an automatic numerical weather-model forecast,
+not as physical weather-station observations. MET Norway and Yr logos are not bundled or used.

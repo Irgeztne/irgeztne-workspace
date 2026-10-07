@@ -52,181 +52,6 @@
     return (num / (1024 * 1024 * 1024)).toFixed(1) + ' GB';
   }
 
-  function getImageToolMime(format) {
-    const value = safeLower(format || 'webp');
-    if (value === 'jpg' || value === 'jpeg') return 'image/jpeg';
-    if (value === 'png') return 'image/png';
-    return 'image/webp';
-  }
-
-  function getImageToolExt(format) {
-    const value = safeLower(format || 'webp');
-    if (value === 'jpg' || value === 'jpeg') return 'jpg';
-    if (value === 'png') return 'png';
-    return 'webp';
-  }
-
-  function makeConvertedFileName(name, format) {
-    const clean = String(name || 'image').replace(/\.[^.\/]+$/, '').replace(/[^a-zA-Z0-9._-]+/g, '-').replace(/^-+|-+$/g, '') || 'image';
-    return clean + '-irgeztne.' + getImageToolExt(format);
-  }
-
-  function loadImageFromDataUrl(dataUrl) {
-    return new Promise(function (resolve, reject) {
-      const image = new Image();
-      image.onload = function () { resolve(image); };
-      image.onerror = function () { reject(new Error('Image could not be loaded.')); };
-      image.src = dataUrl;
-    });
-  }
-
-  function canvasToBlob(canvas, type, quality) {
-    return new Promise(function (resolve) {
-      if (!canvas || typeof canvas.toBlob !== 'function') {
-        resolve(null);
-        return;
-      }
-
-      canvas.toBlob(function (blob) {
-        resolve(blob || null);
-      }, type, quality);
-    });
-  }
-
-  function blobToDataUrl(blob) {
-    return new Promise(function (resolve, reject) {
-      const reader = new FileReader();
-      reader.onload = function () { resolve(reader.result); };
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
-    });
-  }
-
-  function calculateImageToolSize(originalWidth, originalHeight, requestedWidth, requestedHeight) {
-    const sourceWidth = Math.max(1, Number(originalWidth || 1));
-    const sourceHeight = Math.max(1, Number(originalHeight || 1));
-    const nextWidth = Math.max(0, Number(requestedWidth || 0));
-    const nextHeight = Math.max(0, Number(requestedHeight || 0));
-
-    if (nextWidth && nextHeight) {
-      return { width: Math.round(nextWidth), height: Math.round(nextHeight) };
-    }
-
-    if (nextWidth) {
-      return { width: Math.round(nextWidth), height: Math.max(1, Math.round(nextWidth * sourceHeight / sourceWidth)) };
-    }
-
-    if (nextHeight) {
-      return { width: Math.max(1, Math.round(nextHeight * sourceWidth / sourceHeight)), height: Math.round(nextHeight) };
-    }
-
-    return { width: Math.round(sourceWidth), height: Math.round(sourceHeight) };
-  }
-
-  function downloadDataUrl(dataUrl, fileName) {
-    const link = document.createElement('a');
-    link.href = dataUrl;
-    link.download = fileName || 'irgeztne-image.webp';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  }
-
-  function setImageToolStatus(libraryRoot, id, message, isError) {
-    const block = libraryRoot ? libraryRoot.querySelector('[data-image-tools="' + getCssEscape(id) + '"]') : null;
-    const status = block ? block.querySelector('[data-image-tool-status]') : null;
-    if (!status) return;
-    status.textContent = message;
-    status.classList.toggle('is-error', Boolean(isError));
-  }
-
-  async function runImageToolConversion(libraryRoot, id, mode) {
-    if (!window.NSLibraryStore || typeof window.NSLibraryStore.getItemById !== 'function') return;
-
-    const item = window.NSLibraryStore.getItemById(id);
-    if (!item || !item.storage || !item.storage.dataUrl) return;
-
-    const block = libraryRoot ? libraryRoot.querySelector('[data-image-tools="' + getCssEscape(id) + '"]') : null;
-    if (!block) return;
-
-    const formatInput = block.querySelector('[data-image-tool-format]');
-    const widthInput = block.querySelector('[data-image-tool-width]');
-    const heightInput = block.querySelector('[data-image-tool-height]');
-    const qualityInput = block.querySelector('[data-image-tool-quality]');
-
-    const format = formatInput ? formatInput.value : 'webp';
-    const mime = getImageToolMime(format);
-    const quality = qualityInput ? Math.max(0.1, Math.min(1, Number(qualityInput.value || 82) / 100)) : 0.82;
-    const requestedWidth = widthInput ? parseInt(widthInput.value, 10) : 0;
-    const requestedHeight = heightInput ? parseInt(heightInput.value, 10) : 0;
-
-    setImageToolStatus(libraryRoot, id, tr('Preparing image...','Подготовка изображения...'), false);
-
-    try {
-      const image = await loadImageFromDataUrl(item.storage.dataUrl);
-      const size = calculateImageToolSize(image.naturalWidth || image.width, image.naturalHeight || image.height, requestedWidth, requestedHeight);
-      const canvas = document.createElement('canvas');
-      canvas.width = size.width;
-      canvas.height = size.height;
-
-      const ctx = canvas.getContext('2d');
-      if (!ctx) throw new Error('Canvas is unavailable.');
-
-      if (mime === 'image/jpeg') {
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(0, 0, size.width, size.height);
-      }
-
-      ctx.imageSmoothingEnabled = true;
-      ctx.imageSmoothingQuality = 'high';
-      ctx.drawImage(image, 0, 0, size.width, size.height);
-
-      let blob = await canvasToBlob(canvas, mime, quality);
-      let finalMime = mime;
-      let finalFormat = format;
-
-      if (!blob) {
-        blob = await canvasToBlob(canvas, 'image/png', 0.92);
-        finalMime = 'image/png';
-        finalFormat = 'png';
-      }
-
-      if (!blob) throw new Error('Image export failed.');
-
-      const dataUrl = await blobToDataUrl(blob);
-      const fileName = makeConvertedFileName(item.name || item.originalName || 'image', finalFormat);
-
-      if (mode === 'library') {
-        if (typeof window.NSLibraryStore.addItem !== 'function') return;
-
-        window.NSLibraryStore.addItem({
-          name: fileName,
-          originalName: fileName,
-          type: finalMime,
-          ext: getImageToolExt(finalFormat),
-          size: blob.size || 0,
-          category: 'asset',
-          tags: ['image-tools', 'converted'],
-          description: tr('Converted with IRGEZTNE Image Tools.','Сконвертировано через инструменты изображений IRGEZTNE.'),
-          storage: { kind: 'local', dataUrl: dataUrl },
-          preview: { kind: 'image', excerpt: '', textContent: '', textType: 'text' },
-          usage: { inChatContext: false, inEditor: false, inPublishing: true, inSiteAssets: true },
-          publishing: { ipfsReady: false, ipfsCid: null, publishName: null }
-        });
-
-        syncKnowledgeFromLibrary();
-        setImageToolStatus(libraryRoot, id, tr('Converted image added to Files.','Сконвертированное изображение добавлено в Файлы.'), false);
-        return;
-      }
-
-      downloadDataUrl(dataUrl, fileName);
-      setImageToolStatus(libraryRoot, id, tr('Converted image downloaded.','Сконвертированное изображение скачано.'), false);
-    } catch (error) {
-      console.error('[ImageTools] conversion failed:', error);
-      setImageToolStatus(libraryRoot, id, tr('Image conversion failed. Try PNG/JPEG/WebP source.','Конвертация не удалась. Попробуйте PNG/JPEG/WebP источник.'), true);
-    }
-  }
-
   function safeLower(value) {
     return String(value || '').trim().toLowerCase();
   }
@@ -249,6 +74,18 @@
 
   function getPreviewKind(item) {
     return safeLower(item && item.preview ? item.preview.kind : '');
+  }
+
+  function workspaceAssetUrl(item) {
+    const storage = item && item.storage ? item.storage : null;
+    const fileId = storage && storage.fileId ? String(storage.fileId) : '';
+    if (!fileId) return '';
+    return 'irgeztne-asset://workspace-file/' + encodeURIComponent(fileId);
+  }
+
+  function libraryPreviewUrl(item) {
+    if (!item || !item.storage) return '';
+    return item.storage.dataUrl || workspaceAssetUrl(item);
   }
 
   function fileIcon(item) {
@@ -410,53 +247,9 @@
   }
 
   function renderImageToolsBlock(item) {
-    if (!item || getPreviewKind(item) !== 'image' || !item.storage || !item.storage.dataUrl) return '';
+    if (!item || getPreviewKind(item) !== 'image' || !libraryPreviewUrl(item)) return '';
 
-    return `
-      <div class="ns-library-image-tools" data-image-tools="${escapeHtml(item.id)}">
-        <div class="ns-library-image-tools__head">
-          <div>
-            <strong>${tr('Image Tools','Инструменты изображений')}</strong>
-            <span>${tr('Convert, resize, and prepare assets for templates or publishing.','Конвертация, изменение размера и подготовка изображений для шаблонов или публикации.')}</span>
-          </div>
-        </div>
-
-        <div class="ns-library-image-tools__grid">
-          <label>
-            <span>${tr('Format','Формат')}</span>
-            <select data-image-tool-format>
-              <option value="webp">WebP</option>
-              <option value="png">PNG</option>
-              <option value="jpg">JPG</option>
-            </select>
-          </label>
-
-          <label>
-            <span>${tr('Width','Ширина')}</span>
-            <input type="number" min="1" step="1" inputmode="numeric" placeholder="${tr('auto','авто')}" data-image-tool-width>
-          </label>
-
-          <label>
-            <span>${tr('Height','Высота')}</span>
-            <input type="number" min="1" step="1" inputmode="numeric" placeholder="${tr('auto','авто')}" data-image-tool-height>
-          </label>
-
-          <label class="ns-library-image-tools__quality">
-            <span>${tr('Quality','Качество')}: <b data-image-tool-quality-value>82%</b></span>
-            <input type="range" min="40" max="100" value="82" data-image-tool-quality>
-          </label>
-        </div>
-
-        <div class="ns-library-image-tools__actions">
-          <button type="button" class="ns-library-image-tools__primary" data-image-convert-download="${escapeHtml(item.id)}">${tr('Download converted','Скачать результат')}</button>
-          <button type="button" class="ns-library-image-tools__secondary" data-image-convert-library="${escapeHtml(item.id)}">${tr('Add to Files','Добавить в Файлы')}</button>
-        </div>
-
-        <div class="ns-library-image-tools__status" data-image-tool-status>
-          ${tr('Ready. Leave width/height empty to keep original size.','Готово. Оставьте ширину/высоту пустыми, чтобы сохранить исходный размер.')}
-        </div>
-      </div>
-    `;
+    return '<div data-image-tool-root data-image-tool-host="files" data-image-tool-surface="workspace" data-image-tool-mode="embedded" data-image-tool-source-id="' + escapeHtml(item.id) + '"></div>';
   }
 
   function renderKnowledgePackActions(item) {
@@ -634,7 +427,8 @@
           </div>
         </div>
 
-        <div class="ns-library-dropzone irg-files-dropzone-v033k" data-library-dropzone>
+        <div class="ns-library-dropzone irg-files-dropzone-v033k" data-library-dropzone
+          role="button" tabindex="0" aria-label="${tr('Add files','Добавить файлы')}">
           ${tr('Drop files here to add them into Files','Перетащите файлы сюда, чтобы добавить их в Файлы')}
         </div>
 
@@ -718,6 +512,7 @@
       </div>
     `;
 
+    if (window.NSImageToolV1) window.NSImageToolV1.mountAll(root);
     bindLibraryEvents(root);
   }
 
@@ -735,8 +530,10 @@
 
     let previewBody = '<div class="ns-library-preview-placeholder">' + tr('Preview unavailable','Предпросмотр недоступен') + '</div>';
 
-    if (previewKind === 'image' && item.storage && item.storage.dataUrl) {
-      previewBody = `<img class="ns-library-preview-image" src="${item.storage.dataUrl}" alt="${escapeHtml(normalizeDisplayText(item.name))}">`;
+    const previewUrl = libraryPreviewUrl(item);
+
+    if (previewKind === 'image' && previewUrl) {
+      previewBody = `<img class="ns-library-preview-image" src="${escapeHtml(previewUrl)}" alt="${escapeHtml(normalizeDisplayText(item.name))}">`;
     } else if (previewKind === 'text') {
       previewBody = `
         <pre class="ns-library-preview-text">${escapeHtml(item.preview.textContent || item.preview.excerpt || '')}</pre>
@@ -757,10 +554,13 @@
 
     return `
       <div class="ns-library-preview-head">
-        <div class="ns-library-preview-title">${escapeHtml(normalizeDisplayText(item.name))}</div>
-        <div class="ns-library-preview-subtitle">
-          ${escapeHtml(item.type)} • ${escapeHtml(item.ext || 'file')} • ${escapeHtml(trCategory(previewKind || 'file'))}${textType === 'rdf' ? ' • rdf' : ''}
+        <div class="ns-library-preview-head-copy">
+          <div class="ns-library-preview-title">${escapeHtml(normalizeDisplayText(item.name))}</div>
+          <div class="ns-library-preview-subtitle">
+            ${escapeHtml(item.type)} • ${escapeHtml(item.ext || 'file')} • ${escapeHtml(trCategory(previewKind || 'file'))}${textType === 'rdf' ? ' • rdf' : ''}
+          </div>
         </div>
+        <button type="button" class="ns-library-preview-quick-delete ns-danger-action" data-library-remove="${escapeHtml(item.id)}" aria-label="${tr('Delete file','Удалить файл')}">${tr('Delete','Удалить')}</button>
       </div>
 
       <div class="ns-library-preview-body">
@@ -863,20 +663,22 @@
       });
     });
 
-    if (!root.dataset.imageToolInputBound) {
-      root.dataset.imageToolInputBound = 'true';
-      root.addEventListener('input', function (event) {
-        const quality = event.target.closest('[data-image-tool-quality]');
-        if (!quality) return;
-
-        const block = quality.closest('[data-image-tools]');
-        const value = block ? block.querySelector('[data-image-tool-quality-value]') : null;
-        if (value) value.textContent = String(quality.value || 82) + '%';
-      });
-    }
-
     if (dropzone && !dropzone.dataset.bound) {
       dropzone.dataset.bound = 'true';
+
+      function openFilePicker() {
+        if (uploadInput) uploadInput.click();
+      }
+
+      dropzone.addEventListener('click', function () {
+        openFilePicker();
+      });
+
+      dropzone.addEventListener('keydown', function (event) {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        event.preventDefault();
+        openFilePicker();
+      });
 
       ['dragenter', 'dragover'].forEach(function (eventName) {
         dropzone.addEventListener(eventName, function (event) {
@@ -922,23 +724,6 @@
         const categoryButton = event.target.closest('[data-library-set-category]');
         const addToPackEl = event.target.closest('[data-library-add-to-pack]');
         const openSourceButton = event.target.closest('[data-open-source-id]');
-        const imageDownloadEl = event.target.closest('[data-image-convert-download]');
-        const imageLibraryEl = event.target.closest('[data-image-convert-library]');
-
-        if (imageDownloadEl) {
-          event.preventDefault();
-          event.stopPropagation();
-          runImageToolConversion(root, imageDownloadEl.getAttribute('data-image-convert-download'), 'download');
-          return;
-        }
-
-        if (imageLibraryEl) {
-          event.preventDefault();
-          event.stopPropagation();
-          runImageToolConversion(root, imageLibraryEl.getAttribute('data-image-convert-library'), 'library');
-          return;
-        }
-
         if (openSourceButton) {
           event.preventDefault();
           const sourceId = openSourceButton.getAttribute('data-open-source-id');
@@ -979,8 +764,23 @@
 
           const ok = window.confirm(tr('Remove this file from Files?','Удалить этот источник из библиотеки источников?'));
           if (ok) {
+            const item = window.NSLibraryStore.getItemById(id);
             window.NSLibraryStore.removeItem(id);
             syncKnowledgeFromLibrary();
+
+            const refId = item && item.storage && item.storage.refId
+              ? String(item.storage.refId)
+              : '';
+
+            if (
+              refId &&
+              window.nsAPI &&
+              typeof window.nsAPI.workspaceFileRemoveReference === 'function'
+            ) {
+              void window.nsAPI.workspaceFileRemoveReference(refId).catch(function (error) {
+                console.warn('[Files] Failed to release Workspace File Store reference:', error);
+              });
+            }
           }
           return;
         }
@@ -992,7 +792,25 @@
           if (!id) return;
 
           const item = window.NSLibraryStore.getItemById(id);
-          if (!item || !item.storage || !item.storage.dataUrl) return;
+          if (!item || !item.storage) return;
+
+          const workspaceFileId = item.storage.fileId
+            ? String(item.storage.fileId)
+            : '';
+
+          if (
+            workspaceFileId &&
+            window.nsAPI &&
+            typeof window.nsAPI.workspaceFileSaveAs === 'function'
+          ) {
+            void window.nsAPI.workspaceFileSaveAs(
+              workspaceFileId,
+              item.originalName || item.name || 'download'
+            );
+            return;
+          }
+
+          if (!item.storage.dataUrl) return;
 
           const link = document.createElement('a');
           link.href = item.storage.dataUrl;
@@ -1246,4 +1064,3 @@
 
   document.head.appendChild(style);
 })();
-

@@ -1,0 +1,53 @@
+/*
+ IRGEZTNE Workspace — Green Lightning Local Cleanup v0.4P20
+
+ Per-device cleanup for delete-for-everyone tombstones.
+ Group cryptographic history remains intact.
+*/
+
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p20-hide-local-action {
+  width: 24px;
+  height: 24px;
+  display: inline-grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid rgba(150,170,185,.16);
+  border-radius: 999px;
+  background: rgba(8,18,27,.18);
+  color: #91a8b8;
+  cursor: pointer;
+  opacity: .44;
+  transition:
+    opacity .14s ease,
+    border-color .14s ease,
+    background .14s ease,
+    color .14s ease;
+}
+
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message.is-deleted:hover .gl-p20-hide-local-action,
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p20-hide-local-action:focus-visible {
+  opacity: 1;
+  border-color: rgba(255,142,155,.44);
+  background: rgba(70,27,37,.34);
+  color: #ffc0c8;
+  outline: none;
+}
+
+/* Reuse the accepted P19 confirmation surface, with local-cleanup wording. */
+.gl-p20-local-hide-dialog .gl-p19-delete-preview {
+  border-left-color: rgba(137,179,207,.58);
+  background: rgba(21,45,63,.34);
+  color: #b9cbd8;
+}
+
+.gl-p20-local-hide-dialog .gl-p19-confirm-actions .is-danger {
+  border-color: rgba(121,170,205,.48);
+  background: rgba(34,76,103,.72);
+  color: #e1f1fb;
+}
+
+.gl-p20-local-hide-dialog .gl-p19-confirm-actions .is-danger:hover,
+.gl-p20-local-hide-dialog .gl-p19-confirm-actions .is-danger:focus-visible {
+  border-color: rgba(151,199,232,.72);
+  background: rgba(42,92,124,.82);
+}

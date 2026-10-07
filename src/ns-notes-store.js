@@ -1,5 +1,7 @@
 (function (root) {
-  const STORAGE_KEY = "ns.browser.v8.notes.v1";
+  const STORAGE_KEY = "ns.browser.v8.notes.v1"; // legacy migration/cache
+  const DURABLE_STATE_KEY = "workspace.notes.v1";
+  const DURABLE_PERSISTENCE_VERSION = 1;
 
   const NOTE_TYPES = [
     "note",
@@ -86,8 +88,13 @@
   }
 
   function createStore() {
+    let migrateLegacyOnBoot = false;
     let state = loadFromStorage();
     const listeners = [];
+
+    if (migrateLegacyOnBoot) {
+      if (writeDurableStorage()) migrateLegacyOnBoot = false;
+    }
 
     function notify() {
       const snapshot = getState();
@@ -104,7 +111,7 @@
       try {
         return root.localStorage.getItem(STORAGE_KEY) || "";
       } catch (error) {
-        console.warn("[NSNotesStore] readStorage failed:", error);
+        console.warn("[NSNotesStore] legacy read failed:", error);
         return "";
       }
     }
@@ -113,25 +120,71 @@
       try {
         root.localStorage.setItem(STORAGE_KEY, text);
       } catch (error) {
-        console.warn("[NSNotesStore] writeStorage failed:", error);
+        console.warn("[NSNotesStore] legacy mirror failed:", error);
+      }
+    }
+
+    function readDurableStorage() {
+      try {
+        const api = root.nsAPI;
+        if (!api || typeof api.storageGetModuleStateSync !== "function") return null;
+        const value = api.storageGetModuleStateSync(DURABLE_STATE_KEY, null);
+        return value && typeof value === "object" ? value : null;
+      } catch (error) {
+        console.warn("[NSNotesStore] durable read failed:", error);
+        return null;
+      }
+    }
+
+    function writeDurableStorage() {
+      const api = root.nsAPI;
+      if (!api || typeof api.storageSetModuleStateSync !== "function") return false;
+      const payload = clone(state);
+      payload.persistenceVersion = DURABLE_PERSISTENCE_VERSION;
+      try {
+        const result = api.storageSetModuleStateSync(DURABLE_STATE_KEY, payload);
+        return Boolean(result && result.ok === true);
+      } catch (error) {
+        console.error("[NSNotesStore] durable save failed:", error);
+        return false;
       }
     }
 
     function loadFromStorage() {
+      const durableRaw = readDurableStorage();
+      const durable = durableRaw ? ensureShape(durableRaw) : null;
+      let legacy = null;
       try {
         const text = readStorage();
-        if (text && String(text).trim()) {
-          return ensureShape(JSON.parse(text));
-        }
+        if (text && String(text).trim()) legacy = ensureShape(JSON.parse(text));
       } catch (error) {
-        console.warn("[NSNotesStore] parse failed, using defaults:", error);
+        console.warn("[NSNotesStore] legacy parse failed:", error);
+      }
+
+      const durableCount = durable ? durable.items.length : 0;
+      const legacyCount = legacy ? legacy.items.length : 0;
+      const durableStamp = durable ? Date.parse(durable.meta.lastUpdatedAt || '') || 0 : 0;
+      const legacyStamp = legacy ? Date.parse(legacy.meta.lastUpdatedAt || '') || 0 : 0;
+
+      if (legacy && (legacyCount > durableCount || (legacyCount > 0 && legacyStamp > durableStamp))) {
+        migrateLegacyOnBoot = true;
+        return legacy;
+      }
+      if (durable) return durable;
+      if (legacy) {
+        migrateLegacyOnBoot = true;
+        return legacy;
       }
       return clone(DEFAULT_STATE);
     }
 
     function persist() {
       state.meta.lastUpdatedAt = nowIso();
+      const durableOk = writeDurableStorage();
       writeStorage(JSON.stringify(state, null, 2));
+      if (root.nsAPI && typeof root.nsAPI.storageSetModuleStateSync === "function" && !durableOk) {
+        throw new Error("NOTES_DURABLE_SAVE_FAILED");
+      }
       notify();
     }
 

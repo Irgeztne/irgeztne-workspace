@@ -1,0 +1,24 @@
+/*
+ IRGEZTNE Workspace — Green Lightning Local Group Lab v0.4P13
+ Third real local MLS member: Camel / Верблюд.
+*/
+
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p12-sender-toggle.is-camel {
+  border-color: #876b36;
+  background: #3a2c16;
+  color: #ffe4a8;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p12-sender-toggle.is-camel:hover {
+  border-color: #b28a45;
+  background: #4a3618;
+}
+
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message.is-camel {
+  margin-left: 0 !important;
+  margin-right: auto !important;
+  background: linear-gradient(145deg, #3a2e18, #2c2618) !important;
+  border-color: #745c32 !important;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message.is-camel .gl-p1-message-state {
+  color: #d8bd80 !important;
+}

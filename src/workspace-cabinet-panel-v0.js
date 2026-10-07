@@ -2,16 +2,17 @@
   'use strict';
 
   const NOTE_KEY = 'irgeztne.workspace.quickNote.v0';
-  const WEATHER_SETTINGS_KEY = 'irgeztne.workspace.weather.v041';
-  const WEATHER_CACHE_KEY = 'irgeztne.workspace.weather.cache.v041';
-  const WEATHER_CACHE_MAX_AGE = 1000 * 60 * 30;
-  const DEFAULT_WEATHER_PLACE = { cityRu: 'Баку', cityEn: 'Baku', latitude: 40.4093, longitude: 49.8671 };
   /* IRGEZTNE_WORKSPACE_WEATHER_V041 */
   let calendarViewDate = new Date();
+  let weatherRequest = null;
+  let weatherRequestSequence = 0;
+  let weatherLocationUnsubscribe = null;
 
   function getLang() {
     const workspaceToggle = document.querySelector('#workspaceToggle .workspace-toggle-text, #workspaceToggle');
     const workspaceText = (workspaceToggle && workspaceToggle.textContent || '').trim().toLowerCase();
+    if (workspaceText.includes('информация')) return 'ru';
+    if (workspaceText.includes('information')) return 'en';
     if (workspaceText.includes('пространство')) return 'ru';
     if (workspaceText.includes('workspace')) return 'en';
 
@@ -81,52 +82,34 @@
   }
 
   function getWeatherPlace() {
-    try {
-      const saved = JSON.parse(localStorage.getItem(WEATHER_SETTINGS_KEY) || 'null');
-      if (saved && Number.isFinite(Number(saved.latitude)) && Number.isFinite(Number(saved.longitude))) {
-        return {
-          cityRu: saved.cityRu || saved.city || DEFAULT_WEATHER_PLACE.cityRu,
-          cityEn: saved.cityEn || saved.city || DEFAULT_WEATHER_PLACE.cityEn,
-          latitude: Number(saved.latitude),
-          longitude: Number(saved.longitude)
-        };
-      }
-    } catch (error) {}
-    return DEFAULT_WEATHER_PLACE;
+    const client = window.IRGEZTNEWeatherClientV1;
+    return client && typeof client.getPlace === 'function'
+      ? client.getPlace()
+      : null;
   }
 
   function weatherCityLabel(place) {
+    if (!place) return t('Choose location', 'Выбрать место');
     return getLang() === 'en' ? (place.cityEn || place.cityRu || 'Weather') : (place.cityRu || place.cityEn || 'Погода');
   }
 
-  function weatherIcon(code) {
-    code = Number(code);
-    if (code === 0) return '☀';
-    if ([1, 2, 3].includes(code)) return '◐';
-    if ([45, 48].includes(code)) return '≋';
-    if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) return '☔';
-    if (code >= 71 && code <= 77) return '❄';
-    if (code >= 95) return '⚡';
-    return '🌡';
+  function weatherIcon(condition) {
+    const model = window.IRGEZTNEWeatherViewModelV1;
+    if (model && typeof model.conditionIcon === 'function') return model.conditionIcon(condition);
+    return '○';
   }
 
   function weatherText(code) {
-    code = Number(code);
-    if (code === 0) return t('Clear', 'Ясно');
-    if ([1, 2, 3].includes(code)) return t('Clouds', 'Облачно');
-    if ([45, 48].includes(code)) return t('Fog', 'Туман');
-    if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) return t('Rain', 'Дождь');
-    if (code >= 71 && code <= 77) return t('Snow', 'Снег');
-    if (code >= 95) return t('Storm', 'Гроза');
+    code = String(code || 'unknown');
+    if (code === 'clear') return t('Clear', 'Ясно');
+    if (code === 'mostly_clear') return t('Mostly clear', 'Малооблачно');
+    if (code === 'partly_cloudy') return t('Partly cloudy', 'Переменная облачность');
+    if (code === 'cloudy') return t('Cloudy', 'Облачно');
+    if (code === 'fog') return t('Fog', 'Туман');
+    if (code.includes('rain') || code === 'sleet') return t('Rain', 'Дождь');
+    if (code.includes('snow')) return t('Snow', 'Снег');
+    if (code === 'thunder') return t('Thunderstorm', 'Гроза');
     return t('Weather', 'Погода');
-  }
-
-  function cachedWeather() {
-    try {
-      const cached = JSON.parse(localStorage.getItem(WEATHER_CACHE_KEY) || 'null');
-      if (cached && cached.savedAt && Date.now() - Number(cached.savedAt) < WEATHER_CACHE_MAX_AGE) return cached;
-    } catch (error) {}
-    return null;
   }
 
   function renderWeatherView(panel, payload, stateText) {
@@ -135,64 +118,73 @@
     const cityEl = scope.querySelector('[data-ir-wc-weather-city]');
     const metaEl = scope.querySelector('[data-ir-wc-weather-meta]');
     const iconEl = scope.querySelector('[data-ir-wc-weather-icon]');
+    const buttonEl = scope.querySelector('[data-ir-wc-weather-refresh]');
     const place = getWeatherPlace();
+    const model = window.IRGEZTNEWeatherViewModelV1;
+    const semanticState = model && typeof model.semanticState === 'function'
+      ? model.semanticState(payload, stateText === t('Updating…', 'Обновляем…'), Boolean(payload && payload.current))
+      : 'unavailable';
 
     if (cityEl) cityEl.textContent = weatherCityLabel(place);
+    if (buttonEl) buttonEl.dataset.weatherState = semanticState;
 
-    if (!payload) {
+    if (!payload || !payload.current) {
       if (tempEl) tempEl.textContent = '--°';
-      if (metaEl) metaEl.textContent = stateText || t('Weather', 'Погода');
-      if (iconEl) iconEl.textContent = '🌡';
+      if (metaEl) metaEl.textContent = stateText || (place ? t('Weather', 'Погода') : t('Open to choose', 'Откройте для выбора'));
+      if (iconEl) iconEl.textContent = '○';
       return;
     }
 
-    const temp = Number(payload.temperature);
-    const wind = Number(payload.wind);
+    const temp = Number(payload.current.temperature_c);
+    const wind = Number(payload.current.wind_speed_mps);
+    const condition = payload.current.condition || { code: 'unknown', phase: 'unknown' };
     if (tempEl) tempEl.textContent = Number.isFinite(temp) ? Math.round(temp) + '°' : '--°';
-    if (iconEl) iconEl.textContent = weatherIcon(payload.code);
+    if (iconEl) iconEl.textContent = weatherIcon(condition);
     if (metaEl) {
-      const windText = Number.isFinite(wind) ? ' · ' + Math.round(wind) + (getLang() === 'en' ? ' km/h' : ' км/ч') : '';
-      metaEl.textContent = weatherText(payload.code) + windText;
+      const windText = Number.isFinite(wind) ? ' · ' + Math.round(wind * 3.6) + (getLang() === 'en' ? ' km/h' : ' км/ч') : '';
+      metaEl.textContent = weatherText(condition.code) + windText;
     }
   }
 
   async function updateWeather(panel, force) {
-    const cached = cachedWeather();
-    if (cached && !force) {
-      renderWeatherView(panel, cached);
+    const client = window.IRGEZTNEWeatherClientV1;
+    const place = getWeatherPlace();
+    if (!place) {
+      renderWeatherView(panel, null, t('Open to choose', 'Откройте для выбора'));
       return;
     }
-
-    renderWeatherView(panel, cached, t('Updating...', 'Обновляем...'));
-
-    try {
-      const place = getWeatherPlace();
-      const url = 'https://api.open-meteo.com/v1/forecast?latitude=' + encodeURIComponent(place.latitude) +
-        '&longitude=' + encodeURIComponent(place.longitude) +
-        '&current=temperature_2m,weather_code,wind_speed_10m&temperature_unit=celsius&wind_speed_unit=kmh&timezone=auto';
-      const response = await fetch(url, { cache: 'no-store' });
-      if (!response.ok) throw new Error('Weather request failed');
-      const data = await response.json();
-      const current = data && data.current ? data.current : {};
-      const payload = {
-        savedAt: Date.now(),
-        temperature: Number(current.temperature_2m),
-        code: Number(current.weather_code),
-        wind: Number(current.wind_speed_10m)
-      };
-      localStorage.setItem(WEATHER_CACHE_KEY, JSON.stringify(payload));
-      renderWeatherView(panel, payload);
-    } catch (error) {
-      renderWeatherView(panel, cached, t('No data', 'Нет данных'));
+    if (!client || typeof client.fetchForecast !== 'function') {
+      renderWeatherView(panel, null, t('Unavailable', 'Недоступно'));
+      return;
     }
+    const cached = client.getCachedForecast(place);
+    renderWeatherView(panel, cached, t('Updating…', 'Обновляем…'));
+    if (weatherRequest && !force) return weatherRequest;
+    const requestSequence = ++weatherRequestSequence;
+    weatherRequest = client.fetchForecast({ place: place, force: force === true }).then(function (payload) {
+      if (requestSequence === weatherRequestSequence) renderWeatherView(panel, payload, t('Unavailable', 'Недоступно'));
+      return payload;
+    }).finally(function () {
+      if (requestSequence === weatherRequestSequence) weatherRequest = null;
+    });
+    return weatherRequest;
+  }
+
+  function bindWeatherLocationSync() {
+    if (weatherLocationUnsubscribe || !window.nsAPI || typeof window.nsAPI.onWeatherLocationChanged !== 'function') return;
+    weatherLocationUnsubscribe = window.nsAPI.onWeatherLocationChanged(function () {
+      const panel = document.querySelector('.workspace-shell .workspace-panel[data-panel="workspace"]');
+      if (!panel) return;
+      updateWeather(panel, true).catch(function (error) {
+        console.warn('[IRGEZTNE Weather] Compact location refresh failed:', error);
+      });
+    });
   }
 
   function render() {
     const panel = document.querySelector('.workspace-shell .workspace-panel[data-panel="workspace"]');
     if (!panel) return;
-
     const note = localStorage.getItem(NOTE_KEY) || '';
-    const now = new Date();
 
     panel.innerHTML = [
       '<div class="ir-wc-v040d">',
@@ -204,7 +196,7 @@
       '        <small data-ir-wc-date>—</small>',
       '      </div>',
       '    </div>',
-      '    <button type="button" class="ir-wc-weatherbox" data-ir-wc-weather-refresh title="' + esc(t('Refresh weather', 'Обновить погоду')) + '">',
+      '    <button type="button" class="ir-wc-weatherbox" data-ir-wc-weather-refresh title="' + esc(t('Open full weather', 'Открыть погоду полностью')) + '">',
       '      <span class="ir-wc-weather-icon" data-ir-wc-weather-icon>🌡</span>',
       '      <div>',
       '        <strong data-ir-wc-weather-temp>--°</strong>',
@@ -229,6 +221,8 @@
       '    </div>',
       '  </section>',
 
+      '  <section class="ir-wc-economy-slot" data-ir-economy-widget></section>',
+
       '  <section class="ir-wc-grid">',
       '    <article class="ir-wc-card ir-wc-note">',
       '      <div class="ir-wc-card-head"><span>✎</span><strong>' + esc(t('Quick note', 'Быстрая заметка')) + '</strong></div>',
@@ -244,6 +238,64 @@
     bind(panel);
     updateClock();
     updateWeather(panel, false);
+    mountEconomy(panel);
+  }
+
+  function mountEconomy(panel) {
+    const root = panel.querySelector('[data-ir-economy-widget]');
+    const widget = window.IRGEZTNEEconomyWidgetCoreV1;
+    if (!root || !widget || typeof widget.mount !== 'function') return;
+    widget.mount(root, {
+      mode: 'compact',
+      locale: getLang(),
+      onOpenFull: function (countryId, detail) {
+        const params = new URLSearchParams({
+          country: countryId || '',
+          lang: getLang(),
+          theme: document.body.classList.contains('theme-light') || document.documentElement.dataset.theme === 'light' ? 'light' : 'dark',
+          tab: detail?.tab || 'world',
+          metric: detail?.metric || '',
+          instrument: detail?.instrument || '',
+          range: detail?.range || ''
+        });
+        window.open('./proofs/economy-widget-standalone.html?' + params.toString(), '_blank', 'noopener');
+      }
+    });
+  }
+
+  function openWeatherFull() {
+    const place = getWeatherPlace();
+    const client = window.IRGEZTNEWeatherClientV1;
+    const locationContext = client && typeof client.getLocationContext === 'function' ? client.getLocationContext() : null;
+    const payload = { lang: getLang() };
+    if (place) {
+      payload.latitude = place.latitude;
+      payload.longitude = place.longitude;
+      payload.altitude = place.altitude;
+      payload.cityRu = place.cityRu || '';
+      payload.cityEn = place.cityEn || '';
+      payload.timeZone = place.timeZone || '';
+      payload.locationSource = locationContext && locationContext.source || 'workspace';
+    }
+    if (window.nsAPI && typeof window.nsAPI.weatherOpenFull === 'function') {
+      window.nsAPI.weatherOpenFull(payload).catch(function (error) {
+        console.warn('[IRGEZTNE Weather] failed to open Full Weather:', error);
+      });
+      return;
+    }
+    // Browser-only proof fallback. Packaged Workspace always uses the managed
+    // main-process window above so a partially navigated child is never shown.
+    const params = new URLSearchParams({ lang: payload.lang });
+    if (place) {
+      params.set('lat', String(payload.latitude));
+      params.set('lon', String(payload.longitude));
+      params.set('altitude', payload.altitude == null ? '' : String(payload.altitude));
+      params.set('cityRu', payload.cityRu);
+      params.set('cityEn', payload.cityEn);
+      params.set('timeZone', payload.timeZone);
+      params.set('locationSource', payload.locationSource);
+    }
+    window.open('./proofs/weather-widget-standalone.html?' + params.toString(), '_blank', 'noopener');
   }
 
 
@@ -287,7 +339,7 @@
     const weatherRefresh = panel.querySelector('[data-ir-wc-weather-refresh]');
     if (weatherRefresh) {
       weatherRefresh.addEventListener('click', function () {
-        updateWeather(panel, true);
+        openWeatherFull();
       });
     }
 
@@ -299,6 +351,7 @@
         if (status) status.textContent = t('Saved locally on this computer.', 'Сохраняется локально на этом компьютере.');
       });
     }
+
   }
 
   function updateClock() {
@@ -351,6 +404,7 @@
 
   function init() {
     render();
+    bindWeatherLocationSync();
     bindWorkspaceToggleReturnHome();
     setTimeout(render, 300);
     setInterval(updateClock, 1000 * 20);

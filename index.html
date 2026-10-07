@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta
     http-equiv="Content-Security-Policy"
-    content="default-src 'self' 'unsafe-inline' data: blob: https: http:; img-src 'self' data: https: http:; media-src 'self' data: https: http:; frame-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline';"
+    content="default-src 'self' 'unsafe-inline' data: blob: https: http:; img-src 'self' data: irgeztne-asset: https: http:; media-src 'self' data: https: http:; frame-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline';"
   />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
  <title>IRGEZTNE</title>
@@ -17,16 +17,23 @@
 <link rel="stylesheet" href="src/modules/relations/relations-v0.css" />
 <link rel="stylesheet" href="src/modules/notes/notes-v0.css" />
 <link rel="stylesheet" href="src/modules/tools/tools-v0.css" />
+<link rel="stylesheet" href="src/modules/tools/image-tool-v1.css" />
 <link rel="stylesheet" href="src/v87-vitrina-v1.css" />
 <link rel="stylesheet" href="src/v88-codehub-v1.css" />
 <link rel="stylesheet" href="src/modules/map/map-v0.css" />
 <link rel="stylesheet" href="src/modules/documents/documents-v0.css" />
+<link rel="stylesheet" href="src/modules/documents/office-spreadsheet-v1.css" />
+<link rel="stylesheet" href="src/modules/documents/office-presentation-v1.css" />
+<link rel="stylesheet" href="src/modules/documents/office-diagram-v1.css" />
+<link rel="stylesheet" href="src/modules/documents/office-formula-v1.css" />
+<link rel="stylesheet" href="src/modules/documents/office-form-v1.css" />
+<link rel="stylesheet" href="src/modules/office-shell/office-shell-v1.css" />
 <link rel="stylesheet" href="src/modules/site-pages/site-pages-v0.css" />
 <link rel="stylesheet" href="src/modules/ecosystem/ecosystem-v0.css" />
 <link rel="stylesheet" href="src/modules/rooms/rooms-v0.css" />
 <link rel="stylesheet" href="src/modules/fili-store/fili-store-v0.css" />
 <link rel="stylesheet" href="src/modules/fili-safe/fili-safe-v0.css" />
-<link rel="stylesheet" href="src/modules/analytics/analytics-v0.css" />
+<link rel="stylesheet" href="src/modules/tasks/tasks-v1.css" />
 <link rel="stylesheet" href="src/modules/workspace-backup/workspace-backup-v0.css" />
 <link rel="stylesheet" href="src/v92-topbar-menu.css" />
 <link rel="icon" type="image/svg+xml" href="./assets/branding/favicon.png?v=v7g2e" />
@@ -46,10 +53,19 @@
   <link rel="stylesheet" href="src/v039i-cabinet-rooms-polish.css">
   <link rel="stylesheet" href="src/v039j-strong-visual-polish.css">
   <link rel="stylesheet" href="src/workspace-cabinet-panel-v040d.css">
+  <link rel="stylesheet" href="src/modules/economy/economy-widget-v1.css">
   <link rel="stylesheet" href="src/v039k-rooms-message-area-polish.css">
-
-
-
+  <link rel="stylesheet" href="src/chat-typography-owner-fix-v04p11a.css">
+  <link rel="stylesheet" href="src/chat-mirror-v04p12.css">
+  <link rel="stylesheet" href="src/chat-bubble-geometry-v04p12a.css">
+  <link rel="stylesheet" href="src/chat-local-group-v04p13.css">
+  <link rel="stylesheet" href="src/chat-puffed-capsule-owner-v04p13d.css">
+  <link rel="stylesheet" href="src/chat-reply-v04p15.css">
+  <link rel="stylesheet" href="src/chat-message-actions-v04p16.css">
+  <link rel="stylesheet" href="src/chat-reactions-v04p17.css">
+  <link rel="stylesheet" href="src/chat-message-edit-v04p18.css">
+  <link rel="stylesheet" href="src/chat-message-lifecycle-v04p19.css">
+  <link rel="stylesheet" href="src/chat-local-cleanup-v04p20.css">
 </head>
 <body>
   <div class="app-shell" id="appShell">
@@ -127,11 +143,11 @@
               class="workspace-toggle"
               id="workspaceToggle"
               type="button"
-              title="Переключить режим рабочего пространства"
+              title="Переключить информационную панель"
               aria-pressed="false"
             >
               <span class="workspace-indicator-dot"></span>
-              <span class="workspace-toggle-text">Пространство</span>
+              <span class="workspace-toggle-text">Информация</span>
             </button>
           </div>
 
@@ -182,7 +198,6 @@
               <button type="button" role="menuitem" data-topbar-link="website">Официальный сайт</button>
               <button type="button" role="menuitem" data-topbar-link="updates">Проверить новую версию</button>
               <button type="button" role="menuitem" data-topbar-link="releases">Релизы / история версий</button>
-              <button type="button" role="menuitem" data-topbar-action="docs-status">Документация — в разработке</button>
               <button type="button" role="menuitem" data-topbar-link="github">GitHub репозиторий</button>
               <button type="button" role="menuitem" data-topbar-action="about">О IRGEZTNE</button>
             </div>
@@ -218,11 +233,11 @@
         <div class="workspace-shell-header">
           <div class="workspace-shell-title">
             <span class="workspace-shell-dot"></span>
-            <span>Пространство</span>
+            <span>Информация</span>
           </div>
 
           <div class="workspace-shell-actions">
-            <button class="workspace-mini-btn" id="workspaceCollapseBtn" title="Закрыть пространство">✕</button>
+            <button class="workspace-mini-btn" id="workspaceCollapseBtn" title="Закрыть информационную панель">✕</button>
           </div>
         </div>
 
@@ -241,7 +256,7 @@
   <button class="workspace-nav-btn" data-section="rooms">Чат</button>
   <button class="workspace-nav-btn" data-section="fili-store">Fili Store</button>
   <button class="workspace-nav-btn" data-section="fili-safe">Fili Safe</button>
-  <button class="workspace-nav-btn" data-section="analytics">Аналитика</button>
+  <button class="workspace-nav-btn" data-section="tasks">Задачи</button>
 </div>
 
         <div class="workspace-shell-body" id="workspaceShellBody">          <section class="workspace-panel active" data-panel="workspace">
@@ -411,9 +426,9 @@
       <strong>Fili Safe v0</strong>
       <span>Локальный профиль, подписи и будущий слой безопасности.</span>
     </button>
-    <button type="button" class="workspace-home-shortcut ecosystem-v0-card" data-ecosystem-card="analytics" data-home-open="analytics" title="Открыть Веб-аналитика">
-      <strong>Веб-аналитика</strong>
-      <span>Веб-аналитика сайта, экспортов и публикации.</span>
+    <button type="button" class="workspace-home-shortcut ecosystem-v0-card" data-ecosystem-card="tasks" data-home-open="tasks" title="Открыть Задачи">
+      <strong>Задачи</strong>
+      <span>Личные и проектные задачи, следующий шаг и рабочий контекст.</span>
     </button>
   </div>
 </div>
@@ -580,7 +595,7 @@
   <div class="panel-card workspace-vitrina-panel-card">
     <div class="panel-card-header">
       <h3>Шаблоны</h3>
-      <span>Официальные шаблоны · Бесплатно · Preview.4</span>
+      <span>Официальные шаблоны · Бесплатно</span>
     </div>
 
     <div class="workspace-vitrina-lite-note">
@@ -620,31 +635,31 @@
             </div>
           </section>
 
-          <section class="workspace-panel" data-panel="analytics">
+          <section class="workspace-panel" data-panel="tasks">
             <div class="panel-card large">
               <div class="panel-card-header">
-                <h3>Веб-аналитика</h3>
-                <span>Веб-аналитика · локальная аналитика без внешних SDK</span>
+                <h3>Задачи</h3>
+                <span>Задачи · локальная рабочая система</span>
               </div>
-              <div class="module-shell-card module-shell-card--analytics standalone-shell ecosystem-v0-shell">
+              <div class="module-shell-card module-shell-card--tasks standalone-shell ecosystem-v0-shell">
                 <div class="module-stage-row">
-                  <span class="module-stage is-v0">v0 local analytics</span>
-                  <span class="module-meta-chip">Файлы · Проекты · Экспорты · Мастерская</span>
+                  <span class="module-stage is-v0">Tasks v1</span>
+                  <span class="module-meta-chip">Фокус · Следующий шаг · Проекты</span>
                 </div>
                 <div class="module-block-grid two-up">
                   <div class="module-block compact-block">
-                    <div class="module-block-title">Локальные сигналы</div>
-                    <div class="module-block-text">В будущем здесь будут сводки по файлам, проектам, документам, шаблонам, экспортам и публикациям.</div>
+                    <div class="module-block-title">Рабочий фокус</div>
+                    <div class="module-block-text">Здесь отображаются активные задачи, ближайшие действия и рабочий контекст.</div>
                   </div>
                   <div class="module-block compact-block">
-                    <div class="module-block-title">Не рыночная аналитика</div>
-                    <div class="module-block-text">Это не биржи и не крипто-dashboard. Это наблюдательный центр своего workspace и будущей FiliNet-активности.</div>
+                    <div class="module-block-title">Рабочий контекст</div>
+                    <div class="module-block-text">Задачи помогают быстро вернуться к текущей работе и следующему конкретному действию.</div>
                   </div>
                 </div>
                 <div class="module-checklist three-col">
-                  <span>Без внешних SDK</span>
-                  <span>Локальные счётчики позже</span>
-                  <span>FiliNet signals later</span>
+                  <span>Локально</span>
+                  <span>Следующие действия</span>
+                  <span>Связи с проектами</span>
                 </div>
               </div>
             </div>
@@ -682,7 +697,7 @@
           <button type="button" data-open-section="codehub">Мастерская</button>
           <button type="button" data-open-section="marketplace">Шаблоны</button>
           <button type="button" data-open-section="rooms">Чат</button>
-          <button type="button" data-open-section="analytics">Аналитика</button>
+          <button type="button" data-open-section="tasks">Задачи</button>
         </div>
 
 
@@ -749,9 +764,9 @@
       <span class="cabinet-tile-text">Локальные комнаты проекта, решения, задачи, заметки и ссылки.</span>
     </button>
 
-    <button class="cabinet-tile cabinet-tile--primary" data-open-section="analytics" type="button" data-preview4-card="web-analytics">
-      <span class="cabinet-tile-title">Веб-аналитика</span>
-      <span class="cabinet-tile-text">Веб-аналитика сайта, экспортов и публикации.</span>
+    <button class="cabinet-tile cabinet-tile--primary" data-open-section="tasks" type="button" data-preview4-card="tasks">
+      <span class="cabinet-tile-title">Задачи</span>
+      <span class="cabinet-tile-text">Личные и проектные задачи, следующий шаг и рабочий контекст.</span>
     </button>
 
   </div>
@@ -772,9 +787,9 @@
         <span class="cabinet-tile-title">Fili Safe v0</span>
         <span class="cabinet-tile-text">Локальный профиль, подписи и будущий слой безопасности.</span>
       </button>
-      <button class="cabinet-tile ecosystem-v0-card" data-ecosystem-card="analytics" data-open-section="analytics" type="button" title="Открыть Веб-аналитика">
-        <span class="cabinet-tile-title">Веб-аналитика</span>
-        <span class="cabinet-tile-text">Веб-аналитика сайта, экспортов и публикации.</span>
+      <button class="cabinet-tile ecosystem-v0-card" data-ecosystem-card="tasks" data-open-section="tasks" type="button" title="Открыть Задачи">
+        <span class="cabinet-tile-title">Задачи</span>
+        <span class="cabinet-tile-text">Личные и проектные задачи, следующий шаг и рабочий контекст.</span>
       </button>
     </div>
   </div>
@@ -812,7 +827,7 @@
   <button class="cabinet-inner-nav-btn" data-section="rooms">Чат</button>
   <button class="cabinet-inner-nav-btn" data-section="fili-store">Fili Store</button>
   <button class="cabinet-inner-nav-btn" data-section="fili-safe">Fili Safe</button>
-  <button class="cabinet-inner-nav-btn" data-section="analytics">Аналитика</button>
+  <button class="cabinet-inner-nav-btn" data-section="tasks">Задачи</button>
 </div>
         <div class="cabinet-expanded-body" id="cabinetExpandedBody">
           <section class="cabinet-section-panel active" data-cabinet-panel="rooms">
@@ -869,22 +884,26 @@
             </div>
           </section>
 
-          <section class="cabinet-section-panel" data-cabinet-panel="analytics">
+          <section class="cabinet-section-panel" data-cabinet-panel="tasks">
             <div class="cabinet-panel-grid two-wide ecosystem-v0-grid">
               <div class="cabinet-panel-card large">
-                <h3>Веб-аналитика</h3>
-                <p>Веб-аналитика — локальный центр аналитики по файлам, проектам, документам, шаблонам, экспортам, Веб-мастерской и публикациям.</p>
+                <h3>Задачи</h3>
+                <p>Задачи — локальный рабочий модуль для фокуса, следующих действий и проектного контекста.</p>
                 <div class="module-checklist compact">
-                  <span>Без внешних SDK</span>
-                  <span>Локальная аналитика</span>
-                  <span>FiliNet позже</span>
+                  <span>Локально</span>
+                  <span>Локальное хранение</span>
+                  <span>Связи позже</span>
                 </div>
               </div>
               <div class="cabinet-panel-card">
-                <h3>Не рыночная аналитика</h3>
-                <p>Это не биржи и не crypto-dashboard. Это аналитика собственного рабочего пространства и будущей файловой инфраструктурой.</p>
+                <h3>Рабочий контекст</h3>
+                <p>Здесь хранится рабочий контекст задач; расширенные связи будут подключаться поэтапно.</p>
               </div>
             </div>
+          </section>
+
+          <section class="cabinet-section-panel" data-cabinet-panel="account">
+            <div id="irgeztneAccountSurface" class="account-page-v1-host" aria-live="polite"></div>
           </section>
 
           <section class="cabinet-section-panel" data-cabinet-panel="files">
@@ -920,7 +939,7 @@
           </section>
 
           <section class="cabinet-section-panel" data-cabinet-panel="documents">
-            <div data-documents-root data-documents-surface="cabinet"></div>
+            <div data-office-shell-root></div>
           </section>
 
 
@@ -947,7 +966,7 @@
     <div class="cabinet-panel-card">
       <div class="panel-card-header">
         <h3>Шаблоны</h3>
-        <span>Официальные шаблоны · Бесплатно · Preview.4</span>
+        <span>Официальные шаблоны · Бесплатно</span>
       </div>
       <div class="ns-vitrina-host ns-vitrina-host--cabinet" data-vitrina-root data-vitrina-surface="cabinet"></div>
     </div>
@@ -1027,9 +1046,9 @@
                     <strong>Fili Safe v0</strong>
                     <span>Локальный профиль, подписи и будущий слой безопасности.</span>
                   </button>
-                  <button class="workspace-home-shortcut ecosystem-v0-card" data-ecosystem-card="analytics" data-open-section="analytics" type="button" title="Открыть Веб-аналитика">
-                    <strong>Веб-аналитика</strong>
-                    <span>Веб-аналитика сайта, экспортов и публикации.</span>
+                  <button class="workspace-home-shortcut ecosystem-v0-card" data-ecosystem-card="tasks" data-open-section="tasks" type="button" title="Открыть Задачи">
+                    <strong>Задачи</strong>
+                    <span>Личные и проектные задачи, следующий шаг и рабочий контекст.</span>
                   </button>
                 </div>
               </div>
@@ -1039,6 +1058,7 @@
       </div>
     </div>
   </div>
+<script src="./src/storage/legacy-durable-bridge-v1.js"></script>
 <script type="module" src="./src/bootstrap.js"></script>
 <script src="src/v81-editor-storage.js"></script>
 <script src="./src/ns-library-store.js"></script>
@@ -1047,6 +1067,8 @@
 <script src="./src/ns-codehub-store.js"></script>
 <script src="./src/ns-knowledge-sync.js"></script>
 <script src="./src/v82-editor-v1.js"></script>
+<script src="./src/modules/tools/tool-registry-v1.js"></script>
+<script src="./src/modules/tools/image-tool-v1.js"></script>
 <script src="./src/modules/files/files-v0.js"></script>
 <script src="./src/ns-project-store.js"></script>
 <script src="./src/ns-notes-store.js"></script>
@@ -1057,13 +1079,22 @@
 <script src="./src/v87-vitrina-v1.js"></script>
 <script src="./src/v88-codehub-v1.js"></script>
 <script src="./src/modules/map/map-v0.js"></script>
+<script src="./src/modules/documents/office-working-object-v1.js"></script>
+<script src="./src/modules/documents/office-spreadsheet-v1.js"></script>
+<script src="./src/modules/documents/office-presentation-v1.js"></script>
+<script src="./src/modules/documents/office-diagram-v1.js"></script>
+<script src="./src/modules/documents/office-formula-v1.js"></script>
+<script src="./src/modules/documents/office-form-v1.js"></script>
+<script src="./src/modules/documents/office-templates-v1.js"></script>
 <script src="./src/modules/documents/documents-v0.js"></script>
+<script src="./src/modules/office-shell/office-shell-v1.js"></script>
 <script src="./src/modules/ecosystem/ecosystem-v0-shared.js"></script>
 <script src="./src/modules/rooms/rooms-v0.js"></script>
   <script src="src/modules/rooms/rooms-live-v1.js"></script>
 <script src="./src/modules/fili-store/fili-store-v0.js"></script>
 <script src="./src/modules/fili-safe/fili-safe-v0.js"></script>
-<script src="./src/modules/analytics/analytics-v0.js"></script>
+<script src="./src/modules/tasks/tasks-store-v1.js"></script>
+<script src="./src/modules/tasks/tasks-v1.js"></script>
 <script src="./src/modules/site-pages/site-pages-v0.js"></script>
 <script src="./src/site-profile-store.js"></script>
 <script src="./src/modules/workspace-backup/workspace-backup-v0.js"></script>
@@ -1085,11 +1116,19 @@
 <script src="./src/preview4-cabinet-nav-drag-v1.js"></script>
 <script src="./src/preview4-official-templates-v1.js"></script>
 <script src="./src/preview4-webstudio-stable-pages-bridge-v1.js"></script>
+  <script src="./src/modules/economy/economy-bootstrap-v1.js"></script>
+  <script src="./src/modules/economy/economy-data-core-v1.js"></script>
+  <script src="./src/modules/economy/economy-widget-core-v1.js"></script>
+  <script src="./src/modules/weather/weather-view-model-v1.js"></script>
+  <script src="./src/modules/weather/weather-client-v1.js"></script>
   <script src="./src/workspace-cabinet-panel-v0.js"></script>
   <script src="src/ui-release-cleanup-v039d.js"></script>
   <script src="src/ui-release-cleanup-v039e.js"></script>
   <script src="src/v039i-workspace-first-click-bridge.js"></script>
   <script src="src/v039j-strong-visual-polish.js"></script>
   <script src="src/v039k-rooms-message-area-polish.js"></script>
+  <script src="./src/floating-window-manager-v04p17d.js"></script>
+  <script src="src/chat-autoscroll-v04p13a.js"></script>
+  <script src="src/chat-startup-scroll-fix-v04p13e.js"></script>
 </body>
 </html>

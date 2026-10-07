@@ -23,7 +23,7 @@
       document.documentElement.style.colorScheme = theme;
     })();
   </script>
-  <link rel="stylesheet" href="./editor-workbench.css?v=v084r">
+  <link rel="stylesheet" href="./editor-workbench.css?v=r1w9h-presentation">
 </head>
 <body>
   <main class="ewb-shell" data-theme="dark">
@@ -32,60 +32,105 @@
         <div class="ewb-kicker">EDITOR WORKBENCH</div>
         <strong id="ewbPageTitle">Page</strong>
       </div>
-      <div class="ewb-status" id="ewbStatus">ready</div>
+      <div class="ewb-top-actions">
+        <div class="ewb-status" id="ewbStatus">ready</div>
+        <button class="ewb-top-save" data-action="save" data-save-state="saved" disabled type="button">Сохранено</button>
+        <button class="ewb-top-preview ewb-top-widgets-r1w9h" data-action="widgets-open-r1w9h" type="button">Виджеты сайта</button>
+        <button class="ewb-top-preview" data-action="preview" type="button">Preview</button>
+      </div>
     </header>
 
-    <section class="ewb-toolbar" aria-label="Editor toolbar">
-      <button data-cmd="bold"><b>B</b></button>
-      <button data-cmd="italic"><i>I</i></button>
-      <button data-cmd="underline"><u>U</u></button>
-      <button data-cmd="strikeThrough"><s>S</s></button>
-      <button data-action="color">A</button>
-      <button data-action="highlight">▰</button>
+
+    <section id="ewbToolbar" class="ewb-toolbar ewb-text-toolbar-r1w9f6b" aria-label="Text formatting / Форматирование текста" hidden aria-hidden="true">
+      <button data-cmd="bold" title="Жирный / Bold"><b>B</b></button>
+      <button data-cmd="italic" title="Курсив / Italic"><i>I</i></button>
+      <button data-cmd="underline" title="Подчёркивание / Underline"><u>U</u></button>
+      <button data-cmd="strikeThrough" title="Зачёркивание / Strike"><s>S</s></button>
+      <button data-action="color" title="Цвет текста / Text color">A</button>
+      <button data-action="highlight" title="Маркер / Highlight">▰</button>
 
       <span class="ewb-sep"></span>
 
-      <button data-block="p">P</button>
-      <button data-block="h1">H1</button>
-      <button data-block="h2">H2</button>
-      <button data-block="h3">H3</button>
-      <button data-block="blockquote">❞</button>
+      <select class="ewb-block-select" data-block-select title="Формат блока P/H1–H6" aria-label="Формат блока P/H1–H6">
+        <option value="" selected>P/H ▾</option>
+        <option value="p">P · Абзац</option>
+        <option value="h1">H1</option>
+        <option value="h2">H2</option>
+        <option value="h3">H3</option>
+        <option value="h4">H4</option>
+        <option value="h5">H5</option>
+        <option value="h6">H6</option>
+      </select>
+      <button data-block="blockquote" title="Цитата / Quote">❞</button>
 
       <span class="ewb-sep"></span>
 
-      <button data-cmd="insertUnorderedList">•</button>
-      <button data-cmd="insertOrderedList">1.</button>
-      <button data-cmd="undo">↶</button>
-      <button data-cmd="redo">↷</button>
+      <button data-cmd="insertUnorderedList" title="Маркированный список">•</button>
+      <button data-cmd="insertOrderedList" title="Нумерованный список">1.</button>
+      <button data-cmd="undo" title="Отменить / Undo">↶</button>
+      <button data-cmd="redo" title="Повторить / Redo">↷</button>
 
       <span class="ewb-sep"></span>
 
-      <button data-action="link">🔗</button>
-      <button data-cmd="unlink">⛓</button>
-      <button data-action="image">🖼</button>
-      <button
-        data-action="video"
-        title="Видео с компьютера / Local video"
-        aria-label="Видео с компьютера"
-      >▶</button>
-      <button
-        data-action="video-url"
-        title="Видео по ссылке / Video URL"
-        aria-label="Видео по ссылке"
-      >▶ URL</button>
-      <button data-action="emoji">🙂</button>
-      <button data-action="divider">─</button>
-      <button data-action="code">{}</button>
+      <button data-action="link" title="Ссылка / Link">🔗</button>
+      <button data-cmd="unlink" title="Убрать ссылку / Unlink">⛓</button>
+      <button data-action="emoji" title="Символ / Emoji">🙂</button>
 
       <span class="ewb-sep"></span>
 
-      <button data-action="html">HTML</button>
-      <button data-action="save" class="is-primary">Save</button>
-      <button data-action="preview">Preview</button>
+      <button class="ewb-toolbar-compact-wide" data-action="image" type="button" title="Изображение с компьютера">🖼</button>
+      <button class="ewb-toolbar-compact-wide" data-action="image-url" type="button" title="Изображение по URL">🖼URL</button>
+      <button class="ewb-toolbar-compact-wide" data-action="video" type="button" title="Видео с компьютера">▶</button>
+      <button class="ewb-toolbar-compact-wide" data-action="video-url" type="button" title="Видео по URL">▶URL</button>
+      <button data-action="divider" type="button" title="Разделитель">—</button>
+      <button data-action="code" type="button" title="Код">{}</button>
+      <button class="ewb-toolbar-compact-wide" data-action="html" type="button" title="Редактировать HTML">HTML</button>
+      <button class="ewb-toolbar-close" data-action="tools-close" type="button" title="Закрыть / Close" aria-label="Закрыть инструменты">×</button>
+    </section>
+
+    <button id="ewbBlockHandle" class="ewb-block-handle" data-action="block-menu-toggle" type="button" aria-controls="ewbBlockMenu" aria-expanded="false" aria-label="Действия блока" title="Действия блока" hidden>⋮</button>
+
+    <section id="ewbBlockMenu" class="ewb-block-menu" hidden aria-label="Действия блока">
+      <button type="button" data-action="block-insert-after">+ Вставить блок после</button>
+      <div class="ewb-block-menu-sep" role="separator"></div>
+      <button type="button" data-action="block-move-up">↑ Выше</button>
+      <button type="button" data-action="block-move-down">↓ Ниже</button>
+      <button type="button" data-action="block-delete" class="is-danger">Удалить блок</button>
+    </section>
+
+    <section id="ewbBlocksPanel" class="ewb-blocks-panel" hidden aria-label="Installed blocks / Установленные блоки">
+      <header class="ewb-blocks-head">
+        <div>
+          <div class="ewb-kicker" data-blocks-kicker>МАСТЕРСКАЯ</div>
+          <strong data-blocks-title>Блоки</strong>
+          <p data-blocks-help>Установленные компоненты доступны для вставки в текущую страницу.</p>
+        </div>
+        <button type="button" data-action="blocks-close" class="ewb-blocks-close" aria-label="Close / Закрыть">×</button>
+      </header>
+      <div id="ewbBlocksList" class="ewb-blocks-list"></div>
+    </section>
+
+    <section id="ewbWidgetsPanel" class="ewb-blocks-panel ewb-widgets-panel-r1w9h" hidden aria-label="Installed site widgets / Установленные виджеты сайта">
+      <header class="ewb-blocks-head">
+        <div>
+          <div class="ewb-kicker">МАСТЕРСКАЯ</div>
+          <strong data-widgets-title>Виджеты сайта</strong>
+          <p data-widgets-help>Выберите Widget, настройте его и подтвердите размещение на сайте.</p>
+        </div>
+        <button type="button" data-action="widgets-close-r1w9h" class="ewb-blocks-close" aria-label="Close / Закрыть">×</button>
+      </header>
+      <div id="ewbWidgetsList" class="ewb-blocks-list"></div>
+      <section id="ewbWidgetConfigR1W9H" class="ewb-widget-config-r1w9h" hidden></section>
+      <section id="ewbWidgetInstancesR1W9H" class="ewb-widget-instances-r1w9h" hidden aria-label="Site Widget instances / Виджеты на сайте"></section>
     </section>
 
     <section class="ewb-editor-wrap">
-      <article id="ewbEditor" class="ewb-editor" contenteditable="true" spellcheck="true" aria-label="Editor"></article>
+      <div id="ewbEditorCanvasR1W9H" class="ewb-editor-canvas-r1w9h">
+        <section id="ewbWidgetSurfaceBeforeR1W9H" class="ewb-widget-editor-surface-r1w9h ewb-widget-editor-surface-before-r1w9h" hidden aria-label="Site Widget placements before page content"></section>
+        <article id="ewbEditor" class="ewb-editor" contenteditable="true" spellcheck="true" aria-label="Editor"></article>
+        <section id="ewbWidgetSurfaceAfterR1W9H" class="ewb-widget-editor-surface-r1w9h ewb-widget-editor-surface-after-r1w9h" hidden aria-label="Site Widget placements after page content"></section>
+        <div id="ewbWidgetSurfaceFloatingR1W9H" class="ewb-widget-editor-floating-layer-r1w9h" hidden aria-label="Floating Site Widget placements"></div>
+      </div>
 
       <section id="ewbHtmlPanel" class="ewb-html-panel" hidden>
         <header class="ewb-html-head">
@@ -101,6 +146,6 @@
     </section>
   </main>
 
-  <script src="./editor-workbench.js?v=v084r"></script>
+  <script src="./editor-workbench.js?v=1.0.0-closure-20261007"></script>
 </body>
 </html>

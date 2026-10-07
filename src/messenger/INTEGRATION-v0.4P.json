@@ -1,0 +1,7 @@
+{
+  "version": "0.4P",
+  "secure_core": "0.4N2 frozen",
+  "mode": "local-secure-loopback",
+  "network": "disabled",
+  "checkpoint": "/home/acer/Загрузки/_CHECKPOINTS/workspace/20260815-104909-BEFORE-GREEN-LIGHTNING-v0.4P"
+}

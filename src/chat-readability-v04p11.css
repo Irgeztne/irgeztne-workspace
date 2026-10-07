@@ -1,0 +1,131 @@
+/*
+IRGEZTNE Workspace — Green Lightning Chat Readability v0.4P11
+Visual/readability only. No JS/IPC/MLS/SQLCipher changes.
+*/
+
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1 {
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-rail-title strong {
+  font-size: 15px;
+  line-height: 1.2;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-rail-title span {
+  font-size: 12px;
+  line-height: 1.35;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-rail-search input {
+  font-size: 13px;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-filters,
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-filters button {
+  font-size: 12.5px;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-conversation {
+  min-height: 58px;
+  padding: 10px 9px;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-conv-copy strong {
+  font-size: 13.5px;
+  line-height: 1.3;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-conv-copy span {
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-chat-title strong {
+  font-size: 15px;
+  line-height: 1.2;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-chat-title span {
+  font-size: 12.5px;
+  line-height: 1.35;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-status,
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-status span,
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-status strong {
+  font-size: 12px;
+}
+
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message {
+  font-size: 14.5px;
+  line-height: 1.52;
+  padding: 11px 14px;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message p,
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message div {
+  line-height: 1.52;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message strong {
+  font-size: 12px;
+  line-height: 1.35;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message span {
+  font-size: 11.5px;
+  line-height: 1.35;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-empty {
+  font-size: 13px;
+  line-height: 1.5;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-empty strong {
+  font-size: 15px;
+}
+
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-compose {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-compose textarea,
+.cabinet-section-panel[data-cabinet-panel="rooms"] textarea[data-gl-compose] {
+  min-height: 46px;
+  padding: 11px 13px;
+  font-size: 14px;
+  line-height: 1.45;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-send {
+  width: 46px;
+  height: 46px;
+}
+
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-info {
+  font-size: 13px;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-info-head strong {
+  font-size: 16px;
+  line-height: 1.2;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-profile strong {
+  font-size: 15px;
+  line-height: 1.25;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-profile span {
+  font-size: 12.5px;
+  line-height: 1.4;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-info-section {
+  padding: 14px;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-info-section h5 {
+  font-size: 11.5px;
+  line-height: 1.3;
+  letter-spacing: 0.06em;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-info-row {
+  min-height: 36px;
+  gap: 12px;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-info-row span,
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-info-row strong {
+  font-size: 13px;
+  line-height: 1.4;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-info section,
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-info section span,
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-info section strong,
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-info section button {
+  font-size: max(12px, 0.93em);
+}

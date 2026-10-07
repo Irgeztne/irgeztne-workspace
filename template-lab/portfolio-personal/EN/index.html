@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Aster Works portfolio: selected projects, approach and contact.">
+  <title>Aster Works — independent portfolio</title>
+  <script>
+    (() => {
+      const queryTheme = new URLSearchParams(location.search).get("theme");
+      let theme = queryTheme === "dark" || queryTheme === "light" ? queryTheme : null;
+      if (!theme) {
+        try {
+          const savedTheme = localStorage.getItem("aster-works-theme");
+          if (savedTheme === "dark" || savedTheme === "light") theme = savedTheme;
+        } catch {}
+      }
+      if (!theme && window.matchMedia?.("(prefers-color-scheme: dark)").matches) theme = "dark";
+      document.documentElement.dataset.theme = theme || "light";
+    })();
+  </script>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <header class="site-header"><div class="header-inner shell">
+    <a class="brand" href="index.html" aria-label="Aster Works — home">
+      <span class="brand-mark">A</span><span class="brand-copy"><strong>Aster Works</strong><small>Portfolio / personal site</small></span>
+    </a>
+    <nav class="main-nav" data-main-nav data-open="false" aria-label="Main navigation">
+      <a href="index.html" aria-current="page">Home</a><a href="works.html">Works</a><a href="about.html">About</a><a href="about.html#process">Process</a><a href="contact.html">Contact</a>
+    </nav>
+    <div class="header-actions">
+      <a class="header-cta" href="contact.html">Discuss a project</a>
+      <button class="theme-toggle" type="button" data-theme-toggle data-label-light="Switch to light theme" data-label-dark="Switch to dark theme" aria-label="Switch to dark theme">☾</button>
+      <button class="menu-toggle" type="button" data-menu-toggle aria-label="Open menu" aria-expanded="false">☰</button>
+    </div>
+  </div></header>
+  <main class="main shell">
+    <section class="hero">
+      <div class="hero-copy">
+        <div><span class="eyebrow">Independent creator · digital projects</span><h1 class="display">I turn complex ideas into clear stories.</h1><p class="lead">Design, digital products and editorial projects — from the first round of research to a coherent publication.</p><div class="button-row"><a class="button button-primary" href="works.html">View works</a><a class="button" href="about.html">Meet the creator</a></div></div>
+        <div class="hero-meta"><div><strong>12 projects</strong><span>in the selected archive</span></div><div><strong>6 disciplines</strong><span>from strategy to publication</span></div></div>
+      </div>
+      <figure class="hero-media"><img src="../assets/portfolio-hero-studio.webp" alt="An independent studio with layouts and materials for digital projects"><figcaption class="media-label">Independent studio · 2026</figcaption></figure>
+    </section>
+    <div class="discipline-strip"><strong>Identity</strong><strong>Interfaces</strong><strong>Editorial</strong><strong>Photography</strong><span>A portfolio for a creator who values context.</span></div>
+    <section class="section-head"><div><span class="eyebrow">Selected works</span><h2>Different projects deserve different visual weight.</h2></div><p>A major case, an independent series and a short observation do not need to look identical. This selection keeps their own rhythm intact.</p></section>
+    <section class="works-grid" aria-label="Selected projects">
+      <a class="work-card work-featured" href="works.html#serein"><img src="../assets/portfolio-product-interface.webp" alt="A calm workspace with a modular interface study"><span class="work-card-copy"><span class="eyebrow">Featured case</span><h2>Serein: a digital environment for focused work.</h2><p>Research, product logic, interface and launch.</p></span></a>
+      <a class="work-card work-small work-city" href="works.html#city"><img src="../assets/portfolio-editorial-city.webp" alt="A modern city in evening light"><span class="work-card-copy"><span class="eyebrow">Editorial series</span><h3>The City After Six.</h3></span></a>
+      <a class="work-card work-small" href="works.html#fieldwork"><img src="../assets/portfolio-identity-system.webp" alt="Abstract visual identity materials arranged on a worktable"><span class="work-card-copy"><span class="eyebrow">Identity</span><h3>Fieldwork: a system with room to breathe.</h3></span></a>
+    </section>
+    <section class="split-panel">
+      <article class="note-card"><div><span class="eyebrow">Selection principle</span><h3>A portfolio is not a warehouse of finished tasks.</h3></div><p>What stays here are projects where the thought, the decision and the result are visible. Everything else belongs in the working archive.</p></article>
+      <article class="panel"><span class="eyebrow">How I work</span><h2>From question to form.</h2><div class="panel-list"><div><strong>01</strong><span><h3>Listen</h3><p>Understand the task, context and real constraints.</p></span></div><div><strong>02</strong><span><h3>Build</h3><p>Connect research, content and the visual system.</p></span></div><div><strong>03</strong><span><h3>Test</h3><p>Bring the solution to a state people can actually use.</p></span></div></div></article>
+    </section>
+    <section class="quote-card"><blockquote>“Good form does not cover meaning. It helps people see it.”</blockquote><p>I work with independent creators, cultural projects and small teams looking for a coherent result without unnecessary noise.</p></section>
+  </main>
+  <footer class="site-footer shell"><div><strong>Aster Works</strong><span>Independent portfolio · 2026</span></div><nav class="footer-nav" aria-label="Footer navigation"><a href="index.html">Home</a><a href="works.html">Works</a><a href="about.html">About</a><a href="about.html#process">Process</a><a href="contact.html">Contact</a></nav></footer>
+  <script src="../site.js"></script>
+</body>
+</html>

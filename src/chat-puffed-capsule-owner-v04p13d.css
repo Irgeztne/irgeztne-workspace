@@ -1,0 +1,180 @@
+/*
+  IRGEZTNE Workspace — Green Lightning
+  Puffed Capsule Owner v0.4P13d
+
+  Single visual owner for the whole message article.
+  Replaces active P13b/P13c capsule layers.
+  No pseudo-elements: author, time, text and state all stay in one real box.
+*/
+
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message {
+  /* The message article itself owns the complete capsule. */
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 0 0 auto !important;
+  gap: 0 !important;
+
+  width: fit-content !important;
+  min-width: 0 !important;
+  max-width: min(72%, 820px) !important;
+
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  block-size: auto !important;
+  min-block-size: 0 !important;
+  max-block-size: none !important;
+
+  contain: none !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+
+  padding: 11px 14px 10px !important;
+
+  border: 1px solid rgba(100, 170, 226, 0.40) !important;
+  border-radius: 23px 23px 9px 23px !important;
+
+  /* Alien inflated skin, painted on the actual article — not on a pseudo-layer. */
+  background:
+    radial-gradient(130% 105% at 20% -32%,
+      rgba(255,255,255,.23) 0%,
+      rgba(255,255,255,.11) 30%,
+      rgba(255,255,255,0) 58%),
+    linear-gradient(180deg,
+      rgba(255,255,255,.045) 0%,
+      rgba(255,255,255,0) 44%,
+      rgba(0,0,0,.10) 100%),
+    linear-gradient(145deg,#184a78,#113758) !important;
+
+  box-shadow:
+    0 10px 24px rgba(0,0,0,.23),
+    0 2px 6px rgba(0,0,0,.15),
+    inset 0 1px 0 rgba(255,255,255,.20),
+    inset 0 -9px 18px rgba(0,0,0,.08) !important;
+
+  transform: none !important;
+  isolation: auto !important;
+}
+
+/* Explicitly kill the two experimental pseudo skins from P13b. */
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message::before,
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* All real children participate in normal layout and determine capsule height. */
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message > *,
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message-meta,
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message p,
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message-state {
+  position: static !important;
+  float: none !important;
+  inset: auto !important;
+  transform: none !important;
+
+  width: auto !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+
+  overflow: visible !important;
+  box-sizing: border-box !important;
+}
+
+/* Author + time remain one compact top row. */
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message-meta {
+  display: flex !important;
+  flex: 0 0 auto !important;
+  justify-content: space-between !important;
+  align-items: baseline !important;
+  gap: 16px !important;
+  margin: 0 !important;
+}
+
+/* Real message text. */
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message p {
+  display: block !important;
+  flex: 0 0 auto !important;
+  margin: 6px 0 0 !important;
+  white-space: pre-wrap !important;
+  overflow-wrap: anywhere !important;
+  word-break: normal !important;
+  line-height: 1.48 !important;
+}
+
+/* Delivery / crypto line remains inside the same capsule. */
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message-state {
+  display: block !important;
+  flex: 0 0 auto !important;
+  margin: 6px 0 0 !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+}
+
+/* YOU — right, blue, pinched toward sender side. */
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message.is-mine {
+  align-self: flex-end !important;
+  margin-left: auto !important;
+  margin-right: 0 !important;
+  border-radius: 23px 23px 9px 23px !important;
+  border-color: rgba(100,170,226,.40) !important;
+  background:
+    radial-gradient(130% 105% at 20% -32%,
+      rgba(255,255,255,.23) 0%,
+      rgba(255,255,255,.11) 30%,
+      rgba(255,255,255,0) 58%),
+    linear-gradient(180deg,
+      rgba(255,255,255,.045) 0%,
+      rgba(255,255,255,0) 44%,
+      rgba(0,0,0,.10) 100%),
+    linear-gradient(145deg,#184a78,#113758) !important;
+}
+
+/* MIRROR — left, green. */
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message.is-peer {
+  align-self: flex-start !important;
+  margin-left: 0 !important;
+  margin-right: auto !important;
+  border-radius: 23px 23px 23px 9px !important;
+  border-color: rgba(74,168,152,.48) !important;
+  background:
+    radial-gradient(130% 105% at 20% -32%,
+      rgba(255,255,255,.20) 0%,
+      rgba(255,255,255,.09) 30%,
+      rgba(255,255,255,0) 58%),
+    linear-gradient(180deg,
+      rgba(255,255,255,.04) 0%,
+      rgba(255,255,255,0) 44%,
+      rgba(0,0,0,.10) 100%),
+    linear-gradient(145deg,#17483f,#102d2b) !important;
+}
+
+/* CAMEL — left, amber/brown. */
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message.is-camel {
+  align-self: flex-start !important;
+  margin-left: 0 !important;
+  margin-right: auto !important;
+  border-radius: 23px 23px 23px 9px !important;
+  border-color: rgba(178,138,69,.55) !important;
+  background:
+    radial-gradient(130% 105% at 20% -32%,
+      rgba(255,245,205,.18) 0%,
+      rgba(255,245,205,.075) 30%,
+      rgba(255,245,205,0) 58%),
+    linear-gradient(180deg,
+      rgba(255,255,255,.035) 0%,
+      rgba(255,255,255,0) 44%,
+      rgba(0,0,0,.11) 100%),
+    linear-gradient(145deg,#49381d,#2c2618) !important;
+}
+
+/* Floating Chat: relative width can be a little larger. */
+.irgeztne-floating-window
+  .cabinet-section-panel[data-cabinet-panel="rooms"]
+  .gl-p1-message,
+[data-irgeztne-floating-window]
+  .cabinet-section-panel[data-cabinet-panel="rooms"]
+  .gl-p1-message {
+  max-width: min(78%, 700px) !important;
+}

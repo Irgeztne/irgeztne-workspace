@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A wide business website with a clear offer, services, cases, and contact path.">
+    <meta name="theme-color" content="#17694b">
+    <title>Meridian · Business and product systems</title>
+    <script>
+      try {
+        const urlTheme = new URLSearchParams(location.search).get("theme");
+        const savedTheme = localStorage.getItem("irgeztne-business-canon-theme");
+        const initialTheme =
+          urlTheme === "dark" || urlTheme === "light" ? urlTheme : savedTheme;
+        if (initialTheme === "dark" || initialTheme === "light") {
+          document.documentElement.dataset.theme = initialTheme;
+        }
+      } catch {}
+    </script>
+    <link rel="stylesheet" href="../shared/styles.css">
+    <script defer src="../shared/site.js"></script>
+  </head>
+  <body data-page="home" data-nav-open="false">
+    
+    <header class="site-header">
+      <div class="header-shell">
+        <a class="brand" href="index.html" data-brand-text-fallback="true">
+          <strong>Meridian</strong>
+          <span>Business and product systems</span>
+        </a>
+        <nav class="site-nav" aria-label="Main navigation"><a href="index.html" aria-current="page">Home</a><a href="services.html">Services</a><a href="about.html">Company</a><a href="contacts.html">Contact</a></nav>
+        <div class="header-actions">
+          <a class="header-cta" href="contacts.html">Discuss a project</a>
+          <button
+            class="theme-toggle"
+            type="button"
+            data-theme-toggle
+            data-label-dark="Use dark theme"
+            data-label-light="Use light theme"
+            aria-label="Use dark theme"
+          >☾</button>
+          <button
+            class="menu-toggle"
+            type="button"
+            data-menu-toggle
+            aria-label="Open menu"
+            aria-expanded="false"
+          >☰</button>
+        </div>
+      </div>
+    </header>
+    
+    <main class="main-shell">
+      <section class="home-hero">
+        <article class="hero-copy">
+          <div>
+            <span class="eyebrow">Business / Product</span>
+            <h1>Present your product and services so the choice feels obvious.</h1>
+            <p>A complete business structure for a company, product, or service: a clear offer, proof, process, and a calm path to contact.</p>
+            <div class="hero-buttons">
+              <a class="button-primary" href="services.html">Explore ways to work</a>
+              <a class="button-secondary" href="contacts.html">Start a conversation</a>
+            </div>
+          </div>
+          <div class="hero-proof" aria-label="Key figures">
+            <article><strong>48%</strong><span>faster path from idea to launch</span></article>
+            <article><strong>24/7</strong><span>a clear point of contact</span></article>
+            <article><strong>6 weeks</strong><span>to the first working release</span></article>
+          </div>
+        </article>
+        <aside class="hero-media" data-template-slot="hero.image">
+          <img src="../assets/hero-office.webp" alt="A team working in a bright office" width="883" height="475">
+          <div class="hero-media-card">
+            <div><small>Working system</small><strong>Offer → trust → action</strong></div>
+            <b>+32.8%</b>
+          </div>
+        </aside>
+      </section>
+
+      <div class="trust-strip" aria-label="Sample client strip">
+        <span>The structure fits product teams, services, and companies</span>
+        <strong>Northline</strong><strong>Forma</strong><strong>Vector</strong><strong>NovaLab</strong>
+      </div>
+
+      <section class="section" id="system">
+        <div class="section-intro">
+          <div><span class="eyebrow">Site foundation</span><h2>Not a collection of blocks — a complete business presentation.</h2></div>
+          <p>Visitors immediately understand what you do, why they can trust you, and what their next step should be.</p>
+        </div>
+        <div class="feature-grid">
+          <figure class="image-panel" data-template-slot="feature.image">
+            <img src="../assets/process-team.webp" alt="A team discussing a project structure" width="880" height="252">
+          </figure>
+          <div class="feature-stack">
+            <article><b>01</b><div><h3>Clear offer</h3><p>The main idea is visible in the first viewport and never gets lost in decoration.</p></div></article>
+            <article><b>02</b><div><h3>Proof</h3><p>Cases, figures, and process are part of the story instead of a random card grid.</p></div></article>
+            <article><b>03</b><div><h3>Calm action</h3><p>The contact path stays present without turning the site into an aggressive funnel.</p></div></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section case-layout">
+        <article class="case-story">
+          <div><span class="eyebrow">Featured case</span><h2>Results should be visible, not merely claimed.</h2><p>One strong case explains the challenge, the work, and the measurable outcome better than ten generic promises.</p></div>
+          <div class="case-result">
+            <article><strong>3.4×</strong><span>more qualified enquiries</span></article>
+            <article><strong>62%</strong><span>faster product comprehension</span></article>
+            <article><strong>18 days</strong><span>from prototype to launch</span></article>
+          </div>
+        </article>
+        <figure class="case-visual" data-template-slot="case.image">
+          <img src="../assets/case-city.webp" alt="Modern business architecture" width="385" height="376">
+          <figcaption class="case-caption"><strong>Northline Systems</strong><span>A new product structure, one coherent journey, and independent pages.</span></figcaption>
+        </figure>
+      </section>
+
+      <section class="section">
+        <div class="section-intro">
+          <div><span class="eyebrow">Process</span><h2>Four clear steps from challenge to launch.</h2></div>
+          <p>Every phase ends with a concrete result that can be reviewed and accepted.</p>
+        </div>
+        <div class="process-grid">
+          <article><b>01 · Context</b><h3>Understand</h3><p>The challenge, audience, constraints, and actual product state.</p></article>
+          <article><b>02 · Structure</b><h3>Shape</h3><p>The journey, pages, content, and visual hierarchy.</p></article>
+          <article><b>03 · Delivery</b><h3>Launch</h3><p>A working release with responsive layouts, themes, and verified routes.</p></article>
+          <article><b>04 · Support</b><h3>Develop</h3><p>Measurement, new sections, and changes without rebuilding the foundation.</p></article>
+        </div>
+      </section>
+
+      <section class="cta-band">
+        <div><span class="eyebrow">Next step</span><h2>Let’s start with the challenge, not a preset collection of blocks.</h2></div>
+        <a class="button-primary" href="contacts.html">Discuss a project</a>
+      </section>
+    </main>
+    
+    <footer class="site-footer">
+      <div class="footer-shell">
+        <div class="footer-brand">
+          <strong>Meridian</strong>
+          <p>A calm business structure for companies, products, and services.</p>
+        </div>
+        <div class="footer-column">
+          <b>Sections</b>
+          <a href="services.html">Services</a>
+          <a href="about.html">Company</a>
+          <a href="contacts.html">Contact</a>
+        </div>
+        <div class="footer-column">
+          <b>Contact</b>
+          <a href="mailto:hello@example.com">hello@example.com</a>
+          <a href="tel:+994000000000">+994 00 000 00 00</a>
+        </div>
+      </div>
+      <div class="footer-bottom">© 2026 Meridian · Business Canon v1 demonstration content</div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,31 @@
+{
+  "version": "0.2.0",
+  "sources": [
+    {
+      "id": "worldbank",
+      "role": ["historical_gdp", "historical_inflation"],
+      "status": "active",
+      "auth": "none",
+      "provenance_required": true
+    },
+    {
+      "id": "ecb",
+      "role": ["historical_daily_reference_fx"],
+      "status": "active",
+      "auth": "none",
+      "provenance_required": true,
+      "note": "Official reference rates, not live tradable market quotes."
+    },
+    {
+      "id": "bis",
+      "role": ["historical_policy_rates"],
+      "status": "active",
+      "auth": "none",
+      "provenance_required": true
+    }
+  ],
+  "market_tick_provider": {
+    "status": "not_connected",
+    "reason": "Rights and source contract not selected; no synthetic substitute is permitted."
+  }
+}

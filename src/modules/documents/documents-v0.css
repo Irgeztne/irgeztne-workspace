@@ -67,6 +67,63 @@
   gap: 8px;
 }
 
+.ns-documents-v1__format-toolbar {
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:7px;
+  margin:2px 0 4px;
+}
+
+.ns-documents-v1__format-toolbar .ns-documents-v1__btn {
+  min-width:38px;
+  min-height:34px;
+  padding:0 10px;
+}
+
+.ns-documents-v1__format-separator {
+  width:1px;
+  height:25px;
+  margin:0 2px;
+  background:rgba(113,169,242,.28);
+}
+
+.ns-documents-v1__save-state {
+  margin-left:auto;
+  padding:5px 9px;
+  border:1px solid rgba(87,190,147,.3);
+  border-radius:999px;
+  background:rgba(35,134,92,.12);
+  color:#9be2bf;
+  font-size:11px;
+  font-weight:760;
+}
+
+.ns-documents-v1__save-state[data-documents-save-state="dirty"] {
+  border-color:rgba(245,176,65,.38);
+  background:rgba(183,111,19,.14);
+  color:#ffd18b;
+}
+
+html[data-theme="light"] .ns-documents-v1__save-state,
+body[data-theme="light"] .ns-documents-v1__save-state { color:#17633f; background:#e5f7ee; border-color:#8bc8aa; }
+html[data-theme="light"] .ns-documents-v1__save-state[data-documents-save-state="dirty"],
+body[data-theme="light"] .ns-documents-v1__save-state[data-documents-save-state="dirty"] { color:#7d4d08; background:#fff2d7; border-color:#ddb76d; }
+
+/* The text changes while autosave settles, but the toolbar geometry does not. */
+.ns-documents-v1--office-classic .ns-documents-v1__save-state {
+  display: inline-flex;
+  flex: 0 0 100px;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  min-width: 100px;
+  max-width: 100px;
+  min-height: 28px;
+  text-align: center;
+  white-space: nowrap;
+}
+
 .ns-documents-v1__btn {
   appearance: none;
   border: 1px solid rgba(112, 170, 255, 0.28);
@@ -78,13 +135,14 @@
   font-size: 12px;
   font-weight: 700;
   cursor: pointer;
-  transition: transform .16s ease, border-color .16s ease, background .16s ease;
+  transition: border-color .16s ease, background .16s ease, box-shadow .16s ease;
 }
 
 .ns-documents-v1__btn:hover {
-  transform: translateY(-1px);
+  transform: none;
   border-color: rgba(112, 180, 255, 0.52);
   background: linear-gradient(180deg, rgba(42, 79, 144, 0.98), rgba(18, 44, 88, 0.98));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.07), 0 0 0 1px rgba(92,155,255,.08);
 }
 
 .ns-documents-v1__btn--primary {
@@ -239,6 +297,56 @@
     align-items: stretch;
   }
 }
+
+/* Office 1.0 inherited light theme — dark remains the default above. */
+:is(html,body)[data-theme="light"] .ns-documents-v1 { color:#10243d; }
+:is(html,body)[data-theme="light"] .ns-documents-v1__hero,
+:is(html,body)[data-theme="light"] .ns-documents-v1__panel,
+:is(html,body)[data-theme="light"] .ns-documents-v1__side-card,
+:is(html,body)[data-theme="light"] .ns-documents-v1__editor-card,
+:is(html,body)[data-theme="light"] .ns-documents-v1__future-card,
+:is(html,body)[data-theme="light"] .ns-documents-v1--compact .ns-documents-v1__compact-hero,
+:is(html,body)[data-theme="light"] .ns-documents-v1--compact .ns-documents-v1__compact-panel,
+:is(html,body)[data-theme="light"] .ns-documents-v1--compact .ns-documents-v1__compact-editor,
+:is(html,body)[data-theme="light"] .ns-documents-v1--office-classic .ns-documents-v1__office-classic-head,
+:is(html,body)[data-theme="light"] .ns-documents-v1--office-classic .ns-documents-v1__office-classic-library,
+:is(html,body)[data-theme="light"] .ns-documents-v1--office-classic .ns-documents-v1__office-classic-editor { background:#f8fbff; border-color:rgba(67,104,151,.34); box-shadow:0 12px 32px rgba(45,78,118,.1); }
+:is(html,body)[data-theme="light"] .ns-documents-v1__btn { background:#e5f0fc; border-color:rgba(67,104,151,.38); color:#173957; }
+:is(html,body)[data-theme="light"] .ns-documents-v1__btn:hover { background:#d7e9fb; border-color:#6e9ed8; }
+:is(html,body)[data-theme="light"] .ns-documents-v1__btn:focus-visible { outline:none; border-color:#2878df; box-shadow:0 0 0 3px rgba(40,120,223,.18); }
+:is(html,body)[data-theme="light"] .ns-documents-v1__btn:disabled { opacity:.46; cursor:not-allowed; }
+:is(html,body)[data-theme="light"] .ns-documents-v1__btn--primary { background:linear-gradient(180deg,#3f8cf1,#1767d7); border-color:#1767d7; color:#fff; }
+:is(html,body)[data-theme="light"] .ns-documents-v1__btn--danger { background:linear-gradient(180deg,#d94c60,#aa293e); border-color:#a8263b; color:#fff; }
+:is(html,body)[data-theme="light"] .ns-documents-v1__input,
+:is(html,body)[data-theme="light"] .ns-documents-v1__select,
+:is(html,body)[data-theme="light"] .ns-documents-v1__textarea { background:#fff; border-color:rgba(67,104,151,.42); color:#10243d; }
+:is(html,body)[data-theme="light"] .ns-documents-v1__item,
+:is(html,body)[data-theme="light"] .ns-documents-v1--compact .ns-documents-v1__compact-item,
+:is(html,body)[data-theme="light"] .ns-documents-v1--office-classic .ns-documents-v1__compact-item { background:#edf4fc; border-color:rgba(67,104,151,.34); color:#10243d; }
+:is(html,body)[data-theme="light"] .ns-documents-v1__item:hover,
+:is(html,body)[data-theme="light"] .ns-documents-v1__item.is-active,
+:is(html,body)[data-theme="light"] .ns-documents-v1--compact .ns-documents-v1__compact-item:hover,
+:is(html,body)[data-theme="light"] .ns-documents-v1--compact .ns-documents-v1__compact-item.is-active,
+:is(html,body)[data-theme="light"] .ns-documents-v1--office-classic .ns-documents-v1__compact-item:hover,
+:is(html,body)[data-theme="light"] .ns-documents-v1--office-classic .ns-documents-v1__compact-item.is-active { background:#dcecff; border-color:#5b91d2; }
+:is(html,body)[data-theme="light"] .ns-documents-v1__relation-panel,
+:is(html,body)[data-theme="light"] .ns-documents-v1__link-block,
+:is(html,body)[data-theme="light"] .ns-documents-v1__meta-card { background:#edf4fc; border-color:rgba(67,104,151,.3); }
+:is(html,body)[data-theme="light"] .ns-documents-v1__link-pill,
+:is(html,body)[data-theme="light"] .ns-documents-v1__chip { background:#e1edfa; border-color:#a4bddb; color:#254a72; }
+:is(html,body)[data-theme="light"] .ns-documents-v1__kicker,
+:is(html,body)[data-theme="light"] .ns-documents-v1__meta-label,
+:is(html,body)[data-theme="light"] .ns-documents-v1__small-label,
+:is(html,body)[data-theme="light"] .ns-documents-v1__copy,
+:is(html,body)[data-theme="light"] .ns-documents-v1__hint,
+:is(html,body)[data-theme="light"] .ns-documents-v1__item-meta,
+:is(html,body)[data-theme="light"] .ns-documents-v1__relation-copy span,
+:is(html,body)[data-theme="light"] .ns-documents-v1--office-classic .ns-documents-v1__office-classic-copy,
+:is(html,body)[data-theme="light"] .ns-documents-v1--office-classic .ns-documents-v1__office-classic-note,
+:is(html,body)[data-theme="light"] .ns-documents-v1--office-classic .ns-documents-v1__compact-item span { color:#526b88; }
+:is(html,body)[data-theme="light"] .ns-documents-v1__relation-copy strong,
+:is(html,body)[data-theme="light"] .ns-documents-v1__link-head strong,
+:is(html,body)[data-theme="light"] .ns-documents-v1--office-classic .ns-documents-v1__office-classic-meta strong { color:#10243d; }
 
 
 /* Relations v0 document link panel */
@@ -1067,3 +1175,1045 @@
   }
 }
 
+
+/* =========================================================
+   IRGEZTNE Workspace v031e
+   Restored classic Compact Office.
+   Historical v90 working pattern, current shared documents store.
+   The large Office remains unchanged.
+   ========================================================= */
+
+.ns-documents-v1--office-classic {
+  display: grid;
+  gap: 10px;
+  min-height: auto;
+  align-content: start;
+}
+
+.ns-documents-v1--office-classic .ns-documents-v1__office-classic-head,
+.ns-documents-v1--office-classic .ns-documents-v1__office-classic-library,
+.ns-documents-v1--office-classic .ns-documents-v1__office-classic-editor {
+  border: 1px solid rgba(91, 151, 255, 0.22);
+  background:
+    radial-gradient(circle at 12% 0%, rgba(73, 142, 255, 0.12), transparent 42%),
+    linear-gradient(180deg, rgba(13, 31, 58, 0.96), rgba(8, 22, 43, 0.96));
+  border-radius: 17px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.035);
+}
+
+.ns-documents-v1--office-classic .ns-documents-v1__office-classic-head,
+.ns-documents-v1--office-classic .ns-documents-v1__office-classic-library,
+.ns-documents-v1--office-classic .ns-documents-v1__office-classic-editor {
+  padding: 12px;
+}
+
+.ns-documents-v1--office-classic .ns-documents-v1__office-classic-head {
+  display: grid;
+  gap: 10px;
+}
+
+.ns-documents-v1--office-classic .ns-documents-v1__office-classic-title {
+  margin: 3px 0 5px;
+  font-size: 22px;
+  line-height: 1.05;
+  font-weight: 850;
+}
+
+.ns-documents-v1--office-classic .ns-documents-v1__office-classic-copy,
+.ns-documents-v1--office-classic .ns-documents-v1__office-classic-note,
+.ns-documents-v1--office-classic .ns-documents-v1__office-classic-empty,
+.ns-documents-v1--office-classic .ns-documents-v1__office-classic-editor--empty p {
+  margin: 0;
+  color: var(--text-2, #aebbd0);
+  font-size: 12px;
+  line-height: 1.42;
+}
+
+.ns-documents-v1--office-classic .ns-documents-v1__office-classic-head-actions,
+.ns-documents-v1--office-classic .ns-documents-v1__office-classic-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.ns-documents-v1--office-classic .ns-documents-v1__btn {
+  min-width: 0;
+  min-height: 34px;
+  padding: 0 10px;
+  border-radius: 11px;
+  font-size: 12px;
+}
+
+.ns-documents-v1--office-classic .ns-documents-v1__office-classic-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 9px;
+}
+
+.ns-documents-v1--office-classic .ns-documents-v1__office-classic-section-head strong {
+  font-size: 15px;
+}
+
+.ns-documents-v1--office-classic .ns-documents-v1__office-classic-section-head span {
+  display: inline-grid;
+  place-items: center;
+  min-width: 28px;
+  min-height: 24px;
+  padding: 0 7px;
+  border-radius: 999px;
+  border: 1px solid rgba(118, 169, 255, 0.22);
+  background: rgba(47, 123, 230, 0.18);
+  color: #dbeafe;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.ns-documents-v1--office-classic .ns-documents-v1__office-classic-list {
+  display: grid;
+  gap: 7px;
+  max-height: 176px;
+  overflow: auto;
+  padding-right: 3px;
+}
+
+.ns-documents-v1--office-classic .ns-documents-v1__compact-item {
+  width: 100%;
+  min-width: 0;
+  text-align: left;
+  display: grid;
+  gap: 3px;
+  border: 1px solid rgba(100, 155, 230, 0.18);
+  background: rgba(11, 26, 51, 0.78);
+  border-radius: 13px;
+  padding: 10px;
+  color: var(--text-1, #eaf2ff);
+  cursor: pointer;
+}
+
+.ns-documents-v1--office-classic .ns-documents-v1__compact-item:hover,
+.ns-documents-v1--office-classic .ns-documents-v1__compact-item.is-active {
+  border-color: rgba(91, 151, 255, 0.58);
+  background: linear-gradient(180deg, rgba(23, 50, 91, 0.96), rgba(13, 31, 61, 0.96));
+}
+
+.ns-documents-v1--office-classic .ns-documents-v1__compact-item strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+}
+
+.ns-documents-v1--office-classic .ns-documents-v1__compact-item span {
+  color: var(--text-2, #aebbd0);
+  font-size: 11px;
+}
+
+.ns-documents-v1--office-classic .ns-documents-v1__office-classic-editor {
+  display: grid;
+  gap: 10px;
+}
+
+.ns-documents-v1--office-classic .ns-documents-v1__office-classic-selects {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.ns-documents-v1--office-classic .ns-documents-v1__input,
+.ns-documents-v1--office-classic .ns-documents-v1__select,
+.ns-documents-v1--office-classic .ns-documents-v1__textarea {
+  border-radius: 11px;
+  padding: 9px 10px;
+  font-size: 13px;
+}
+
+.ns-documents-v1--office-classic .ns-documents-v1__office-classic-textarea {
+  min-height: 185px !important;
+  max-height: 330px;
+  resize: vertical;
+}
+
+.ns-documents-v1--office-classic .ns-documents-v1__office-classic-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px 12px;
+  color: var(--text-2, #aebbd0);
+  font-size: 11px;
+}
+
+.ns-documents-v1--office-classic .ns-documents-v1__office-classic-meta strong {
+  color: var(--text-1, #eaf2ff);
+}
+
+.ns-documents-v1--office-classic .ns-documents-v1__office-classic-actions .ns-documents-v1__btn--danger {
+  border-color: rgba(255, 104, 124, 0.48);
+  background: linear-gradient(180deg, rgba(132, 45, 62, 0.98), rgba(82, 24, 38, 0.98));
+  color: #fff4f6;
+}
+
+.ns-documents-v1--office-classic .ns-documents-v1__office-classic-actions .ns-documents-v1__btn--danger:hover {
+  border-color: rgba(255, 125, 145, 0.7);
+  background: linear-gradient(180deg, rgba(153, 49, 70, 1), rgba(96, 27, 44, 1));
+}
+
+.ns-documents-v1--office-classic .ns-documents-v1__office-classic-note {
+  padding-top: 2px;
+}
+
+.ns-documents-v1--office-classic .ns-documents-v1__office-classic-editor--empty {
+  justify-items: start;
+}
+
+.ns-documents-v1--office-classic .ns-documents-v1__status {
+  min-height: 0;
+  font-size: 12px;
+}
+
+@media (min-width: 470px) {
+  .ns-documents-v1--office-classic .ns-documents-v1__office-classic-actions {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 390px) {
+  .ns-documents-v1--office-classic .ns-documents-v1__office-classic-selects,
+  .ns-documents-v1--office-classic .ns-documents-v1__office-classic-head-actions,
+  .ns-documents-v1--office-classic .ns-documents-v1__office-classic-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Office stabilization pass.
+   Full Office owns a single document-workspace wrapper.  This prevents an
+   outer shell grid from auto-placing the editor's title, canvas, actions and
+   relation panels into the same cells.  Compact Office has different markup
+   and intentionally does not match these selectors. */
+.ns-documents-v1--office-shell {
+  grid-template-columns: minmax(238px, 248px) minmax(0, 1fr) !important;
+  grid-template-rows: minmax(0, 1fr) auto !important;
+  align-items: stretch !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+}
+
+.ns-documents-v1--office-shell.is-library-collapsed {
+  grid-template-columns: 48px minmax(0, 1fr) !important;
+}
+
+.ns-documents-v1--office-shell > .ns-documents-v1__object-browser,
+.ns-documents-v1--office-shell > .ns-documents-v1__native-editor {
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+.ns-documents-v1--office-shell > .ns-documents-v1__native-editor {
+  overflow: auto !important;
+}
+
+.ns-documents-v1--office-shell.is-library-collapsed > .ns-documents-v1__object-browser {
+  width: 48px !important;
+  min-width: 48px !important;
+  max-width: 48px !important;
+  overflow: hidden !important;
+}
+
+.ns-documents-v1--office-shell.is-library-collapsed .ns-documents-v1__object-browser-title {
+  justify-content: center !important;
+}
+
+.ns-documents-v1--office-shell.is-library-collapsed .ns-documents-v1__object-browser-title > strong,
+.ns-documents-v1--office-shell.is-library-collapsed .ns-documents-v1__object-count,
+.ns-documents-v1--office-shell.is-library-collapsed .ns-documents-v1__object-browser-actions,
+.ns-documents-v1--office-shell.is-library-collapsed .ns-documents-v1__object-list {
+  display: none !important;
+}
+
+.ns-documents-v1--office-shell .ns-documents-v1__object-browser-actions {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  gap: 8px !important;
+  width: 100% !important;
+}
+
+.ns-documents-v1--office-shell .ns-documents-v1__object-browser-actions .ns-documents-v1__btn {
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+.ns-documents-v1--office-shell .ns-documents-v1__document-workspace {
+  grid-column: 1 / -1 !important;
+  grid-row: 1 / -1 !important;
+  position: relative !important;
+  inset: auto !important;
+  isolation: isolate;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 10px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  opacity: 1 !important;
+  filter: none !important;
+  background: transparent !important;
+}
+
+.ns-documents-v1--office-shell .ns-documents-v1__document-workspace::before,
+.ns-documents-v1--office-shell .ns-documents-v1__document-workspace::after {
+  content: none !important;
+  display: none !important;
+}
+
+.ns-documents-v1--office-shell .ns-documents-v1__document-workspace > * {
+  position: relative !important;
+  inset: auto !important;
+  grid-column: auto !important;
+  grid-row: auto !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+.ns-documents-v1--office-shell .ns-documents-v1__document-workspace > .ns-documents-v1__form-grid { order: 1 !important; }
+.ns-documents-v1--office-shell .ns-documents-v1__document-workspace > .ns-documents-v1__format-toolbar { order: 2 !important; }
+.ns-documents-v1--office-shell .ns-documents-v1__document-workspace > .ns-documents-v1__field--body { order: 3 !important; }
+.ns-documents-v1--office-shell .ns-documents-v1__document-workspace > .ns-documents-v1__document-actions { order: 4 !important; }
+.ns-documents-v1--office-shell .ns-documents-v1__document-workspace > .ns-documents-v1__hint { order: 5 !important; }
+.ns-documents-v1--office-shell .ns-documents-v1__document-workspace > .ns-documents-v1__relation-panel { order: 6 !important; }
+.ns-documents-v1--office-shell .ns-documents-v1__document-workspace > .ns-documents-v1__link-panel { order: 7 !important; }
+
+.ns-documents-v1--office-shell .ns-documents-v1__form-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(150px, 180px) !important;
+}
+
+.ns-documents-v1--office-shell .ns-documents-v1__format-toolbar {
+  flex: 0 0 auto !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  overflow: visible !important;
+}
+
+.ns-documents-v1--office-shell .ns-documents-v1__field--body {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 0 0 auto !important;
+  gap: 8px !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  overflow: visible !important;
+  background: transparent !important;
+}
+
+.ns-documents-v1--office-shell .ns-documents-v1__rich-editor {
+  position: relative !important;
+  inset: auto !important;
+  display: block !important;
+  flex: 0 0 auto !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  height: auto !important;
+  min-height: 330px !important;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: 20px 22px !important;
+  overflow: visible !important;
+  border: 1px solid #b7c7da !important;
+  border-radius: 14px !important;
+  outline: none !important;
+  background: #fbfcfe !important;
+  color: #17243a !important;
+  opacity: 1 !important;
+  filter: none !important;
+  font-size: 15px !important;
+  line-height: 1.65 !important;
+  caret-color: #245f9e !important;
+}
+
+.ns-documents-v1--office-shell .ns-documents-v1__rich-editor:empty::before {
+  content: attr(data-placeholder);
+  color: var(--text-2, #aebbd0);
+  pointer-events: none;
+}
+
+.ns-documents-v1--office-shell .ns-documents-v1__rich-editor:focus {
+  border-color: #6d9fd4 !important;
+  box-shadow: 0 0 0 3px rgba(64, 132, 255, .16) !important;
+}
+
+.ns-documents-v1--office-shell .ns-documents-v1__document-actions {
+  position: relative !important;
+  inset: auto !important;
+  z-index: 1 !important;
+  display: flex !important;
+  flex: 0 0 auto !important;
+  flex-wrap: wrap !important;
+  justify-content: flex-start !important;
+  align-items: flex-end !important;
+  gap: 8px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 58px !important;
+  margin: 0 !important;
+  padding: 12px 0 0 !important;
+  overflow: visible !important;
+  border-top: 1px solid rgba(112, 170, 255, .18) !important;
+  background: transparent !important;
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+.ns-documents-v1--office-shell .ns-documents-v1__document-actions > * {
+  position: static !important;
+  inset: auto !important;
+  flex: 0 0 auto !important;
+  margin: 0 !important;
+  transform: none !important;
+}
+
+.ns-documents-v1--office-shell .ns-documents-v1__document-actions > .ns-documents-v1__field {
+  flex-basis: 180px !important;
+  width: 180px !important;
+  min-width: 150px !important;
+  max-width: 180px !important;
+}
+
+.ns-documents-v1--office-shell .ns-documents-v1__document-actions .ns-documents-v1__btn--danger {
+  margin-left: 0 !important;
+}
+
+.ns-documents-v1--office-shell .ns-documents-v1__relation-panel,
+.ns-documents-v1--office-shell .ns-documents-v1__link-panel {
+  position: relative !important;
+  inset: auto !important;
+  z-index: 0 !important;
+  margin: 8px 0 0 !important;
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+.ns-documents-v1--office-shell .ns-documents-v1__save-state {
+  display: inline-flex !important;
+  flex: 0 0 112px !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 112px !important;
+  min-width: 112px !important;
+  max-width: 112px !important;
+  min-height: 28px !important;
+  margin-left: auto !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+}
+
+.ns-documents-v1--office-shell .ns-documents-v1__btn,
+.ns-documents-v1--office-shell .ns-documents-v1__library-toggle,
+.ns-documents-v1--office-shell .ns-documents-v1__object-item {
+  box-sizing: border-box !important;
+  transform: none !important;
+  translate: none !important;
+  transition-property: color, background-color, border-color, box-shadow, opacity !important;
+  transition-duration: .14s !important;
+  transition-timing-function: ease !important;
+}
+
+.ns-documents-v1--office-shell .ns-documents-v1__btn:hover,
+.ns-documents-v1--office-shell .ns-documents-v1__btn:focus-visible,
+.ns-documents-v1--office-shell .ns-documents-v1__btn:active,
+.ns-documents-v1--office-shell .ns-documents-v1__btn:disabled,
+.ns-documents-v1--office-shell .ns-documents-v1__object-item:hover,
+.ns-documents-v1--office-shell .ns-documents-v1__object-item:focus-visible,
+.ns-documents-v1--office-shell .ns-documents-v1__library-toggle:hover,
+.ns-documents-v1--office-shell .ns-documents-v1__library-toggle:focus-visible {
+  transform: none !important;
+  translate: none !important;
+}
+
+@media (max-width: 980px) {
+  .ns-documents-v1--office-shell {
+    grid-template-columns: 210px minmax(0, 1fr) !important;
+  }
+
+  .ns-documents-v1--office-shell.is-library-collapsed {
+    grid-template-columns: 48px minmax(0, 1fr) !important;
+  }
+
+  .ns-documents-v1--office-shell .ns-documents-v1__form-grid,
+  .ns-documents-v1--office-shell .ns-documents-v1__relation-panel,
+  .ns-documents-v1--office-shell .ns-documents-v1__link-add {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+
+/* IRGEZTNE_DOCUMENTS_WORKSPACE_FILE_UI_V1 */
+.ns-documents-v1__file-entry-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)); /* IRGEZTNE_OFFICE_ATTACHMENT_ACTIONS_ROW_R1O */
+  gap: 8px;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.ns-documents-v1__file-entry-actions .ns-documents-v1__btn {
+  width: 100%;
+  justify-content: center;
+}
+
+.ns-documents-v1__workspace-file-pill {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+/* IRGEZTNE_DOCUMENTS_FILES_CHOOSER_UX_V1 */
+.ns-documents-v1__files-library-chooser {
+  margin-top: 8px;
+}
+
+.ns-documents-v1__files-library-chooser[hidden] {
+  display: none !important;
+}
+
+
+/* IRGEZTNE_DOCUMENTS_INLINE_IMAGE_V1 */
+.ns-documents-v1__rich-editor .ns-documents-v1__inline-image {
+  display: block;
+  max-width: min(100%, 920px);
+  height: auto;
+  margin: 18px auto;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.16);
+}
+
+
+/* IRGEZTNE_DOCUMENTS_UI_POLISH_V3
+   The formatting bar is a docked editor strip, not a floating card laid over
+   the white document. It remains sticky, but its opaque rail visually owns the
+   top edge while content scrolls underneath without looking clipped. */
+.ns-documents-v1--office-shell > .ns-documents-v1__native-editor .ns-documents-v1__format-toolbar {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 30 !important;
+  padding: 8px 10px 10px !important;
+  margin: 0 0 10px !important;
+  border: 0 !important;
+  border-bottom: 1px solid rgba(112, 170, 255, .24) !important;
+  border-radius: 0 !important;
+  background: #f5f8fc !important;
+  box-shadow: 0 9px 14px -14px rgba(15, 23, 42, .7) !important;
+  backdrop-filter: none !important;
+}
+
+html[data-theme="dark"] .ns-documents-v1--office-shell > .ns-documents-v1__native-editor .ns-documents-v1__format-toolbar,
+body[data-theme="dark"] .ns-documents-v1--office-shell > .ns-documents-v1__native-editor .ns-documents-v1__format-toolbar {
+  background: #0b1930 !important;
+  border-bottom-color: rgba(112, 170, 255, .22) !important;
+}
+
+/* Keep Chromium's native caret, then reinforce it with a 2px overlay from JS. */
+.ns-documents-v1--office-shell .ns-documents-v1__rich-editor {
+  caret-color: #075fc7 !important;
+  cursor: text !important;
+}
+
+.ns-documents-v1__caret-boost {
+  position: fixed;
+  z-index: 2147483000;
+  width: 2px;
+  min-height: 15px;
+  pointer-events: none;
+  border-radius: 2px;
+  background: #075fc7;
+  box-shadow: 0 0 0 1px rgba(7, 95, 199, .12);
+  transform: translateX(-1px);
+  animation: ns-documents-caret-boost-blink 1.05s steps(1, end) infinite;
+}
+
+.ns-documents-v1__caret-boost[hidden] {
+  display: none !important;
+}
+
+@keyframes ns-documents-caret-boost-blink {
+  0%, 54% { opacity: 1; }
+  55%, 100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ns-documents-v1__caret-boost { animation: none; }
+}
+
+/* Inline images keep their original file quality but start at a document-friendly
+   display size instead of filling the whole laptop-width canvas. */
+.ns-documents-v1__rich-editor .ns-documents-v1__inline-image {
+  max-width: min(72%, 640px) !important;
+  max-height: 520px !important;
+  width: auto !important;
+  height: auto !important;
+  object-fit: contain !important;
+}
+
+.ns-documents-v1__rich-editor a[href] {
+  color: #1769c2;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+@media (max-width: 760px) {
+  .ns-documents-v1__rich-editor .ns-documents-v1__inline-image {
+    max-width: 100% !important;
+    max-height: 460px !important;
+  }
+}
+
+/* IRGEZTNE_DOCUMENTS_CARET_MATCH_V4
+   Match the accepted Web Studio writing-surface caret behavior instead of
+   painting a second blinking caret over Chromium's native one. The document
+   canvas is white in both app themes, so the high-contrast light-theme Web
+   Studio caret color is the correct choice here. */
+.ns-documents-v1--office-shell .ns-documents-v1__rich-editor,
+.ns-documents-v1--office-shell .ns-documents-v1__rich-editor * {
+  -webkit-user-select: text !important;
+  user-select: text !important;
+}
+
+.ns-documents-v1--office-shell .ns-documents-v1__rich-editor {
+  pointer-events: auto !important;
+  cursor: text !important;
+  caret-color: #102033 !important;
+  -webkit-user-modify: read-write !important;
+}
+
+/* V3's synthetic blue caret was useful diagnostically but visually blinked
+   differently from Web Studio. Keep the JS harmlessly installed for rollback
+   compatibility, but suppress the overlay and use the native black caret. */
+.ns-documents-v1__caret-boost {
+  display: none !important;
+}
+
+/* IRGEZTNE_DOCUMENTS_TOOLBAR_BLUE_V5
+   The formatting rail belongs to the dark-blue Office chrome, not to the
+   white document canvas. Keep it blue in both themes and give the save state
+   a strong, readable contrast at the far right. */
+.ns-documents-v1--office-shell > .ns-documents-v1__native-editor .ns-documents-v1__format-toolbar,
+html[data-theme="dark"] .ns-documents-v1--office-shell > .ns-documents-v1__native-editor .ns-documents-v1__format-toolbar,
+body[data-theme="dark"] .ns-documents-v1--office-shell > .ns-documents-v1__native-editor .ns-documents-v1__format-toolbar,
+html[data-theme="light"] .ns-documents-v1--office-shell > .ns-documents-v1__native-editor .ns-documents-v1__format-toolbar,
+body[data-theme="light"] .ns-documents-v1--office-shell > .ns-documents-v1__native-editor .ns-documents-v1__format-toolbar {
+  background: linear-gradient(180deg, #174a84 0%, #123862 100%) !important;
+  border-bottom: 1px solid #2e6da8 !important;
+  box-shadow: 0 8px 16px -14px rgba(3, 12, 28, .95) !important;
+}
+
+.ns-documents-v1--office-shell .ns-documents-v1__format-toolbar .ns-documents-v1__btn,
+html[data-theme="light"] .ns-documents-v1--office-shell .ns-documents-v1__format-toolbar .ns-documents-v1__btn,
+body[data-theme="light"] .ns-documents-v1--office-shell .ns-documents-v1__format-toolbar .ns-documents-v1__btn {
+  background: #0e2d52 !important;
+  border-color: rgba(174, 211, 255, .34) !important;
+  color: #f6f9ff !important;
+}
+
+.ns-documents-v1--office-shell .ns-documents-v1__format-toolbar .ns-documents-v1__btn:hover,
+.ns-documents-v1--office-shell .ns-documents-v1__format-toolbar .ns-documents-v1__btn:focus-visible {
+  background: #1d558f !important;
+  border-color: #82b9ef !important;
+  color: #ffffff !important;
+}
+
+.ns-documents-v1--office-shell .ns-documents-v1__format-toolbar .ns-documents-v1__style-control {
+  color: #dfeeff !important;
+}
+
+.ns-documents-v1--office-shell .ns-documents-v1__format-toolbar .ns-documents-v1__style-control > span {
+  color: #dfeeff !important;
+}
+
+.ns-documents-v1--office-shell .ns-documents-v1__format-toolbar .ns-documents-v1__style-control select {
+  background: #0e2d52 !important;
+  border-color: rgba(174, 211, 255, .34) !important;
+  color: #ffffff !important;
+}
+
+.ns-documents-v1--office-shell .ns-documents-v1__format-toolbar .ns-documents-v1__format-separator {
+  background: rgba(204, 226, 255, .42) !important;
+}
+
+.ns-documents-v1--office-shell .ns-documents-v1__format-toolbar .ns-documents-v1__save-state,
+html[data-theme="light"] .ns-documents-v1--office-shell .ns-documents-v1__format-toolbar .ns-documents-v1__save-state,
+body[data-theme="light"] .ns-documents-v1--office-shell .ns-documents-v1__format-toolbar .ns-documents-v1__save-state {
+  background: #0d5b42 !important;
+  border-color: #62d6a5 !important;
+  color: #f2fff9 !important;
+  font-weight: 800 !important;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.04) !important;
+}
+
+.ns-documents-v1--office-shell .ns-documents-v1__format-toolbar .ns-documents-v1__save-state[data-documents-save-state="saving"] {
+  background: #174d79 !important;
+  border-color: #8ac7ef !important;
+  color: #f4fbff !important;
+}
+
+.ns-documents-v1--office-shell .ns-documents-v1__format-toolbar .ns-documents-v1__save-state[data-documents-save-state="dirty"] {
+  background: #74480d !important;
+  border-color: #f1bd63 !important;
+  color: #fff4dc !important;
+}
+
+
+/* IRGEZTNE_DOCUMENTS_DENSE_TOOLBAR_V6
+   Compact segmented formatting rail: no visual cracks between controls. */
+.ns-documents-v1--office-shell .ns-documents-v1__format-toolbar {
+  gap: 0 !important;
+  padding: 6px 8px !important;
+  margin: 0 !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  scrollbar-width: thin;
+}
+
+.ns-documents-v1--office-shell .ns-documents-v1__format-toolbar .ns-documents-v1__style-control {
+  min-height: 34px !important;
+  margin: 0 !important;
+  border-radius: 8px 0 0 8px !important;
+  border-right-width: 0 !important;
+}
+
+.ns-documents-v1--office-shell .ns-documents-v1__format-toolbar .ns-documents-v1__btn {
+  margin: 0 !important;
+  min-height: 34px !important;
+  border-radius: 0 !important;
+}
+
+.ns-documents-v1--office-shell .ns-documents-v1__format-toolbar .ns-documents-v1__format-separator {
+  width: 0 !important;
+  height: 34px !important;
+  margin: 0 !important;
+  border-left: 1px solid rgba(204, 226, 255, .42) !important;
+  background: transparent !important;
+}
+
+.ns-documents-v1--office-shell .ns-documents-v1__format-toolbar .ns-documents-v1__save-state {
+  margin-left: auto !important;
+  margin-right: 0 !important;
+  min-height: 34px !important;
+}
+
+.ns-documents-v1--office-shell .ns-documents-v1__rich-editor a[href] {
+  cursor: pointer !important;
+  text-decoration: underline !important;
+  text-underline-offset: 2px !important;
+}
+
+
+/* IRGEZTNE_DOCUMENTS_DENSE_TOOLBAR_V7
+   Final compact Office formatting rail. Controls touch as one segmented group;
+   the document cannot show through between them. */
+.ns-documents-v1--office-shell > .ns-documents-v1__native-editor .ns-documents-v1__format-toolbar,
+.ns-documents-v1--office-shell .ns-documents-v1__format-toolbar {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: stretch !important;
+  gap: 0 !important;
+  min-height: 42px !important;
+  padding: 4px 6px !important;
+  margin: 0 !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  background: linear-gradient(180deg, #174a84 0%, #123862 100%) !important;
+}
+
+.ns-documents-v1--office-shell .ns-documents-v1__format-toolbar > .ns-documents-v1__style-control {
+  flex: 0 0 auto !important;
+  min-height: 34px !important;
+  height: 34px !important;
+  margin: 0 !important;
+  padding: 0 7px !important;
+  gap: 5px !important;
+  border-radius: 8px 0 0 8px !important;
+  border-right-width: 0 !important;
+  background: #0e2d52 !important;
+}
+
+.ns-documents-v1--office-shell .ns-documents-v1__format-toolbar > .ns-documents-v1__btn {
+  flex: 0 0 auto !important;
+  min-width: 36px !important;
+  min-height: 34px !important;
+  height: 34px !important;
+  margin: 0 !important;
+  padding: 0 9px !important;
+  border-radius: 0 !important;
+  border-left-color: rgba(174, 211, 255, .28) !important;
+}
+
+.ns-documents-v1--office-shell .ns-documents-v1__format-toolbar > .ns-documents-v1__btn + .ns-documents-v1__btn {
+  margin-left: -1px !important;
+}
+
+.ns-documents-v1--office-shell .ns-documents-v1__format-toolbar > .ns-documents-v1__format-separator {
+  flex: 0 0 1px !important;
+  width: 1px !important;
+  height: 34px !important;
+  margin: 0 !important;
+  border: 0 !important;
+  background: rgba(204, 226, 255, .42) !important;
+}
+
+.ns-documents-v1--office-shell .ns-documents-v1__format-toolbar > .ns-documents-v1__save-state {
+  flex: 0 0 112px !important;
+  min-width: 112px !important;
+  width: 112px !important;
+  min-height: 34px !important;
+  height: 34px !important;
+  margin: 0 0 0 auto !important;
+  border-radius: 999px !important;
+}
+
+.ns-documents-v1--office-shell .ns-documents-v1__rich-editor a[href] {
+  cursor: pointer !important;
+  color: #1769c2 !important;
+  text-decoration: underline !important;
+  text-underline-offset: 2px !important;
+}
+
+/* IRGEZTNE_DOCUMENTS_LINK_DIALOG_V7 */
+.ns-documents-v1__link-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483200;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(3, 10, 22, .58);
+  backdrop-filter: blur(2px);
+}
+
+.ns-documents-v1__link-dialog {
+  width: min(460px, calc(100vw - 40px));
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid #315f91;
+  border-radius: 14px;
+  background: #0d1d33;
+  color: #eef6ff;
+  box-shadow: 0 22px 60px rgba(0,0,0,.48);
+}
+
+.ns-documents-v1__link-dialog-title {
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.ns-documents-v1__link-dialog-selection {
+  overflow: hidden;
+  padding: 8px 10px;
+  border: 1px solid rgba(126, 181, 239, .24);
+  border-radius: 9px;
+  color: #cfe4fb;
+  background: #102945;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.ns-documents-v1__link-dialog-label {
+  display: grid;
+  gap: 6px;
+  font-size: 12px;
+  color: #c7dbf2;
+}
+
+.ns-documents-v1__link-dialog input {
+  width: 100%;
+  min-height: 40px;
+  padding: 0 11px;
+  border: 1px solid #4776aa;
+  border-radius: 9px;
+  outline: none;
+  background: #f8fbff;
+  color: #14233a;
+  font: 14px/1.2 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.ns-documents-v1__link-dialog input:focus {
+  border-color: #76b8ff;
+  box-shadow: 0 0 0 3px rgba(69, 148, 236, .20);
+}
+
+.ns-documents-v1__link-dialog-error {
+  color: #ffb4b4;
+  font-size: 12px;
+}
+
+.ns-documents-v1__link-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.ns-documents-v1__link-dialog-actions button {
+  min-height: 36px;
+  padding: 0 13px;
+  border: 1px solid #3b5d82;
+  border-radius: 9px;
+  background: #142a46;
+  color: #eef6ff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ns-documents-v1__link-dialog-actions button.is-primary {
+  border-color: #4f91dc;
+  background: #1768bf;
+  color: #fff;
+}
+
+
+/* IRGEZTNE_DOCUMENTS_FINAL_V8
+   Remove the visible strip of document/image above the sticky formatting rail.
+   The gap came from Office native-editor top padding, not from the buttons. */
+.ns-documents-v1--office-shell[data-office-surface-type="document"] > .ns-documents-v1__native-editor {
+  padding-top: 0 !important;
+}
+
+.ns-documents-v1--office-shell[data-office-surface-type="document"] > .ns-documents-v1__native-editor .ns-documents-v1__format-toolbar {
+  top: 0 !important;
+  margin-top: 0 !important;
+}
+
+.ns-documents-v1__link-dialog-hint {
+  display: block;
+  margin-top: -3px;
+  color: #8fa9c5;
+  font-size: 11px;
+  line-height: 1.3;
+}
+
+
+/* IRGEZTNE_DOCUMENT_ATTACHMENTS_RELEASE_R1
+   Attachment identity and unlink are separate controls. */
+.ns-documents-v1__workspace-file-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  max-width: min(100%, 420px);
+}
+.ns-documents-v1__workspace-file-pill-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ns-documents-v1__workspace-file-pill > button {
+  flex: 0 0 auto;
+}
+
+
+/* IRGEZTNE_OFFICE_ATTACHMENT_TO_DOCUMENT_FINAL_R1I */
+.ns-documents-v1__workspace-file-insert {
+  min-height: 24px;
+  padding: 2px 8px;
+  border: 1px solid rgba(99, 164, 255, 0.42);
+  border-radius: 7px;
+  background: rgba(38, 112, 207, 0.18);
+  color: inherit;
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+.ns-documents-v1__workspace-file-insert:hover {
+  background: rgba(38, 112, 207, 0.30);
+}
+
+/* IRGEZTNE_OFFICE_ATTACHMENT_BUTTON_GEOMETRY_R1J
+   CSS-only: make the insert action a real, non-overlapping button. */
+.ns-documents-v1__workspace-file-pill {
+  overflow: visible;
+}
+.ns-documents-v1__workspace-file-pill > .ns-documents-v1__workspace-file-insert {
+  width: auto;
+  min-width: 74px;
+  height: 24px;
+  min-height: 24px;
+  padding: 2px 9px;
+  line-height: 18px;
+  white-space: nowrap;
+  overflow: visible;
+  text-overflow: clip;
+  background: rgba(38, 112, 207, 0.18);
+  border: 1px solid rgba(99, 164, 255, 0.42);
+  border-radius: 7px;
+}
+.ns-documents-v1__workspace-file-pill > .ns-documents-v1__workspace-file-insert:hover {
+  background: rgba(38, 112, 207, 0.30);
+  color: #fff;
+}
+.ns-documents-v1__workspace-file-pill > [data-documents-action="remove-workspace-file-ref"] {
+  width: 20px;
+  min-width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+}
+
+/* IRGEZTNE_WORKSPACE_FILE_OPEN_R1N
+   Neutral open action for File Store-backed document attachments. */
+.ns-documents-v1__workspace-file-pill > .ns-documents-v1__workspace-file-open {
+  width: auto;
+  min-width: 58px;
+  height: 24px;
+  min-height: 24px;
+  padding: 2px 8px;
+  line-height: 18px;
+  white-space: nowrap;
+  overflow: visible;
+  text-overflow: clip;
+  border: 1px solid rgba(99, 164, 255, 0.42);
+  border-radius: 7px;
+  background: rgba(38, 112, 207, 0.18);
+  color: inherit;
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.ns-documents-v1__workspace-file-pill > .ns-documents-v1__workspace-file-open:hover {
+  background: rgba(38, 112, 207, 0.30);
+  color: #ffffff;
+}
+
+
+/* IRGEZTNE_OFFICE_ATTACHMENT_INSERT_GREEN_R1K
+   CSS-only release polish: distinguish the positive "Insert into document"
+   action from the neutral attachment chip and unlink control. */
+.ns-documents-v1__workspace-file-pill > .ns-documents-v1__workspace-file-insert {
+  background: rgba(24, 150, 96, 0.20);
+  border-color: rgba(65, 210, 145, 0.55);
+  color: #bdf6d9;
+}
+
+.ns-documents-v1__workspace-file-pill > .ns-documents-v1__workspace-file-insert:hover {
+  background: rgba(24, 150, 96, 0.34);
+  border-color: rgba(84, 232, 162, 0.72);
+  color: #ffffff;
+}
+
+
+/* IRGEZTNE_DOCUMENT_BUNDLE_EXPORT_R1L */
+.ns-documents-v1__btn--bundle-export {
+  border-color: rgba(65, 210, 145, 0.52);
+}

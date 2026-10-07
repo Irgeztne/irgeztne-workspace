@@ -67,24 +67,28 @@
 
   function normalizeDocument(item) {
     var source = item && typeof item === 'object' ? item : {};
+    var payload = source.payload && typeof source.payload === 'object' ? source.payload : {};
+    var relations = source.relations && typeof source.relations === 'object' ? source.relations : {};
+    var commonOfficeType = ['document', 'spreadsheet', 'presentation', 'diagram', 'formula', 'form'].indexOf(safeString(source.type)) !== -1 && source.payload && typeof source.payload === 'object';
+    if (commonOfficeType && source.type !== 'document') return null;
     return {
       id: safeString(source.id),
       title: safeString(source.title) || 'Untitled document',
-      type: safeString(source.type) || 'article',
-      status: safeString(source.status) || 'draft',
-      projectId: safeString(source.projectId),
-      fileIds: safeArray(source.fileIds).map(safeString),
-      mapPointIds: safeArray(source.mapPointIds).map(safeString),
+      type: commonOfficeType ? (safeString(payload.documentType) || 'article') : (safeString(source.type) || 'article'),
+      status: commonOfficeType ? (safeString(payload.status) || 'draft') : (safeString(source.status) || 'draft'),
+      projectId: safeString(commonOfficeType ? relations.projectId : source.projectId),
+      fileIds: safeArray(commonOfficeType ? relations.fileIds : source.fileIds).map(safeString),
+      mapPointIds: safeArray(commonOfficeType ? relations.mapPointIds : source.mapPointIds).map(safeString),
       updatedAt: safeString(source.updatedAt || source.createdAt)
     };
   }
 
   function getDocuments() {
     if (root.NSDocumentsV1 && typeof root.NSDocumentsV1.getAll === 'function') {
-      return safeArray(root.NSDocumentsV1.getAll()).map(normalizeDocument).filter(function (item) { return item.id; });
+      return safeArray(root.NSDocumentsV1.getAll()).map(normalizeDocument).filter(function (item) { return item && item.id; });
     }
     var state = readLocalJson(DOCUMENTS_STORAGE_KEY, { items: [] });
-    return safeArray(state && state.items).map(normalizeDocument).filter(function (item) { return item.id; });
+    return safeArray(state && state.items).map(normalizeDocument).filter(function (item) { return item && item.id; });
   }
 
   function normalizeMapPoint(item) {

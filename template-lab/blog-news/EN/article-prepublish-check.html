@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A practical website check before publication · Northline Journal</title>
+  <meta name="description" content="A step-by-step list covering content, routes, imagery, themes and responsive behavior.">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:title" content="A practical website check before publication · Northline Journal">
+  <meta property="og:description" content="A step-by-step list covering content, routes, imagery, themes and responsive behavior.">
+  <meta name="theme-color" content="#c83e2b">
+  <script>
+    try {
+      const queryTheme = new URLSearchParams(location.search).get("theme");
+      const savedTheme = localStorage.getItem("irgeztne-blog-news-canon-theme");
+      document.documentElement.dataset.theme =
+        queryTheme === "dark" || queryTheme === "light"
+          ? queryTheme
+          : savedTheme === "dark" || savedTheme === "light"
+            ? savedTheme
+            : "light";
+    } catch {}
+  </script>
+  <link rel="stylesheet" href="../shared/styles.css">
+  <script src="../shared/site.js" defer></script>
+</head>
+<body data-page="article" data-nav-open="false">
+  
+  <header class="site-header">
+    <div class="header-shell">
+      <a class="brand" href="index.html" aria-label="Northline Journal">
+        <strong>Northline</strong>
+        <span>Journal</span>
+        <small>Independent digital journal</small>
+      </a>
+      <button class="menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-label="Open menu">☰</button>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="index.html">Home</a>
+        <a href="articles.html" aria-current="page">Articles</a>
+        <a href="topics.html">Topics</a>
+        <a href="about.html">About</a>
+      </nav>
+      <div class="header-actions">
+        <a class="subscribe-link" href="about.html#subscribe">Subscribe</a>
+        <button
+          class="theme-toggle"
+          type="button"
+          data-theme-toggle
+          data-label-dark="Switch to dark theme"
+          data-label-light="Switch to light theme"
+          aria-label="Switch to dark theme"
+        >☾</button>
+      </div>
+    </div>
+    <nav class="section-nav" aria-label="Editorial sections">
+      <div class="section-shell">
+        <a href="topics.html#technology">Technology</a><a href="topics.html#business">Business</a><a href="topics.html#culture">Culture</a><a href="topics.html#design">Design</a><a href="topics.html#guides">Guides</a><a href="topics.html#opinion">Opinion</a>
+      </div>
+    </nav>
+  </header>
+  <main class="main-shell article-detail-shell-v098h">
+    <nav class="article-breadcrumb-v098h" aria-label="Articles"><a href="articles.html">← Back to all articles</a></nav>
+    <article class="article-detail-v098h">
+      <header class="article-detail-header-v098h">
+        <p class="eyebrow">Guide</p>
+        <h1>A practical website check before publication</h1>
+        <p class="article-detail-lead-v098h">A step-by-step list covering content, routes, imagery, themes and responsive behavior.</p>
+        <div class="article-detail-meta-v098h"><span>15:20 · 8 min</span></div>
+      </header>
+      <figure class="media-frame article-detail-media-v098h">
+        <img src="../assets/guide.jpg" alt="A desk prepared for a website review" loading="eager" data-template-slot="article.article-prepublish-check.image" data-slot-kind="image">
+      </figure>
+      <div class="article-detail-layout-v098h">
+        <div class="article-detail-body-v098h">
+          <p class="article-detail-intro-v098h">A pre-publication review should be short, repeatable and consistent across every page.</p>
+          <section id="section-1"><h2>Content and routes</h2><p>Check the page title, summary, image descriptions and publication status. Every button should lead to an existing page or a clear action.</p><p>Walk through the visitor route: home, section, story and back again. An anchor inside an archive should not pretend to be a standalone article.</p></section><section id="section-2"><h2>Media and visual modes</h2><p>Compare the editor, embedded preview and the page in an external browser. Size, alignment and order of images or video should match.</p><p>Review light and dark themes, plus both language versions when the site genuinely supports two languages.</p></section><section id="section-3"><h2>The final package</h2><p>Open the export locally and check the home page, nested routes, favicon and missing files. Only then send the package to the server.</p></section>
+        </div>
+        <aside class="article-detail-aside-v098h">
+          <strong>In this story</strong>
+          <ol><li><a href="#section-1">Content and routes</a></li><li><a href="#section-2">Media and visual modes</a></li><li><a href="#section-3">The final package</a></li></ol>
+          <a class="text-link" href="articles.html">Continue reading →</a>
+        </aside>
+      </div>
+    </article>
+  </main>
+  
+  <footer class="site-footer">
+    <div class="footer-shell">
+      <div class="footer-brand">
+        <strong>Northline Journal</strong>
+        <p>Stories, analysis and practical guides for modern teams.</p>
+        <small>Northline Journal · editorial template</small>
+      </div>
+      <nav class="footer-nav" aria-label="Footer navigation">
+        <a href="articles.html">Archive</a>
+        <a href="topics.html">All topics</a>
+        <a href="about.html">Editorial desk</a>
+        <a href="rss.xml">RSS</a>
+      </nav>
+      <div class="footer-meta">
+        <span>© 2026 Northline Journal</span>
+        <a href="mailto:editor@northline.example">editor@northline.example</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

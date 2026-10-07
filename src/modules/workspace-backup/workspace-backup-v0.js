@@ -10,6 +10,7 @@
     IDENTITY_KEY,
     'nsbrowser:v8:source-library',
     'ns.browser.v8.projects.v1',
+    'irgeztne.workspace.tasks.v1',
     'ns.browser.v8.notes.v1',
     'irgeztne.documents.v1',
     'irgeztne.sitePages.v0',
@@ -22,21 +23,17 @@
     'ns.browser.v8.tools.v1',
     'ns.browser.v8.vitrina.v1',
     'ns.browser.v8.site-profile.v1',
-    'irgeztne.ecosystem.rooms.v0',
-    'irgeztne.ecosystem.filiStore.v0',
-    'irgeztne.ecosystem.filiSafe.v0',
     'nsbrowser.v8.bookmarks',
     'nsbrowser.v8.language',
+    'irgeztne-workshop-installed-v1',
+    'nsbrowser:v8:knowledge-library',
+    'ns.browser.v8.editor.v1.backup',
     'nsbrowser.v8.browser.source'
   ];
 
   function isWorkspaceKey(key) {
     var value = String(key || '');
-    return KNOWN_KEYS.indexOf(value) >= 0 ||
-      value.indexOf('irgeztne.') === 0 ||
-      value.indexOf('irgeztne:') === 0 ||
-      value.indexOf('nsbrowser') === 0 ||
-      value.indexOf('ns.browser') === 0;
+    return KNOWN_KEYS.indexOf(value) >= 0;
   }
 
   function nowIso() {
@@ -114,6 +111,19 @@
     return identity;
   }
 
+  function stripBackupCredentials(value) {
+    if (Array.isArray(value)) return value.map(stripBackupCredentials);
+    if (value && typeof value === 'object') {
+      var result = {};
+      Object.keys(value).forEach(function (key) {
+        if (/^(token|password|privateKey|secretKey|accessKey|recoveryPhrase|masterCredential|credential|refreshToken|accessToken|authorization|hasToken|hasPassword|hasPrivateKey|hasSecretKey|hasAccessKey|tokenPreview|passwordPreview|secretKeyPreview|accessKeyPreview|__proto__|constructor|prototype)$/i.test(key)) return;
+        result[key] = stripBackupCredentials(value[key]);
+      });
+      return result;
+    }
+    return value;
+  }
+
   function collectStorage() {
     var result = {};
     try {
@@ -121,7 +131,10 @@
         var key = root.localStorage.key(index);
         if (!key || !isWorkspaceKey(key)) continue;
         var value = root.localStorage.getItem(key);
-        if (value != null) result[key] = value;
+        if (value != null) {
+          try { result[key] = JSON.stringify(stripBackupCredentials(JSON.parse(value))); }
+          catch (_) { result[key] = value; }
+        }
       }
     } catch (error) {
       console.warn('[IRGEZTNE Backup] collect failed', error);
@@ -139,7 +152,9 @@
   }
 
   function getWebStudioSiteStats() {
-    var manager = readJson('irgeztne.webStudioSites.v1', null);
+    var manager = null;
+    try { if (root.nsAPI && root.nsAPI.storageGetModuleStateSync) manager = root.nsAPI.storageGetModuleStateSync('webstudio.siteManager.v1', null); } catch (_) {}
+    if (!manager) manager = readJson('irgeztne.webStudioSites.v1', null);
     if (manager && Array.isArray(manager.sites)) {
       var pages = manager.sites.reduce(function (total, site) {
         return total + (site && site.state && Array.isArray(site.state.pages) ? site.state.pages.length : 0);
@@ -157,6 +172,7 @@
       files: getArrayCount('nsbrowser:v8:source-library', 'items'),
       projects: getArrayCount('ns.browser.v8.projects.v1', 'items'),
       notes: getArrayCount('ns.browser.v8.notes.v1', 'items'),
+      tasks: getArrayCount('irgeztne.workspace.tasks.v1', 'tasks'),
       documents: getArrayCount('irgeztne.documents.v1', 'items'),
       sites: webStudio.sites,
       pages: webStudio.pages,
@@ -198,6 +214,8 @@
     return {
       format: BACKUP_FORMAT,
       formatVersion: BACKUP_FORMAT_VERSION,
+      metadataOnly: true,
+      physicalAssetsIncluded: false,
       app: 'IRGEZTNE Workspace',
       exportedAt: exportedAt,
       workspace: identity,
@@ -207,36 +225,17 @@
     };
   }
 
-  function getDownloadName(backup) {
-    var stamp = String((backup && backup.exportedAt) || nowIso())
-      .replace(/[-:]/g, '')
-      .replace('T', '-')
-      .replace(/\.\d+Z$/, '');
-    var workspaceId = String((backup && backup.workspace && backup.workspace.workspaceId) || 'workspace').replace(/[^a-zA-Z0-9_-]+/g, '-').slice(0, 40);
-    return 'irgeztne-backup-' + workspaceId + '-' + stamp + '.json';
-  }
-
-  function downloadBackup() {
-    var backup = buildBackup();
-    var text = JSON.stringify(backup, null, 2);
-    var blob = new Blob([text], { type: 'application/json;charset=utf-8' });
-    var url = URL.createObjectURL(blob);
-    var link = document.createElement('a');
-    link.href = url;
-    link.download = getDownloadName(backup);
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    window.setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
-    setStatus(t('Backup-файл создан. Сохраните его в безопасном месте.', 'Backup file created. Keep it somewhere safe.'));
-    renderPanel();
-  }
-
-  function validateBackup(data) {
-    if (!data || typeof data !== 'object') return 'empty';
-    if (data.format !== BACKUP_FORMAT) return 'format';
-    if (!data.storage || typeof data.storage !== 'object') return 'storage';
-    return '';
+  async function downloadBackup() {
+    if (root.nsAPI && root.nsAPI.workspaceBackupExport) {
+      try {
+        var result = await root.nsAPI.workspaceBackupExport({ storage: collectStorage(), language: getLang() });
+        if (result.ok) { updateIdentity({ lastBackupAt: nowIso() }); renderPanel(); setStatus(t('Полный backup создан, включая физические файлы.', 'Full backup created, including physical files.')); }
+        else if (!result.canceled) setStatus(result.error || t('Не удалось создать backup.', 'Backup failed.'));
+      } catch (error) { setStatus(error.message); }
+      return;
+    }
+    setStatus(t('Полный backup доступен в настольном приложении. Экспорт метаданных не является полным backup.', 'Full backup is available in the desktop app. Metadata export is not a full backup.'));
+    return;
   }
 
   function clearWorkspaceStorage() {
@@ -250,38 +249,21 @@
     });
   }
 
-  function importBackup(data) {
-    var error = validateBackup(data);
-    if (error) {
-      setStatus(t('Файл не похож на backup IRGEZTNE Workspace.', 'This file does not look like an IRGEZTNE Workspace backup.'));
+  async function importBackup(data) {
+    if (!root.nsAPI || !root.nsAPI.workspaceBackupImport) {
+      setStatus(t('Восстановление полного backup доступно в настольном приложении.', 'Full backup restore is available in the desktop app.'));
       return;
     }
-
-    var ok = root.confirm(t(
-      'Импорт заменит текущие локальные данные workspace данными из backup. Продолжить?',
-      'Import will replace current local workspace data with the backup. Continue?'
-    ));
-    if (!ok) return;
-
-    clearWorkspaceStorage();
-    Object.keys(data.storage).forEach(function (key) {
-      if (!isWorkspaceKey(key)) return;
-      root.localStorage.setItem(key, String(data.storage[key] || ''));
-    });
-    updateIdentity({ lastImportAt: nowIso() });
-    setStatus(t('Backup импортирован. Приложение перезагрузится.', 'Backup imported. The app will reload.'));
-    window.setTimeout(function () {
+    try {
+      var result = await root.nsAPI.workspaceBackupImport({ storage: collectStorage(), language: getLang() });
+      if (!result.ok) { if (!result.canceled) setStatus(result.error || t('Восстановление не выполнено.', 'Restore failed.')); return; }
+      clearWorkspaceStorage();
+      Object.keys(result.storage || {}).forEach(function (key) {
+        if (isWorkspaceKey(key)) root.localStorage.setItem(key, result.storage[key]);
+      });
+      updateIdentity({ lastImportAt: nowIso() });
       root.location.reload();
-    }, 700);
-  }
-
-  function readFile(file) {
-    return new Promise(function (resolve, reject) {
-      var reader = new FileReader();
-      reader.onload = function () { resolve(String(reader.result || '')); };
-      reader.onerror = function () { reject(reader.error || new Error('Failed to read file')); };
-      reader.readAsText(file, 'utf-8');
-    });
+    } catch (error) { setStatus(error.message); }
   }
 
   function createPanel() {
@@ -321,9 +303,9 @@
     rootNode.innerHTML = [
       '<div class="workspace-backup-head">',
       '  <div>',
-      '    <div class="workspace-backup-kicker">IRGEZTNE · Workspace Identity v0</div>',
+      '    <div class="workspace-backup-kicker">IRGEZTNE · Workspace</div>',
       '    <h2>' + escapeHtml(t('Backup / перенос workspace', 'Workspace Backup / Migration')) + '</h2>',
-      '    <p>' + escapeHtml(t('Локальный backup для переноса, восстановления и будущей синхронизации. Аккаунт не нужен для локального backup workspace.', 'Local backup for transfer, restore, and future sync. Account is not required for local workspace backup.')) + '</p>',
+      '    <p>' + escapeHtml(t('Локальный backup для переноса и восстановления. Аккаунт не нужен для локального backup workspace.', 'Local backup for transfer and restore. Account is not required for local workspace backup.')) + '</p>',
       '  </div>',
       '  <button type="button" class="workspace-backup-close" data-workspace-backup-close aria-label="' + escapeHtml(t('Закрыть', 'Close')) + '">×</button>',
       '</div>',
@@ -337,6 +319,7 @@
       statCard(t('Файлы', 'Files'), stats.files),
       statCard(t('Проекты', 'Projects'), stats.projects),
       statCard(t('Заметки', 'Notes'), stats.notes),
+      statCard(t('Задачи', 'Tasks'), stats.tasks),
       statCard(t('Документы', 'Documents'), stats.documents),
       statCard(t('Сайты', 'Sites'), stats.sites),
       statCard(t('Страницы', 'Pages'), stats.sitePages),
@@ -346,12 +329,12 @@
       '<div class="workspace-backup-actions">',
       '  <button type="button" class="workspace-backup-primary" data-workspace-backup-export>' + escapeHtml(t('Экспортировать backup', 'Export backup')) + '</button>',
       '  <button type="button" data-workspace-backup-import>' + escapeHtml(t('Импортировать backup', 'Import backup')) + '</button>',
-      '  <input type="file" accept="application/json,.json" id="workspaceBackupFile" hidden />',
       '</div>',
       '<div class="workspace-backup-note">',
       '  <strong>' + escapeHtml(t('Что сохраняется:', 'Saved data:')) + '</strong> ',
-      escapeHtml(t('проекты, файлы и ассеты, заметки, документы, сайты и страницы Web Studio, черновики, настройки и рабочие закладки. Размер сейчас примерно ', 'projects, files and assets, notes, documents, Web Studio sites/pages, drafts, settings, and workspace bookmarks. Current size is about ')),
-      '<strong>' + escapeHtml(formatBytes(storageSize)) + '</strong>.',
+      escapeHtml(t('проекты, задачи, заметки, документы, сайты и страницы Web Studio, медиа, физические файлы и закладки. Account, Chat и данные доступа не включаются. Размер локальных метаданных примерно ', 'projects, tasks, notes, documents, Web Studio sites/pages, media, physical files, and bookmarks. Account, Chat, and credentials are excluded. Local metadata size is about ')),
+      '<strong>' + escapeHtml(formatBytes(storageSize)) + '</strong>. ',
+      escapeHtml(t('Лимит физических файлов в одном backup: 256 MiB. При превышении лимита или отсутствии файлов экспорт не создаёт неполную копию.', 'Physical files limit per backup: 256 MiB. Export refuses incomplete copies when the limit is exceeded or files are missing.')),
       '</div>',
       '<div class="workspace-backup-status" id="workspaceBackupStatus" role="status" aria-live="polite"></div>'
     ].join('');
@@ -400,24 +383,8 @@
       }
 
       if (event.target.closest('[data-workspace-backup-import]')) {
-        var input = document.getElementById('workspaceBackupFile');
-        if (input) input.click();
+        void importBackup();
       }
-    });
-
-    document.addEventListener('change', function (event) {
-      var input = event.target && event.target.id === 'workspaceBackupFile' ? event.target : null;
-      if (!input || !input.files || !input.files[0]) return;
-      readFile(input.files[0]).then(function (text) {
-        input.value = '';
-        try {
-          importBackup(JSON.parse(text));
-        } catch (error) {
-          setStatus(t('Не удалось прочитать JSON backup.', 'Could not read backup JSON.'));
-        }
-      }).catch(function () {
-        setStatus(t('Не удалось открыть файл backup.', 'Could not open backup file.'));
-      });
     });
 
     document.addEventListener('keydown', function (event) {

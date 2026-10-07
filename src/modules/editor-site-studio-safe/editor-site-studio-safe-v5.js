@@ -1,11 +1,16 @@
 (function () {
   'use strict';
 
-  var VERSION = 'preview4-editor-site-studio-safe-v5-v7g1g-fix-menu-simplified';
+  window.__IRGEZTNE_CANONICAL_TEMPLATE_PREVIEW_V094A__ = true;
+  window.__IRGEZTNE_OFFICIAL_TEMPLATE_CONTRACT_V095A__ = true;
+
+  var VERSION = '1.0.0';
   // Keep the v4 storage key so test pages created in v4 are not lost.
   var STORAGE_KEY = 'irgeztne.editorSiteStudioSafe.v4';
   var SITE_MANAGER_KEY = 'irgeztne.webStudioSites.v1';
   var WEBSTUDIO_MANAGER_STORAGE_KEY = 'webstudio.siteManager.v1';
+  var WORKSHOP_SITE_SNAPSHOT_DB_R1W9D = 'irgeztne-webstudio-template-site-snapshots-v1';
+  var WORKSHOP_SITE_SNAPSHOT_STORE_R1W9D = 'snapshots';
   var LEGACY_PAGES_KEY = 'irgeztne.siteСтраницы.v0';
   var rootButton = null;
   var overlay = null;
@@ -27,6 +32,7 @@
   var JODIT_SCRIPT_SRC = 'node_modules/jodit/es2021/jodit.fat.min.js';
   var studioLang = '';
   var studioTheme = '';
+  var generatedSiteLangOverrideV094C = '';
   var siteJodit = null;
   var siteEditorCoreBridge = null; // IRGEZTNE_WEBSTUDIO_EDITOR_CORE_BRIDGE_V065D
   var siteEditorCoreSaveTimer = null; // IRGEZTNE_WEBSTUDIO_EDITOR_CORE_BRIDGE_V065E
@@ -42,6 +48,11 @@
   }
 
   function currentLang() {
+    var shellApi = window.__IRG_BROWSER_SHELL_API;
+    if (shellApi && typeof shellApi.getLanguage === 'function') {
+      var shellLanguage = shellApi.getLanguage();
+      if (shellLanguage === 'ru' || shellLanguage === 'en') return shellLanguage;
+    }
     if (!studioLang) {
       try { studioLang = localStorage.getItem(STUDIO_LANG_KEY) || ''; } catch (error) { studioLang = ''; }
       if (studioLang !== 'ru' && studioLang !== 'en') studioLang = detectInitialLang();
@@ -51,7 +62,10 @@
 
   function isRu() { return currentLang() === 'ru'; }
 
-  function t(en, ru) { return isRu() ? ru : en; }
+  function t(en, ru) {
+    var lang = generatedSiteLangOverrideV094C || currentLang();
+    return lang === 'ru' ? ru : en;
+  }
 
   var UI_LABELS = {
     sites: { en: 'Sites', ru: 'Сайты' },
@@ -120,10 +134,14 @@
   function toggleStudioLang() {
     studioLang = currentLang() === 'ru' ? 'en' : 'ru';
     try { localStorage.setItem(STUDIO_LANG_KEY, studioLang); } catch (error) {}
+    saveAllFromDom(false);
+    var shellApi = window.__IRG_BROWSER_SHELL_API;
+    if (shellApi && typeof shellApi.setLanguage === 'function') { shellApi.setLanguage(studioLang); return; }
     renderStudio();
   }
 
   function toggleStudioTheme() {
+    saveAllFromDom(false);
     studioTheme = currentTheme() === 'light' ? 'dark' : 'light';
     try { localStorage.setItem(STUDIO_THEME_KEY, studioTheme); } catch (error) {}
     renderStudio();
@@ -335,6 +353,11 @@
         fontFamily: 'Inter',
         headingFont: 'Inter',
         activeTemplate: 'project-landing',
+        siteSettings: {
+          general: {
+            language: currentLang() === 'ru' ? 'ru' : 'en'
+          }
+        },
         publishSettings: normalizePublishSettings(null)
       },
       pages: [page],
@@ -352,11 +375,42 @@
 
   // IRGEZTNE_TEMPLATE_STARTER_SITES_V068C
   function normalizeOfficialTemplateIdV068C(templateId) {
-    var id = String(templateId || 'project-landing').toLowerCase();
-    if (id === 'modern-landing-wide') return 'project-landing';
-    if (id === 'studio-portfolio-wide') return 'studio-portfolio';
-    if (id === 'knowledge-base-wide') return 'documentation-wide';
-    return id;
+    var id = String(templateId || 'project-landing').trim().toLowerCase();
+    var aliases = {
+      'landing': 'project-landing',
+      'landing-product': 'project-landing',
+      'modern-landing': 'project-landing',
+      'modern-landing-wide': 'project-landing',
+      'portfolio': 'studio-portfolio',
+      'personal': 'studio-portfolio',
+      'portfolio-personal': 'studio-portfolio',
+      'studio-portfolio-wide': 'studio-portfolio',
+      'documentation': 'documentation-wide',
+      'docs': 'documentation-wide',
+      'knowledge-base': 'documentation-wide',
+      'knowledge-base-wide': 'documentation-wide',
+      'business': 'business-product',
+      'product': 'business-product',
+      'agency': 'agency-studio',
+      'studio': 'agency-studio',
+      'blog': 'blog-news',
+      'news': 'blog-news'
+    };
+    var normalized = aliases[id] || id;
+    return normalized || 'project-landing';
+  }
+
+  function officialTemplateProductIdV095A(templateId) {
+    var id = normalizeOfficialTemplateIdV068C(templateId);
+    var map = {
+      'project-landing': 'landing-product',
+      'business-product': 'business-product',
+      'blog-news': 'blog-news',
+      'documentation-wide': 'documentation',
+      'studio-portfolio': 'portfolio-personal',
+      'agency-studio': 'agency-studio'
+    };
+    return map[id] || '';
   }
 
   function officialTemplateMetaV068C(templateId) {
@@ -371,6 +425,624 @@
     };
     var meta = map[id] || map['project-landing'];
     return Object.assign({ id: id }, meta);
+  }
+
+
+
+  /* IRGEZTNE_OFFICIAL_FOUR_CANON_V098A
+     Accepted Business, Blog, Portfolio and Agency packages. Landing and
+     Documentation remain owned by their existing Web Studio renderers. */
+  /* IRGEZTNE_OFFICIAL_FOUR_WIDE_REWORK_V098B
+     Final practical v2 source refresh for Business, Blog, Portfolio and Agency. */
+  var OFFICIAL_FOUR_CANON_V098A = {
+  "business-product": {
+    "assetBase": "assets/template/business/",
+    "css": "* {\n  box-sizing: border-box;\n}\n\n:root {\n  color-scheme: light;\n  --bg: #f1ede4;\n  --surface: #fffdf8;\n  --surface-strong: #ffffff;\n  --surface-soft: #e9e2d6;\n  --ink: #111915;\n  --muted: #665f55;\n  --line: #d7cec0;\n  --accent: #17694b;\n  --accent-hover: #0f553a;\n  --accent-soft: #dcece4;\n  --signal: #d9733e;\n  --deep: #10251d;\n  --deep-2: #08130f;\n  --header-bg: rgba(255, 253, 248, 0.9);\n  --shadow: 0 28px 80px rgba(42, 31, 20, 0.11);\n  --shadow-soft: 0 18px 48px rgba(42, 31, 20, 0.08);\n  --radius-xl: 36px;\n  --radius-lg: 28px;\n  --radius-md: 20px;\n  --header-height: 86px;\n}\n\nhtml[data-theme=\"dark\"] {\n  color-scheme: dark;\n  --bg: #0d1411;\n  --surface: #151d19;\n  --surface-strong: #19231e;\n  --surface-soft: #202c26;\n  --ink: #f4f0e8;\n  --muted: #b8b0a5;\n  --line: #344139;\n  --accent: #55c691;\n  --accent-hover: #74d6a9;\n  --accent-soft: #183b2d;\n  --signal: #ff9a64;\n  --deep: #09130f;\n  --deep-2: #050a08;\n  --header-bg: rgba(13, 20, 17, 0.9);\n  --shadow: 0 28px 80px rgba(0, 0, 0, 0.3);\n  --shadow-soft: 0 18px 48px rgba(0, 0, 0, 0.22);\n}\n\nhtml {\n  scroll-behavior: smooth;\n  scroll-padding-top: calc(var(--header-height) + 22px);\n}\n\nbody {\n  min-width: 320px;\n  margin: 0;\n  padding-top: var(--header-height);\n  overflow-x: hidden;\n  background:\n    radial-gradient(circle at 8% 0%, rgba(23, 105, 75, 0.13), transparent 31rem),\n    radial-gradient(circle at 92% 5%, rgba(217, 115, 62, 0.11), transparent 34rem),\n    linear-gradient(180deg, var(--surface), var(--bg));\n  color: var(--ink);\n  font-family:\n    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\",\n    sans-serif;\n  text-rendering: optimizeLegibility;\n}\n\nbody::before {\n  position: fixed;\n  inset: 0;\n  z-index: -1;\n  background-image:\n    linear-gradient(rgba(100, 88, 71, 0.035) 1px, transparent 1px),\n    linear-gradient(90deg, rgba(100, 88, 71, 0.035) 1px, transparent 1px);\n  background-size: 48px 48px;\n  content: \"\";\n  pointer-events: none;\n}\n\nbutton,\ninput,\ntextarea {\n  font: inherit;\n}\n\na {\n  color: inherit;\n}\n\nimg {\n  display: block;\n  max-width: 100%;\n}\n\nfigure {\n  margin: 0;\n}\n\n.site-header {\n  position: fixed;\n  inset: 0 0 auto;\n  z-index: 1000;\n  height: var(--header-height);\n  border-bottom: 1px solid color-mix(in srgb, var(--line) 84%, transparent);\n  background: var(--header-bg);\n  box-shadow: 0 12px 40px rgba(33, 25, 17, 0.045);\n  backdrop-filter: blur(18px);\n  -webkit-backdrop-filter: blur(18px);\n}\n\n.header-shell,\n.main-shell,\n.footer-shell {\n  width: min(calc(100% - 64px), 1720px);\n  margin-inline: auto;\n}\n\n.header-shell {\n  display: grid;\n  grid-template-columns: minmax(220px, auto) 1fr auto;\n  gap: 28px;\n  align-items: center;\n  height: 100%;\n}\n\n.brand {\n  display: inline-flex;\n  flex-direction: column;\n  align-items: flex-start;\n  min-width: 0;\n  text-decoration: none;\n}\n\n.brand strong {\n  font-size: 21px;\n  line-height: 1;\n  letter-spacing: -0.045em;\n}\n\n.brand span {\n  margin-top: 5px;\n  color: var(--muted);\n  font-size: 12px;\n  font-weight: 760;\n  letter-spacing: 0.035em;\n}\n\n.site-nav {\n  display: flex;\n  justify-content: center;\n  gap: 7px;\n}\n\n.site-nav a {\n  min-height: 38px;\n  padding: 9px 13px;\n  border: 1px solid transparent;\n  border-radius: 999px;\n  color: var(--muted);\n  font-size: 14px;\n  font-weight: 840;\n  text-decoration: none;\n  transition:\n    color 160ms ease,\n    border-color 160ms ease,\n    background 160ms ease,\n    transform 160ms ease;\n}\n\n.site-nav a:hover {\n  transform: translateY(-1px);\n  border-color: var(--line);\n  background: var(--surface-strong);\n  color: var(--ink);\n}\n\n.site-nav a[aria-current=\"page\"] {\n  border-color: var(--ink);\n  background: var(--ink);\n  color: var(--surface);\n}\n\n.header-actions {\n  display: flex;\n  gap: 9px;\n  align-items: center;\n}\n\n.header-cta,\n.button-primary,\n.button-secondary {\n  display: inline-flex;\n  justify-content: center;\n  align-items: center;\n  min-height: 46px;\n  padding: 12px 17px;\n  border: 1px solid var(--accent);\n  border-radius: 999px;\n  font-weight: 880;\n  line-height: 1;\n  text-decoration: none;\n  transition:\n    transform 160ms ease,\n    background 160ms ease,\n    box-shadow 160ms ease;\n}\n\n.header-cta,\n.button-primary {\n  background: var(--accent);\n  color: #fff;\n}\n\n.header-cta:hover,\n.button-primary:hover {\n  transform: translateY(-2px);\n  background: var(--accent-hover);\n  box-shadow: 0 12px 26px rgba(23, 105, 75, 0.2);\n}\n\n.button-secondary {\n  border-color: var(--line);\n  background: var(--surface-strong);\n  color: var(--ink);\n}\n\n.button-secondary:hover {\n  transform: translateY(-2px);\n  border-color: var(--ink);\n  box-shadow: var(--shadow-soft);\n}\n\n.theme-toggle,\n.menu-toggle {\n  display: inline-grid;\n  place-items: center;\n  width: 42px;\n  height: 42px;\n  padding: 0;\n  border: 1px solid var(--line);\n  border-radius: 50%;\n  background: var(--surface-strong);\n  color: var(--ink);\n  cursor: pointer;\n  transition:\n    transform 160ms ease,\n    border-color 160ms ease,\n    background 160ms ease;\n}\n\n.theme-toggle:hover,\n.menu-toggle:hover {\n  transform: translateY(-1px);\n  border-color: var(--ink);\n}\n\n.menu-toggle {\n  display: none;\n}\n\n.main-shell {\n  padding: 34px 0 84px;\n}\n\n.eyebrow {\n  display: inline-flex;\n  align-items: center;\n  gap: 9px;\n  color: var(--signal);\n  font-size: 12px;\n  font-weight: 920;\n  letter-spacing: 0.16em;\n  text-transform: uppercase;\n}\n\n.eyebrow::before {\n  width: 22px;\n  height: 2px;\n  background: currentColor;\n  content: \"\";\n}\n\n.home-hero {\n  display: grid;\n  grid-template-columns: minmax(0, 1.08fr) minmax(460px, 0.92fr);\n  gap: clamp(34px, 3.4vw, 64px);\n  align-items: stretch;\n  min-height: 0;\n}\n\n.hero-copy,\n.hero-media,\n.content-panel,\n.image-panel,\n.metric-panel,\n.contact-panel,\n.form-panel {\n  overflow: hidden;\n  border: 1px solid var(--line);\n  border-radius: var(--radius-xl);\n  background: var(--surface);\n  box-shadow: var(--shadow);\n}\n\n.hero-copy {\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n  padding: clamp(34px, 3.35vw, 58px);\n  background:\n    linear-gradient(145deg, color-mix(in srgb, var(--surface) 94%, var(--accent-soft)), var(--surface));\n}\n\n.hero-copy h1 {\n  max-width: 900px;\n  margin: 18px 0 20px;\n  font-size: clamp(48px, 5.15vw, 88px);\n  line-height: 0.94;\n  letter-spacing: -0.062em;\n}\n\n.hero-copy > div > p {\n  max-width: 790px;\n  margin: 0;\n  color: var(--muted);\n  font-size: clamp(18px, 1.35vw, 24px);\n  line-height: 1.57;\n}\n\n.hero-buttons {\n  display: flex;\n  gap: 10px;\n  flex-wrap: wrap;\n  margin-top: 24px;\n}\n\n.hero-proof {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 12px;\n  margin-top: 30px;\n}\n\n.hero-proof article {\n  padding: 15px;\n  border: 1px solid var(--line);\n  border-radius: var(--radius-md);\n  background: color-mix(in srgb, var(--surface-strong) 86%, var(--accent-soft));\n}\n\n.hero-proof strong {\n  display: block;\n  font-size: clamp(25px, 2.3vw, 42px);\n  line-height: 1;\n  letter-spacing: -0.05em;\n}\n\n.hero-proof span {\n  display: block;\n  margin-top: 8px;\n  color: var(--muted);\n  font-size: 13px;\n  font-weight: 700;\n}\n\n.hero-media {\n  position: relative;\n  min-height: 0;\n  max-height: 640px;\n  aspect-ratio: 1.06 / 1;\n  background: var(--deep);\n}\n\n.hero-media img {\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n}\n\n.hero-media::after {\n  position: absolute;\n  inset: 0;\n  background:\n    linear-gradient(180deg, transparent 35%, rgba(5, 13, 10, 0.7)),\n    linear-gradient(90deg, rgba(5, 13, 10, 0.08), transparent 42%);\n  content: \"\";\n}\n\n.hero-media-card {\n  position: absolute;\n  z-index: 2;\n  inset: auto 26px 26px;\n  display: grid;\n  grid-template-columns: 1fr auto;\n  gap: 28px;\n  align-items: end;\n  padding: 24px;\n  border: 1px solid rgba(255, 255, 255, 0.22);\n  border-radius: 24px;\n  background: rgba(11, 24, 18, 0.76);\n  color: #fff;\n  backdrop-filter: blur(14px);\n}\n\n.hero-media-card small {\n  display: block;\n  color: rgba(255, 255, 255, 0.68);\n  font-weight: 760;\n}\n\n.hero-media-card strong {\n  display: block;\n  margin-top: 7px;\n  font-size: clamp(23px, 2vw, 38px);\n  letter-spacing: -0.045em;\n}\n\n.hero-media-card b {\n  color: #7ee4b3;\n  font-size: clamp(34px, 3vw, 54px);\n  letter-spacing: -0.06em;\n}\n\n.trust-strip {\n  display: grid;\n  grid-template-columns: minmax(230px, 1.6fr) repeat(4, minmax(110px, 1fr));\n  gap: 12px;\n  align-items: center;\n  margin: 22px 0 0;\n  padding: 18px 24px;\n  border: 1px solid var(--line);\n  border-radius: 24px;\n  background: color-mix(in srgb, var(--surface) 86%, transparent);\n}\n\n.trust-strip span {\n  color: var(--muted);\n  font-size: 13px;\n  font-weight: 760;\n}\n\n.trust-strip strong {\n  color: color-mix(in srgb, var(--ink) 83%, var(--muted));\n  font-size: 15px;\n  text-align: center;\n}\n\n.section {\n  margin-top: clamp(62px, 6.2vw, 104px);\n}\n\n.section-intro {\n  display: grid;\n  grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr);\n  gap: 42px;\n  align-items: end;\n  margin-bottom: 34px;\n}\n\n.section-intro h2,\n.subpage-hero h1,\n.statement h2,\n.contact-panel h1 {\n  margin: 16px 0 0;\n  font-size: clamp(40px, 4.35vw, 72px);\n  line-height: 1;\n  letter-spacing: -0.057em;\n}\n\n.section-intro p,\n.subpage-hero p,\n.statement p {\n  margin: 0;\n  color: var(--muted);\n  font-size: clamp(17px, 1.24vw, 22px);\n  line-height: 1.7;\n}\n\n.feature-grid {\n  display: grid;\n  grid-template-columns: minmax(0, 1.32fr) minmax(340px, 0.68fr);\n  gap: 22px;\n}\n\n.image-panel {\n  min-height: 440px;\n}\n\n.image-panel img {\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n}\n\n.feature-stack {\n  display: grid;\n  gap: 14px;\n}\n\n.feature-stack article,\n.service-card,\n.value-card,\n.contact-detail,\n.case-card {\n  padding: 27px;\n  border: 1px solid var(--line);\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n  box-shadow: var(--shadow-soft);\n}\n\n.feature-stack article {\n  display: grid;\n  grid-template-columns: auto 1fr;\n  column-gap: 18px;\n  align-content: center;\n}\n\n.feature-stack b,\n.service-card > b,\n.value-card > b {\n  grid-row: 1 / span 2;\n  color: var(--signal);\n  font-size: 13px;\n  letter-spacing: 0.12em;\n}\n\n.feature-stack h3,\n.service-card h2,\n.value-card h2,\n.case-card h3 {\n  margin: 0;\n  font-size: clamp(23px, 2vw, 34px);\n  line-height: 1.05;\n  letter-spacing: -0.04em;\n}\n\n.feature-stack p,\n.service-card p,\n.value-card p,\n.case-card p,\n.contact-detail p {\n  margin: 11px 0 0;\n  color: var(--muted);\n  line-height: 1.68;\n}\n\n.case-layout {\n  display: grid;\n  grid-template-columns: minmax(320px, 0.8fr) minmax(0, 1.2fr);\n  gap: 22px;\n}\n\n.case-story {\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n  min-height: 520px;\n  padding: clamp(32px, 3.4vw, 54px);\n  border-radius: var(--radius-xl);\n  background: var(--deep);\n  color: #fff;\n  box-shadow: var(--shadow);\n}\n\n.case-story h2 {\n  margin: 16px 0 18px;\n  font-size: clamp(40px, 4.15vw, 68px);\n  line-height: 0.95;\n  letter-spacing: -0.06em;\n}\n\n.case-story p {\n  max-width: 660px;\n  margin: 0;\n  color: rgba(255, 255, 255, 0.68);\n  font-size: 18px;\n  line-height: 1.7;\n}\n\n.case-result {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 10px;\n  margin-top: 46px;\n}\n\n.case-result article {\n  padding: 18px;\n  border: 1px solid rgba(255, 255, 255, 0.16);\n  border-radius: 20px;\n  background: rgba(255, 255, 255, 0.055);\n}\n\n.case-result strong {\n  display: block;\n  color: #82e3b6;\n  font-size: clamp(27px, 2.6vw, 48px);\n  letter-spacing: -0.055em;\n}\n\n.case-result span {\n  display: block;\n  margin-top: 7px;\n  color: rgba(255, 255, 255, 0.66);\n  font-size: 12px;\n}\n\n.case-visual {\n  position: relative;\n  overflow: hidden;\n  min-height: 520px;\n  border: 1px solid var(--line);\n  border-radius: var(--radius-xl);\n  background: var(--surface-soft);\n  box-shadow: var(--shadow);\n}\n\n.case-visual img {\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n  object-position: 78% center;\n  transform: scale(1.32);\n  transform-origin: right center;\n}\n\n.case-visual::after {\n  position: absolute;\n  inset: 0;\n  background: linear-gradient(145deg, rgba(16, 37, 29, 0.04), rgba(16, 37, 29, 0.38));\n  content: \"\";\n}\n\n.case-caption {\n  position: absolute;\n  z-index: 2;\n  right: 24px;\n  bottom: 24px;\n  left: 24px;\n  padding: 22px;\n  border: 1px solid rgba(255, 255, 255, 0.18);\n  border-radius: 22px;\n  background: rgba(7, 17, 13, 0.78);\n  color: #fff;\n  backdrop-filter: blur(12px);\n}\n\n.case-caption strong {\n  display: block;\n  font-size: 25px;\n}\n\n.case-caption span {\n  display: block;\n  margin-top: 7px;\n  color: rgba(255, 255, 255, 0.68);\n}\n\n.process-grid {\n  display: grid;\n  grid-template-columns: repeat(4, 1fr);\n  gap: 12px;\n  margin-top: 30px;\n}\n\n.process-grid article {\n  min-height: 230px;\n  padding: 26px;\n  border: 1px solid var(--line);\n  border-radius: var(--radius-lg);\n  background: var(--surface);\n}\n\n.process-grid b {\n  display: block;\n  color: var(--signal);\n  font-size: 13px;\n  letter-spacing: 0.13em;\n}\n\n.process-grid h3 {\n  margin: 40px 0 12px;\n  font-size: clamp(23px, 2vw, 34px);\n  letter-spacing: -0.04em;\n}\n\n.process-grid p {\n  margin: 0;\n  color: var(--muted);\n  line-height: 1.65;\n}\n\n.cta-band {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) auto;\n  gap: 36px;\n  align-items: center;\n  margin-top: clamp(62px, 6.2vw, 104px);\n  padding: clamp(34px, 3.5vw, 58px);\n  border-radius: var(--radius-xl);\n  background:\n    radial-gradient(circle at 80% 30%, rgba(255, 255, 255, 0.1), transparent 18rem),\n    var(--deep);\n  color: #fff;\n  box-shadow: var(--shadow);\n}\n\n.cta-band h2 {\n  max-width: 980px;\n  margin: 15px 0 0;\n  font-size: clamp(40px, 4.25vw, 70px);\n  line-height: 0.96;\n  letter-spacing: -0.062em;\n}\n\n.cta-band .button-primary {\n  border-color: #fff;\n  background: #fff;\n  color: var(--deep);\n}\n\n.subpage {\n  padding-top: 34px;\n}\n\n.subpage-hero {\n  display: grid;\n  grid-template-columns: minmax(0, 1.08fr) minmax(390px, 0.92fr);\n  gap: clamp(34px, 3.4vw, 64px);\n  min-height: 500px;\n}\n\n.content-panel {\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n  padding: clamp(34px, 3.5vw, 60px);\n}\n\n.subpage-hero p {\n  max-width: 710px;\n  margin-top: 25px;\n}\n\n.subpage-index {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 10px;\n  margin-top: 38px;\n}\n\n.subpage-index div {\n  padding: 16px;\n  border: 1px solid var(--line);\n  border-radius: 18px;\n  background: color-mix(in srgb, var(--surface-strong) 88%, var(--accent-soft));\n}\n\n.subpage-index b {\n  display: block;\n  color: var(--signal);\n  font-size: 12px;\n}\n\n.subpage-index span {\n  display: block;\n  margin-top: 8px;\n  color: var(--muted);\n  font-size: 13px;\n  font-weight: 730;\n}\n\n.subpage-media {\n  position: relative;\n  overflow: hidden;\n  border: 1px solid var(--line);\n  border-radius: var(--radius-xl);\n  background: var(--deep);\n  box-shadow: var(--shadow);\n}\n\n.subpage-media img {\n  width: 100%;\n  height: 100%;\n  min-height: 500px;\n  object-fit: cover;\n}\n\n.subpage-media .media-note {\n  position: absolute;\n  right: 22px;\n  bottom: 22px;\n  left: 22px;\n  padding: 20px;\n  border: 1px solid rgba(255, 255, 255, 0.2);\n  border-radius: 21px;\n  background: rgba(8, 19, 14, 0.78);\n  color: #fff;\n  backdrop-filter: blur(12px);\n}\n\n.subpage-media .media-note strong {\n  font-size: 23px;\n}\n\n.subpage-media .media-note span {\n  display: block;\n  margin-top: 7px;\n  color: rgba(255, 255, 255, 0.67);\n}\n\n.service-grid,\n.values-grid,\n.case-grid {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 14px;\n}\n\n.service-card,\n.value-card,\n.case-card {\n  min-height: 280px;\n}\n\n.service-card h2,\n.value-card h2 {\n  margin-top: 48px;\n}\n\n.service-card ul,\n.value-card ul {\n  margin: 22px 0 0;\n  padding: 0;\n  list-style: none;\n}\n\n.service-card li,\n.value-card li {\n  padding: 10px 0;\n  border-top: 1px solid var(--line);\n  color: var(--muted);\n}\n\n.statement {\n  display: grid;\n  grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);\n  gap: 42px;\n  align-items: end;\n  padding: clamp(36px, 4vw, 64px);\n  border: 1px solid var(--line);\n  border-radius: var(--radius-xl);\n  background: var(--surface);\n  box-shadow: var(--shadow);\n}\n\n.statement p {\n  max-width: 620px;\n}\n\n.timeline {\n  display: grid;\n  gap: 0;\n  border-top: 1px solid var(--line);\n}\n\n.timeline article {\n  display: grid;\n  grid-template-columns: 90px minmax(240px, 0.55fr) minmax(0, 1fr);\n  gap: 26px;\n  align-items: baseline;\n  padding: 29px 0;\n  border-bottom: 1px solid var(--line);\n}\n\n.timeline b {\n  color: var(--signal);\n  font-size: 13px;\n  letter-spacing: 0.12em;\n}\n\n.timeline h2 {\n  margin: 0;\n  font-size: clamp(24px, 2.2vw, 38px);\n  letter-spacing: -0.04em;\n}\n\n.timeline p {\n  margin: 0;\n  color: var(--muted);\n  font-size: 17px;\n  line-height: 1.7;\n}\n\n.team-band {\n  display: grid;\n  grid-template-columns: minmax(0, 1.22fr) minmax(330px, 0.78fr);\n  gap: 22px;\n}\n\n.team-band .image-panel {\n  min-height: 420px;\n}\n\n.metric-panel {\n  display: grid;\n  grid-template-columns: 1fr 1fr;\n  gap: 1px;\n  padding: 1px;\n  background: var(--line);\n}\n\n.metric-panel article {\n  display: flex;\n  flex-direction: column;\n  justify-content: flex-end;\n  min-height: 209px;\n  padding: 26px;\n  background: var(--surface);\n}\n\n.metric-panel strong {\n  font-size: clamp(40px, 4vw, 68px);\n  letter-spacing: -0.065em;\n}\n\n.metric-panel span {\n  margin-top: 9px;\n  color: var(--muted);\n  line-height: 1.5;\n}\n\n.contact-layout {\n  display: grid;\n  grid-template-columns: minmax(0, 0.9fr) minmax(430px, 1.1fr);\n  gap: clamp(34px, 3.4vw, 64px);\n  align-items: start;\n  min-height: 0;\n}\n\n.contact-panel,\n.form-panel {\n  padding: clamp(34px, 3.5vw, 60px);\n}\n\n.contact-panel {\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n}\n\n.contact-panel h1 {\n  max-width: 760px;\n}\n\n.contact-panel > div > p {\n  max-width: 650px;\n  margin: 24px 0 0;\n  color: var(--muted);\n  font-size: 18px;\n  line-height: 1.7;\n}\n\n.contact-details {\n  display: grid;\n  grid-template-columns: 1fr 1fr;\n  gap: 10px;\n  margin-top: 32px;\n}\n\n.contact-detail {\n  padding: 20px;\n  box-shadow: none;\n}\n\n.contact-detail b {\n  display: block;\n  color: var(--signal);\n  font-size: 12px;\n  letter-spacing: 0.12em;\n  text-transform: uppercase;\n}\n\n.contact-detail a,\n.contact-detail strong {\n  display: block;\n  margin-top: 10px;\n  font-size: 18px;\n  font-weight: 820;\n  text-decoration: none;\n}\n\n.form-panel {\n  background: var(--deep);\n  color: #fff;\n}\n\n.form-panel h2 {\n  margin: 0;\n  font-size: clamp(35px, 3.8vw, 62px);\n  line-height: 1;\n  letter-spacing: -0.055em;\n}\n\n.form-panel > p {\n  margin: 18px 0 0;\n  color: rgba(255, 255, 255, 0.65);\n  line-height: 1.65;\n}\n\n.contact-form {\n  display: grid;\n  gap: 15px;\n  margin-top: 30px;\n}\n\n.contact-form label {\n  display: grid;\n  gap: 8px;\n  color: rgba(255, 255, 255, 0.72);\n  font-size: 13px;\n  font-weight: 760;\n}\n\n.contact-form input,\n.contact-form textarea {\n  width: 100%;\n  border: 1px solid rgba(255, 255, 255, 0.18);\n  border-radius: 16px;\n  outline: 0;\n  background: rgba(255, 255, 255, 0.06);\n  color: #fff;\n}\n\n.contact-form input {\n  min-height: 50px;\n  padding: 0 15px;\n}\n\n.contact-form textarea {\n  min-height: 132px;\n  padding: 14px 15px;\n  resize: vertical;\n}\n\n.contact-form input:focus,\n.contact-form textarea:focus {\n  border-color: #7ee4b3;\n  box-shadow: 0 0 0 3px rgba(126, 228, 179, 0.12);\n}\n\n.form-note {\n  color: rgba(255, 255, 255, 0.48);\n  font-size: 12px;\n  line-height: 1.55;\n}\n\n.site-footer {\n  background:\n    radial-gradient(circle at 80% 10%, rgba(85, 198, 145, 0.1), transparent 28rem),\n    var(--deep-2);\n  color: #fff;\n}\n\n.footer-shell {\n  display: grid;\n  grid-template-columns: minmax(260px, 1fr) repeat(2, minmax(150px, 220px));\n  gap: 44px;\n  padding: 56px 0;\n}\n\n.footer-brand strong {\n  display: block;\n  font-size: 24px;\n  letter-spacing: -0.04em;\n}\n\n.footer-brand p {\n  max-width: 460px;\n  margin: 12px 0 0;\n  color: rgba(255, 255, 255, 0.58);\n  line-height: 1.65;\n}\n\n.footer-column b {\n  display: block;\n  color: rgba(255, 255, 255, 0.45);\n  font-size: 11px;\n  letter-spacing: 0.14em;\n  text-transform: uppercase;\n}\n\n.footer-column a {\n  display: block;\n  margin-top: 12px;\n  color: rgba(255, 255, 255, 0.76);\n  font-weight: 720;\n  text-decoration: none;\n}\n\n.footer-column a:hover {\n  color: #7ee4b3;\n}\n\n.footer-bottom {\n  width: min(calc(100% - 64px), 1720px);\n  margin-inline: auto;\n  padding: 18px 0 28px;\n  border-top: 1px solid rgba(255, 255, 255, 0.12);\n  color: rgba(255, 255, 255, 0.43);\n  font-size: 12px;\n}\n\n@media (max-width: 1220px) {\n  :root {\n    --header-height: 78px;\n  }\n\n  .header-shell {\n    grid-template-columns: auto 1fr auto;\n    gap: 15px;\n  }\n\n  .brand span,\n  .header-cta {\n    display: none;\n  }\n\n  .home-hero,\n  .subpage-hero,\n  .case-layout,\n  .team-band {\n    grid-template-columns: 1fr;\n  }\n\n  .home-hero {\n    min-height: 0;\n  }\n\n  .hero-copy h1 {\n    font-size: clamp(54px, 9vw, 92px);\n  }\n\n  .hero-media,\n  .subpage-media,\n  .subpage-media img {\n    min-height: 560px;\n  }\n\n  .service-grid,\n  .values-grid,\n  .case-grid {\n    grid-template-columns: repeat(2, 1fr);\n  }\n\n  .process-grid {\n    grid-template-columns: repeat(2, 1fr);\n  }\n}\n\n@media (max-width: 860px) {\n  .header-shell,\n  .main-shell,\n  .footer-shell,\n  .footer-bottom {\n    width: min(calc(100% - 32px), 1720px);\n  }\n\n  .header-shell {\n    grid-template-columns: 1fr auto;\n  }\n\n  .menu-toggle {\n    display: inline-grid;\n  }\n\n  .site-nav {\n    position: fixed;\n    top: var(--header-height);\n    right: 0;\n    left: 0;\n    display: grid;\n    gap: 8px;\n    padding: 14px 16px 20px;\n    border-bottom: 1px solid var(--line);\n    background: var(--header-bg);\n    opacity: 0;\n    visibility: hidden;\n    transform: translateY(-10px);\n    pointer-events: none;\n    backdrop-filter: blur(18px);\n    transition:\n      opacity 160ms ease,\n      visibility 160ms ease,\n      transform 160ms ease;\n  }\n\n  body[data-nav-open=\"true\"] .site-nav {\n    opacity: 1;\n    visibility: visible;\n    transform: translateY(0);\n    pointer-events: auto;\n  }\n\n  .site-nav a {\n    display: flex;\n    align-items: center;\n    min-height: 46px;\n    padding-inline: 16px;\n    border-color: var(--line);\n    background: var(--surface);\n  }\n\n  .section-intro,\n  .feature-grid,\n  .statement,\n  .contact-layout,\n  .cta-band {\n    grid-template-columns: 1fr;\n  }\n\n  .trust-strip {\n    grid-template-columns: 1fr 1fr;\n  }\n\n  .trust-strip span {\n    grid-column: 1 / -1;\n    text-align: center;\n  }\n\n  .feature-stack {\n    grid-template-columns: 1fr;\n  }\n\n  .timeline article {\n    grid-template-columns: 58px 1fr;\n  }\n\n  .timeline p {\n    grid-column: 2;\n  }\n\n  .footer-shell {\n    grid-template-columns: 1fr 1fr;\n  }\n\n  .footer-brand {\n    grid-column: 1 / -1;\n  }\n}\n\n@media (max-width: 620px) {\n  :root {\n    --radius-xl: 26px;\n    --radius-lg: 22px;\n  }\n\n  .main-shell {\n    padding-top: 16px;\n    padding-bottom: 62px;\n  }\n\n  .hero-copy,\n  .content-panel,\n  .contact-panel,\n  .form-panel {\n    padding: 26px;\n  }\n\n  .hero-copy h1 {\n    font-size: clamp(47px, 15vw, 68px);\n  }\n\n  .hero-proof,\n  .subpage-index,\n  .service-grid,\n  .values-grid,\n  .case-grid,\n  .process-grid,\n  .contact-details,\n  .metric-panel {\n    grid-template-columns: 1fr;\n  }\n\n  .hero-media,\n  .subpage-media,\n  .subpage-media img {\n    min-height: 430px;\n  }\n\n  .hero-media-card {\n    grid-template-columns: 1fr;\n  }\n\n  .image-panel {\n    min-height: 360px;\n  }\n\n  .case-story,\n  .case-visual {\n    min-height: 520px;\n  }\n\n  .case-result {\n    grid-template-columns: 1fr;\n  }\n\n  .service-card,\n  .value-card,\n  .case-card {\n    min-height: 0;\n  }\n\n  .service-card h2,\n  .value-card h2 {\n    margin-top: 42px;\n  }\n\n  .footer-shell {\n    grid-template-columns: 1fr;\n    gap: 28px;\n  }\n\n  .footer-brand {\n    grid-column: auto;\n  }\n}\n\n@media (prefers-reduced-motion: reduce) {\n  html {\n    scroll-behavior: auto;\n  }\n\n  *,\n  *::before,\n  *::after {\n    scroll-behavior: auto !important;\n    transition-duration: 0.01ms !important;\n  }\n}\n",
+    "js": "(() => {\n  const storageKey = \"irgeztne-business-canon-theme\";\n  const root = document.documentElement;\n  const body = document.body;\n  const themeButton = document.querySelector(\"[data-theme-toggle]\");\n  const menuButton = document.querySelector(\"[data-menu-toggle]\");\n\n  function preferredTheme() {\n    const themeFromUrl = new URLSearchParams(location.search).get(\"theme\");\n    if (themeFromUrl === \"light\" || themeFromUrl === \"dark\") {\n      return themeFromUrl;\n    }\n    try {\n      const saved = localStorage.getItem(storageKey);\n      if (saved === \"light\" || saved === \"dark\") return saved;\n    } catch {\n      // The site remains usable when browser storage is unavailable.\n    }\n    return root.dataset.theme === \"dark\" ? \"dark\" : \"light\";\n  }\n\n  function syncOfflineLinks(theme) {\n    if (location.protocol !== \"file:\") return;\n    document.querySelectorAll('a[href$=\".html\"], a[href*=\".html?\"]').forEach((link) => {\n      const target = new URL(link.getAttribute(\"href\"), location.href);\n      target.searchParams.set(\"theme\", theme);\n      link.setAttribute(\"href\", `${target.pathname.split(\"/\").pop()}${target.search}${target.hash}`);\n    });\n  }\n\n  function applyTheme(theme, persist = true) {\n    root.dataset.theme = theme;\n    if (themeButton) {\n      themeButton.textContent = theme === \"dark\" ? \"☀\" : \"☾\";\n      themeButton.setAttribute(\n        \"aria-label\",\n        theme === \"dark\"\n          ? themeButton.dataset.labelLight\n          : themeButton.dataset.labelDark,\n      );\n    }\n    if (persist) {\n      try {\n        localStorage.setItem(storageKey, theme);\n      } catch {\n        // Theme still works for the current page.\n      }\n    }\n    syncOfflineLinks(theme);\n  }\n\n  applyTheme(preferredTheme(), false);\n\n  themeButton?.addEventListener(\"click\", () => {\n    applyTheme(root.dataset.theme === \"dark\" ? \"light\" : \"dark\");\n  });\n\n  menuButton?.addEventListener(\"click\", () => {\n    const willOpen = body.dataset.navOpen !== \"true\";\n    body.dataset.navOpen = String(willOpen);\n    menuButton.setAttribute(\"aria-expanded\", String(willOpen));\n  });\n\n  document.querySelectorAll(\".site-nav a\").forEach((link) => {\n    link.addEventListener(\"click\", () => {\n      body.dataset.navOpen = \"false\";\n      menuButton?.setAttribute(\"aria-expanded\", \"false\");\n    });\n  });\n\n  document.addEventListener(\"keydown\", (event) => {\n    if (event.key === \"Escape\") {\n      body.dataset.navOpen = \"false\";\n      menuButton?.setAttribute(\"aria-expanded\", \"false\");\n    }\n  });\n\n  const demoForm = document.querySelector(\"[data-demo-form]\");\n  demoForm?.addEventListener(\"submit\", (event) => {\n    event.preventDefault();\n    const status = demoForm.querySelector(\"[data-form-status]\");\n    if (status) {\n      status.textContent = demoForm.dataset.demoMessage || \"\";\n      status.focus();\n    }\n  });\n})();\n",
+    "light": "#f6f1e9",
+    "dark": "#0b1511",
+    "pages": {
+      "ru": {
+        "index": {
+          "title": "Главная",
+          "summary": "Широкий бизнес-сайт с ясным предложением, услугами, кейсами и контактом.",
+          "documentTitle": "Meridian · Системы для бизнеса и продукта",
+          "html": "<!doctype html>\n<html lang=\"ru\" data-theme=\"light\">\n  <head>\n    <meta charset=\"utf-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n    <meta name=\"description\" content=\"Широкий бизнес-сайт с ясным предложением, услугами, кейсами и контактом.\">\n    <meta name=\"theme-color\" content=\"#17694b\">\n    <title>Meridian · Системы для бизнеса и продукта</title>\n    <script>\n      try {\n        const urlTheme = new URLSearchParams(location.search).get(\"theme\");\n        const savedTheme = localStorage.getItem(\"irgeztne-business-canon-theme\");\n        const initialTheme =\n          urlTheme === \"dark\" || urlTheme === \"light\" ? urlTheme : savedTheme;\n        if (initialTheme === \"dark\" || initialTheme === \"light\") {\n          document.documentElement.dataset.theme = initialTheme;\n        }\n      } catch {}\n    </script>\n    <link rel=\"stylesheet\" href=\"../shared/styles.css\">\n    <script defer src=\"../shared/site.js\"></script>\n  </head>\n  <body data-page=\"home\" data-nav-open=\"false\">\n    \n    <header class=\"site-header\">\n      <div class=\"header-shell\">\n        <a class=\"brand\" href=\"index.html\" data-brand-text-fallback=\"true\">\n          <strong>Meridian</strong>\n          <span>Системы для бизнеса и продукта</span>\n        </a>\n        <nav class=\"site-nav\" aria-label=\"Главное меню\"><a href=\"index.html\" aria-current=\"page\">Главная</a><a href=\"services.html\">Услуги</a><a href=\"about.html\">О компании</a><a href=\"contacts.html\">Контакты</a></nav>\n        <div class=\"header-actions\">\n          <a class=\"header-cta\" href=\"contacts.html\">Обсудить проект</a>\n          <button\n            class=\"theme-toggle\"\n            type=\"button\"\n            data-theme-toggle\n            data-label-dark=\"Включить тёмную тему\"\n            data-label-light=\"Включить светлую тему\"\n            aria-label=\"Включить тёмную тему\"\n          >☾</button>\n          <button\n            class=\"menu-toggle\"\n            type=\"button\"\n            data-menu-toggle\n            aria-label=\"Открыть меню\"\n            aria-expanded=\"false\"\n          >☰</button>\n        </div>\n      </div>\n    </header>\n    \n    <main class=\"main-shell\">\n      <section class=\"home-hero\">\n        <article class=\"hero-copy\">\n          <div>\n            <span class=\"eyebrow\">Business / Product</span>\n            <h1>Покажите продукт и услуги так, чтобы выбор стал очевидным.</h1>\n            <p>Цельная бизнес-структура для компании, продукта или сервиса: ясное предложение, доказательства, процесс и спокойный путь к контакту.</p>\n            <div class=\"hero-buttons\">\n              <a class=\"button-primary\" href=\"services.html\">Посмотреть форматы работы</a>\n              <a class=\"button-secondary\" href=\"contacts.html\">Начать разговор</a>\n            </div>\n          </div>\n          <div class=\"hero-proof\" aria-label=\"Ключевые показатели\">\n            <article><strong>48%</strong><span>быстрее путь от идеи к запуску</span></article>\n            <article><strong>24/7</strong><span>понятная точка контакта</span></article>\n            <article><strong>6 нед.</strong><span>до первой рабочей версии</span></article>\n          </div>\n        </article>\n        <aside class=\"hero-media\" data-template-slot=\"hero.image\">\n          <img src=\"../assets/hero-office.webp\" alt=\"Команда работает в светлом офисе\" width=\"883\" height=\"475\">\n          <div class=\"hero-media-card\">\n            <div><small>Рабочая система</small><strong>Предложение → доверие → действие</strong></div>\n            <b>+32.8%</b>\n          </div>\n        </aside>\n      </section>\n\n      <div class=\"trust-strip\" aria-label=\"Пример клиентской ленты\">\n        <span>Структура подходит продуктовым командам, сервисам и компаниям</span>\n        <strong>Northline</strong><strong>Forma</strong><strong>Vector</strong><strong>NovaLab</strong>\n      </div>\n\n      <section class=\"section\" id=\"system\">\n        <div class=\"section-intro\">\n          <div>\n            <span class=\"eyebrow\">Основа сайта</span>\n            <h2>Не набор блоков, а цельная бизнес-презентация.</h2>\n          </div>\n          <p>Посетитель сразу понимает, чем вы занимаетесь, почему вам можно доверять и какой следующий шаг ему сделать.</p>\n        </div>\n        <div class=\"feature-grid\">\n          <figure class=\"image-panel\" data-template-slot=\"feature.image\">\n            <img src=\"../assets/process-team.webp\" alt=\"Команда обсуждает структуру проекта\" width=\"880\" height=\"252\">\n          </figure>\n          <div class=\"feature-stack\">\n            <article><b>01</b><div><h3>Ясное предложение</h3><p>Главная мысль видна с первого экрана и не теряется среди декоративных блоков.</p></div></article>\n            <article><b>02</b><div><h3>Доказательства</h3><p>Кейсы, цифры и процесс встроены в рассказ, а не вынесены в случайную сетку.</p></div></article>\n            <article><b>03</b><div><h3>Спокойное действие</h3><p>Контакт присутствует во всём маршруте, но сайт не превращается в агрессивную воронку.</p></div></article>\n          </div>\n        </div>\n      </section>\n\n      <section class=\"section case-layout\">\n        <article class=\"case-story\">\n          <div>\n            <span class=\"eyebrow\">Показательный кейс</span>\n            <h2>Результат должен быть виден, а не заявлен.</h2>\n            <p>Один сильный кейс объясняет задачу, ход работы и измеримый итог лучше десятка общих обещаний.</p>\n          </div>\n          <div class=\"case-result\">\n            <article><strong>3.4×</strong><span>больше целевых обращений</span></article>\n            <article><strong>62%</strong><span>быстрее понимание продукта</span></article>\n            <article><strong>18 дн.</strong><span>от прототипа до запуска</span></article>\n          </div>\n        </article>\n        <figure class=\"case-visual\" data-template-slot=\"case.image\">\n          <img src=\"../assets/case-city.webp\" alt=\"Современная деловая архитектура\" width=\"385\" height=\"376\">\n          <figcaption class=\"case-caption\"><strong>Northline Systems</strong><span>Новая структура продукта, единый маршрут и самостоятельные страницы.</span></figcaption>\n        </figure>\n      </section>\n\n      <section class=\"section\">\n        <div class=\"section-intro\">\n          <div><span class=\"eyebrow\">Процесс</span><h2>Четыре понятных шага от задачи до запуска.</h2></div>\n          <p>Каждый этап заканчивается конкретным результатом, который можно проверить и принять.</p>\n        </div>\n        <div class=\"process-grid\">\n          <article><b>01 · Контекст</b><h3>Понять</h3><p>Задача, аудитория, ограничения и фактическое состояние продукта.</p></article>\n          <article><b>02 · Структура</b><h3>Собрать</h3><p>Маршрут, страницы, содержание и визуальная иерархия.</p></article>\n          <article><b>03 · Реализация</b><h3>Запустить</h3><p>Рабочая версия с адаптивностью, темами и проверенными переходами.</p></article>\n          <article><b>04 · Поддержка</b><h3>Развивать</h3><p>Измерения, новые разделы и изменения без перестройки основы.</p></article>\n        </div>\n      </section>\n\n      <section class=\"cta-band\">\n        <div><span class=\"eyebrow\">Следующий шаг</span><h2>Начнём с задачи, а не с готового набора блоков.</h2></div>\n        <a class=\"button-primary\" href=\"contacts.html\">Обсудить проект</a>\n      </section>\n    </main>\n    \n    <footer class=\"site-footer\">\n      <div class=\"footer-shell\">\n        <div class=\"footer-brand\">\n          <strong>Meridian</strong>\n          <p>Спокойная бизнес-структура для компаний, продуктов и сервисов.</p>\n        </div>\n        <div class=\"footer-column\">\n          <b>Разделы</b>\n          <a href=\"services.html\">Услуги</a>\n          <a href=\"about.html\">О компании</a>\n          <a href=\"contacts.html\">Контакты</a>\n        </div>\n        <div class=\"footer-column\">\n          <b>Связаться</b>\n          <a href=\"mailto:hello@example.com\">hello@example.com</a>\n          <a href=\"tel:+994000000000\">+994 00 000 00 00</a>\n        </div>\n      </div>\n      <div class=\"footer-bottom\">© 2026 Meridian · Демонстрационный контент Business Canon v1</div>\n    </footer>\n  </body>\n</html>\n",
+          "main": "<main class=\"main-shell\">\n      <section class=\"home-hero\">\n        <article class=\"hero-copy\">\n          <div>\n            <span class=\"eyebrow\">Business / Product</span>\n            <h1>Покажите продукт и услуги так, чтобы выбор стал очевидным.</h1>\n            <p>Цельная бизнес-структура для компании, продукта или сервиса: ясное предложение, доказательства, процесс и спокойный путь к контакту.</p>\n            <div class=\"hero-buttons\">\n              <a class=\"button-primary\" href=\"services.html\">Посмотреть форматы работы</a>\n              <a class=\"button-secondary\" href=\"contacts.html\">Начать разговор</a>\n            </div>\n          </div>\n          <div class=\"hero-proof\" aria-label=\"Ключевые показатели\">\n            <article><strong>48%</strong><span>быстрее путь от идеи к запуску</span></article>\n            <article><strong>24/7</strong><span>понятная точка контакта</span></article>\n            <article><strong>6 нед.</strong><span>до первой рабочей версии</span></article>\n          </div>\n        </article>\n        <aside class=\"hero-media\" data-template-slot=\"hero.image\">\n          <img src=\"../assets/hero-office.webp\" alt=\"Команда работает в светлом офисе\" width=\"883\" height=\"475\">\n          <div class=\"hero-media-card\">\n            <div><small>Рабочая система</small><strong>Предложение → доверие → действие</strong></div>\n            <b>+32.8%</b>\n          </div>\n        </aside>\n      </section>\n\n      <div class=\"trust-strip\" aria-label=\"Пример клиентской ленты\">\n        <span>Структура подходит продуктовым командам, сервисам и компаниям</span>\n        <strong>Northline</strong><strong>Forma</strong><strong>Vector</strong><strong>NovaLab</strong>\n      </div>\n\n      <section class=\"section\" id=\"system\">\n        <div class=\"section-intro\">\n          <div>\n            <span class=\"eyebrow\">Основа сайта</span>\n            <h2>Не набор блоков, а цельная бизнес-презентация.</h2>\n          </div>\n          <p>Посетитель сразу понимает, чем вы занимаетесь, почему вам можно доверять и какой следующий шаг ему сделать.</p>\n        </div>\n        <div class=\"feature-grid\">\n          <figure class=\"image-panel\" data-template-slot=\"feature.image\">\n            <img src=\"../assets/process-team.webp\" alt=\"Команда обсуждает структуру проекта\" width=\"880\" height=\"252\">\n          </figure>\n          <div class=\"feature-stack\">\n            <article><b>01</b><div><h3>Ясное предложение</h3><p>Главная мысль видна с первого экрана и не теряется среди декоративных блоков.</p></div></article>\n            <article><b>02</b><div><h3>Доказательства</h3><p>Кейсы, цифры и процесс встроены в рассказ, а не вынесены в случайную сетку.</p></div></article>\n            <article><b>03</b><div><h3>Спокойное действие</h3><p>Контакт присутствует во всём маршруте, но сайт не превращается в агрессивную воронку.</p></div></article>\n          </div>\n        </div>\n      </section>\n\n      <section class=\"section case-layout\">\n        <article class=\"case-story\">\n          <div>\n            <span class=\"eyebrow\">Показательный кейс</span>\n            <h2>Результат должен быть виден, а не заявлен.</h2>\n            <p>Один сильный кейс объясняет задачу, ход работы и измеримый итог лучше десятка общих обещаний.</p>\n          </div>\n          <div class=\"case-result\">\n            <article><strong>3.4×</strong><span>больше целевых обращений</span></article>\n            <article><strong>62%</strong><span>быстрее понимание продукта</span></article>\n            <article><strong>18 дн.</strong><span>от прототипа до запуска</span></article>\n          </div>\n        </article>\n        <figure class=\"case-visual\" data-template-slot=\"case.image\">\n          <img src=\"../assets/case-city.webp\" alt=\"Современная деловая архитектура\" width=\"385\" height=\"376\">\n          <figcaption class=\"case-caption\"><strong>Northline Systems</strong><span>Новая структура продукта, единый маршрут и самостоятельные страницы.</span></figcaption>\n        </figure>\n      </section>\n\n      <section class=\"section\">\n        <div class=\"section-intro\">\n          <div><span class=\"eyebrow\">Процесс</span><h2>Четыре понятных шага от задачи до запуска.</h2></div>\n          <p>Каждый этап заканчивается конкретным результатом, который можно проверить и принять.</p>\n        </div>\n        <div class=\"process-grid\">\n          <article><b>01 · Контекст</b><h3>Понять</h3><p>Задача, аудитория, ограничения и фактическое состояние продукта.</p></article>\n          <article><b>02 · Структура</b><h3>Собрать</h3><p>Маршрут, страницы, содержание и визуальная иерархия.</p></article>\n          <article><b>03 · Реализация</b><h3>Запустить</h3><p>Рабочая версия с адаптивностью, темами и проверенными переходами.</p></article>\n          <article><b>04 · Поддержка</b><h3>Развивать</h3><p>Измерения, новые разделы и изменения без перестройки основы.</p></article>\n        </div>\n      </section>\n\n      <section class=\"cta-band\">\n        <div><span class=\"eyebrow\">Следующий шаг</span><h2>Начнём с задачи, а не с готового набора блоков.</h2></div>\n        <a class=\"button-primary\" href=\"contacts.html\">Обсудить проект</a>\n      </section>\n    </main>"
+        },
+        "services": {
+          "title": "Услуги",
+          "summary": "Консалтинг, продуктовые страницы, корпоративные сайты и сопровождение запуска.",
+          "documentTitle": "Форматы работы · Meridian",
+          "html": "<!doctype html>\n<html lang=\"ru\" data-theme=\"light\">\n  <head>\n    <meta charset=\"utf-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n    <meta name=\"description\" content=\"Консалтинг, продуктовые страницы, корпоративные сайты и сопровождение запуска.\">\n    <meta name=\"theme-color\" content=\"#17694b\">\n    <title>Форматы работы · Meridian</title>\n    <script>\n      try {\n        const urlTheme = new URLSearchParams(location.search).get(\"theme\");\n        const savedTheme = localStorage.getItem(\"irgeztne-business-canon-theme\");\n        const initialTheme =\n          urlTheme === \"dark\" || urlTheme === \"light\" ? urlTheme : savedTheme;\n        if (initialTheme === \"dark\" || initialTheme === \"light\") {\n          document.documentElement.dataset.theme = initialTheme;\n        }\n      } catch {}\n    </script>\n    <link rel=\"stylesheet\" href=\"../shared/styles.css\">\n    <script defer src=\"../shared/site.js\"></script>\n  </head>\n  <body data-page=\"services\" data-nav-open=\"false\">\n    \n    <header class=\"site-header\">\n      <div class=\"header-shell\">\n        <a class=\"brand\" href=\"index.html\" data-brand-text-fallback=\"true\">\n          <strong>Meridian</strong>\n          <span>Системы для бизнеса и продукта</span>\n        </a>\n        <nav class=\"site-nav\" aria-label=\"Главное меню\"><a href=\"index.html\">Главная</a><a href=\"services.html\" aria-current=\"page\">Услуги</a><a href=\"about.html\">О компании</a><a href=\"contacts.html\">Контакты</a></nav>\n        <div class=\"header-actions\">\n          <a class=\"header-cta\" href=\"contacts.html\">Обсудить проект</a>\n          <button\n            class=\"theme-toggle\"\n            type=\"button\"\n            data-theme-toggle\n            data-label-dark=\"Включить тёмную тему\"\n            data-label-light=\"Включить светлую тему\"\n            aria-label=\"Включить тёмную тему\"\n          >☾</button>\n          <button\n            class=\"menu-toggle\"\n            type=\"button\"\n            data-menu-toggle\n            aria-label=\"Открыть меню\"\n            aria-expanded=\"false\"\n          >☰</button>\n        </div>\n      </div>\n    </header>\n    \n    <main class=\"main-shell subpage\">\n      <section class=\"subpage-hero\">\n        <article class=\"content-panel\">\n          <div><span class=\"eyebrow\">Форматы работы</span><h1>От задачи до работающей системы — без лишних кругов.</h1><p>Можно начать с одного продукта, отдельной страницы или полной структуры компании. Масштаб меняется, принцип остаётся: ясность, проверяемый результат и нормальная передача.</p></div>\n          <div class=\"subpage-index\"><div><b>01</b><span>Диагностика и маршрут</span></div><div><b>02</b><span>Система и реализация</span></div><div><b>03</b><span>Запуск и развитие</span></div></div>\n        </article>\n        <figure class=\"subpage-media\" data-template-slot=\"services.image\">\n          <img src=\"../assets/process-team.webp\" alt=\"Рабочая сессия команды\" width=\"880\" height=\"252\">\n          <figcaption class=\"media-note\"><strong>Один владелец результата</strong><span>От первой схемы до опубликованной версии.</span></figcaption>\n        </figure>\n      </section>\n\n      <section class=\"section service-grid\">\n        <article class=\"service-card\"><b>01 · Основа</b><h2>Стратегия и структура</h2><p>Для продукта или компании, которым нужно привести смысл и маршрут в порядок.</p><ul><li>Карта аудитории и задач</li><li>Архитектура страниц</li><li>Приоритеты содержания</li></ul></article>\n        <article class=\"service-card\"><b>02 · Сайт</b><h2>Продуктовая презентация</h2><p>Широкий сайт с понятным предложением, доказательствами и самостоятельными страницами.</p><ul><li>Главная и внутренние страницы</li><li>Светлая и тёмная темы</li><li>Адаптивность и проверка маршрутов</li></ul></article>\n        <article class=\"service-card\"><b>03 · Развитие</b><h2>Поддержка запуска</h2><p>Для команд, которым нужна не разовая передача, а спокойное развитие после публикации.</p><ul><li>Проверка фактического поведения</li><li>Улучшение слабых мест</li><li>Новые разделы без перестройки</li></ul></article>\n      </section>\n\n      <section class=\"section statement\">\n        <div><span class=\"eyebrow\">Принцип</span><h2>Сначала принимаем сам продукт. Потом подключаем его к системе.</h2></div>\n        <p>Так визуальная работа не смешивается с интеграцией, а причина каждого дефекта остаётся понятной.</p>\n      </section>\n\n      <section class=\"section timeline\">\n        <article><b>Этап 01</b><h2>Рентген</h2><p>Проверяем существующие владельцы, страницы, данные и ограничения до изменений.</p></article>\n        <article><b>Этап 02</b><h2>Канон</h2><p>Собираем самостоятельный эталон и принимаем композицию, темы, содержание и длину.</p></article>\n        <article><b>Этап 03</b><h2>Интеграция</h2><p>Подключаем принятый эталон к одному маршруту и одной сборке.</p></article>\n        <article><b>Этап 04</b><h2>Проверка</h2><p>Сравниваем предпросмотр, браузер, экспорт и фактические внутренние переходы.</p></article>\n      </section>\n\n      <section class=\"cta-band\"><div><span class=\"eyebrow\">Обсуждение</span><h2>Опишите задачу — структуру предложим после короткого разговора.</h2></div><a class=\"button-primary\" href=\"contacts.html\">Начать разговор</a></section>\n    </main>\n    \n    <footer class=\"site-footer\">\n      <div class=\"footer-shell\">\n        <div class=\"footer-brand\">\n          <strong>Meridian</strong>\n          <p>Спокойная бизнес-структура для компаний, продуктов и сервисов.</p>\n        </div>\n        <div class=\"footer-column\">\n          <b>Разделы</b>\n          <a href=\"services.html\">Услуги</a>\n          <a href=\"about.html\">О компании</a>\n          <a href=\"contacts.html\">Контакты</a>\n        </div>\n        <div class=\"footer-column\">\n          <b>Связаться</b>\n          <a href=\"mailto:hello@example.com\">hello@example.com</a>\n          <a href=\"tel:+994000000000\">+994 00 000 00 00</a>\n        </div>\n      </div>\n      <div class=\"footer-bottom\">© 2026 Meridian · Демонстрационный контент Business Canon v1</div>\n    </footer>\n  </body>\n</html>\n",
+          "main": "<main class=\"main-shell subpage\">\n      <section class=\"subpage-hero\">\n        <article class=\"content-panel\">\n          <div><span class=\"eyebrow\">Форматы работы</span><h1>От задачи до работающей системы — без лишних кругов.</h1><p>Можно начать с одного продукта, отдельной страницы или полной структуры компании. Масштаб меняется, принцип остаётся: ясность, проверяемый результат и нормальная передача.</p></div>\n          <div class=\"subpage-index\"><div><b>01</b><span>Диагностика и маршрут</span></div><div><b>02</b><span>Система и реализация</span></div><div><b>03</b><span>Запуск и развитие</span></div></div>\n        </article>\n        <figure class=\"subpage-media\" data-template-slot=\"services.image\">\n          <img src=\"../assets/process-team.webp\" alt=\"Рабочая сессия команды\" width=\"880\" height=\"252\">\n          <figcaption class=\"media-note\"><strong>Один владелец результата</strong><span>От первой схемы до опубликованной версии.</span></figcaption>\n        </figure>\n      </section>\n\n      <section class=\"section service-grid\">\n        <article class=\"service-card\"><b>01 · Основа</b><h2>Стратегия и структура</h2><p>Для продукта или компании, которым нужно привести смысл и маршрут в порядок.</p><ul><li>Карта аудитории и задач</li><li>Архитектура страниц</li><li>Приоритеты содержания</li></ul></article>\n        <article class=\"service-card\"><b>02 · Сайт</b><h2>Продуктовая презентация</h2><p>Широкий сайт с понятным предложением, доказательствами и самостоятельными страницами.</p><ul><li>Главная и внутренние страницы</li><li>Светлая и тёмная темы</li><li>Адаптивность и проверка маршрутов</li></ul></article>\n        <article class=\"service-card\"><b>03 · Развитие</b><h2>Поддержка запуска</h2><p>Для команд, которым нужна не разовая передача, а спокойное развитие после публикации.</p><ul><li>Проверка фактического поведения</li><li>Улучшение слабых мест</li><li>Новые разделы без перестройки</li></ul></article>\n      </section>\n\n      <section class=\"section statement\">\n        <div><span class=\"eyebrow\">Принцип</span><h2>Сначала принимаем сам продукт. Потом подключаем его к системе.</h2></div>\n        <p>Так визуальная работа не смешивается с интеграцией, а причина каждого дефекта остаётся понятной.</p>\n      </section>\n\n      <section class=\"section timeline\">\n        <article><b>Этап 01</b><h2>Рентген</h2><p>Проверяем существующие владельцы, страницы, данные и ограничения до изменений.</p></article>\n        <article><b>Этап 02</b><h2>Канон</h2><p>Собираем самостоятельный эталон и принимаем композицию, темы, содержание и длину.</p></article>\n        <article><b>Этап 03</b><h2>Интеграция</h2><p>Подключаем принятый эталон к одному маршруту и одной сборке.</p></article>\n        <article><b>Этап 04</b><h2>Проверка</h2><p>Сравниваем предпросмотр, браузер, экспорт и фактические внутренние переходы.</p></article>\n      </section>\n\n      <section class=\"cta-band\"><div><span class=\"eyebrow\">Обсуждение</span><h2>Опишите задачу — структуру предложим после короткого разговора.</h2></div><a class=\"button-primary\" href=\"contacts.html\">Начать разговор</a></section>\n    </main>"
+        },
+        "about": {
+          "title": "О компании",
+          "summary": "Команда, принципы и процесс работы над бизнес-системами и цифровыми продуктами.",
+          "documentTitle": "Как работает Meridian",
+          "html": "<!doctype html>\n<html lang=\"ru\" data-theme=\"light\">\n  <head>\n    <meta charset=\"utf-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n    <meta name=\"description\" content=\"Команда, принципы и процесс работы над бизнес-системами и цифровыми продуктами.\">\n    <meta name=\"theme-color\" content=\"#17694b\">\n    <title>Как работает Meridian</title>\n    <script>\n      try {\n        const urlTheme = new URLSearchParams(location.search).get(\"theme\");\n        const savedTheme = localStorage.getItem(\"irgeztne-business-canon-theme\");\n        const initialTheme =\n          urlTheme === \"dark\" || urlTheme === \"light\" ? urlTheme : savedTheme;\n        if (initialTheme === \"dark\" || initialTheme === \"light\") {\n          document.documentElement.dataset.theme = initialTheme;\n        }\n      } catch {}\n    </script>\n    <link rel=\"stylesheet\" href=\"../shared/styles.css\">\n    <script defer src=\"../shared/site.js\"></script>\n  </head>\n  <body data-page=\"about\" data-nav-open=\"false\">\n    \n    <header class=\"site-header\">\n      <div class=\"header-shell\">\n        <a class=\"brand\" href=\"index.html\" data-brand-text-fallback=\"true\">\n          <strong>Meridian</strong>\n          <span>Системы для бизнеса и продукта</span>\n        </a>\n        <nav class=\"site-nav\" aria-label=\"Главное меню\"><a href=\"index.html\">Главная</a><a href=\"services.html\">Услуги</a><a href=\"about.html\" aria-current=\"page\">О компании</a><a href=\"contacts.html\">Контакты</a></nav>\n        <div class=\"header-actions\">\n          <a class=\"header-cta\" href=\"contacts.html\">Обсудить проект</a>\n          <button\n            class=\"theme-toggle\"\n            type=\"button\"\n            data-theme-toggle\n            data-label-dark=\"Включить тёмную тему\"\n            data-label-light=\"Включить светлую тему\"\n            aria-label=\"Включить тёмную тему\"\n          >☾</button>\n          <button\n            class=\"menu-toggle\"\n            type=\"button\"\n            data-menu-toggle\n            aria-label=\"Открыть меню\"\n            aria-expanded=\"false\"\n          >☰</button>\n        </div>\n      </div>\n    </header>\n    \n    <main class=\"main-shell subpage\">\n      <section class=\"subpage-hero\">\n        <article class=\"content-panel\">\n          <div><span class=\"eyebrow\">Как мы работаем</span><h1>Команда, которая отвечает не за красивый файл, а за запуск.</h1><p>Мы соединяем структуру, содержание, дизайн и реализацию в один проверяемый результат. Без второго владельца, который появляется между макетом и рабочим сайтом.</p></div>\n          <div class=\"subpage-index\"><div><b>Фокус</b><span>Понятная задача</span></div><div><b>Ритм</b><span>Короткие проверки</span></div><div><b>Итог</b><span>Рабочая версия</span></div></div>\n        </article>\n        <figure class=\"subpage-media\" data-template-slot=\"about.image\">\n          <img src=\"../assets/hero-office.webp\" alt=\"Команда Meridian в рабочем пространстве\" width=\"883\" height=\"475\">\n          <figcaption class=\"media-note\"><strong>Небольшая команда, широкий контекст</strong><span>Стратегия, интерфейс и сборка остаются в одной логике.</span></figcaption>\n        </figure>\n      </section>\n\n      <section class=\"section values-grid\">\n        <article class=\"value-card\"><b>01 · Ясность</b><h2>Называть вещи своими именами</h2><p>Не выдавать заглушку за функцию, а будущий слот — за работающую медиасистему.</p><ul><li>Проверяем владельца</li><li>Фиксируем границы</li><li>Отделяем факт от предположения</li></ul></article>\n        <article class=\"value-card\"><b>02 · Целостность</b><h2>Не сокращать продукт ради скорости</h2><p>Рабочая основа важнее красивого первого экрана, который ломается на втором переходе.</p><ul><li>Полные страницы</li><li>Настоящие маршруты</li><li>Единое поведение тем</li></ul></article>\n        <article class=\"value-card\"><b>03 · Проверка</b><h2>Принимать по фактическому результату</h2><p>Скриншоты, переходы и реальный браузер важнее зелёного теста, который проверяет не то.</p><ul><li>Визуальная приёмка</li><li>Проверка взаимодействий</li><li>Сравнение сборок</li></ul></article>\n      </section>\n\n      <section class=\"section team-band\">\n        <figure class=\"image-panel\" data-template-slot=\"team.image\"><img src=\"../assets/process-team.webp\" alt=\"Обсуждение проекта у рабочей доски\" width=\"880\" height=\"252\"></figure>\n        <div class=\"metric-panel\">\n          <article><strong>1</strong><span>единый маршрут от идеи до запуска</span></article>\n          <article><strong>4</strong><span>точки проверки до передачи</span></article>\n          <article><strong>2</strong><span>полноценные цветовые темы</span></article>\n          <article><strong>0</strong><span>скрытых внешних зависимостей</span></article>\n        </div>\n      </section>\n\n      <section class=\"section statement\"><div><span class=\"eyebrow\">Манифест</span><h2>Хороший бизнес-сайт не выглядит как административная система.</h2></div><p>Навигация помогает двигаться, а самостоятельная страница открывает содержание — без технической подписи «страница» и автоматического повтора пункта меню.</p></section>\n      <section class=\"cta-band\"><div><span class=\"eyebrow\">Знакомство</span><h2>Если задача сложная, начнём с карты — не с обещания готового ответа.</h2></div><a class=\"button-primary\" href=\"contacts.html\">Связаться</a></section>\n    </main>\n    \n    <footer class=\"site-footer\">\n      <div class=\"footer-shell\">\n        <div class=\"footer-brand\">\n          <strong>Meridian</strong>\n          <p>Спокойная бизнес-структура для компаний, продуктов и сервисов.</p>\n        </div>\n        <div class=\"footer-column\">\n          <b>Разделы</b>\n          <a href=\"services.html\">Услуги</a>\n          <a href=\"about.html\">О компании</a>\n          <a href=\"contacts.html\">Контакты</a>\n        </div>\n        <div class=\"footer-column\">\n          <b>Связаться</b>\n          <a href=\"mailto:hello@example.com\">hello@example.com</a>\n          <a href=\"tel:+994000000000\">+994 00 000 00 00</a>\n        </div>\n      </div>\n      <div class=\"footer-bottom\">© 2026 Meridian · Демонстрационный контент Business Canon v1</div>\n    </footer>\n  </body>\n</html>\n",
+          "main": "<main class=\"main-shell subpage\">\n      <section class=\"subpage-hero\">\n        <article class=\"content-panel\">\n          <div><span class=\"eyebrow\">Как мы работаем</span><h1>Команда, которая отвечает не за красивый файл, а за запуск.</h1><p>Мы соединяем структуру, содержание, дизайн и реализацию в один проверяемый результат. Без второго владельца, который появляется между макетом и рабочим сайтом.</p></div>\n          <div class=\"subpage-index\"><div><b>Фокус</b><span>Понятная задача</span></div><div><b>Ритм</b><span>Короткие проверки</span></div><div><b>Итог</b><span>Рабочая версия</span></div></div>\n        </article>\n        <figure class=\"subpage-media\" data-template-slot=\"about.image\">\n          <img src=\"../assets/hero-office.webp\" alt=\"Команда Meridian в рабочем пространстве\" width=\"883\" height=\"475\">\n          <figcaption class=\"media-note\"><strong>Небольшая команда, широкий контекст</strong><span>Стратегия, интерфейс и сборка остаются в одной логике.</span></figcaption>\n        </figure>\n      </section>\n\n      <section class=\"section values-grid\">\n        <article class=\"value-card\"><b>01 · Ясность</b><h2>Называть вещи своими именами</h2><p>Не выдавать заглушку за функцию, а будущий слот — за работающую медиасистему.</p><ul><li>Проверяем владельца</li><li>Фиксируем границы</li><li>Отделяем факт от предположения</li></ul></article>\n        <article class=\"value-card\"><b>02 · Целостность</b><h2>Не сокращать продукт ради скорости</h2><p>Рабочая основа важнее красивого первого экрана, который ломается на втором переходе.</p><ul><li>Полные страницы</li><li>Настоящие маршруты</li><li>Единое поведение тем</li></ul></article>\n        <article class=\"value-card\"><b>03 · Проверка</b><h2>Принимать по фактическому результату</h2><p>Скриншоты, переходы и реальный браузер важнее зелёного теста, который проверяет не то.</p><ul><li>Визуальная приёмка</li><li>Проверка взаимодействий</li><li>Сравнение сборок</li></ul></article>\n      </section>\n\n      <section class=\"section team-band\">\n        <figure class=\"image-panel\" data-template-slot=\"team.image\"><img src=\"../assets/process-team.webp\" alt=\"Обсуждение проекта у рабочей доски\" width=\"880\" height=\"252\"></figure>\n        <div class=\"metric-panel\">\n          <article><strong>1</strong><span>единый маршрут от идеи до запуска</span></article>\n          <article><strong>4</strong><span>точки проверки до передачи</span></article>\n          <article><strong>2</strong><span>полноценные цветовые темы</span></article>\n          <article><strong>0</strong><span>скрытых внешних зависимостей</span></article>\n        </div>\n      </section>\n\n      <section class=\"section statement\"><div><span class=\"eyebrow\">Манифест</span><h2>Хороший бизнес-сайт не выглядит как административная система.</h2></div><p>Навигация помогает двигаться, а самостоятельная страница открывает содержание — без технической подписи «страница» и автоматического повтора пункта меню.</p></section>\n      <section class=\"cta-band\"><div><span class=\"eyebrow\">Знакомство</span><h2>Если задача сложная, начнём с карты — не с обещания готового ответа.</h2></div><a class=\"button-primary\" href=\"contacts.html\">Связаться</a></section>\n    </main>"
+        },
+        "contacts": {
+          "title": "Контакты",
+          "summary": "Контактная страница для обсуждения продукта, сайта или бизнес-задачи.",
+          "documentTitle": "Начать разговор · Meridian",
+          "html": "<!doctype html>\n<html lang=\"ru\" data-theme=\"light\">\n  <head>\n    <meta charset=\"utf-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n    <meta name=\"description\" content=\"Контактная страница для обсуждения продукта, сайта или бизнес-задачи.\">\n    <meta name=\"theme-color\" content=\"#17694b\">\n    <title>Начать разговор · Meridian</title>\n    <script>\n      try {\n        const urlTheme = new URLSearchParams(location.search).get(\"theme\");\n        const savedTheme = localStorage.getItem(\"irgeztne-business-canon-theme\");\n        const initialTheme =\n          urlTheme === \"dark\" || urlTheme === \"light\" ? urlTheme : savedTheme;\n        if (initialTheme === \"dark\" || initialTheme === \"light\") {\n          document.documentElement.dataset.theme = initialTheme;\n        }\n      } catch {}\n    </script>\n    <link rel=\"stylesheet\" href=\"../shared/styles.css\">\n    <script defer src=\"../shared/site.js\"></script>\n  </head>\n  <body data-page=\"contacts\" data-nav-open=\"false\">\n    \n    <header class=\"site-header\">\n      <div class=\"header-shell\">\n        <a class=\"brand\" href=\"index.html\" data-brand-text-fallback=\"true\">\n          <strong>Meridian</strong>\n          <span>Системы для бизнеса и продукта</span>\n        </a>\n        <nav class=\"site-nav\" aria-label=\"Главное меню\"><a href=\"index.html\">Главная</a><a href=\"services.html\">Услуги</a><a href=\"about.html\">О компании</a><a href=\"contacts.html\" aria-current=\"page\">Контакты</a></nav>\n        <div class=\"header-actions\">\n          <a class=\"header-cta\" href=\"contacts.html\">Обсудить проект</a>\n          <button\n            class=\"theme-toggle\"\n            type=\"button\"\n            data-theme-toggle\n            data-label-dark=\"Включить тёмную тему\"\n            data-label-light=\"Включить светлую тему\"\n            aria-label=\"Включить тёмную тему\"\n          >☾</button>\n          <button\n            class=\"menu-toggle\"\n            type=\"button\"\n            data-menu-toggle\n            aria-label=\"Открыть меню\"\n            aria-expanded=\"false\"\n          >☰</button>\n        </div>\n      </div>\n    </header>\n    \n    <main class=\"main-shell subpage\">\n      <section class=\"contact-layout\">\n        <article class=\"contact-panel\">\n          <div><span class=\"eyebrow\">Начать разговор</span><h1>Начнём с короткого разговора — и быстро поймём следующий шаг.</h1><p>Расскажите, что уже существует, что не работает и какой результат нужен. Для первого контакта достаточно нескольких предложений.</p></div>\n          <div class=\"contact-details\">\n            <article class=\"contact-detail\"><b>Почта</b><a href=\"mailto:hello@example.com\">hello@example.com</a><p>Для описания задачи и материалов.</p></article>\n            <article class=\"contact-detail\"><b>Телефон</b><a href=\"tel:+994000000000\">+994 00 000 00 00</a><p>Демонстрационный контакт.</p></article>\n            <article class=\"contact-detail\"><b>Формат</b><strong>Онлайн / Баку</strong><p>Рабочее время согласуем заранее.</p></article>\n            <article class=\"contact-detail\"><b>Ответ</b><strong>1–2 рабочих дня</strong><p>Без автоматической воронки.</p></article>\n          </div>\n        </article>\n        <article class=\"form-panel\">\n          <h2>Коротко о задаче</h2>\n          <p>Эта форма демонстрационная: она показывает компоновку контакта, но не отправляет данные.</p>\n          <form class=\"contact-form\" data-demo-form data-demo-message=\"Демонстрация: данные не отправлены.\">\n            <label>Имя<input name=\"name\" autocomplete=\"name\" placeholder=\"Как к вам обращаться\"></label>\n            <label>Почта<input type=\"email\" name=\"email\" autocomplete=\"email\" placeholder=\"name@example.com\"></label>\n            <label>Задача<textarea name=\"message\" placeholder=\"Что уже есть и какой результат нужен\"></textarea></label>\n            <button class=\"button-primary\" type=\"submit\">Проверить форму</button>\n            <p class=\"form-note\" data-form-status tabindex=\"-1\">В каноническом шаблоне серверный владелец формы не подключён.</p>\n          </form>\n        </article>\n      </section>\n      <section class=\"section statement\"><div><span class=\"eyebrow\">До разговора</span><h2>Не нужно готовить техническое задание на десятки страниц.</h2></div><p>Достаточно назвать задачу, текущую точку и ограничения. Остальную структуру мы соберём вместе после рентгена.</p></section>\n    </main>\n    \n    <footer class=\"site-footer\">\n      <div class=\"footer-shell\">\n        <div class=\"footer-brand\">\n          <strong>Meridian</strong>\n          <p>Спокойная бизнес-структура для компаний, продуктов и сервисов.</p>\n        </div>\n        <div class=\"footer-column\">\n          <b>Разделы</b>\n          <a href=\"services.html\">Услуги</a>\n          <a href=\"about.html\">О компании</a>\n          <a href=\"contacts.html\">Контакты</a>\n        </div>\n        <div class=\"footer-column\">\n          <b>Связаться</b>\n          <a href=\"mailto:hello@example.com\">hello@example.com</a>\n          <a href=\"tel:+994000000000\">+994 00 000 00 00</a>\n        </div>\n      </div>\n      <div class=\"footer-bottom\">© 2026 Meridian · Демонстрационный контент Business Canon v1</div>\n    </footer>\n  </body>\n</html>\n",
+          "main": "<main class=\"main-shell subpage\">\n      <section class=\"contact-layout\">\n        <article class=\"contact-panel\">\n          <div><span class=\"eyebrow\">Начать разговор</span><h1>Начнём с короткого разговора — и быстро поймём следующий шаг.</h1><p>Расскажите, что уже существует, что не работает и какой результат нужен. Для первого контакта достаточно нескольких предложений.</p></div>\n          <div class=\"contact-details\">\n            <article class=\"contact-detail\"><b>Почта</b><a href=\"mailto:hello@example.com\">hello@example.com</a><p>Для описания задачи и материалов.</p></article>\n            <article class=\"contact-detail\"><b>Телефон</b><a href=\"tel:+994000000000\">+994 00 000 00 00</a><p>Демонстрационный контакт.</p></article>\n            <article class=\"contact-detail\"><b>Формат</b><strong>Онлайн / Баку</strong><p>Рабочее время согласуем заранее.</p></article>\n            <article class=\"contact-detail\"><b>Ответ</b><strong>1–2 рабочих дня</strong><p>Без автоматической воронки.</p></article>\n          </div>\n        </article>\n        <article class=\"form-panel\">\n          <h2>Коротко о задаче</h2>\n          <p>Эта форма демонстрационная: она показывает компоновку контакта, но не отправляет данные.</p>\n          <form class=\"contact-form\" data-demo-form data-demo-message=\"Демонстрация: данные не отправлены.\">\n            <label>Имя<input name=\"name\" autocomplete=\"name\" placeholder=\"Как к вам обращаться\"></label>\n            <label>Почта<input type=\"email\" name=\"email\" autocomplete=\"email\" placeholder=\"name@example.com\"></label>\n            <label>Задача<textarea name=\"message\" placeholder=\"Что уже есть и какой результат нужен\"></textarea></label>\n            <button class=\"button-primary\" type=\"submit\">Проверить форму</button>\n            <p class=\"form-note\" data-form-status tabindex=\"-1\">В каноническом шаблоне серверный владелец формы не подключён.</p>\n          </form>\n        </article>\n      </section>\n      <section class=\"section statement\"><div><span class=\"eyebrow\">До разговора</span><h2>Не нужно готовить техническое задание на десятки страниц.</h2></div><p>Достаточно назвать задачу, текущую точку и ограничения. Остальную структуру мы соберём вместе после рентгена.</p></section>\n    </main>"
+        }
+      },
+      "en": {
+        "index": {
+          "title": "Home",
+          "summary": "A wide business website with a clear offer, services, cases, and contact path.",
+          "documentTitle": "Meridian · Business and product systems",
+          "html": "<!doctype html>\n<html lang=\"en\" data-theme=\"light\">\n  <head>\n    <meta charset=\"utf-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n    <meta name=\"description\" content=\"A wide business website with a clear offer, services, cases, and contact path.\">\n    <meta name=\"theme-color\" content=\"#17694b\">\n    <title>Meridian · Business and product systems</title>\n    <script>\n      try {\n        const urlTheme = new URLSearchParams(location.search).get(\"theme\");\n        const savedTheme = localStorage.getItem(\"irgeztne-business-canon-theme\");\n        const initialTheme =\n          urlTheme === \"dark\" || urlTheme === \"light\" ? urlTheme : savedTheme;\n        if (initialTheme === \"dark\" || initialTheme === \"light\") {\n          document.documentElement.dataset.theme = initialTheme;\n        }\n      } catch {}\n    </script>\n    <link rel=\"stylesheet\" href=\"../shared/styles.css\">\n    <script defer src=\"../shared/site.js\"></script>\n  </head>\n  <body data-page=\"home\" data-nav-open=\"false\">\n    \n    <header class=\"site-header\">\n      <div class=\"header-shell\">\n        <a class=\"brand\" href=\"index.html\" data-brand-text-fallback=\"true\">\n          <strong>Meridian</strong>\n          <span>Business and product systems</span>\n        </a>\n        <nav class=\"site-nav\" aria-label=\"Main navigation\"><a href=\"index.html\" aria-current=\"page\">Home</a><a href=\"services.html\">Services</a><a href=\"about.html\">Company</a><a href=\"contacts.html\">Contact</a></nav>\n        <div class=\"header-actions\">\n          <a class=\"header-cta\" href=\"contacts.html\">Discuss a project</a>\n          <button\n            class=\"theme-toggle\"\n            type=\"button\"\n            data-theme-toggle\n            data-label-dark=\"Use dark theme\"\n            data-label-light=\"Use light theme\"\n            aria-label=\"Use dark theme\"\n          >☾</button>\n          <button\n            class=\"menu-toggle\"\n            type=\"button\"\n            data-menu-toggle\n            aria-label=\"Open menu\"\n            aria-expanded=\"false\"\n          >☰</button>\n        </div>\n      </div>\n    </header>\n    \n    <main class=\"main-shell\">\n      <section class=\"home-hero\">\n        <article class=\"hero-copy\">\n          <div>\n            <span class=\"eyebrow\">Business / Product</span>\n            <h1>Present your product and services so the choice feels obvious.</h1>\n            <p>A complete business structure for a company, product, or service: a clear offer, proof, process, and a calm path to contact.</p>\n            <div class=\"hero-buttons\">\n              <a class=\"button-primary\" href=\"services.html\">Explore ways to work</a>\n              <a class=\"button-secondary\" href=\"contacts.html\">Start a conversation</a>\n            </div>\n          </div>\n          <div class=\"hero-proof\" aria-label=\"Key figures\">\n            <article><strong>48%</strong><span>faster path from idea to launch</span></article>\n            <article><strong>24/7</strong><span>a clear point of contact</span></article>\n            <article><strong>6 weeks</strong><span>to the first working release</span></article>\n          </div>\n        </article>\n        <aside class=\"hero-media\" data-template-slot=\"hero.image\">\n          <img src=\"../assets/hero-office.webp\" alt=\"A team working in a bright office\" width=\"883\" height=\"475\">\n          <div class=\"hero-media-card\">\n            <div><small>Working system</small><strong>Offer → trust → action</strong></div>\n            <b>+32.8%</b>\n          </div>\n        </aside>\n      </section>\n\n      <div class=\"trust-strip\" aria-label=\"Sample client strip\">\n        <span>The structure fits product teams, services, and companies</span>\n        <strong>Northline</strong><strong>Forma</strong><strong>Vector</strong><strong>NovaLab</strong>\n      </div>\n\n      <section class=\"section\" id=\"system\">\n        <div class=\"section-intro\">\n          <div><span class=\"eyebrow\">Site foundation</span><h2>Not a collection of blocks — a complete business presentation.</h2></div>\n          <p>Visitors immediately understand what you do, why they can trust you, and what their next step should be.</p>\n        </div>\n        <div class=\"feature-grid\">\n          <figure class=\"image-panel\" data-template-slot=\"feature.image\">\n            <img src=\"../assets/process-team.webp\" alt=\"A team discussing a project structure\" width=\"880\" height=\"252\">\n          </figure>\n          <div class=\"feature-stack\">\n            <article><b>01</b><div><h3>Clear offer</h3><p>The main idea is visible in the first viewport and never gets lost in decoration.</p></div></article>\n            <article><b>02</b><div><h3>Proof</h3><p>Cases, figures, and process are part of the story instead of a random card grid.</p></div></article>\n            <article><b>03</b><div><h3>Calm action</h3><p>The contact path stays present without turning the site into an aggressive funnel.</p></div></article>\n          </div>\n        </div>\n      </section>\n\n      <section class=\"section case-layout\">\n        <article class=\"case-story\">\n          <div><span class=\"eyebrow\">Featured case</span><h2>Results should be visible, not merely claimed.</h2><p>One strong case explains the challenge, the work, and the measurable outcome better than ten generic promises.</p></div>\n          <div class=\"case-result\">\n            <article><strong>3.4×</strong><span>more qualified enquiries</span></article>\n            <article><strong>62%</strong><span>faster product comprehension</span></article>\n            <article><strong>18 days</strong><span>from prototype to launch</span></article>\n          </div>\n        </article>\n        <figure class=\"case-visual\" data-template-slot=\"case.image\">\n          <img src=\"../assets/case-city.webp\" alt=\"Modern business architecture\" width=\"385\" height=\"376\">\n          <figcaption class=\"case-caption\"><strong>Northline Systems</strong><span>A new product structure, one coherent journey, and independent pages.</span></figcaption>\n        </figure>\n      </section>\n\n      <section class=\"section\">\n        <div class=\"section-intro\">\n          <div><span class=\"eyebrow\">Process</span><h2>Four clear steps from challenge to launch.</h2></div>\n          <p>Every phase ends with a concrete result that can be reviewed and accepted.</p>\n        </div>\n        <div class=\"process-grid\">\n          <article><b>01 · Context</b><h3>Understand</h3><p>The challenge, audience, constraints, and actual product state.</p></article>\n          <article><b>02 · Structure</b><h3>Shape</h3><p>The journey, pages, content, and visual hierarchy.</p></article>\n          <article><b>03 · Delivery</b><h3>Launch</h3><p>A working release with responsive layouts, themes, and verified routes.</p></article>\n          <article><b>04 · Support</b><h3>Develop</h3><p>Measurement, new sections, and changes without rebuilding the foundation.</p></article>\n        </div>\n      </section>\n\n      <section class=\"cta-band\">\n        <div><span class=\"eyebrow\">Next step</span><h2>Let’s start with the challenge, not a preset collection of blocks.</h2></div>\n        <a class=\"button-primary\" href=\"contacts.html\">Discuss a project</a>\n      </section>\n    </main>\n    \n    <footer class=\"site-footer\">\n      <div class=\"footer-shell\">\n        <div class=\"footer-brand\">\n          <strong>Meridian</strong>\n          <p>A calm business structure for companies, products, and services.</p>\n        </div>\n        <div class=\"footer-column\">\n          <b>Sections</b>\n          <a href=\"services.html\">Services</a>\n          <a href=\"about.html\">Company</a>\n          <a href=\"contacts.html\">Contact</a>\n        </div>\n        <div class=\"footer-column\">\n          <b>Contact</b>\n          <a href=\"mailto:hello@example.com\">hello@example.com</a>\n          <a href=\"tel:+994000000000\">+994 00 000 00 00</a>\n        </div>\n      </div>\n      <div class=\"footer-bottom\">© 2026 Meridian · Business Canon v1 demonstration content</div>\n    </footer>\n  </body>\n</html>\n",
+          "main": "<main class=\"main-shell\">\n      <section class=\"home-hero\">\n        <article class=\"hero-copy\">\n          <div>\n            <span class=\"eyebrow\">Business / Product</span>\n            <h1>Present your product and services so the choice feels obvious.</h1>\n            <p>A complete business structure for a company, product, or service: a clear offer, proof, process, and a calm path to contact.</p>\n            <div class=\"hero-buttons\">\n              <a class=\"button-primary\" href=\"services.html\">Explore ways to work</a>\n              <a class=\"button-secondary\" href=\"contacts.html\">Start a conversation</a>\n            </div>\n          </div>\n          <div class=\"hero-proof\" aria-label=\"Key figures\">\n            <article><strong>48%</strong><span>faster path from idea to launch</span></article>\n            <article><strong>24/7</strong><span>a clear point of contact</span></article>\n            <article><strong>6 weeks</strong><span>to the first working release</span></article>\n          </div>\n        </article>\n        <aside class=\"hero-media\" data-template-slot=\"hero.image\">\n          <img src=\"../assets/hero-office.webp\" alt=\"A team working in a bright office\" width=\"883\" height=\"475\">\n          <div class=\"hero-media-card\">\n            <div><small>Working system</small><strong>Offer → trust → action</strong></div>\n            <b>+32.8%</b>\n          </div>\n        </aside>\n      </section>\n\n      <div class=\"trust-strip\" aria-label=\"Sample client strip\">\n        <span>The structure fits product teams, services, and companies</span>\n        <strong>Northline</strong><strong>Forma</strong><strong>Vector</strong><strong>NovaLab</strong>\n      </div>\n\n      <section class=\"section\" id=\"system\">\n        <div class=\"section-intro\">\n          <div><span class=\"eyebrow\">Site foundation</span><h2>Not a collection of blocks — a complete business presentation.</h2></div>\n          <p>Visitors immediately understand what you do, why they can trust you, and what their next step should be.</p>\n        </div>\n        <div class=\"feature-grid\">\n          <figure class=\"image-panel\" data-template-slot=\"feature.image\">\n            <img src=\"../assets/process-team.webp\" alt=\"A team discussing a project structure\" width=\"880\" height=\"252\">\n          </figure>\n          <div class=\"feature-stack\">\n            <article><b>01</b><div><h3>Clear offer</h3><p>The main idea is visible in the first viewport and never gets lost in decoration.</p></div></article>\n            <article><b>02</b><div><h3>Proof</h3><p>Cases, figures, and process are part of the story instead of a random card grid.</p></div></article>\n            <article><b>03</b><div><h3>Calm action</h3><p>The contact path stays present without turning the site into an aggressive funnel.</p></div></article>\n          </div>\n        </div>\n      </section>\n\n      <section class=\"section case-layout\">\n        <article class=\"case-story\">\n          <div><span class=\"eyebrow\">Featured case</span><h2>Results should be visible, not merely claimed.</h2><p>One strong case explains the challenge, the work, and the measurable outcome better than ten generic promises.</p></div>\n          <div class=\"case-result\">\n            <article><strong>3.4×</strong><span>more qualified enquiries</span></article>\n            <article><strong>62%</strong><span>faster product comprehension</span></article>\n            <article><strong>18 days</strong><span>from prototype to launch</span></article>\n          </div>\n        </article>\n        <figure class=\"case-visual\" data-template-slot=\"case.image\">\n          <img src=\"../assets/case-city.webp\" alt=\"Modern business architecture\" width=\"385\" height=\"376\">\n          <figcaption class=\"case-caption\"><strong>Northline Systems</strong><span>A new product structure, one coherent journey, and independent pages.</span></figcaption>\n        </figure>\n      </section>\n\n      <section class=\"section\">\n        <div class=\"section-intro\">\n          <div><span class=\"eyebrow\">Process</span><h2>Four clear steps from challenge to launch.</h2></div>\n          <p>Every phase ends with a concrete result that can be reviewed and accepted.</p>\n        </div>\n        <div class=\"process-grid\">\n          <article><b>01 · Context</b><h3>Understand</h3><p>The challenge, audience, constraints, and actual product state.</p></article>\n          <article><b>02 · Structure</b><h3>Shape</h3><p>The journey, pages, content, and visual hierarchy.</p></article>\n          <article><b>03 · Delivery</b><h3>Launch</h3><p>A working release with responsive layouts, themes, and verified routes.</p></article>\n          <article><b>04 · Support</b><h3>Develop</h3><p>Measurement, new sections, and changes without rebuilding the foundation.</p></article>\n        </div>\n      </section>\n\n      <section class=\"cta-band\">\n        <div><span class=\"eyebrow\">Next step</span><h2>Let’s start with the challenge, not a preset collection of blocks.</h2></div>\n        <a class=\"button-primary\" href=\"contacts.html\">Discuss a project</a>\n      </section>\n    </main>"
+        },
+        "services": {
+          "title": "Services",
+          "summary": "Consulting, product pages, company websites, and launch support.",
+          "documentTitle": "Ways to work together · Meridian",
+          "html": "<!doctype html>\n<html lang=\"en\" data-theme=\"light\">\n  <head>\n    <meta charset=\"utf-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n    <meta name=\"description\" content=\"Consulting, product pages, company websites, and launch support.\">\n    <meta name=\"theme-color\" content=\"#17694b\">\n    <title>Ways to work together · Meridian</title>\n    <script>\n      try {\n        const urlTheme = new URLSearchParams(location.search).get(\"theme\");\n        const savedTheme = localStorage.getItem(\"irgeztne-business-canon-theme\");\n        const initialTheme =\n          urlTheme === \"dark\" || urlTheme === \"light\" ? urlTheme : savedTheme;\n        if (initialTheme === \"dark\" || initialTheme === \"light\") {\n          document.documentElement.dataset.theme = initialTheme;\n        }\n      } catch {}\n    </script>\n    <link rel=\"stylesheet\" href=\"../shared/styles.css\">\n    <script defer src=\"../shared/site.js\"></script>\n  </head>\n  <body data-page=\"services\" data-nav-open=\"false\">\n    \n    <header class=\"site-header\">\n      <div class=\"header-shell\">\n        <a class=\"brand\" href=\"index.html\" data-brand-text-fallback=\"true\">\n          <strong>Meridian</strong>\n          <span>Business and product systems</span>\n        </a>\n        <nav class=\"site-nav\" aria-label=\"Main navigation\"><a href=\"index.html\">Home</a><a href=\"services.html\" aria-current=\"page\">Services</a><a href=\"about.html\">Company</a><a href=\"contacts.html\">Contact</a></nav>\n        <div class=\"header-actions\">\n          <a class=\"header-cta\" href=\"contacts.html\">Discuss a project</a>\n          <button\n            class=\"theme-toggle\"\n            type=\"button\"\n            data-theme-toggle\n            data-label-dark=\"Use dark theme\"\n            data-label-light=\"Use light theme\"\n            aria-label=\"Use dark theme\"\n          >☾</button>\n          <button\n            class=\"menu-toggle\"\n            type=\"button\"\n            data-menu-toggle\n            aria-label=\"Open menu\"\n            aria-expanded=\"false\"\n          >☰</button>\n        </div>\n      </div>\n    </header>\n    \n    <main class=\"main-shell subpage\">\n      <section class=\"subpage-hero\">\n        <article class=\"content-panel\">\n          <div><span class=\"eyebrow\">Ways to work</span><h1>From a real challenge to a working system — without unnecessary loops.</h1><p>Start with one product, a single page, or the complete company structure. The scope changes; the principle stays the same: clarity, verifiable outcomes, and a clean handoff.</p></div>\n          <div class=\"subpage-index\"><div><b>01</b><span>Diagnosis and journey</span></div><div><b>02</b><span>System and delivery</span></div><div><b>03</b><span>Launch and growth</span></div></div>\n        </article>\n        <figure class=\"subpage-media\" data-template-slot=\"services.image\">\n          <img src=\"../assets/process-team.webp\" alt=\"A team workshop\" width=\"880\" height=\"252\">\n          <figcaption class=\"media-note\"><strong>One owner for the outcome</strong><span>From the first structure to the published release.</span></figcaption>\n        </figure>\n      </section>\n\n      <section class=\"section service-grid\">\n        <article class=\"service-card\"><b>01 · Foundation</b><h2>Strategy and structure</h2><p>For a product or company that needs a clearer story and customer journey.</p><ul><li>Audience and challenge map</li><li>Page architecture</li><li>Content priorities</li></ul></article>\n        <article class=\"service-card\"><b>02 · Website</b><h2>Product presentation</h2><p>A wide site with a clear offer, proof, and fully independent pages.</p><ul><li>Home and inner pages</li><li>Light and dark themes</li><li>Responsive layouts and route checks</li></ul></article>\n        <article class=\"service-card\"><b>03 · Growth</b><h2>Launch support</h2><p>For teams that need calm product development after publication, not a one-off handoff.</p><ul><li>Real-behaviour review</li><li>Weak-point improvement</li><li>New sections without a rebuild</li></ul></article>\n      </section>\n\n      <section class=\"section statement\"><div><span class=\"eyebrow\">Principle</span><h2>Accept the product itself first. Connect it to the system second.</h2></div><p>This keeps visual work separate from integration and makes the cause of every defect understandable.</p></section>\n\n      <section class=\"section timeline\">\n        <article><b>Phase 01</b><h2>X-ray</h2><p>Review existing owners, pages, data, and constraints before making changes.</p></article>\n        <article><b>Phase 02</b><h2>Canon</h2><p>Build an independent reference and accept its composition, themes, content, and length.</p></article>\n        <article><b>Phase 03</b><h2>Integration</h2><p>Connect the accepted reference to one route and one build pipeline.</p></article>\n        <article><b>Phase 04</b><h2>Verification</h2><p>Compare preview, browser, export, and actual internal navigation.</p></article>\n      </section>\n\n      <section class=\"cta-band\"><div><span class=\"eyebrow\">Conversation</span><h2>Describe the challenge — we’ll propose the structure after a short call.</h2></div><a class=\"button-primary\" href=\"contacts.html\">Start a conversation</a></section>\n    </main>\n    \n    <footer class=\"site-footer\">\n      <div class=\"footer-shell\">\n        <div class=\"footer-brand\">\n          <strong>Meridian</strong>\n          <p>A calm business structure for companies, products, and services.</p>\n        </div>\n        <div class=\"footer-column\">\n          <b>Sections</b>\n          <a href=\"services.html\">Services</a>\n          <a href=\"about.html\">Company</a>\n          <a href=\"contacts.html\">Contact</a>\n        </div>\n        <div class=\"footer-column\">\n          <b>Contact</b>\n          <a href=\"mailto:hello@example.com\">hello@example.com</a>\n          <a href=\"tel:+994000000000\">+994 00 000 00 00</a>\n        </div>\n      </div>\n      <div class=\"footer-bottom\">© 2026 Meridian · Business Canon v1 demonstration content</div>\n    </footer>\n  </body>\n</html>\n",
+          "main": "<main class=\"main-shell subpage\">\n      <section class=\"subpage-hero\">\n        <article class=\"content-panel\">\n          <div><span class=\"eyebrow\">Ways to work</span><h1>From a real challenge to a working system — without unnecessary loops.</h1><p>Start with one product, a single page, or the complete company structure. The scope changes; the principle stays the same: clarity, verifiable outcomes, and a clean handoff.</p></div>\n          <div class=\"subpage-index\"><div><b>01</b><span>Diagnosis and journey</span></div><div><b>02</b><span>System and delivery</span></div><div><b>03</b><span>Launch and growth</span></div></div>\n        </article>\n        <figure class=\"subpage-media\" data-template-slot=\"services.image\">\n          <img src=\"../assets/process-team.webp\" alt=\"A team workshop\" width=\"880\" height=\"252\">\n          <figcaption class=\"media-note\"><strong>One owner for the outcome</strong><span>From the first structure to the published release.</span></figcaption>\n        </figure>\n      </section>\n\n      <section class=\"section service-grid\">\n        <article class=\"service-card\"><b>01 · Foundation</b><h2>Strategy and structure</h2><p>For a product or company that needs a clearer story and customer journey.</p><ul><li>Audience and challenge map</li><li>Page architecture</li><li>Content priorities</li></ul></article>\n        <article class=\"service-card\"><b>02 · Website</b><h2>Product presentation</h2><p>A wide site with a clear offer, proof, and fully independent pages.</p><ul><li>Home and inner pages</li><li>Light and dark themes</li><li>Responsive layouts and route checks</li></ul></article>\n        <article class=\"service-card\"><b>03 · Growth</b><h2>Launch support</h2><p>For teams that need calm product development after publication, not a one-off handoff.</p><ul><li>Real-behaviour review</li><li>Weak-point improvement</li><li>New sections without a rebuild</li></ul></article>\n      </section>\n\n      <section class=\"section statement\"><div><span class=\"eyebrow\">Principle</span><h2>Accept the product itself first. Connect it to the system second.</h2></div><p>This keeps visual work separate from integration and makes the cause of every defect understandable.</p></section>\n\n      <section class=\"section timeline\">\n        <article><b>Phase 01</b><h2>X-ray</h2><p>Review existing owners, pages, data, and constraints before making changes.</p></article>\n        <article><b>Phase 02</b><h2>Canon</h2><p>Build an independent reference and accept its composition, themes, content, and length.</p></article>\n        <article><b>Phase 03</b><h2>Integration</h2><p>Connect the accepted reference to one route and one build pipeline.</p></article>\n        <article><b>Phase 04</b><h2>Verification</h2><p>Compare preview, browser, export, and actual internal navigation.</p></article>\n      </section>\n\n      <section class=\"cta-band\"><div><span class=\"eyebrow\">Conversation</span><h2>Describe the challenge — we’ll propose the structure after a short call.</h2></div><a class=\"button-primary\" href=\"contacts.html\">Start a conversation</a></section>\n    </main>"
+        },
+        "about": {
+          "title": "About",
+          "summary": "The team, principles, and process behind business systems and digital products.",
+          "documentTitle": "How Meridian works",
+          "html": "<!doctype html>\n<html lang=\"en\" data-theme=\"light\">\n  <head>\n    <meta charset=\"utf-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n    <meta name=\"description\" content=\"The team, principles, and process behind business systems and digital products.\">\n    <meta name=\"theme-color\" content=\"#17694b\">\n    <title>How Meridian works</title>\n    <script>\n      try {\n        const urlTheme = new URLSearchParams(location.search).get(\"theme\");\n        const savedTheme = localStorage.getItem(\"irgeztne-business-canon-theme\");\n        const initialTheme =\n          urlTheme === \"dark\" || urlTheme === \"light\" ? urlTheme : savedTheme;\n        if (initialTheme === \"dark\" || initialTheme === \"light\") {\n          document.documentElement.dataset.theme = initialTheme;\n        }\n      } catch {}\n    </script>\n    <link rel=\"stylesheet\" href=\"../shared/styles.css\">\n    <script defer src=\"../shared/site.js\"></script>\n  </head>\n  <body data-page=\"about\" data-nav-open=\"false\">\n    \n    <header class=\"site-header\">\n      <div class=\"header-shell\">\n        <a class=\"brand\" href=\"index.html\" data-brand-text-fallback=\"true\">\n          <strong>Meridian</strong>\n          <span>Business and product systems</span>\n        </a>\n        <nav class=\"site-nav\" aria-label=\"Main navigation\"><a href=\"index.html\">Home</a><a href=\"services.html\">Services</a><a href=\"about.html\" aria-current=\"page\">Company</a><a href=\"contacts.html\">Contact</a></nav>\n        <div class=\"header-actions\">\n          <a class=\"header-cta\" href=\"contacts.html\">Discuss a project</a>\n          <button\n            class=\"theme-toggle\"\n            type=\"button\"\n            data-theme-toggle\n            data-label-dark=\"Use dark theme\"\n            data-label-light=\"Use light theme\"\n            aria-label=\"Use dark theme\"\n          >☾</button>\n          <button\n            class=\"menu-toggle\"\n            type=\"button\"\n            data-menu-toggle\n            aria-label=\"Open menu\"\n            aria-expanded=\"false\"\n          >☰</button>\n        </div>\n      </div>\n    </header>\n    \n    <main class=\"main-shell subpage\">\n      <section class=\"subpage-hero\">\n        <article class=\"content-panel\">\n          <div><span class=\"eyebrow\">How we work</span><h1>A team responsible for the launch, not just a polished file.</h1><p>We connect structure, content, design, and implementation into one verifiable outcome. There is no second owner appearing between the mockup and the working site.</p></div>\n          <div class=\"subpage-index\"><div><b>Focus</b><span>A clear challenge</span></div><div><b>Rhythm</b><span>Short reviews</span></div><div><b>Outcome</b><span>A working release</span></div></div>\n        </article>\n        <figure class=\"subpage-media\" data-template-slot=\"about.image\">\n          <img src=\"../assets/hero-office.webp\" alt=\"The Meridian team in its workspace\" width=\"883\" height=\"475\">\n          <figcaption class=\"media-note\"><strong>Small team, broad context</strong><span>Strategy, interface, and delivery stay in one coherent system.</span></figcaption>\n        </figure>\n      </section>\n\n      <section class=\"section values-grid\">\n        <article class=\"value-card\"><b>01 · Clarity</b><h2>Call things by their real names</h2><p>Never present a placeholder as a feature, or a future slot as a working media system.</p><ul><li>Verify the owner</li><li>Define the boundary</li><li>Separate fact from assumption</li></ul></article>\n        <article class=\"value-card\"><b>02 · Integrity</b><h2>Do not shrink the product for speed</h2><p>A working foundation matters more than a beautiful first viewport that fails on the second route.</p><ul><li>Complete pages</li><li>Real navigation</li><li>Consistent theme behaviour</li></ul></article>\n        <article class=\"value-card\"><b>03 · Verification</b><h2>Accept the actual outcome</h2><p>Screens, routes, and the real browser matter more than a green test that checks the wrong thing.</p><ul><li>Visual acceptance</li><li>Interaction testing</li><li>Build comparison</li></ul></article>\n      </section>\n\n      <section class=\"section team-band\">\n        <figure class=\"image-panel\" data-template-slot=\"team.image\"><img src=\"../assets/process-team.webp\" alt=\"A project workshop at a whiteboard\" width=\"880\" height=\"252\"></figure>\n        <div class=\"metric-panel\">\n          <article><strong>1</strong><span>coherent journey from idea to launch</span></article>\n          <article><strong>4</strong><span>review points before handoff</span></article>\n          <article><strong>2</strong><span>complete colour themes</span></article>\n          <article><strong>0</strong><span>hidden external dependencies</span></article>\n        </div>\n      </section>\n\n      <section class=\"section statement\"><div><span class=\"eyebrow\">Manifesto</span><h2>A good business site should not look like an admin system.</h2></div><p>Navigation helps people move, while every independent page opens its actual content — without a technical “page” label or an automatic repeat of the menu item.</p></section>\n      <section class=\"cta-band\"><div><span class=\"eyebrow\">Introduction</span><h2>If the challenge is complex, we’ll start with a map — not a promise of a ready answer.</h2></div><a class=\"button-primary\" href=\"contacts.html\">Get in touch</a></section>\n    </main>\n    \n    <footer class=\"site-footer\">\n      <div class=\"footer-shell\">\n        <div class=\"footer-brand\">\n          <strong>Meridian</strong>\n          <p>A calm business structure for companies, products, and services.</p>\n        </div>\n        <div class=\"footer-column\">\n          <b>Sections</b>\n          <a href=\"services.html\">Services</a>\n          <a href=\"about.html\">Company</a>\n          <a href=\"contacts.html\">Contact</a>\n        </div>\n        <div class=\"footer-column\">\n          <b>Contact</b>\n          <a href=\"mailto:hello@example.com\">hello@example.com</a>\n          <a href=\"tel:+994000000000\">+994 00 000 00 00</a>\n        </div>\n      </div>\n      <div class=\"footer-bottom\">© 2026 Meridian · Business Canon v1 demonstration content</div>\n    </footer>\n  </body>\n</html>\n",
+          "main": "<main class=\"main-shell subpage\">\n      <section class=\"subpage-hero\">\n        <article class=\"content-panel\">\n          <div><span class=\"eyebrow\">How we work</span><h1>A team responsible for the launch, not just a polished file.</h1><p>We connect structure, content, design, and implementation into one verifiable outcome. There is no second owner appearing between the mockup and the working site.</p></div>\n          <div class=\"subpage-index\"><div><b>Focus</b><span>A clear challenge</span></div><div><b>Rhythm</b><span>Short reviews</span></div><div><b>Outcome</b><span>A working release</span></div></div>\n        </article>\n        <figure class=\"subpage-media\" data-template-slot=\"about.image\">\n          <img src=\"../assets/hero-office.webp\" alt=\"The Meridian team in its workspace\" width=\"883\" height=\"475\">\n          <figcaption class=\"media-note\"><strong>Small team, broad context</strong><span>Strategy, interface, and delivery stay in one coherent system.</span></figcaption>\n        </figure>\n      </section>\n\n      <section class=\"section values-grid\">\n        <article class=\"value-card\"><b>01 · Clarity</b><h2>Call things by their real names</h2><p>Never present a placeholder as a feature, or a future slot as a working media system.</p><ul><li>Verify the owner</li><li>Define the boundary</li><li>Separate fact from assumption</li></ul></article>\n        <article class=\"value-card\"><b>02 · Integrity</b><h2>Do not shrink the product for speed</h2><p>A working foundation matters more than a beautiful first viewport that fails on the second route.</p><ul><li>Complete pages</li><li>Real navigation</li><li>Consistent theme behaviour</li></ul></article>\n        <article class=\"value-card\"><b>03 · Verification</b><h2>Accept the actual outcome</h2><p>Screens, routes, and the real browser matter more than a green test that checks the wrong thing.</p><ul><li>Visual acceptance</li><li>Interaction testing</li><li>Build comparison</li></ul></article>\n      </section>\n\n      <section class=\"section team-band\">\n        <figure class=\"image-panel\" data-template-slot=\"team.image\"><img src=\"../assets/process-team.webp\" alt=\"A project workshop at a whiteboard\" width=\"880\" height=\"252\"></figure>\n        <div class=\"metric-panel\">\n          <article><strong>1</strong><span>coherent journey from idea to launch</span></article>\n          <article><strong>4</strong><span>review points before handoff</span></article>\n          <article><strong>2</strong><span>complete colour themes</span></article>\n          <article><strong>0</strong><span>hidden external dependencies</span></article>\n        </div>\n      </section>\n\n      <section class=\"section statement\"><div><span class=\"eyebrow\">Manifesto</span><h2>A good business site should not look like an admin system.</h2></div><p>Navigation helps people move, while every independent page opens its actual content — without a technical “page” label or an automatic repeat of the menu item.</p></section>\n      <section class=\"cta-band\"><div><span class=\"eyebrow\">Introduction</span><h2>If the challenge is complex, we’ll start with a map — not a promise of a ready answer.</h2></div><a class=\"button-primary\" href=\"contacts.html\">Get in touch</a></section>\n    </main>"
+        },
+        "contacts": {
+          "title": "Contacts",
+          "summary": "A contact page for discussing a product, website, or business challenge.",
+          "documentTitle": "Start a conversation · Meridian",
+          "html": "<!doctype html>\n<html lang=\"en\" data-theme=\"light\">\n  <head>\n    <meta charset=\"utf-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n    <meta name=\"description\" content=\"A contact page for discussing a product, website, or business challenge.\">\n    <meta name=\"theme-color\" content=\"#17694b\">\n    <title>Start a conversation · Meridian</title>\n    <script>\n      try {\n        const urlTheme = new URLSearchParams(location.search).get(\"theme\");\n        const savedTheme = localStorage.getItem(\"irgeztne-business-canon-theme\");\n        const initialTheme =\n          urlTheme === \"dark\" || urlTheme === \"light\" ? urlTheme : savedTheme;\n        if (initialTheme === \"dark\" || initialTheme === \"light\") {\n          document.documentElement.dataset.theme = initialTheme;\n        }\n      } catch {}\n    </script>\n    <link rel=\"stylesheet\" href=\"../shared/styles.css\">\n    <script defer src=\"../shared/site.js\"></script>\n  </head>\n  <body data-page=\"contacts\" data-nav-open=\"false\">\n    \n    <header class=\"site-header\">\n      <div class=\"header-shell\">\n        <a class=\"brand\" href=\"index.html\" data-brand-text-fallback=\"true\">\n          <strong>Meridian</strong>\n          <span>Business and product systems</span>\n        </a>\n        <nav class=\"site-nav\" aria-label=\"Main navigation\"><a href=\"index.html\">Home</a><a href=\"services.html\">Services</a><a href=\"about.html\">Company</a><a href=\"contacts.html\" aria-current=\"page\">Contact</a></nav>\n        <div class=\"header-actions\">\n          <a class=\"header-cta\" href=\"contacts.html\">Discuss a project</a>\n          <button\n            class=\"theme-toggle\"\n            type=\"button\"\n            data-theme-toggle\n            data-label-dark=\"Use dark theme\"\n            data-label-light=\"Use light theme\"\n            aria-label=\"Use dark theme\"\n          >☾</button>\n          <button\n            class=\"menu-toggle\"\n            type=\"button\"\n            data-menu-toggle\n            aria-label=\"Open menu\"\n            aria-expanded=\"false\"\n          >☰</button>\n        </div>\n      </div>\n    </header>\n    \n    <main class=\"main-shell subpage\">\n      <section class=\"contact-layout\">\n        <article class=\"contact-panel\">\n          <div><span class=\"eyebrow\">Start a conversation</span><h1>Let’s begin with a short conversation and identify the next step quickly.</h1><p>Tell us what already exists, what is not working, and what outcome you need. A few sentences are enough for the first contact.</p></div>\n          <div class=\"contact-details\">\n            <article class=\"contact-detail\"><b>Email</b><a href=\"mailto:hello@example.com\">hello@example.com</a><p>For the challenge and supporting material.</p></article>\n            <article class=\"contact-detail\"><b>Phone</b><a href=\"tel:+994000000000\">+994 00 000 00 00</a><p>Demonstration contact.</p></article>\n            <article class=\"contact-detail\"><b>Format</b><strong>Online / Baku</strong><p>Working hours are agreed in advance.</p></article>\n            <article class=\"contact-detail\"><b>Response</b><strong>1–2 business days</strong><p>No automated funnel.</p></article>\n          </div>\n        </article>\n        <article class=\"form-panel\">\n          <h2>Tell us about the challenge</h2>\n          <p>This is a demonstration form: it shows the contact layout but does not submit data.</p>\n          <form class=\"contact-form\" data-demo-form data-demo-message=\"Demonstration: no data was submitted.\">\n            <label>Name<input name=\"name\" autocomplete=\"name\" placeholder=\"How should we address you?\"></label>\n            <label>Email<input type=\"email\" name=\"email\" autocomplete=\"email\" placeholder=\"name@example.com\"></label>\n            <label>Challenge<textarea name=\"message\" placeholder=\"What exists today and what outcome do you need?\"></textarea></label>\n            <button class=\"button-primary\" type=\"submit\">Test the form</button>\n            <p class=\"form-note\" data-form-status tabindex=\"-1\">The canonical template has no connected server-side form owner.</p>\n          </form>\n        </article>\n      </section>\n      <section class=\"section statement\"><div><span class=\"eyebrow\">Before the call</span><h2>You do not need a technical brief spanning dozens of pages.</h2></div><p>Name the challenge, the current state, and the constraints. We will shape the remaining structure together after the x-ray.</p></section>\n    </main>\n    \n    <footer class=\"site-footer\">\n      <div class=\"footer-shell\">\n        <div class=\"footer-brand\">\n          <strong>Meridian</strong>\n          <p>A calm business structure for companies, products, and services.</p>\n        </div>\n        <div class=\"footer-column\">\n          <b>Sections</b>\n          <a href=\"services.html\">Services</a>\n          <a href=\"about.html\">Company</a>\n          <a href=\"contacts.html\">Contact</a>\n        </div>\n        <div class=\"footer-column\">\n          <b>Contact</b>\n          <a href=\"mailto:hello@example.com\">hello@example.com</a>\n          <a href=\"tel:+994000000000\">+994 00 000 00 00</a>\n        </div>\n      </div>\n      <div class=\"footer-bottom\">© 2026 Meridian · Business Canon v1 demonstration content</div>\n    </footer>\n  </body>\n</html>\n",
+          "main": "<main class=\"main-shell subpage\">\n      <section class=\"contact-layout\">\n        <article class=\"contact-panel\">\n          <div><span class=\"eyebrow\">Start a conversation</span><h1>Let’s begin with a short conversation and identify the next step quickly.</h1><p>Tell us what already exists, what is not working, and what outcome you need. A few sentences are enough for the first contact.</p></div>\n          <div class=\"contact-details\">\n            <article class=\"contact-detail\"><b>Email</b><a href=\"mailto:hello@example.com\">hello@example.com</a><p>For the challenge and supporting material.</p></article>\n            <article class=\"contact-detail\"><b>Phone</b><a href=\"tel:+994000000000\">+994 00 000 00 00</a><p>Demonstration contact.</p></article>\n            <article class=\"contact-detail\"><b>Format</b><strong>Online / Baku</strong><p>Working hours are agreed in advance.</p></article>\n            <article class=\"contact-detail\"><b>Response</b><strong>1–2 business days</strong><p>No automated funnel.</p></article>\n          </div>\n        </article>\n        <article class=\"form-panel\">\n          <h2>Tell us about the challenge</h2>\n          <p>This is a demonstration form: it shows the contact layout but does not submit data.</p>\n          <form class=\"contact-form\" data-demo-form data-demo-message=\"Demonstration: no data was submitted.\">\n            <label>Name<input name=\"name\" autocomplete=\"name\" placeholder=\"How should we address you?\"></label>\n            <label>Email<input type=\"email\" name=\"email\" autocomplete=\"email\" placeholder=\"name@example.com\"></label>\n            <label>Challenge<textarea name=\"message\" placeholder=\"What exists today and what outcome do you need?\"></textarea></label>\n            <button class=\"button-primary\" type=\"submit\">Test the form</button>\n            <p class=\"form-note\" data-form-status tabindex=\"-1\">The canonical template has no connected server-side form owner.</p>\n          </form>\n        </article>\n      </section>\n      <section class=\"section statement\"><div><span class=\"eyebrow\">Before the call</span><h2>You do not need a technical brief spanning dozens of pages.</h2></div><p>Name the challenge, the current state, and the constraints. We will shape the remaining structure together after the x-ray.</p></section>\n    </main>"
+        }
+      }
+    }
+  },
+  "blog-news": {
+    "assetBase": "assets/template/blog/",
+    "css": "* {\n  box-sizing: border-box;\n}\n\n:root {\n  color-scheme: light;\n  --bg: #eee8df;\n  --paper: #fffdf8;\n  --panel: #ffffff;\n  --panel-soft: #f3eee6;\n  --ink: #171512;\n  --muted: #6d655c;\n  --line: #d8cfc3;\n  --accent: #c83e2b;\n  --accent-strong: #9e2a1b;\n  --accent-soft: #f3d9d1;\n  --blue: #244f82;\n  --header-bg: rgba(255, 253, 248, 0.92);\n  --shadow: 0 24px 68px rgba(44, 32, 22, 0.1);\n  --shadow-soft: 0 14px 36px rgba(44, 32, 22, 0.07);\n  --radius-xl: 30px;\n  --radius-lg: 24px;\n  --radius-md: 18px;\n  --header-height: 128px;\n}\n\nhtml[data-theme=\"dark\"] {\n  color-scheme: dark;\n  --bg: #090f18;\n  --paper: #0d1622;\n  --panel: #121e2d;\n  --panel-soft: #172537;\n  --ink: #f4f0e8;\n  --muted: #afbac7;\n  --line: #2d3d50;\n  --accent: #ff634b;\n  --accent-strong: #ff856f;\n  --accent-soft: #4b241f;\n  --blue: #8ab8f0;\n  --header-bg: rgba(9, 15, 24, 0.92);\n  --shadow: 0 24px 68px rgba(0, 0, 0, 0.34);\n  --shadow-soft: 0 14px 36px rgba(0, 0, 0, 0.24);\n}\n\nhtml {\n  scroll-behavior: smooth;\n  scroll-padding-top: calc(var(--header-height) + 24px);\n}\n\nbody {\n  min-width: 320px;\n  margin: 0;\n  padding-top: var(--header-height);\n  overflow-x: hidden;\n  background:\n    radial-gradient(circle at 8% -4%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 34rem),\n    linear-gradient(180deg, var(--paper), var(--bg));\n  color: var(--ink);\n  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif;\n  text-rendering: optimizeLegibility;\n}\n\nbody::before {\n  position: fixed;\n  inset: 0;\n  z-index: -1;\n  background-image:\n    linear-gradient(color-mix(in srgb, var(--line) 18%, transparent) 1px, transparent 1px),\n    linear-gradient(90deg, color-mix(in srgb, var(--line) 18%, transparent) 1px, transparent 1px);\n  background-size: 56px 56px;\n  content: \"\";\n  pointer-events: none;\n}\n\nbutton,\ninput {\n  font: inherit;\n}\n\na {\n  color: inherit;\n}\n\nh1,\nh2,\nh3 {\n  overflow-wrap: break-word;\n}\n\nimg {\n  display: block;\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n}\n\n.header-shell,\n.section-shell,\n.main-shell,\n.footer-shell {\n  width: min(calc(100% - 64px), 1760px);\n  margin-inline: auto;\n}\n\n.site-header {\n  position: fixed;\n  inset: 0 0 auto;\n  z-index: 1000;\n  height: var(--header-height);\n  border-bottom: 1px solid color-mix(in srgb, var(--line) 88%, transparent);\n  background: var(--header-bg);\n  box-shadow: 0 10px 34px rgba(20, 17, 13, 0.04);\n  backdrop-filter: blur(18px);\n  -webkit-backdrop-filter: blur(18px);\n}\n\n.header-shell {\n  display: grid;\n  grid-template-columns: minmax(240px, 0.8fr) auto minmax(240px, 0.8fr);\n  gap: 28px;\n  align-items: center;\n  height: 82px;\n}\n\n.brand {\n  display: grid;\n  grid-template-columns: auto auto 1fr;\n  gap: 7px;\n  align-items: baseline;\n  width: fit-content;\n  text-decoration: none;\n}\n\n.brand strong,\n.brand span {\n  font-size: 22px;\n  line-height: 1;\n  letter-spacing: -0.05em;\n}\n\n.brand strong {\n  font-weight: 920;\n}\n\n.brand span {\n  color: var(--accent);\n  font-family: Georgia, \"Times New Roman\", serif;\n  font-style: italic;\n}\n\n.brand small {\n  grid-column: 1 / -1;\n  color: var(--muted);\n  font-size: 11px;\n  font-weight: 760;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n}\n\n.site-nav {\n  display: flex;\n  gap: 5px;\n  justify-content: center;\n}\n\n.site-nav a,\n.subscribe-link {\n  min-height: 38px;\n  padding: 9px 14px;\n  border: 1px solid transparent;\n  border-radius: 999px;\n  color: var(--muted);\n  font-size: 14px;\n  font-weight: 820;\n  text-decoration: none;\n  transition: 160ms ease;\n}\n\n.site-nav a:hover,\n.subscribe-link:hover {\n  border-color: var(--line);\n  background: var(--panel);\n  color: var(--ink);\n}\n\n.site-nav a[aria-current=\"page\"] {\n  border-color: var(--ink);\n  background: var(--ink);\n  color: var(--paper);\n}\n\n.header-actions {\n  display: flex;\n  gap: 9px;\n  align-items: center;\n  justify-content: flex-end;\n}\n\n.subscribe-link {\n  border-color: var(--accent);\n  background: var(--accent);\n  color: #fff;\n}\n\n.subscribe-link:hover {\n  border-color: var(--accent-strong);\n  background: var(--accent-strong);\n  color: #fff;\n}\n\n.theme-toggle,\n.menu-toggle {\n  display: inline-grid;\n  place-items: center;\n  width: 42px;\n  height: 42px;\n  padding: 0;\n  border: 1px solid var(--line);\n  border-radius: 50%;\n  background: var(--panel);\n  color: var(--ink);\n  cursor: pointer;\n}\n\n.theme-toggle:hover,\n.menu-toggle:hover {\n  border-color: var(--ink);\n}\n\n.menu-toggle {\n  display: none;\n}\n\n.section-nav {\n  height: 46px;\n  border-top: 1px solid color-mix(in srgb, var(--line) 70%, transparent);\n}\n\n.section-shell {\n  display: flex;\n  gap: 25px;\n  align-items: center;\n  height: 100%;\n  overflow-x: auto;\n  scrollbar-width: none;\n}\n\n.section-shell::-webkit-scrollbar {\n  display: none;\n}\n\n.section-nav a {\n  position: relative;\n  flex: 0 0 auto;\n  color: var(--muted);\n  font-family: Georgia, \"Times New Roman\", serif;\n  font-size: 15px;\n  font-weight: 700;\n  text-decoration: none;\n}\n\n.section-nav a::after {\n  position: absolute;\n  right: -14px;\n  color: var(--accent);\n  content: \"•\";\n}\n\n.section-nav a:last-child::after {\n  display: none;\n}\n\n.main-shell {\n  padding-block: 28px 110px;\n}\n\n.ticker {\n  display: grid;\n  grid-template-columns: auto 1fr;\n  gap: 18px;\n  align-items: center;\n  min-height: 46px;\n  padding: 8px 14px 8px 8px;\n  border: 1px solid var(--line);\n  border-radius: 999px;\n  background: color-mix(in srgb, var(--panel) 86%, transparent);\n}\n\n.ticker strong {\n  padding: 8px 13px;\n  border-radius: 999px;\n  background: var(--accent);\n  color: #fff;\n  font-size: 12px;\n  letter-spacing: 0.09em;\n  text-transform: uppercase;\n}\n\n.ticker div {\n  display: flex;\n  gap: 28px;\n  overflow: hidden;\n  color: var(--muted);\n  font-size: 13px;\n  font-weight: 720;\n  white-space: nowrap;\n}\n\n.ticker span {\n  position: relative;\n}\n\n.ticker span::after {\n  position: absolute;\n  right: -16px;\n  color: var(--accent);\n  content: \"•\";\n}\n\n.eyebrow {\n  margin: 0;\n  color: var(--accent);\n  font-size: 12px;\n  font-weight: 900;\n  letter-spacing: 0.13em;\n  text-transform: uppercase;\n}\n\n.masthead {\n  display: grid;\n  grid-template-columns: minmax(0, 1.8fr) minmax(290px, 0.62fr);\n  gap: clamp(34px, 6vw, 116px);\n  align-items: end;\n  padding: clamp(42px, 5vw, 82px) 0 34px;\n}\n\n.masthead h1,\n.page-intro h1 {\n  max-width: 1200px;\n  margin: 14px 0 0;\n  font-size: clamp(48px, 4.4vw, 78px);\n  line-height: 0.95;\n  letter-spacing: -0.07em;\n}\n\n.edition-card {\n  padding: 24px;\n  border: 1px solid var(--line);\n  border-radius: var(--radius-lg);\n  background: var(--panel);\n  box-shadow: var(--shadow-soft);\n}\n\n.edition-card span,\n.edition-card strong {\n  display: block;\n}\n\n.edition-card span {\n  color: var(--accent);\n  font-size: 12px;\n  font-weight: 900;\n  letter-spacing: 0.11em;\n  text-transform: uppercase;\n}\n\n.edition-card strong {\n  margin-top: 12px;\n  font-family: Georgia, \"Times New Roman\", serif;\n  font-size: 23px;\n  line-height: 1.15;\n}\n\n.edition-card p {\n  margin: 10px 0 0;\n  color: var(--muted);\n  line-height: 1.55;\n}\n\n.front-grid {\n  display: grid;\n  grid-template-columns: minmax(0, 1.48fr) minmax(280px, 0.78fr) minmax(250px, 0.62fr);\n  gap: 22px;\n  align-items: start;\n}\n\n.lead-card,\n.feed-story,\n.rail-panel,\n.story-card,\n.archive-card,\n.topic-card,\n.topics-trending,\n.long-read,\n.editors-pick,\n.mission-copy,\n.mission-image,\n.principle-grid article,\n.team-subscribe > article,\n.subscribe-form {\n  border: 1px solid var(--line);\n  background: var(--panel);\n}\n\n.lead-card {\n  overflow: hidden;\n  border-radius: var(--radius-xl);\n  box-shadow: var(--shadow);\n}\n\n.media-frame {\n  position: relative;\n  display: block;\n  overflow: hidden;\n  background: var(--panel-soft);\n}\n\n.media-frame img {\n  transition: transform 350ms ease;\n}\n\n.media-frame:hover img {\n  transform: scale(1.025);\n}\n\n.media-frame--lead {\n  aspect-ratio: 16 / 8.4;\n}\n\n.lead-content {\n  padding: clamp(24px, 3vw, 42px);\n}\n\n.lead-content h2,\n.section-heading h2,\n.long-read h2,\n.archive-callout h2,\n.mission-copy h2 {\n  margin: 12px 0 0;\n  font-size: clamp(32px, 3.35vw, 58px);\n  line-height: 1;\n  letter-spacing: -0.055em;\n}\n\n.lead-content h2 a,\n.feed-story h3 a,\n.story-card h3 a {\n  text-decoration: none;\n}\n\n.lead-content p,\n.feed-story p,\n.story-card p,\n.archive-card p,\n.topic-card p,\n.editors-pick p,\n.team-subscribe p,\n.subscribe-form p {\n  color: var(--muted);\n  line-height: 1.62;\n}\n\n.lead-content small,\n.feed-story small,\n.story-card small,\n.archive-card small {\n  color: var(--muted);\n  font-weight: 780;\n}\n\n.center-feed {\n  display: grid;\n  gap: 18px;\n}\n\n.feed-story {\n  padding: 22px;\n  border-radius: var(--radius-lg);\n}\n\n.media-frame--feed {\n  aspect-ratio: 16 / 8.6;\n  margin: -8px -8px 20px;\n  border-radius: var(--radius-md);\n}\n\n.feed-story h3,\n.story-card h3,\n.archive-card h2,\n.topic-card h2,\n.editors-pick h3,\n.principle-grid h3,\n.team-subscribe h2,\n.subscribe-form h2,\n.topics-trending h2 {\n  margin: 10px 0 0;\n  font-size: clamp(23px, 2vw, 35px);\n  line-height: 1.05;\n  letter-spacing: -0.045em;\n}\n\n.feed-story p {\n  margin: 10px 0 14px;\n}\n\n.right-rail {\n  display: grid;\n  gap: 18px;\n}\n\n.rail-panel {\n  padding: 22px;\n  border-radius: var(--radius-lg);\n}\n\n.trend-list {\n  margin: 16px 0 0;\n  padding: 0;\n  list-style: none;\n  counter-reset: trend;\n}\n\n.trend-list li {\n  counter-increment: trend;\n  border-top: 1px solid var(--line);\n}\n\n.trend-list li:first-child {\n  border-top: 0;\n}\n\n.trend-list a {\n  display: grid;\n  grid-template-columns: 30px 1fr;\n  gap: 9px;\n  padding: 14px 0;\n  font-family: Georgia, \"Times New Roman\", serif;\n  font-size: 16px;\n  font-weight: 700;\n  line-height: 1.22;\n  text-decoration: none;\n}\n\n.trend-list a::before {\n  color: var(--accent);\n  content: \"0\" counter(trend);\n  font-family: Inter, sans-serif;\n  font-size: 11px;\n  font-weight: 900;\n}\n\n.topic-chips {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 8px;\n  margin-top: 15px;\n}\n\n.topic-chips a,\n.filter-bar a {\n  padding: 8px 11px;\n  border: 1px solid var(--line);\n  border-radius: 999px;\n  background: var(--paper);\n  color: var(--muted);\n  font-size: 12px;\n  font-weight: 800;\n  text-decoration: none;\n}\n\n.rail-panel--brief {\n  background: var(--ink);\n  color: var(--paper);\n}\n\nhtml[data-theme=\"dark\"] .rail-panel--brief {\n  background: #f2eadf;\n  color: #171512;\n}\n\n.rail-panel--brief p:not(.eyebrow) {\n  color: currentColor;\n  opacity: 0.76;\n  line-height: 1.55;\n}\n\n.text-link {\n  color: var(--accent);\n  font-weight: 870;\n  text-decoration: none;\n}\n\n.section-heading {\n  display: flex;\n  gap: 30px;\n  align-items: end;\n  justify-content: space-between;\n  padding: clamp(80px, 9vw, 150px) 0 28px;\n}\n\n.section-heading > div > p:last-child {\n  max-width: 760px;\n  margin: 14px 0 0;\n  color: var(--muted);\n  line-height: 1.6;\n}\n\n.button {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  min-height: 46px;\n  padding: 12px 18px;\n  border: 1px solid var(--accent);\n  border-radius: 999px;\n  background: var(--accent);\n  color: #fff;\n  font-weight: 860;\n  text-decoration: none;\n  cursor: pointer;\n}\n\n.button:hover {\n  border-color: var(--accent-strong);\n  background: var(--accent-strong);\n}\n\n.latest-grid {\n  display: grid;\n  grid-template-columns: repeat(4, minmax(0, 1fr));\n  gap: 18px;\n}\n\n.story-card {\n  padding: 14px 14px 22px;\n  border-radius: var(--radius-lg);\n}\n\n.media-frame--card {\n  aspect-ratio: 16 / 9;\n  margin-bottom: 20px;\n  border-radius: var(--radius-md);\n}\n\n.story-card h3 {\n  font-size: clamp(22px, 1.7vw, 31px);\n}\n\n.story-card p {\n  min-height: 76px;\n  margin: 10px 0 18px;\n}\n\n.editorial-band {\n  display: grid;\n  grid-template-columns: minmax(0, 1.55fr) minmax(300px, 0.65fr);\n  gap: 22px;\n  padding-top: clamp(80px, 9vw, 150px);\n}\n\n.long-read {\n  display: grid;\n  grid-template-columns: minmax(320px, 0.9fr) minmax(0, 1.1fr);\n  overflow: hidden;\n  border-radius: var(--radius-xl);\n}\n\n.media-frame--long {\n  min-height: 430px;\n}\n\n.long-read > div {\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n  padding: clamp(30px, 4vw, 64px);\n}\n\n.long-read > div > p:not(.eyebrow) {\n  color: var(--muted);\n  font-size: 18px;\n  line-height: 1.65;\n}\n\n.long-read small {\n  color: var(--muted);\n  font-weight: 780;\n}\n\n.editors-pick {\n  padding: clamp(28px, 3vw, 44px);\n  border-radius: var(--radius-xl);\n  background:\n    linear-gradient(145deg, color-mix(in srgb, var(--accent-soft) 78%, var(--panel)), var(--panel));\n}\n\n.editors-pick ul {\n  margin: 25px 0 0;\n  padding: 0;\n  list-style: none;\n}\n\n.editors-pick li {\n  border-top: 1px solid var(--line);\n}\n\n.editors-pick a {\n  display: block;\n  padding: 15px 0;\n  font-weight: 780;\n  text-decoration: none;\n}\n\n.page-intro {\n  display: grid;\n  grid-template-columns: minmax(0, 1.8fr) minmax(270px, 0.55fr);\n  gap: clamp(38px, 7vw, 128px);\n  align-items: end;\n  padding: clamp(58px, 7vw, 112px) 0 40px;\n  border-bottom: 1px solid var(--line);\n}\n\n.page-intro > div > p:last-child {\n  max-width: 920px;\n  margin: 22px 0 0;\n  color: var(--muted);\n  font-size: clamp(18px, 1.55vw, 26px);\n  line-height: 1.55;\n}\n\n.page-intro > aside {\n  padding: 22px;\n  border: 1px solid var(--line);\n  border-radius: var(--radius-lg);\n  background: var(--panel);\n}\n\n.page-intro > aside > strong {\n  font-family: Georgia, \"Times New Roman\", serif;\n  font-size: 22px;\n}\n\n.filter-bar {\n  display: flex;\n  gap: 9px;\n  align-items: center;\n  padding: 26px 0;\n  overflow-x: auto;\n}\n\n.filter-bar strong {\n  margin-right: 8px;\n}\n\n.filter-bar a {\n  flex: 0 0 auto;\n}\n\n.filter-bar a[aria-current=\"true\"] {\n  border-color: var(--ink);\n  background: var(--ink);\n  color: var(--paper);\n}\n\n.article-grid {\n  display: grid;\n  grid-template-columns: repeat(3, minmax(0, 1fr));\n  gap: 20px;\n}\n\n.archive-card {\n  overflow: hidden;\n  border-radius: var(--radius-lg);\n}\n\n.archive-card--lead {\n  display: grid;\n  grid-column: span 2;\n  grid-template-columns: 1.15fr 0.85fr;\n}\n\n.media-frame--archive {\n  aspect-ratio: 16 / 9;\n}\n\n.archive-card--lead .media-frame--archive {\n  height: 100%;\n  min-height: 430px;\n}\n\n.archive-card > div {\n  padding: 24px;\n}\n\n.archive-card--lead > div {\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n  padding: clamp(30px, 4vw, 58px);\n}\n\n.archive-card--lead h2 {\n  font-size: clamp(32px, 3vw, 54px);\n}\n\n.archive-card p {\n  margin: 12px 0 16px;\n}\n\n.archive-card .text-link {\n  display: block;\n  margin-top: 20px;\n}\n\n.archive-callout {\n  display: flex;\n  gap: 35px;\n  align-items: center;\n  justify-content: space-between;\n  margin-top: 80px;\n  padding: clamp(34px, 4vw, 64px);\n  border-radius: var(--radius-xl);\n  background: var(--ink);\n  color: var(--paper);\n}\n\nhtml[data-theme=\"dark\"] .archive-callout {\n  background: #f2eadf;\n  color: #171512;\n}\n\n.archive-callout h2 {\n  max-width: 1000px;\n}\n\n.page-intro--topics {\n  grid-template-columns: minmax(0, 1.45fr) minmax(360px, 0.72fr);\n}\n\n.topic-index {\n  display: grid;\n  grid-template-columns: 1fr 1fr;\n  gap: 0 20px;\n}\n\n.topic-index a {\n  display: grid;\n  grid-template-columns: 28px 1fr;\n  gap: 8px;\n  padding: 11px 0;\n  border-bottom: 1px solid var(--line);\n  font-weight: 790;\n  text-decoration: none;\n}\n\n.topic-index span {\n  color: var(--accent);\n  font-size: 11px;\n  font-weight: 900;\n}\n\n.topics-layout {\n  display: grid;\n  grid-template-columns: minmax(0, 1.55fr) minmax(320px, 0.55fr);\n  gap: 22px;\n  padding-top: 34px;\n}\n\n.topic-grid {\n  display: grid;\n  grid-template-columns: repeat(2, minmax(0, 1fr));\n  gap: 18px;\n}\n\n.topic-card {\n  position: relative;\n  min-height: 300px;\n  padding: 30px;\n  overflow: hidden;\n  border-radius: var(--radius-lg);\n}\n\n.topic-number {\n  position: absolute;\n  right: 18px;\n  bottom: -20px;\n  color: color-mix(in srgb, var(--accent) 12%, transparent);\n  font-size: 122px;\n  font-weight: 950;\n  line-height: 1;\n  letter-spacing: -0.09em;\n}\n\n.topic-card > *:not(.topic-number) {\n  position: relative;\n  z-index: 1;\n}\n\n.topic-card h2 {\n  font-size: clamp(34px, 3vw, 54px);\n}\n\n.topic-card p:not(.eyebrow) {\n  max-width: 420px;\n}\n\n.topic-card .text-link {\n  position: absolute;\n  bottom: 30px;\n}\n\n.topics-trending {\n  position: sticky;\n  top: calc(var(--header-height) + 24px);\n  height: fit-content;\n  padding: 30px;\n  border-radius: var(--radius-xl);\n}\n\n.topics-trending h2 {\n  margin-bottom: 24px;\n}\n\n.topics-trending > a {\n  display: grid;\n  grid-template-columns: 32px 1fr;\n  gap: 12px;\n  padding: 18px 0;\n  border-top: 1px solid var(--line);\n  text-decoration: none;\n}\n\n.topics-trending > a span {\n  color: var(--accent);\n  font-size: 11px;\n  font-weight: 900;\n}\n\n.topics-trending > a strong {\n  line-height: 1.3;\n}\n\n.page-intro--about {\n  display: block;\n  max-width: none;\n}\n\n.mission-grid {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) minmax(380px, 0.82fr);\n  gap: 22px;\n  padding-top: 34px;\n}\n\n.mission-copy,\n.mission-image {\n  min-height: 520px;\n  overflow: hidden;\n  border-radius: var(--radius-xl);\n}\n\n.mission-copy {\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n  padding: clamp(34px, 5vw, 84px);\n}\n\n.mission-copy h2 {\n  max-width: 1000px;\n}\n\n.mission-image img {\n  min-height: 100%;\n}\n\n.principles-section {\n  padding-top: 90px;\n}\n\n.section-heading--compact {\n  padding: 0 0 28px;\n}\n\n.principle-grid {\n  display: grid;\n  grid-template-columns: repeat(4, minmax(0, 1fr));\n  gap: 18px;\n}\n\n.principle-grid article {\n  min-height: 250px;\n  padding: 26px;\n  border-radius: var(--radius-lg);\n}\n\n.principle-grid article > span {\n  color: var(--accent);\n  font-size: 12px;\n  font-weight: 900;\n}\n\n.principle-grid h3 {\n  margin-top: 42px;\n}\n\n.team-subscribe {\n  display: grid;\n  grid-template-columns: 1fr 1fr;\n  gap: 22px;\n  padding-top: 90px;\n}\n\n.team-subscribe > article,\n.subscribe-form {\n  padding: clamp(32px, 4vw, 64px);\n  border-radius: var(--radius-xl);\n}\n\n.team-subscribe h2,\n.subscribe-form h2 {\n  font-size: clamp(34px, 3vw, 54px);\n}\n\n.subscribe-form {\n  background:\n    linear-gradient(145deg, color-mix(in srgb, var(--accent-soft) 76%, var(--panel)), var(--panel));\n}\n\n.subscribe-form label {\n  display: grid;\n  gap: 8px;\n  margin: 26px 0 14px;\n  color: var(--muted);\n  font-size: 13px;\n  font-weight: 800;\n}\n\n.subscribe-form input {\n  width: 100%;\n  min-height: 50px;\n  padding: 12px 15px;\n  border: 1px solid var(--line);\n  border-radius: 14px;\n  outline: none;\n  background: var(--panel);\n  color: var(--ink);\n}\n\n.subscribe-form input:focus {\n  border-color: var(--accent);\n  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);\n}\n\n.form-status {\n  min-height: 24px;\n  margin: 14px 0 0 !important;\n  font-weight: 760;\n}\n\n.site-footer {\n  border-top: 1px solid var(--line);\n  background: var(--paper);\n}\n\n.footer-shell {\n  display: grid;\n  grid-template-columns: minmax(280px, 1.1fr) minmax(260px, 0.8fr) minmax(260px, 0.7fr);\n  gap: 50px;\n  align-items: start;\n  padding-block: 52px;\n}\n\n.footer-brand strong {\n  font-size: 22px;\n  letter-spacing: -0.04em;\n}\n\n.footer-brand p {\n  max-width: 480px;\n  margin: 12px 0;\n  color: var(--muted);\n  line-height: 1.55;\n}\n\n.footer-brand small,\n.footer-meta {\n  color: var(--muted);\n  font-size: 12px;\n  font-weight: 700;\n}\n\n.footer-nav {\n  display: grid;\n  grid-template-columns: 1fr 1fr;\n  gap: 12px 22px;\n}\n\n.footer-nav a,\n.footer-meta a {\n  color: var(--muted);\n  font-weight: 770;\n  text-decoration: none;\n}\n\n.footer-nav a:hover,\n.footer-meta a:hover {\n  color: var(--accent);\n}\n\n.footer-meta {\n  display: grid;\n  gap: 10px;\n  justify-items: end;\n  text-align: right;\n}\n\n@media (max-width: 1320px) {\n  .header-shell {\n    grid-template-columns: auto 1fr auto;\n  }\n\n  .front-grid {\n    grid-template-columns: minmax(0, 1.35fr) minmax(270px, 0.8fr);\n  }\n\n  .right-rail {\n    grid-column: 1 / -1;\n    grid-template-columns: 1.2fr 0.8fr 0.9fr;\n  }\n\n  .latest-grid,\n  .principle-grid {\n    grid-template-columns: repeat(2, minmax(0, 1fr));\n  }\n\n  .story-card p {\n    min-height: auto;\n  }\n}\n\n@media (max-width: 980px) {\n  :root {\n    --header-height: 82px;\n  }\n\n  .header-shell,\n  .section-shell,\n  .main-shell,\n  .footer-shell {\n    width: min(calc(100% - 28px), 1760px);\n  }\n\n  .header-shell {\n    height: 82px;\n  }\n\n  .menu-toggle {\n    display: inline-grid;\n    justify-self: end;\n  }\n\n  .site-nav {\n    position: fixed;\n    top: 82px;\n    right: 14px;\n    left: 14px;\n    display: none;\n    flex-direction: column;\n    gap: 4px;\n    padding: 14px;\n    border: 1px solid var(--line);\n    border-radius: 20px;\n    background: var(--panel);\n    box-shadow: var(--shadow);\n  }\n\n  body[data-nav-open=\"true\"] .site-nav {\n    display: flex;\n  }\n\n  .site-nav a {\n    text-align: center;\n  }\n\n  .section-nav {\n    display: none;\n  }\n\n  .header-shell {\n    grid-template-columns: 1fr auto auto;\n  }\n\n  .header-actions {\n    justify-content: end;\n  }\n\n  .subscribe-link {\n    display: none;\n  }\n\n  .masthead,\n  .page-intro,\n  .page-intro--topics {\n    grid-template-columns: 1fr;\n  }\n\n  .edition-card,\n  .page-intro > aside {\n    max-width: 620px;\n  }\n\n  .front-grid {\n    grid-template-columns: 1fr;\n  }\n\n  .right-rail {\n    grid-column: auto;\n    grid-template-columns: 1fr 1fr;\n  }\n\n  .rail-panel--brief {\n    grid-column: 1 / -1;\n  }\n\n  .editorial-band,\n  .topics-layout,\n  .mission-grid,\n  .team-subscribe {\n    grid-template-columns: 1fr;\n  }\n\n  .topics-trending {\n    position: static;\n  }\n\n  .archive-card--lead {\n    display: block;\n    grid-column: 1 / -1;\n  }\n\n  .article-grid {\n    grid-template-columns: repeat(2, minmax(0, 1fr));\n  }\n\n  .long-read {\n    grid-template-columns: 1fr;\n  }\n\n  .media-frame--long {\n    min-height: 360px;\n  }\n\n  .mission-copy,\n  .mission-image {\n    min-height: 430px;\n  }\n\n  .footer-shell {\n    grid-template-columns: 1fr 1fr;\n  }\n\n  .footer-meta {\n    grid-column: 1 / -1;\n    justify-items: start;\n    text-align: left;\n  }\n}\n\n@media (max-width: 680px) {\n  .brand small {\n    display: none;\n  }\n\n  .main-shell {\n    padding-top: 16px;\n    padding-bottom: 70px;\n  }\n\n  .ticker {\n    grid-template-columns: auto minmax(0, 1fr);\n  }\n\n  .ticker div {\n    gap: 0;\n  }\n\n  .ticker span {\n    display: none;\n  }\n\n  .ticker span:first-child {\n    display: block;\n    overflow: hidden;\n    text-overflow: ellipsis;\n  }\n\n  .ticker span::after {\n    display: none;\n  }\n\n  .masthead {\n    padding-top: 42px;\n  }\n\n  .masthead h1,\n  .page-intro h1 {\n    font-size: clamp(38px, 11vw, 48px);\n  }\n\n  .right-rail,\n  .latest-grid,\n  .article-grid,\n  .topic-grid,\n  .principle-grid,\n  .footer-shell {\n    grid-template-columns: 1fr;\n  }\n\n  .rail-panel--brief,\n  .archive-card--lead {\n    grid-column: auto;\n  }\n\n  .section-heading,\n  .archive-callout {\n    align-items: flex-start;\n    flex-direction: column;\n  }\n\n  .long-read h2,\n  .lead-content h2,\n  .section-heading h2,\n  .archive-callout h2,\n  .mission-copy h2 {\n    font-size: 36px;\n  }\n\n  .topic-index {\n    grid-template-columns: 1fr;\n  }\n\n  .mission-copy,\n  .mission-image {\n    min-height: 340px;\n  }\n\n  .footer-nav {\n    grid-template-columns: 1fr;\n  }\n}\n\n@media (prefers-reduced-motion: reduce) {\n  html {\n    scroll-behavior: auto;\n  }\n\n  *,\n  *::before,\n  *::after {\n    transition-duration: 0.01ms !important;\n  }\n}\n",
+    "js": "(() => {\n  const storageKey = \"irgeztne-blog-news-canon-theme\";\n  const root = document.documentElement;\n  const body = document.body;\n  const themeButton = document.querySelector(\"[data-theme-toggle]\");\n  const menuButton = document.querySelector(\"[data-menu-toggle]\");\n\n  function preferredTheme() {\n    const queryTheme = new URLSearchParams(location.search).get(\"theme\");\n    if (queryTheme === \"light\" || queryTheme === \"dark\") return queryTheme;\n    try {\n      const saved = localStorage.getItem(storageKey);\n      if (saved === \"light\" || saved === \"dark\") return saved;\n    } catch {\n      // The current page remains usable when storage is unavailable.\n    }\n    return root.dataset.theme === \"dark\" ? \"dark\" : \"light\";\n  }\n\n  function syncOfflineLinks(theme) {\n    if (location.protocol !== \"file:\") return;\n    document.querySelectorAll('a[href$=\".html\"], a[href*=\".html?\"], a[href*=\".html#\"]').forEach((link) => {\n      const rawHref = link.getAttribute(\"href\");\n      if (!rawHref) return;\n      const target = new URL(rawHref, location.href);\n      target.searchParams.set(\"theme\", theme);\n      const file = target.pathname.split(\"/\").pop();\n      link.setAttribute(\"href\", file + target.search + target.hash);\n    });\n  }\n\n  function applyTheme(theme, persist = true) {\n    root.dataset.theme = theme;\n    if (themeButton) {\n      themeButton.textContent = theme === \"dark\" ? \"☀\" : \"☾\";\n      themeButton.setAttribute(\n        \"aria-label\",\n        theme === \"dark\"\n          ? themeButton.dataset.labelLight\n          : themeButton.dataset.labelDark,\n      );\n    }\n    if (persist) {\n      try {\n        localStorage.setItem(storageKey, theme);\n      } catch {\n        // The theme still works for this page.\n      }\n    }\n    syncOfflineLinks(theme);\n  }\n\n  applyTheme(preferredTheme(), false);\n\n  themeButton?.addEventListener(\"click\", () => {\n    applyTheme(root.dataset.theme === \"dark\" ? \"light\" : \"dark\");\n  });\n\n  menuButton?.addEventListener(\"click\", () => {\n    const open = body.dataset.navOpen !== \"true\";\n    body.dataset.navOpen = String(open);\n    menuButton.setAttribute(\"aria-expanded\", String(open));\n  });\n\n  document.querySelectorAll(\".site-nav a\").forEach((link) => {\n    link.addEventListener(\"click\", () => {\n      body.dataset.navOpen = \"false\";\n      menuButton?.setAttribute(\"aria-expanded\", \"false\");\n    });\n  });\n\n  document.addEventListener(\"keydown\", (event) => {\n    if (event.key === \"Escape\") {\n      body.dataset.navOpen = \"false\";\n      menuButton?.setAttribute(\"aria-expanded\", \"false\");\n    }\n  });\n\n  const demoForm = document.querySelector(\"[data-demo-form]\");\n  demoForm?.addEventListener(\"submit\", (event) => {\n    event.preventDefault();\n    const status = demoForm.querySelector(\"[data-form-status]\");\n    if (status) {\n      status.textContent = demoForm.dataset.demoMessage || \"\";\n      status.focus();\n    }\n  });\n})();\n",
+    "light": "#f7f1e9",
+    "dark": "#11100f",
+    "pages": {
+      "ru": {
+        "index": {
+          "title": "Главная",
+          "summary": "Истории, аналитика и практические материалы для современных команд.",
+          "documentTitle": "Northline Journal",
+          "html": "<!doctype html>\n<html lang=\"ru\" data-theme=\"light\">\n<head>\n  <meta charset=\"utf-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <title>Northline Journal</title>\n  <meta name=\"description\" content=\"Истории, аналитика и практические материалы для современных команд.\">\n  <meta property=\"og:type\" content=\"website\">\n  <meta property=\"og:locale\" content=\"ru_RU\">\n  <meta property=\"og:title\" content=\"Northline Journal\">\n  <meta property=\"og:description\" content=\"Истории, аналитика и практические материалы для современных команд.\">\n  <meta name=\"theme-color\" content=\"#c83e2b\">\n  <script>\n    try {\n      const queryTheme = new URLSearchParams(location.search).get(\"theme\");\n      const savedTheme = localStorage.getItem(\"irgeztne-blog-news-canon-theme\");\n      document.documentElement.dataset.theme =\n        queryTheme === \"dark\" || queryTheme === \"light\"\n          ? queryTheme\n          : savedTheme === \"dark\" || savedTheme === \"light\"\n            ? savedTheme\n            : \"light\";\n    } catch {}\n  </script>\n  <link rel=\"stylesheet\" href=\"../shared/styles.css\">\n  <script src=\"../shared/site.js\" defer></script>\n</head>\n<body data-page=\"home\" data-nav-open=\"false\">\n  \n  <header class=\"site-header\">\n    <div class=\"header-shell\">\n      <a class=\"brand\" href=\"index.html\" aria-label=\"Northline Journal\">\n        <strong>Northline</strong>\n        <span>Journal</span>\n        <small>Независимый цифровой журнал</small>\n      </a>\n      <button class=\"menu-toggle\" type=\"button\" data-menu-toggle aria-expanded=\"false\" aria-label=\"Открыть меню\">☰</button>\n      <nav class=\"site-nav\" aria-label=\"Main navigation\">\n        <a href=\"index.html\" aria-current=\"page\">Главная</a>\n        <a href=\"articles.html\">Материалы</a>\n        <a href=\"topics.html\">Темы</a>\n        <a href=\"about.html\">О журнале</a>\n      </nav>\n      <div class=\"header-actions\">\n        <a class=\"subscribe-link\" href=\"about.html#subscribe\">Подписаться</a>\n        <button\n          class=\"theme-toggle\"\n          type=\"button\"\n          data-theme-toggle\n          data-label-dark=\"Включить тёмную тему\"\n          data-label-light=\"Включить светлую тему\"\n          aria-label=\"Включить тёмную тему\"\n        >☾</button>\n      </div>\n    </div>\n    <nav class=\"section-nav\" aria-label=\"Editorial sections\">\n      <div class=\"section-shell\">\n        <a href=\"topics.html#technology\">Технологии</a><a href=\"topics.html#business\">Бизнес</a><a href=\"topics.html#culture\">Культура</a><a href=\"topics.html#design\">Дизайн</a><a href=\"topics.html#guides\">Гайды</a><a href=\"topics.html#opinion\">Мнения</a>\n      </div>\n    </nav>\n  </header>\n  <main class=\"main-shell\">\n    \n    <section class=\"ticker\" aria-label=\"Сейчас\">\n      <strong>Сейчас</strong>\n      <div><span>Инструменты ИИ меняют редакционные процессы</span><span>Почему цифровые продукты переходят к широким макетам</span><span>Новый выпуск: шесть материалов и один большой разбор</span></div>\n    </section>\n\n    <section class=\"masthead\">\n      <div>\n        <p class=\"eyebrow\">Независимый цифровой журнал</p>\n        <h1>Истории, аналитика и практические материалы для современных команд.</h1>\n      </div>\n      <aside class=\"edition-card\">\n        <span>Сегодняшний выпуск</span>\n        <strong>Четверг · 24 материала · 6 тем</strong>\n        <p>Спокойное чтение без информационного шума.</p>\n      </aside>\n    </section>\n\n    <section class=\"front-grid\">\n      <article class=\"lead-card\">\n        <a class=\"media-frame media-frame--lead\" href=\"articles.html\">\n          <img src=\"../assets/main.jpg\" alt=\"Как современные веб-продукты меняют работу небольших редакций\" loading=\"lazy\" data-template-slot=\"hero.image\" data-slot=\"hero.image\" data-slot-kind=\"image\">\n        </a>\n        <div class=\"lead-content\">\n          <span class=\"eyebrow\">Главная тема</span>\n          <h2><a href=\"articles.html\">Как современные веб-продукты меняют работу небольших редакций</a></h2>\n          <p>Большой материал о новых инструментах, ясной структуре и спокойном процессе публикации.</p>\n          <small>Редакция · 12 минут</small>\n        </div>\n      </article>\n\n      <div class=\"center-feed\">\n        \n          <article class=\"feed-story\">\n            <a class=\"media-frame media-frame--feed\" href=\"articles.html\"><img src=\"../assets/tech.jpg\" alt=\"Новые инструменты делают публикацию быстрее и спокойнее\" loading=\"lazy\" data-template-slot=\"featured.secondaryImage\" data-slot=\"featured.secondaryImage\" data-slot-kind=\"image\"></a>\n            <span class=\"eyebrow\">Технологии</span>\n            <h3><a href=\"articles.html\">Новые инструменты делают публикацию быстрее и спокойнее</a></h3>\n            <p>Как автоматизация убирает повторяющиеся операции и оставляет больше времени для содержания.</p>\n            <small>09:40 · 4 минуты</small>\n          </article>\n          <article class=\"feed-story\">\n            \n            <span class=\"eyebrow\">Бизнес</span>\n            <h3><a href=\"articles.html\">Почему продуктовым страницам нужна более ясная структура</a></h3>\n            <p>Короткий разбор для команд, авторов и создателей цифровых сервисов.</p>\n            <small>11:15 · 6 минут</small>\n          </article>\n          <article class=\"feed-story\">\n            \n            <span class=\"eyebrow\">Гайд</span>\n            <h3><a href=\"articles.html\">Практическая проверка сайта перед публикацией</a></h3>\n            <p>Пошаговый список: содержание, маршруты, изображения, темы и адаптивность.</p>\n            <small>15:20 · 8 минут</small>\n          </article>\n      </div>\n\n      <aside class=\"right-rail\">\n        <section class=\"rail-panel\">\n          <p class=\"eyebrow\">Читают сейчас</p>\n          <ol class=\"trend-list\">\n            <li><a href=\"articles.html\">Возвращение длинного чтения</a></li><li><a href=\"articles.html\">Шаблоны, которые выглядят как настоящие сайты</a></li><li><a href=\"articles.html\">Что делает новостной портал убедительным</a></li><li><a href=\"articles.html\">Зачем публикациям собственный визуальный ритм</a></li>\n          </ol>\n        </section>\n        <section class=\"rail-panel rail-panel--topics\">\n          <p class=\"eyebrow\">Темы</p>\n          <div class=\"topic-chips\">\n            <a href=\"topics.html#technology\">Технологии</a><a href=\"topics.html#business\">Бизнес</a><a href=\"topics.html#culture\">Культура</a><a href=\"topics.html#design\">Дизайн</a><a href=\"topics.html#guides\">Гайды</a><a href=\"topics.html#opinion\">Мнения</a>\n          </div>\n        </section>\n        <section class=\"rail-panel rail-panel--brief\">\n          <p class=\"eyebrow\">Ежедневная сводка</p>\n          <p>Короткое письмо с главными материалами выпуска — без лишних уведомлений.</p>\n          <a class=\"text-link\" href=\"about.html#subscribe\">Получать сводку →</a>\n        </section>\n      </aside>\n    </section>\n\n    <section class=\"section-heading\">\n      <div>\n        <p class=\"eyebrow\">Свежий выпуск</p>\n        <h2>Последние материалы</h2>\n        <p>Новости, обзоры и практические руководства в единой редакционной ленте.</p>\n      </div>\n      <a class=\"button\" href=\"articles.html\">Все материалы</a>\n    </section>\n\n    <section class=\"latest-grid\">\n      \n        <article class=\"story-card\">\n          <a class=\"media-frame media-frame--card\" href=\"articles.html\">\n            <img src=\"../assets/business.jpg\" alt=\"Почему продуктовым страницам нужна более ясная структура\" loading=\"lazy\" data-template-slot=\"post.image.1\" data-slot=\"post.image.1\" data-slot-kind=\"image\">\n          </a>\n          <span class=\"eyebrow\">Бизнес</span>\n          <h3><a href=\"articles.html\">Почему продуктовым страницам нужна более ясная структура</a></h3>\n          <p>Короткий разбор для команд, авторов и создателей цифровых сервисов.</p>\n          <small>11:15 · 6 минут</small>\n        </article>\n        <article class=\"story-card\">\n          <a class=\"media-frame media-frame--card\" href=\"articles.html\">\n            <img src=\"../assets/guide.jpg\" alt=\"Практическая проверка сайта перед публикацией\" loading=\"lazy\" data-template-slot=\"post.image.2\" data-slot=\"post.image.2\" data-slot-kind=\"image\">\n          </a>\n          <span class=\"eyebrow\">Гайд</span>\n          <h3><a href=\"articles.html\">Практическая проверка сайта перед публикацией</a></h3>\n          <p>Пошаговый список: содержание, маршруты, изображения, темы и адаптивность.</p>\n          <small>15:20 · 8 минут</small>\n        </article>\n        <article class=\"story-card\">\n          <a class=\"media-frame media-frame--card\" href=\"articles.html\">\n            <img src=\"../assets/workspace.jpg\" alt=\"Как сохранить редакционный ритм в небольшой команде\" loading=\"lazy\" data-template-slot=\"post.image.3\" data-slot=\"post.image.3\" data-slot-kind=\"image\">\n          </a>\n          <span class=\"eyebrow\">Рабочая среда</span>\n          <h3><a href=\"articles.html\">Как сохранить редакционный ритм в небольшой команде</a></h3>\n          <p>Распределение ролей, спокойный выпуск и единая картина проекта.</p>\n          <small>Сегодня · 5 минут</small>\n        </article>\n        <article class=\"story-card\">\n          <a class=\"media-frame media-frame--card\" href=\"articles.html\">\n            <img src=\"../assets/city.jpg\" alt=\"Широкие макеты возвращают цифровым изданиям характер\" loading=\"lazy\" data-template-slot=\"post.image.4\" data-slot=\"post.image.4\" data-slot-kind=\"image\">\n          </a>\n          <span class=\"eyebrow\">Мнение</span>\n          <h3><a href=\"articles.html\">Широкие макеты возвращают цифровым изданиям характер</a></h3>\n          <p>Почему плотность, масштаб и воздух важнее бесконечной сетки одинаковых карточек.</p>\n          <small>Колонка · 7 минут</small>\n        </article>\n    </section>\n\n    <section class=\"editorial-band\">\n      <article class=\"long-read\">\n        <a class=\"media-frame media-frame--long\" href=\"articles.html\">\n          <img src=\"../assets/main.jpg\" alt=\"Как независимые цифровые журналы собирают современную публикационную систему\" loading=\"lazy\" data-template-slot=\"premium.feature.image\" data-slot=\"premium.feature.image\" data-slot-kind=\"image\">\n        </a>\n        <div>\n          <p class=\"eyebrow\">Большой материал</p>\n          <h2>Как независимые цифровые журналы собирают современную публикационную систему</h2>\n          <p>Спокойный журнальный ритм, сильная иерархия, реальные изображения и достаточно пространства для длинного чтения.</p>\n          <small>Редакция · 12 минут</small>\n        </div>\n      </article>\n      <aside class=\"editors-pick\">\n        <p class=\"eyebrow\">Выбор редакции</p>\n        <h3>Хороший шаблон создаёт ритм, а не повторяет одинаковые карточки.</h3>\n        <p>Разные масштабы материалов, ясные метаданные и широкая сетка делают главную страницу похожей на настоящее издание.</p>\n        <ul>\n          <li><a href=\"articles.html\">Возвращение длинного чтения</a></li><li><a href=\"articles.html\">Шаблоны, которые выглядят как настоящие сайты</a></li><li><a href=\"articles.html\">Что делает новостной портал убедительным</a></li>\n        </ul>\n      </aside>\n    </section>\n  </main>\n  \n  <footer class=\"site-footer\">\n    <div class=\"footer-shell\">\n      <div class=\"footer-brand\">\n        <strong>Northline Journal</strong>\n        <p>Истории, аналитика и практические материалы для современных команд.</p>\n        <small>Northline Journal · редакционный шаблон</small>\n      </div>\n      <nav class=\"footer-nav\" aria-label=\"Footer navigation\">\n        <a href=\"articles.html\">Архив</a>\n        <a href=\"topics.html\">Все темы</a>\n        <a href=\"about.html\">Редакция</a>\n        <a href=\"rss.xml\">RSS</a>\n      </nav>\n      <div class=\"footer-meta\">\n        <span>© 2026 Northline Journal</span>\n        <a href=\"mailto:editor@northline.example\">editor@northline.example</a>\n      </div>\n    </div>\n  </footer>\n</body>\n</html>\n",
+          "main": "<main class=\"main-shell\">\n    \n    <section class=\"ticker\" aria-label=\"Сейчас\">\n      <strong>Сейчас</strong>\n      <div><span>Инструменты ИИ меняют редакционные процессы</span><span>Почему цифровые продукты переходят к широким макетам</span><span>Новый выпуск: шесть материалов и один большой разбор</span></div>\n    </section>\n\n    <section class=\"masthead\">\n      <div>\n        <p class=\"eyebrow\">Независимый цифровой журнал</p>\n        <h1>Истории, аналитика и практические материалы для современных команд.</h1>\n      </div>\n      <aside class=\"edition-card\">\n        <span>Сегодняшний выпуск</span>\n        <strong>Четверг · 24 материала · 6 тем</strong>\n        <p>Спокойное чтение без информационного шума.</p>\n      </aside>\n    </section>\n\n    <section class=\"front-grid\">\n      <article class=\"lead-card\">\n        <a class=\"media-frame media-frame--lead\" href=\"articles.html\">\n          <img src=\"../assets/main.jpg\" alt=\"Как современные веб-продукты меняют работу небольших редакций\" loading=\"lazy\" data-template-slot=\"hero.image\" data-slot=\"hero.image\" data-slot-kind=\"image\">\n        </a>\n        <div class=\"lead-content\">\n          <span class=\"eyebrow\">Главная тема</span>\n          <h2><a href=\"articles.html\">Как современные веб-продукты меняют работу небольших редакций</a></h2>\n          <p>Большой материал о новых инструментах, ясной структуре и спокойном процессе публикации.</p>\n          <small>Редакция · 12 минут</small>\n        </div>\n      </article>\n\n      <div class=\"center-feed\">\n        \n          <article class=\"feed-story\">\n            <a class=\"media-frame media-frame--feed\" href=\"articles.html\"><img src=\"../assets/tech.jpg\" alt=\"Новые инструменты делают публикацию быстрее и спокойнее\" loading=\"lazy\" data-template-slot=\"featured.secondaryImage\" data-slot=\"featured.secondaryImage\" data-slot-kind=\"image\"></a>\n            <span class=\"eyebrow\">Технологии</span>\n            <h3><a href=\"articles.html\">Новые инструменты делают публикацию быстрее и спокойнее</a></h3>\n            <p>Как автоматизация убирает повторяющиеся операции и оставляет больше времени для содержания.</p>\n            <small>09:40 · 4 минуты</small>\n          </article>\n          <article class=\"feed-story\">\n            \n            <span class=\"eyebrow\">Бизнес</span>\n            <h3><a href=\"articles.html\">Почему продуктовым страницам нужна более ясная структура</a></h3>\n            <p>Короткий разбор для команд, авторов и создателей цифровых сервисов.</p>\n            <small>11:15 · 6 минут</small>\n          </article>\n          <article class=\"feed-story\">\n            \n            <span class=\"eyebrow\">Гайд</span>\n            <h3><a href=\"articles.html\">Практическая проверка сайта перед публикацией</a></h3>\n            <p>Пошаговый список: содержание, маршруты, изображения, темы и адаптивность.</p>\n            <small>15:20 · 8 минут</small>\n          </article>\n      </div>\n\n      <aside class=\"right-rail\">\n        <section class=\"rail-panel\">\n          <p class=\"eyebrow\">Читают сейчас</p>\n          <ol class=\"trend-list\">\n            <li><a href=\"articles.html\">Возвращение длинного чтения</a></li><li><a href=\"articles.html\">Шаблоны, которые выглядят как настоящие сайты</a></li><li><a href=\"articles.html\">Что делает новостной портал убедительным</a></li><li><a href=\"articles.html\">Зачем публикациям собственный визуальный ритм</a></li>\n          </ol>\n        </section>\n        <section class=\"rail-panel rail-panel--topics\">\n          <p class=\"eyebrow\">Темы</p>\n          <div class=\"topic-chips\">\n            <a href=\"topics.html#technology\">Технологии</a><a href=\"topics.html#business\">Бизнес</a><a href=\"topics.html#culture\">Культура</a><a href=\"topics.html#design\">Дизайн</a><a href=\"topics.html#guides\">Гайды</a><a href=\"topics.html#opinion\">Мнения</a>\n          </div>\n        </section>\n        <section class=\"rail-panel rail-panel--brief\">\n          <p class=\"eyebrow\">Ежедневная сводка</p>\n          <p>Короткое письмо с главными материалами выпуска — без лишних уведомлений.</p>\n          <a class=\"text-link\" href=\"about.html#subscribe\">Получать сводку →</a>\n        </section>\n      </aside>\n    </section>\n\n    <section class=\"section-heading\">\n      <div>\n        <p class=\"eyebrow\">Свежий выпуск</p>\n        <h2>Последние материалы</h2>\n        <p>Новости, обзоры и практические руководства в единой редакционной ленте.</p>\n      </div>\n      <a class=\"button\" href=\"articles.html\">Все материалы</a>\n    </section>\n\n    <section class=\"latest-grid\">\n      \n        <article class=\"story-card\">\n          <a class=\"media-frame media-frame--card\" href=\"articles.html\">\n            <img src=\"../assets/business.jpg\" alt=\"Почему продуктовым страницам нужна более ясная структура\" loading=\"lazy\" data-template-slot=\"post.image.1\" data-slot=\"post.image.1\" data-slot-kind=\"image\">\n          </a>\n          <span class=\"eyebrow\">Бизнес</span>\n          <h3><a href=\"articles.html\">Почему продуктовым страницам нужна более ясная структура</a></h3>\n          <p>Короткий разбор для команд, авторов и создателей цифровых сервисов.</p>\n          <small>11:15 · 6 минут</small>\n        </article>\n        <article class=\"story-card\">\n          <a class=\"media-frame media-frame--card\" href=\"articles.html\">\n            <img src=\"../assets/guide.jpg\" alt=\"Практическая проверка сайта перед публикацией\" loading=\"lazy\" data-template-slot=\"post.image.2\" data-slot=\"post.image.2\" data-slot-kind=\"image\">\n          </a>\n          <span class=\"eyebrow\">Гайд</span>\n          <h3><a href=\"articles.html\">Практическая проверка сайта перед публикацией</a></h3>\n          <p>Пошаговый список: содержание, маршруты, изображения, темы и адаптивность.</p>\n          <small>15:20 · 8 минут</small>\n        </article>\n        <article class=\"story-card\">\n          <a class=\"media-frame media-frame--card\" href=\"articles.html\">\n            <img src=\"../assets/workspace.jpg\" alt=\"Как сохранить редакционный ритм в небольшой команде\" loading=\"lazy\" data-template-slot=\"post.image.3\" data-slot=\"post.image.3\" data-slot-kind=\"image\">\n          </a>\n          <span class=\"eyebrow\">Рабочая среда</span>\n          <h3><a href=\"articles.html\">Как сохранить редакционный ритм в небольшой команде</a></h3>\n          <p>Распределение ролей, спокойный выпуск и единая картина проекта.</p>\n          <small>Сегодня · 5 минут</small>\n        </article>\n        <article class=\"story-card\">\n          <a class=\"media-frame media-frame--card\" href=\"articles.html\">\n            <img src=\"../assets/city.jpg\" alt=\"Широкие макеты возвращают цифровым изданиям характер\" loading=\"lazy\" data-template-slot=\"post.image.4\" data-slot=\"post.image.4\" data-slot-kind=\"image\">\n          </a>\n          <span class=\"eyebrow\">Мнение</span>\n          <h3><a href=\"articles.html\">Широкие макеты возвращают цифровым изданиям характер</a></h3>\n          <p>Почему плотность, масштаб и воздух важнее бесконечной сетки одинаковых карточек.</p>\n          <small>Колонка · 7 минут</small>\n        </article>\n    </section>\n\n    <section class=\"editorial-band\">\n      <article class=\"long-read\">\n        <a class=\"media-frame media-frame--long\" href=\"articles.html\">\n          <img src=\"../assets/main.jpg\" alt=\"Как независимые цифровые журналы собирают современную публикационную систему\" loading=\"lazy\" data-template-slot=\"premium.feature.image\" data-slot=\"premium.feature.image\" data-slot-kind=\"image\">\n        </a>\n        <div>\n          <p class=\"eyebrow\">Большой материал</p>\n          <h2>Как независимые цифровые журналы собирают современную публикационную систему</h2>\n          <p>Спокойный журнальный ритм, сильная иерархия, реальные изображения и достаточно пространства для длинного чтения.</p>\n          <small>Редакция · 12 минут</small>\n        </div>\n      </article>\n      <aside class=\"editors-pick\">\n        <p class=\"eyebrow\">Выбор редакции</p>\n        <h3>Хороший шаблон создаёт ритм, а не повторяет одинаковые карточки.</h3>\n        <p>Разные масштабы материалов, ясные метаданные и широкая сетка делают главную страницу похожей на настоящее издание.</p>\n        <ul>\n          <li><a href=\"articles.html\">Возвращение длинного чтения</a></li><li><a href=\"articles.html\">Шаблоны, которые выглядят как настоящие сайты</a></li><li><a href=\"articles.html\">Что делает новостной портал убедительным</a></li>\n        </ul>\n      </aside>\n    </section>\n  </main>"
+        },
+        "articles": {
+          "title": "Материалы",
+          "summary": "Архив материалов Northline Journal.",
+          "documentTitle": "Материалы · Northline Journal",
+          "html": "<!doctype html>\n<html lang=\"ru\" data-theme=\"light\">\n<head>\n  <meta charset=\"utf-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <title>Материалы · Northline Journal</title>\n  <meta name=\"description\" content=\"Архив материалов Northline Journal.\">\n  <meta property=\"og:type\" content=\"website\">\n  <meta property=\"og:locale\" content=\"ru_RU\">\n  <meta property=\"og:title\" content=\"Материалы · Northline Journal\">\n  <meta property=\"og:description\" content=\"Архив материалов Northline Journal.\">\n  <meta name=\"theme-color\" content=\"#c83e2b\">\n  <script>\n    try {\n      const queryTheme = new URLSearchParams(location.search).get(\"theme\");\n      const savedTheme = localStorage.getItem(\"irgeztne-blog-news-canon-theme\");\n      document.documentElement.dataset.theme =\n        queryTheme === \"dark\" || queryTheme === \"light\"\n          ? queryTheme\n          : savedTheme === \"dark\" || savedTheme === \"light\"\n            ? savedTheme\n            : \"light\";\n    } catch {}\n  </script>\n  <link rel=\"stylesheet\" href=\"../shared/styles.css\">\n  <script src=\"../shared/site.js\" defer></script>\n</head>\n<body data-page=\"articles\" data-nav-open=\"false\">\n  \n  <header class=\"site-header\">\n    <div class=\"header-shell\">\n      <a class=\"brand\" href=\"index.html\" aria-label=\"Northline Journal\">\n        <strong>Northline</strong>\n        <span>Journal</span>\n        <small>Независимый цифровой журнал</small>\n      </a>\n      <button class=\"menu-toggle\" type=\"button\" data-menu-toggle aria-expanded=\"false\" aria-label=\"Открыть меню\">☰</button>\n      <nav class=\"site-nav\" aria-label=\"Main navigation\">\n        <a href=\"index.html\">Главная</a>\n        <a href=\"articles.html\" aria-current=\"page\">Материалы</a>\n        <a href=\"topics.html\">Темы</a>\n        <a href=\"about.html\">О журнале</a>\n      </nav>\n      <div class=\"header-actions\">\n        <a class=\"subscribe-link\" href=\"about.html#subscribe\">Подписаться</a>\n        <button\n          class=\"theme-toggle\"\n          type=\"button\"\n          data-theme-toggle\n          data-label-dark=\"Включить тёмную тему\"\n          data-label-light=\"Включить светлую тему\"\n          aria-label=\"Включить тёмную тему\"\n        >☾</button>\n      </div>\n    </div>\n    <nav class=\"section-nav\" aria-label=\"Editorial sections\">\n      <div class=\"section-shell\">\n        <a href=\"topics.html#technology\">Технологии</a><a href=\"topics.html#business\">Бизнес</a><a href=\"topics.html#culture\">Культура</a><a href=\"topics.html#design\">Дизайн</a><a href=\"topics.html#guides\">Гайды</a><a href=\"topics.html#opinion\">Мнения</a>\n      </div>\n    </nav>\n  </header>\n  <main class=\"main-shell\">\n    \n    <section class=\"page-intro\">\n      <div>\n        <p class=\"eyebrow\">Архив</p>\n        <h1>Материалы, новости и практические руководства</h1>\n        <p>Главные публикации, короткие обновления, обзоры и авторские колонки — в одной широкой редакционной сетке.</p>\n      </div>\n      <aside><strong>24 материала · обновлено сегодня</strong></aside>\n    </section>\n\n    <section class=\"filter-bar\" aria-label=\"Фильтры\">\n      <strong>Фильтры</strong>\n      <a aria-current=\"true\" href=\"articles.html\">Все</a>\n      <a href=\"topics.html#technology\">Технологии</a><a href=\"topics.html#business\">Бизнес</a><a href=\"topics.html#culture\">Культура</a><a href=\"topics.html#design\">Дизайн</a><a href=\"topics.html#guides\">Гайды</a><a href=\"topics.html#opinion\">Мнения</a>\n    </section>\n\n    <section class=\"article-grid\">\n      \n        <article class=\"archive-card archive-card--lead\">\n          <a class=\"media-frame media-frame--archive\" href=\"#article-1\">\n            <img src=\"../assets/main.jpg\" alt=\"Как современные веб-продукты меняют работу небольших редакций\" loading=\"lazy\" data-template-slot=\"archive.image.1\" data-slot=\"archive.image.1\" data-slot-kind=\"image\">\n          </a>\n          <div>\n            <span class=\"eyebrow\">Главная тема</span>\n            <h2 id=\"article-1\">Как современные веб-продукты меняют работу небольших редакций</h2>\n            <p>Большой материал о новых инструментах, ясной структуре и спокойном процессе публикации.</p>\n            <small>Редакция · 12 минут</small>\n            <a class=\"text-link\" href=\"#article-1\">Читать материал →</a>\n          </div>\n        </article>\n        <article class=\"archive-card\">\n          <a class=\"media-frame media-frame--archive\" href=\"#article-2\">\n            <img src=\"../assets/tech.jpg\" alt=\"Новые инструменты делают публикацию быстрее и спокойнее\" loading=\"lazy\" data-template-slot=\"archive.image.2\" data-slot=\"archive.image.2\" data-slot-kind=\"image\">\n          </a>\n          <div>\n            <span class=\"eyebrow\">Технологии</span>\n            <h2 id=\"article-2\">Новые инструменты делают публикацию быстрее и спокойнее</h2>\n            <p>Как автоматизация убирает повторяющиеся операции и оставляет больше времени для содержания.</p>\n            <small>09:40 · 4 минуты</small>\n            <a class=\"text-link\" href=\"#article-2\">Читать материал →</a>\n          </div>\n        </article>\n        <article class=\"archive-card\">\n          <a class=\"media-frame media-frame--archive\" href=\"#article-3\">\n            <img src=\"../assets/business.jpg\" alt=\"Почему продуктовым страницам нужна более ясная структура\" loading=\"lazy\" data-template-slot=\"archive.image.3\" data-slot=\"archive.image.3\" data-slot-kind=\"image\">\n          </a>\n          <div>\n            <span class=\"eyebrow\">Бизнес</span>\n            <h2 id=\"article-3\">Почему продуктовым страницам нужна более ясная структура</h2>\n            <p>Короткий разбор для команд, авторов и создателей цифровых сервисов.</p>\n            <small>11:15 · 6 минут</small>\n            <a class=\"text-link\" href=\"#article-3\">Читать материал →</a>\n          </div>\n        </article>\n        <article class=\"archive-card\">\n          <a class=\"media-frame media-frame--archive\" href=\"#article-4\">\n            <img src=\"../assets/guide.jpg\" alt=\"Практическая проверка сайта перед публикацией\" loading=\"lazy\" data-template-slot=\"archive.image.4\" data-slot=\"archive.image.4\" data-slot-kind=\"image\">\n          </a>\n          <div>\n            <span class=\"eyebrow\">Гайд</span>\n            <h2 id=\"article-4\">Практическая проверка сайта перед публикацией</h2>\n            <p>Пошаговый список: содержание, маршруты, изображения, темы и адаптивность.</p>\n            <small>15:20 · 8 минут</small>\n            <a class=\"text-link\" href=\"#article-4\">Читать материал →</a>\n          </div>\n        </article>\n        <article class=\"archive-card\">\n          <a class=\"media-frame media-frame--archive\" href=\"#article-5\">\n            <img src=\"../assets/workspace.jpg\" alt=\"Как сохранить редакционный ритм в небольшой команде\" loading=\"lazy\" data-template-slot=\"archive.image.5\" data-slot=\"archive.image.5\" data-slot-kind=\"image\">\n          </a>\n          <div>\n            <span class=\"eyebrow\">Рабочая среда</span>\n            <h2 id=\"article-5\">Как сохранить редакционный ритм в небольшой команде</h2>\n            <p>Распределение ролей, спокойный выпуск и единая картина проекта.</p>\n            <small>Сегодня · 5 минут</small>\n            <a class=\"text-link\" href=\"#article-5\">Читать материал →</a>\n          </div>\n        </article>\n        <article class=\"archive-card\">\n          <a class=\"media-frame media-frame--archive\" href=\"#article-6\">\n            <img src=\"../assets/city.jpg\" alt=\"Широкие макеты возвращают цифровым изданиям характер\" loading=\"lazy\" data-template-slot=\"archive.image.6\" data-slot=\"archive.image.6\" data-slot-kind=\"image\">\n          </a>\n          <div>\n            <span class=\"eyebrow\">Мнение</span>\n            <h2 id=\"article-6\">Широкие макеты возвращают цифровым изданиям характер</h2>\n            <p>Почему плотность, масштаб и воздух важнее бесконечной сетки одинаковых карточек.</p>\n            <small>Колонка · 7 минут</small>\n            <a class=\"text-link\" href=\"#article-6\">Читать материал →</a>\n          </div>\n        </article>\n    </section>\n\n    <section class=\"archive-callout\">\n      <div>\n        <p class=\"eyebrow\">Архив выпусков</p>\n        <h2>Материалы можно организовать по дате, теме, автору или формату публикации.</h2>\n      </div>\n      <a class=\"button\" href=\"topics.html\">Открыть темы</a>\n    </section>\n  </main>\n  \n  <footer class=\"site-footer\">\n    <div class=\"footer-shell\">\n      <div class=\"footer-brand\">\n        <strong>Northline Journal</strong>\n        <p>Истории, аналитика и практические материалы для современных команд.</p>\n        <small>Northline Journal · редакционный шаблон</small>\n      </div>\n      <nav class=\"footer-nav\" aria-label=\"Footer navigation\">\n        <a href=\"articles.html\">Архив</a>\n        <a href=\"topics.html\">Все темы</a>\n        <a href=\"about.html\">Редакция</a>\n        <a href=\"rss.xml\">RSS</a>\n      </nav>\n      <div class=\"footer-meta\">\n        <span>© 2026 Northline Journal</span>\n        <a href=\"mailto:editor@northline.example\">editor@northline.example</a>\n      </div>\n    </div>\n  </footer>\n</body>\n</html>\n",
+          "main": "<main class=\"main-shell\">\n    \n    <section class=\"page-intro\">\n      <div>\n        <p class=\"eyebrow\">Архив</p>\n        <h1>Материалы, новости и практические руководства</h1>\n        <p>Главные публикации, короткие обновления, обзоры и авторские колонки — в одной широкой редакционной сетке.</p>\n      </div>\n      <aside><strong>24 материала · обновлено сегодня</strong></aside>\n    </section>\n\n    <section class=\"filter-bar\" aria-label=\"Фильтры\">\n      <strong>Фильтры</strong>\n      <a aria-current=\"true\" href=\"articles.html\">Все</a>\n      <a href=\"topics.html#technology\">Технологии</a><a href=\"topics.html#business\">Бизнес</a><a href=\"topics.html#culture\">Культура</a><a href=\"topics.html#design\">Дизайн</a><a href=\"topics.html#guides\">Гайды</a><a href=\"topics.html#opinion\">Мнения</a>\n    </section>\n\n    <section class=\"article-grid\">\n      \n        <article class=\"archive-card archive-card--lead\">\n          <a class=\"media-frame media-frame--archive\" href=\"#article-1\">\n            <img src=\"../assets/main.jpg\" alt=\"Как современные веб-продукты меняют работу небольших редакций\" loading=\"lazy\" data-template-slot=\"archive.image.1\" data-slot=\"archive.image.1\" data-slot-kind=\"image\">\n          </a>\n          <div>\n            <span class=\"eyebrow\">Главная тема</span>\n            <h2 id=\"article-1\">Как современные веб-продукты меняют работу небольших редакций</h2>\n            <p>Большой материал о новых инструментах, ясной структуре и спокойном процессе публикации.</p>\n            <small>Редакция · 12 минут</small>\n            <a class=\"text-link\" href=\"#article-1\">Читать материал →</a>\n          </div>\n        </article>\n        <article class=\"archive-card\">\n          <a class=\"media-frame media-frame--archive\" href=\"#article-2\">\n            <img src=\"../assets/tech.jpg\" alt=\"Новые инструменты делают публикацию быстрее и спокойнее\" loading=\"lazy\" data-template-slot=\"archive.image.2\" data-slot=\"archive.image.2\" data-slot-kind=\"image\">\n          </a>\n          <div>\n            <span class=\"eyebrow\">Технологии</span>\n            <h2 id=\"article-2\">Новые инструменты делают публикацию быстрее и спокойнее</h2>\n            <p>Как автоматизация убирает повторяющиеся операции и оставляет больше времени для содержания.</p>\n            <small>09:40 · 4 минуты</small>\n            <a class=\"text-link\" href=\"#article-2\">Читать материал →</a>\n          </div>\n        </article>\n        <article class=\"archive-card\">\n          <a class=\"media-frame media-frame--archive\" href=\"#article-3\">\n            <img src=\"../assets/business.jpg\" alt=\"Почему продуктовым страницам нужна более ясная структура\" loading=\"lazy\" data-template-slot=\"archive.image.3\" data-slot=\"archive.image.3\" data-slot-kind=\"image\">\n          </a>\n          <div>\n            <span class=\"eyebrow\">Бизнес</span>\n            <h2 id=\"article-3\">Почему продуктовым страницам нужна более ясная структура</h2>\n            <p>Короткий разбор для команд, авторов и создателей цифровых сервисов.</p>\n            <small>11:15 · 6 минут</small>\n            <a class=\"text-link\" href=\"#article-3\">Читать материал →</a>\n          </div>\n        </article>\n        <article class=\"archive-card\">\n          <a class=\"media-frame media-frame--archive\" href=\"#article-4\">\n            <img src=\"../assets/guide.jpg\" alt=\"Практическая проверка сайта перед публикацией\" loading=\"lazy\" data-template-slot=\"archive.image.4\" data-slot=\"archive.image.4\" data-slot-kind=\"image\">\n          </a>\n          <div>\n            <span class=\"eyebrow\">Гайд</span>\n            <h2 id=\"article-4\">Практическая проверка сайта перед публикацией</h2>\n            <p>Пошаговый список: содержание, маршруты, изображения, темы и адаптивность.</p>\n            <small>15:20 · 8 минут</small>\n            <a class=\"text-link\" href=\"#article-4\">Читать материал →</a>\n          </div>\n        </article>\n        <article class=\"archive-card\">\n          <a class=\"media-frame media-frame--archive\" href=\"#article-5\">\n            <img src=\"../assets/workspace.jpg\" alt=\"Как сохранить редакционный ритм в небольшой команде\" loading=\"lazy\" data-template-slot=\"archive.image.5\" data-slot=\"archive.image.5\" data-slot-kind=\"image\">\n          </a>\n          <div>\n            <span class=\"eyebrow\">Рабочая среда</span>\n            <h2 id=\"article-5\">Как сохранить редакционный ритм в небольшой команде</h2>\n            <p>Распределение ролей, спокойный выпуск и единая картина проекта.</p>\n            <small>Сегодня · 5 минут</small>\n            <a class=\"text-link\" href=\"#article-5\">Читать материал →</a>\n          </div>\n        </article>\n        <article class=\"archive-card\">\n          <a class=\"media-frame media-frame--archive\" href=\"#article-6\">\n            <img src=\"../assets/city.jpg\" alt=\"Широкие макеты возвращают цифровым изданиям характер\" loading=\"lazy\" data-template-slot=\"archive.image.6\" data-slot=\"archive.image.6\" data-slot-kind=\"image\">\n          </a>\n          <div>\n            <span class=\"eyebrow\">Мнение</span>\n            <h2 id=\"article-6\">Широкие макеты возвращают цифровым изданиям характер</h2>\n            <p>Почему плотность, масштаб и воздух важнее бесконечной сетки одинаковых карточек.</p>\n            <small>Колонка · 7 минут</small>\n            <a class=\"text-link\" href=\"#article-6\">Читать материал →</a>\n          </div>\n        </article>\n    </section>\n\n    <section class=\"archive-callout\">\n      <div>\n        <p class=\"eyebrow\">Архив выпусков</p>\n        <h2>Материалы можно организовать по дате, теме, автору или формату публикации.</h2>\n      </div>\n      <a class=\"button\" href=\"topics.html\">Открыть темы</a>\n    </section>\n  </main>"
+        },
+        "topics": {
+          "title": "Темы",
+          "summary": "Темы и рубрики Northline Journal.",
+          "documentTitle": "Темы · Northline Journal",
+          "html": "<!doctype html>\n<html lang=\"ru\" data-theme=\"light\">\n<head>\n  <meta charset=\"utf-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <title>Темы · Northline Journal</title>\n  <meta name=\"description\" content=\"Темы и рубрики Northline Journal.\">\n  <meta property=\"og:type\" content=\"website\">\n  <meta property=\"og:locale\" content=\"ru_RU\">\n  <meta property=\"og:title\" content=\"Темы · Northline Journal\">\n  <meta property=\"og:description\" content=\"Темы и рубрики Northline Journal.\">\n  <meta name=\"theme-color\" content=\"#c83e2b\">\n  <script>\n    try {\n      const queryTheme = new URLSearchParams(location.search).get(\"theme\");\n      const savedTheme = localStorage.getItem(\"irgeztne-blog-news-canon-theme\");\n      document.documentElement.dataset.theme =\n        queryTheme === \"dark\" || queryTheme === \"light\"\n          ? queryTheme\n          : savedTheme === \"dark\" || savedTheme === \"light\"\n            ? savedTheme\n            : \"light\";\n    } catch {}\n  </script>\n  <link rel=\"stylesheet\" href=\"../shared/styles.css\">\n  <script src=\"../shared/site.js\" defer></script>\n</head>\n<body data-page=\"topics\" data-nav-open=\"false\">\n  \n  <header class=\"site-header\">\n    <div class=\"header-shell\">\n      <a class=\"brand\" href=\"index.html\" aria-label=\"Northline Journal\">\n        <strong>Northline</strong>\n        <span>Journal</span>\n        <small>Независимый цифровой журнал</small>\n      </a>\n      <button class=\"menu-toggle\" type=\"button\" data-menu-toggle aria-expanded=\"false\" aria-label=\"Открыть меню\">☰</button>\n      <nav class=\"site-nav\" aria-label=\"Main navigation\">\n        <a href=\"index.html\">Главная</a>\n        <a href=\"articles.html\">Материалы</a>\n        <a href=\"topics.html\" aria-current=\"page\">Темы</a>\n        <a href=\"about.html\">О журнале</a>\n      </nav>\n      <div class=\"header-actions\">\n        <a class=\"subscribe-link\" href=\"about.html#subscribe\">Подписаться</a>\n        <button\n          class=\"theme-toggle\"\n          type=\"button\"\n          data-theme-toggle\n          data-label-dark=\"Включить тёмную тему\"\n          data-label-light=\"Включить светлую тему\"\n          aria-label=\"Включить тёмную тему\"\n        >☾</button>\n      </div>\n    </div>\n    <nav class=\"section-nav\" aria-label=\"Editorial sections\">\n      <div class=\"section-shell\">\n        <a href=\"topics.html#technology\">Технологии</a><a href=\"topics.html#business\">Бизнес</a><a href=\"topics.html#culture\">Культура</a><a href=\"topics.html#design\">Дизайн</a><a href=\"topics.html#guides\">Гайды</a><a href=\"topics.html#opinion\">Мнения</a>\n      </div>\n    </nav>\n  </header>\n  <main class=\"main-shell\">\n    \n    <section class=\"page-intro page-intro--topics\">\n      <div>\n        <p class=\"eyebrow\">Навигация по журналу</p>\n        <h1>Темы, которые помогают увидеть связи</h1>\n        <p>Рубрики объединяют новости, объяснения, большие материалы и практические руководства.</p>\n      </div>\n      <aside class=\"topic-index\">\n        <a href=\"#technology\"><span>01</span>Технологии</a><a href=\"#business\"><span>02</span>Бизнес</a><a href=\"#culture\"><span>03</span>Культура</a><a href=\"#design\"><span>04</span>Дизайн</a><a href=\"#guides\"><span>05</span>Гайды</a><a href=\"#opinion\"><span>06</span>Мнения</a>\n      </aside>\n    </section>\n\n    <section class=\"topics-layout\">\n      <div class=\"topic-grid\">\n        \n          <article class=\"topic-card\" id=\"technology\">\n            <div class=\"topic-number\">01</div>\n            <p class=\"eyebrow\">8 материалов</p>\n            <h2>Технологии</h2>\n            <p>Инструменты, продукты и цифровая среда.</p>\n            <a class=\"text-link\" href=\"articles.html\">Открыть тему →</a>\n          </article>\n          <article class=\"topic-card\" id=\"business\">\n            <div class=\"topic-number\">02</div>\n            <p class=\"eyebrow\">5 материалов</p>\n            <h2>Бизнес</h2>\n            <p>Рынки, команды и устройство современных компаний.</p>\n            <a class=\"text-link\" href=\"articles.html\">Открыть тему →</a>\n          </article>\n          <article class=\"topic-card\" id=\"culture\">\n            <div class=\"topic-number\">03</div>\n            <p class=\"eyebrow\">4 материала</p>\n            <h2>Культура</h2>\n            <p>Идеи, медиа и изменения в повседневной жизни.</p>\n            <a class=\"text-link\" href=\"articles.html\">Открыть тему →</a>\n          </article>\n          <article class=\"topic-card\" id=\"design\">\n            <div class=\"topic-number\">04</div>\n            <p class=\"eyebrow\">6 материалов</p>\n            <h2>Дизайн</h2>\n            <p>Интерфейсы, визуальные системы и понятные продукты.</p>\n            <a class=\"text-link\" href=\"articles.html\">Открыть тему →</a>\n          </article>\n          <article class=\"topic-card\" id=\"guides\">\n            <div class=\"topic-number\">05</div>\n            <p class=\"eyebrow\">7 материалов</p>\n            <h2>Гайды</h2>\n            <p>Практические инструкции без лишней сложности.</p>\n            <a class=\"text-link\" href=\"articles.html\">Открыть тему →</a>\n          </article>\n          <article class=\"topic-card\" id=\"opinion\">\n            <div class=\"topic-number\">06</div>\n            <p class=\"eyebrow\">4 материала</p>\n            <h2>Мнения</h2>\n            <p>Авторские колонки и редакционные наблюдения.</p>\n            <a class=\"text-link\" href=\"articles.html\">Открыть тему →</a>\n          </article>\n      </div>\n      <aside class=\"topics-trending\">\n        <p class=\"eyebrow\">Популярное в темах</p>\n        <h2>Самые читаемые материалы недели из разных редакционных направлений.</h2>\n        \n          <a href=\"articles.html\">\n            <span>01</span>\n            <strong>Возвращение длинного чтения</strong>\n          </a>\n          <a href=\"articles.html\">\n            <span>02</span>\n            <strong>Шаблоны, которые выглядят как настоящие сайты</strong>\n          </a>\n          <a href=\"articles.html\">\n            <span>03</span>\n            <strong>Что делает новостной портал убедительным</strong>\n          </a>\n          <a href=\"articles.html\">\n            <span>04</span>\n            <strong>Зачем публикациям собственный визуальный ритм</strong>\n          </a>\n      </aside>\n    </section>\n  </main>\n  \n  <footer class=\"site-footer\">\n    <div class=\"footer-shell\">\n      <div class=\"footer-brand\">\n        <strong>Northline Journal</strong>\n        <p>Истории, аналитика и практические материалы для современных команд.</p>\n        <small>Northline Journal · редакционный шаблон</small>\n      </div>\n      <nav class=\"footer-nav\" aria-label=\"Footer navigation\">\n        <a href=\"articles.html\">Архив</a>\n        <a href=\"topics.html\">Все темы</a>\n        <a href=\"about.html\">Редакция</a>\n        <a href=\"rss.xml\">RSS</a>\n      </nav>\n      <div class=\"footer-meta\">\n        <span>© 2026 Northline Journal</span>\n        <a href=\"mailto:editor@northline.example\">editor@northline.example</a>\n      </div>\n    </div>\n  </footer>\n</body>\n</html>\n",
+          "main": "<main class=\"main-shell\">\n    \n    <section class=\"page-intro page-intro--topics\">\n      <div>\n        <p class=\"eyebrow\">Навигация по журналу</p>\n        <h1>Темы, которые помогают увидеть связи</h1>\n        <p>Рубрики объединяют новости, объяснения, большие материалы и практические руководства.</p>\n      </div>\n      <aside class=\"topic-index\">\n        <a href=\"#technology\"><span>01</span>Технологии</a><a href=\"#business\"><span>02</span>Бизнес</a><a href=\"#culture\"><span>03</span>Культура</a><a href=\"#design\"><span>04</span>Дизайн</a><a href=\"#guides\"><span>05</span>Гайды</a><a href=\"#opinion\"><span>06</span>Мнения</a>\n      </aside>\n    </section>\n\n    <section class=\"topics-layout\">\n      <div class=\"topic-grid\">\n        \n          <article class=\"topic-card\" id=\"technology\">\n            <div class=\"topic-number\">01</div>\n            <p class=\"eyebrow\">8 материалов</p>\n            <h2>Технологии</h2>\n            <p>Инструменты, продукты и цифровая среда.</p>\n            <a class=\"text-link\" href=\"articles.html\">Открыть тему →</a>\n          </article>\n          <article class=\"topic-card\" id=\"business\">\n            <div class=\"topic-number\">02</div>\n            <p class=\"eyebrow\">5 материалов</p>\n            <h2>Бизнес</h2>\n            <p>Рынки, команды и устройство современных компаний.</p>\n            <a class=\"text-link\" href=\"articles.html\">Открыть тему →</a>\n          </article>\n          <article class=\"topic-card\" id=\"culture\">\n            <div class=\"topic-number\">03</div>\n            <p class=\"eyebrow\">4 материала</p>\n            <h2>Культура</h2>\n            <p>Идеи, медиа и изменения в повседневной жизни.</p>\n            <a class=\"text-link\" href=\"articles.html\">Открыть тему →</a>\n          </article>\n          <article class=\"topic-card\" id=\"design\">\n            <div class=\"topic-number\">04</div>\n            <p class=\"eyebrow\">6 материалов</p>\n            <h2>Дизайн</h2>\n            <p>Интерфейсы, визуальные системы и понятные продукты.</p>\n            <a class=\"text-link\" href=\"articles.html\">Открыть тему →</a>\n          </article>\n          <article class=\"topic-card\" id=\"guides\">\n            <div class=\"topic-number\">05</div>\n            <p class=\"eyebrow\">7 материалов</p>\n            <h2>Гайды</h2>\n            <p>Практические инструкции без лишней сложности.</p>\n            <a class=\"text-link\" href=\"articles.html\">Открыть тему →</a>\n          </article>\n          <article class=\"topic-card\" id=\"opinion\">\n            <div class=\"topic-number\">06</div>\n            <p class=\"eyebrow\">4 материала</p>\n            <h2>Мнения</h2>\n            <p>Авторские колонки и редакционные наблюдения.</p>\n            <a class=\"text-link\" href=\"articles.html\">Открыть тему →</a>\n          </article>\n      </div>\n      <aside class=\"topics-trending\">\n        <p class=\"eyebrow\">Популярное в темах</p>\n        <h2>Самые читаемые материалы недели из разных редакционных направлений.</h2>\n        \n          <a href=\"articles.html\">\n            <span>01</span>\n            <strong>Возвращение длинного чтения</strong>\n          </a>\n          <a href=\"articles.html\">\n            <span>02</span>\n            <strong>Шаблоны, которые выглядят как настоящие сайты</strong>\n          </a>\n          <a href=\"articles.html\">\n            <span>03</span>\n            <strong>Что делает новостной портал убедительным</strong>\n          </a>\n          <a href=\"articles.html\">\n            <span>04</span>\n            <strong>Зачем публикациям собственный визуальный ритм</strong>\n          </a>\n      </aside>\n    </section>\n  </main>"
+        },
+        "about": {
+          "title": "О журнале",
+          "summary": "О редакции и принципах Northline Journal.",
+          "documentTitle": "О журнале · Northline Journal",
+          "html": "<!doctype html>\n<html lang=\"ru\" data-theme=\"light\">\n<head>\n  <meta charset=\"utf-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <title>О журнале · Northline Journal</title>\n  <meta name=\"description\" content=\"О редакции и принципах Northline Journal.\">\n  <meta property=\"og:type\" content=\"website\">\n  <meta property=\"og:locale\" content=\"ru_RU\">\n  <meta property=\"og:title\" content=\"О журнале · Northline Journal\">\n  <meta property=\"og:description\" content=\"О редакции и принципах Northline Journal.\">\n  <meta name=\"theme-color\" content=\"#c83e2b\">\n  <script>\n    try {\n      const queryTheme = new URLSearchParams(location.search).get(\"theme\");\n      const savedTheme = localStorage.getItem(\"irgeztne-blog-news-canon-theme\");\n      document.documentElement.dataset.theme =\n        queryTheme === \"dark\" || queryTheme === \"light\"\n          ? queryTheme\n          : savedTheme === \"dark\" || savedTheme === \"light\"\n            ? savedTheme\n            : \"light\";\n    } catch {}\n  </script>\n  <link rel=\"stylesheet\" href=\"../shared/styles.css\">\n  <script src=\"../shared/site.js\" defer></script>\n</head>\n<body data-page=\"about\" data-nav-open=\"false\">\n  \n  <header class=\"site-header\">\n    <div class=\"header-shell\">\n      <a class=\"brand\" href=\"index.html\" aria-label=\"Northline Journal\">\n        <strong>Northline</strong>\n        <span>Journal</span>\n        <small>Независимый цифровой журнал</small>\n      </a>\n      <button class=\"menu-toggle\" type=\"button\" data-menu-toggle aria-expanded=\"false\" aria-label=\"Открыть меню\">☰</button>\n      <nav class=\"site-nav\" aria-label=\"Main navigation\">\n        <a href=\"index.html\">Главная</a>\n        <a href=\"articles.html\">Материалы</a>\n        <a href=\"topics.html\">Темы</a>\n        <a href=\"about.html\" aria-current=\"page\">О журнале</a>\n      </nav>\n      <div class=\"header-actions\">\n        <a class=\"subscribe-link\" href=\"about.html#subscribe\">Подписаться</a>\n        <button\n          class=\"theme-toggle\"\n          type=\"button\"\n          data-theme-toggle\n          data-label-dark=\"Включить тёмную тему\"\n          data-label-light=\"Включить светлую тему\"\n          aria-label=\"Включить тёмную тему\"\n        >☾</button>\n      </div>\n    </div>\n    <nav class=\"section-nav\" aria-label=\"Editorial sections\">\n      <div class=\"section-shell\">\n        <a href=\"topics.html#technology\">Технологии</a><a href=\"topics.html#business\">Бизнес</a><a href=\"topics.html#culture\">Культура</a><a href=\"topics.html#design\">Дизайн</a><a href=\"topics.html#guides\">Гайды</a><a href=\"topics.html#opinion\">Мнения</a>\n      </div>\n    </nav>\n  </header>\n  <main class=\"main-shell\">\n    \n    <section class=\"page-intro page-intro--about\">\n      <div>\n        <p class=\"eyebrow\">О журнале</p>\n        <h1>Независимое цифровое издание о работе, технологиях и идеях</h1>\n        <p>Northline Journal объясняет изменения без спешки и показывает, как новые инструменты влияют на людей, команды и цифровые продукты.</p>\n      </div>\n    </section>\n\n    <section class=\"mission-grid\">\n      <div class=\"mission-copy\">\n        <p class=\"eyebrow\">Редакционная задача</p>\n        <h2>Давать читателю контекст, проверяемые факты и практическую пользу. Короткие новости помогают быстро понять событие, а большие материалы — увидеть причины и последствия.</h2>\n      </div>\n      <figure class=\"mission-image\">\n        <img src=\"../assets/main.jpg\" alt=\"Небольшая редакция, широкий взгляд\" loading=\"lazy\" data-template-slot=\"about.image\" data-slot=\"about.image\" data-slot-kind=\"image\">\n      </figure>\n    </section>\n\n    <section class=\"principles-section\">\n      <div class=\"section-heading section-heading--compact\">\n        <div>\n          <p class=\"eyebrow\">Наши принципы</p>\n          <h2>Наши принципы</h2>\n        </div>\n      </div>\n      <div class=\"principle-grid\">\n        \n          <article>\n            <span>01</span>\n            <h3>Ясность</h3>\n            <p>Сложные темы объясняются простым и точным языком.</p>\n          </article>\n          <article>\n            <span>02</span>\n            <h3>Контекст</h3>\n            <p>Факт сопровождается источником, периодом и объяснением.</p>\n          </article>\n          <article>\n            <span>03</span>\n            <h3>Ритм</h3>\n            <p>Читатель сам выбирает: короткая сводка или длинный материал.</p>\n          </article>\n          <article>\n            <span>04</span>\n            <h3>Независимость</h3>\n            <p>Редакционная логика не подчиняется рекламному шуму.</p>\n          </article>\n      </div>\n    </section>\n\n    <section class=\"team-subscribe\">\n      <article>\n        <p class=\"eyebrow\">Небольшая редакция, широкий взгляд</p>\n        <h2>Небольшая редакция, широкий взгляд</h2>\n        <p>Авторы, исследователи и дизайнеры работают как одна команда: проверяют данные, связывают темы и собирают материалы, к которым хочется возвращаться.</p>\n      </article>\n      <form\n        id=\"subscribe\"\n        class=\"subscribe-form\"\n        data-demo-form\n        data-demo-message=\"Это демонстрационная форма шаблона.\"\n      >\n        <p class=\"eyebrow\">Получать новый выпуск</p>\n        <h2>Получать новый выпуск</h2>\n        <p>Одна спокойная сводка с главными публикациями. Демонстрационная форма ничего не отправляет.</p>\n        <label>\n          <span>Электронная почта</span>\n          <input type=\"email\" placeholder=\"reader@example.com\" required>\n        </label>\n        <button class=\"button\" type=\"submit\">Подписаться</button>\n        <p class=\"form-status\" data-form-status tabindex=\"-1\" aria-live=\"polite\"></p>\n      </form>\n    </section>\n  </main>\n  \n  <footer class=\"site-footer\">\n    <div class=\"footer-shell\">\n      <div class=\"footer-brand\">\n        <strong>Northline Journal</strong>\n        <p>Истории, аналитика и практические материалы для современных команд.</p>\n        <small>Northline Journal · редакционный шаблон</small>\n      </div>\n      <nav class=\"footer-nav\" aria-label=\"Footer navigation\">\n        <a href=\"articles.html\">Архив</a>\n        <a href=\"topics.html\">Все темы</a>\n        <a href=\"about.html\">Редакция</a>\n        <a href=\"rss.xml\">RSS</a>\n      </nav>\n      <div class=\"footer-meta\">\n        <span>© 2026 Northline Journal</span>\n        <a href=\"mailto:editor@northline.example\">editor@northline.example</a>\n      </div>\n    </div>\n  </footer>\n</body>\n</html>\n",
+          "main": "<main class=\"main-shell\">\n    \n    <section class=\"page-intro page-intro--about\">\n      <div>\n        <p class=\"eyebrow\">О журнале</p>\n        <h1>Независимое цифровое издание о работе, технологиях и идеях</h1>\n        <p>Northline Journal объясняет изменения без спешки и показывает, как новые инструменты влияют на людей, команды и цифровые продукты.</p>\n      </div>\n    </section>\n\n    <section class=\"mission-grid\">\n      <div class=\"mission-copy\">\n        <p class=\"eyebrow\">Редакционная задача</p>\n        <h2>Давать читателю контекст, проверяемые факты и практическую пользу. Короткие новости помогают быстро понять событие, а большие материалы — увидеть причины и последствия.</h2>\n      </div>\n      <figure class=\"mission-image\">\n        <img src=\"../assets/main.jpg\" alt=\"Небольшая редакция, широкий взгляд\" loading=\"lazy\" data-template-slot=\"about.image\" data-slot=\"about.image\" data-slot-kind=\"image\">\n      </figure>\n    </section>\n\n    <section class=\"principles-section\">\n      <div class=\"section-heading section-heading--compact\">\n        <div>\n          <p class=\"eyebrow\">Наши принципы</p>\n          <h2>Наши принципы</h2>\n        </div>\n      </div>\n      <div class=\"principle-grid\">\n        \n          <article>\n            <span>01</span>\n            <h3>Ясность</h3>\n            <p>Сложные темы объясняются простым и точным языком.</p>\n          </article>\n          <article>\n            <span>02</span>\n            <h3>Контекст</h3>\n            <p>Факт сопровождается источником, периодом и объяснением.</p>\n          </article>\n          <article>\n            <span>03</span>\n            <h3>Ритм</h3>\n            <p>Читатель сам выбирает: короткая сводка или длинный материал.</p>\n          </article>\n          <article>\n            <span>04</span>\n            <h3>Независимость</h3>\n            <p>Редакционная логика не подчиняется рекламному шуму.</p>\n          </article>\n      </div>\n    </section>\n\n    <section class=\"team-subscribe\">\n      <article>\n        <p class=\"eyebrow\">Небольшая редакция, широкий взгляд</p>\n        <h2>Небольшая редакция, широкий взгляд</h2>\n        <p>Авторы, исследователи и дизайнеры работают как одна команда: проверяют данные, связывают темы и собирают материалы, к которым хочется возвращаться.</p>\n      </article>\n      <form\n        id=\"subscribe\"\n        class=\"subscribe-form\"\n        data-demo-form\n        data-demo-message=\"Это демонстрационная форма шаблона.\"\n      >\n        <p class=\"eyebrow\">Получать новый выпуск</p>\n        <h2>Получать новый выпуск</h2>\n        <p>Одна спокойная сводка с главными публикациями. Демонстрационная форма ничего не отправляет.</p>\n        <label>\n          <span>Электронная почта</span>\n          <input type=\"email\" placeholder=\"reader@example.com\" required>\n        </label>\n        <button class=\"button\" type=\"submit\">Подписаться</button>\n        <p class=\"form-status\" data-form-status tabindex=\"-1\" aria-live=\"polite\"></p>\n      </form>\n    </section>\n  </main>"
+        }
+      },
+      "en": {
+        "index": {
+          "title": "Home",
+          "summary": "Stories, analysis and practical guides for modern teams.",
+          "documentTitle": "Northline Journal",
+          "html": "<!doctype html>\n<html lang=\"en\" data-theme=\"light\">\n<head>\n  <meta charset=\"utf-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <title>Northline Journal</title>\n  <meta name=\"description\" content=\"Stories, analysis and practical guides for modern teams.\">\n  <meta property=\"og:type\" content=\"website\">\n  <meta property=\"og:locale\" content=\"en_US\">\n  <meta property=\"og:title\" content=\"Northline Journal\">\n  <meta property=\"og:description\" content=\"Stories, analysis and practical guides for modern teams.\">\n  <meta name=\"theme-color\" content=\"#c83e2b\">\n  <script>\n    try {\n      const queryTheme = new URLSearchParams(location.search).get(\"theme\");\n      const savedTheme = localStorage.getItem(\"irgeztne-blog-news-canon-theme\");\n      document.documentElement.dataset.theme =\n        queryTheme === \"dark\" || queryTheme === \"light\"\n          ? queryTheme\n          : savedTheme === \"dark\" || savedTheme === \"light\"\n            ? savedTheme\n            : \"light\";\n    } catch {}\n  </script>\n  <link rel=\"stylesheet\" href=\"../shared/styles.css\">\n  <script src=\"../shared/site.js\" defer></script>\n</head>\n<body data-page=\"home\" data-nav-open=\"false\">\n  \n  <header class=\"site-header\">\n    <div class=\"header-shell\">\n      <a class=\"brand\" href=\"index.html\" aria-label=\"Northline Journal\">\n        <strong>Northline</strong>\n        <span>Journal</span>\n        <small>Independent digital journal</small>\n      </a>\n      <button class=\"menu-toggle\" type=\"button\" data-menu-toggle aria-expanded=\"false\" aria-label=\"Open menu\">☰</button>\n      <nav class=\"site-nav\" aria-label=\"Main navigation\">\n        <a href=\"index.html\" aria-current=\"page\">Home</a>\n        <a href=\"articles.html\">Articles</a>\n        <a href=\"topics.html\">Topics</a>\n        <a href=\"about.html\">About</a>\n      </nav>\n      <div class=\"header-actions\">\n        <a class=\"subscribe-link\" href=\"about.html#subscribe\">Subscribe</a>\n        <button\n          class=\"theme-toggle\"\n          type=\"button\"\n          data-theme-toggle\n          data-label-dark=\"Switch to dark theme\"\n          data-label-light=\"Switch to light theme\"\n          aria-label=\"Switch to dark theme\"\n        >☾</button>\n      </div>\n    </div>\n    <nav class=\"section-nav\" aria-label=\"Editorial sections\">\n      <div class=\"section-shell\">\n        <a href=\"topics.html#technology\">Technology</a><a href=\"topics.html#business\">Business</a><a href=\"topics.html#culture\">Culture</a><a href=\"topics.html#design\">Design</a><a href=\"topics.html#guides\">Guides</a><a href=\"topics.html#opinion\">Opinion</a>\n      </div>\n    </nav>\n  </header>\n  <main class=\"main-shell\">\n    \n    <section class=\"ticker\" aria-label=\"Now\">\n      <strong>Now</strong>\n      <div><span>AI tools reshape editorial workflows</span><span>Why digital products are moving to wider layouts</span><span>New edition: six stories and one long read</span></div>\n    </section>\n\n    <section class=\"masthead\">\n      <div>\n        <p class=\"eyebrow\">Independent digital journal</p>\n        <h1>Stories, analysis and practical guides for modern teams.</h1>\n      </div>\n      <aside class=\"edition-card\">\n        <span>Today’s edition</span>\n        <strong>Thursday · 24 stories · 6 topics</strong>\n        <p>Calm reading without the information noise.</p>\n      </aside>\n    </section>\n\n    <section class=\"front-grid\">\n      <article class=\"lead-card\">\n        <a class=\"media-frame media-frame--lead\" href=\"articles.html\">\n          <img src=\"../assets/main.jpg\" alt=\"How modern web products are changing small editorial teams\" loading=\"lazy\" data-template-slot=\"hero.image\" data-slot=\"hero.image\" data-slot-kind=\"image\">\n        </a>\n        <div class=\"lead-content\">\n          <span class=\"eyebrow\">Main story</span>\n          <h2><a href=\"articles.html\">How modern web products are changing small editorial teams</a></h2>\n          <p>A long read about new tools, clear structure and a calmer publishing process.</p>\n          <small>Editorial desk · 12 min</small>\n        </div>\n      </article>\n\n      <div class=\"center-feed\">\n        \n          <article class=\"feed-story\">\n            <a class=\"media-frame media-frame--feed\" href=\"articles.html\"><img src=\"../assets/tech.jpg\" alt=\"New tools make publishing faster and calmer\" loading=\"lazy\" data-template-slot=\"featured.secondaryImage\" data-slot=\"featured.secondaryImage\" data-slot-kind=\"image\"></a>\n            <span class=\"eyebrow\">Technology</span>\n            <h3><a href=\"articles.html\">New tools make publishing faster and calmer</a></h3>\n            <p>How automation removes repetitive work and leaves more time for the story.</p>\n            <small>09:40 · 4 min</small>\n          </article>\n          <article class=\"feed-story\">\n            \n            <span class=\"eyebrow\">Business</span>\n            <h3><a href=\"articles.html\">Why product pages need a clearer structure</a></h3>\n            <p>A compact analysis for teams, writers and digital product makers.</p>\n            <small>11:15 · 6 min</small>\n          </article>\n          <article class=\"feed-story\">\n            \n            <span class=\"eyebrow\">Guide</span>\n            <h3><a href=\"articles.html\">A practical website check before publication</a></h3>\n            <p>A step-by-step list covering content, routes, imagery, themes and responsive behavior.</p>\n            <small>15:20 · 8 min</small>\n          </article>\n      </div>\n\n      <aside class=\"right-rail\">\n        <section class=\"rail-panel\">\n          <p class=\"eyebrow\">Trending now</p>\n          <ol class=\"trend-list\">\n            <li><a href=\"articles.html\">The return of long-form reading</a></li><li><a href=\"articles.html\">Templates that feel like real websites</a></li><li><a href=\"articles.html\">What makes a news portal convincing</a></li><li><a href=\"articles.html\">Why publications need their own visual rhythm</a></li>\n          </ol>\n        </section>\n        <section class=\"rail-panel rail-panel--topics\">\n          <p class=\"eyebrow\">Topics</p>\n          <div class=\"topic-chips\">\n            <a href=\"topics.html#technology\">Technology</a><a href=\"topics.html#business\">Business</a><a href=\"topics.html#culture\">Culture</a><a href=\"topics.html#design\">Design</a><a href=\"topics.html#guides\">Guides</a><a href=\"topics.html#opinion\">Opinion</a>\n          </div>\n        </section>\n        <section class=\"rail-panel rail-panel--brief\">\n          <p class=\"eyebrow\">Daily brief</p>\n          <p>One short email with the essential stories — no unnecessary notifications.</p>\n          <a class=\"text-link\" href=\"about.html#subscribe\">Get the brief →</a>\n        </section>\n      </aside>\n    </section>\n\n    <section class=\"section-heading\">\n      <div>\n        <p class=\"eyebrow\">Fresh edition</p>\n        <h2>Latest stories</h2>\n        <p>News, reviews and practical guides in one editorial stream.</p>\n      </div>\n      <a class=\"button\" href=\"articles.html\">All articles</a>\n    </section>\n\n    <section class=\"latest-grid\">\n      \n        <article class=\"story-card\">\n          <a class=\"media-frame media-frame--card\" href=\"articles.html\">\n            <img src=\"../assets/business.jpg\" alt=\"Why product pages need a clearer structure\" loading=\"lazy\" data-template-slot=\"post.image.1\" data-slot=\"post.image.1\" data-slot-kind=\"image\">\n          </a>\n          <span class=\"eyebrow\">Business</span>\n          <h3><a href=\"articles.html\">Why product pages need a clearer structure</a></h3>\n          <p>A compact analysis for teams, writers and digital product makers.</p>\n          <small>11:15 · 6 min</small>\n        </article>\n        <article class=\"story-card\">\n          <a class=\"media-frame media-frame--card\" href=\"articles.html\">\n            <img src=\"../assets/guide.jpg\" alt=\"A practical website check before publication\" loading=\"lazy\" data-template-slot=\"post.image.2\" data-slot=\"post.image.2\" data-slot-kind=\"image\">\n          </a>\n          <span class=\"eyebrow\">Guide</span>\n          <h3><a href=\"articles.html\">A practical website check before publication</a></h3>\n          <p>A step-by-step list covering content, routes, imagery, themes and responsive behavior.</p>\n          <small>15:20 · 8 min</small>\n        </article>\n        <article class=\"story-card\">\n          <a class=\"media-frame media-frame--card\" href=\"articles.html\">\n            <img src=\"../assets/workspace.jpg\" alt=\"How a small team can preserve its editorial rhythm\" loading=\"lazy\" data-template-slot=\"post.image.3\" data-slot=\"post.image.3\" data-slot-kind=\"image\">\n          </a>\n          <span class=\"eyebrow\">Work</span>\n          <h3><a href=\"articles.html\">How a small team can preserve its editorial rhythm</a></h3>\n          <p>Clear roles, a calm release process and one shared view of the project.</p>\n          <small>Today · 5 min</small>\n        </article>\n        <article class=\"story-card\">\n          <a class=\"media-frame media-frame--card\" href=\"articles.html\">\n            <img src=\"../assets/city.jpg\" alt=\"Wide layouts give digital journals their character back\" loading=\"lazy\" data-template-slot=\"post.image.4\" data-slot=\"post.image.4\" data-slot-kind=\"image\">\n          </a>\n          <span class=\"eyebrow\">Opinion</span>\n          <h3><a href=\"articles.html\">Wide layouts give digital journals their character back</a></h3>\n          <p>Why density, scale and breathing room matter more than endless identical cards.</p>\n          <small>Column · 7 min</small>\n        </article>\n    </section>\n\n    <section class=\"editorial-band\">\n      <article class=\"long-read\">\n        <a class=\"media-frame media-frame--long\" href=\"articles.html\">\n          <img src=\"../assets/main.jpg\" alt=\"How independent digital journals assemble a modern publishing system\" loading=\"lazy\" data-template-slot=\"premium.feature.image\" data-slot=\"premium.feature.image\" data-slot-kind=\"image\">\n        </a>\n        <div>\n          <p class=\"eyebrow\">Long read</p>\n          <h2>How independent digital journals assemble a modern publishing system</h2>\n          <p>Calm magazine rhythm, strong hierarchy, real imagery and enough space for thoughtful reading.</p>\n          <small>Editorial desk · 12 min</small>\n        </div>\n      </article>\n      <aside class=\"editors-pick\">\n        <p class=\"eyebrow\">Editor’s pick</p>\n        <h3>A strong template creates rhythm instead of repeating identical cards.</h3>\n        <p>Different story scales, clear metadata and a wide grid make the homepage feel like a real publication.</p>\n        <ul>\n          <li><a href=\"articles.html\">The return of long-form reading</a></li><li><a href=\"articles.html\">Templates that feel like real websites</a></li><li><a href=\"articles.html\">What makes a news portal convincing</a></li>\n        </ul>\n      </aside>\n    </section>\n  </main>\n  \n  <footer class=\"site-footer\">\n    <div class=\"footer-shell\">\n      <div class=\"footer-brand\">\n        <strong>Northline Journal</strong>\n        <p>Stories, analysis and practical guides for modern teams.</p>\n        <small>Northline Journal · editorial template</small>\n      </div>\n      <nav class=\"footer-nav\" aria-label=\"Footer navigation\">\n        <a href=\"articles.html\">Archive</a>\n        <a href=\"topics.html\">All topics</a>\n        <a href=\"about.html\">Editorial desk</a>\n        <a href=\"rss.xml\">RSS</a>\n      </nav>\n      <div class=\"footer-meta\">\n        <span>© 2026 Northline Journal</span>\n        <a href=\"mailto:editor@northline.example\">editor@northline.example</a>\n      </div>\n    </div>\n  </footer>\n</body>\n</html>\n",
+          "main": "<main class=\"main-shell\">\n    \n    <section class=\"ticker\" aria-label=\"Now\">\n      <strong>Now</strong>\n      <div><span>AI tools reshape editorial workflows</span><span>Why digital products are moving to wider layouts</span><span>New edition: six stories and one long read</span></div>\n    </section>\n\n    <section class=\"masthead\">\n      <div>\n        <p class=\"eyebrow\">Independent digital journal</p>\n        <h1>Stories, analysis and practical guides for modern teams.</h1>\n      </div>\n      <aside class=\"edition-card\">\n        <span>Today’s edition</span>\n        <strong>Thursday · 24 stories · 6 topics</strong>\n        <p>Calm reading without the information noise.</p>\n      </aside>\n    </section>\n\n    <section class=\"front-grid\">\n      <article class=\"lead-card\">\n        <a class=\"media-frame media-frame--lead\" href=\"articles.html\">\n          <img src=\"../assets/main.jpg\" alt=\"How modern web products are changing small editorial teams\" loading=\"lazy\" data-template-slot=\"hero.image\" data-slot=\"hero.image\" data-slot-kind=\"image\">\n        </a>\n        <div class=\"lead-content\">\n          <span class=\"eyebrow\">Main story</span>\n          <h2><a href=\"articles.html\">How modern web products are changing small editorial teams</a></h2>\n          <p>A long read about new tools, clear structure and a calmer publishing process.</p>\n          <small>Editorial desk · 12 min</small>\n        </div>\n      </article>\n\n      <div class=\"center-feed\">\n        \n          <article class=\"feed-story\">\n            <a class=\"media-frame media-frame--feed\" href=\"articles.html\"><img src=\"../assets/tech.jpg\" alt=\"New tools make publishing faster and calmer\" loading=\"lazy\" data-template-slot=\"featured.secondaryImage\" data-slot=\"featured.secondaryImage\" data-slot-kind=\"image\"></a>\n            <span class=\"eyebrow\">Technology</span>\n            <h3><a href=\"articles.html\">New tools make publishing faster and calmer</a></h3>\n            <p>How automation removes repetitive work and leaves more time for the story.</p>\n            <small>09:40 · 4 min</small>\n          </article>\n          <article class=\"feed-story\">\n            \n            <span class=\"eyebrow\">Business</span>\n            <h3><a href=\"articles.html\">Why product pages need a clearer structure</a></h3>\n            <p>A compact analysis for teams, writers and digital product makers.</p>\n            <small>11:15 · 6 min</small>\n          </article>\n          <article class=\"feed-story\">\n            \n            <span class=\"eyebrow\">Guide</span>\n            <h3><a href=\"articles.html\">A practical website check before publication</a></h3>\n            <p>A step-by-step list covering content, routes, imagery, themes and responsive behavior.</p>\n            <small>15:20 · 8 min</small>\n          </article>\n      </div>\n\n      <aside class=\"right-rail\">\n        <section class=\"rail-panel\">\n          <p class=\"eyebrow\">Trending now</p>\n          <ol class=\"trend-list\">\n            <li><a href=\"articles.html\">The return of long-form reading</a></li><li><a href=\"articles.html\">Templates that feel like real websites</a></li><li><a href=\"articles.html\">What makes a news portal convincing</a></li><li><a href=\"articles.html\">Why publications need their own visual rhythm</a></li>\n          </ol>\n        </section>\n        <section class=\"rail-panel rail-panel--topics\">\n          <p class=\"eyebrow\">Topics</p>\n          <div class=\"topic-chips\">\n            <a href=\"topics.html#technology\">Technology</a><a href=\"topics.html#business\">Business</a><a href=\"topics.html#culture\">Culture</a><a href=\"topics.html#design\">Design</a><a href=\"topics.html#guides\">Guides</a><a href=\"topics.html#opinion\">Opinion</a>\n          </div>\n        </section>\n        <section class=\"rail-panel rail-panel--brief\">\n          <p class=\"eyebrow\">Daily brief</p>\n          <p>One short email with the essential stories — no unnecessary notifications.</p>\n          <a class=\"text-link\" href=\"about.html#subscribe\">Get the brief →</a>\n        </section>\n      </aside>\n    </section>\n\n    <section class=\"section-heading\">\n      <div>\n        <p class=\"eyebrow\">Fresh edition</p>\n        <h2>Latest stories</h2>\n        <p>News, reviews and practical guides in one editorial stream.</p>\n      </div>\n      <a class=\"button\" href=\"articles.html\">All articles</a>\n    </section>\n\n    <section class=\"latest-grid\">\n      \n        <article class=\"story-card\">\n          <a class=\"media-frame media-frame--card\" href=\"articles.html\">\n            <img src=\"../assets/business.jpg\" alt=\"Why product pages need a clearer structure\" loading=\"lazy\" data-template-slot=\"post.image.1\" data-slot=\"post.image.1\" data-slot-kind=\"image\">\n          </a>\n          <span class=\"eyebrow\">Business</span>\n          <h3><a href=\"articles.html\">Why product pages need a clearer structure</a></h3>\n          <p>A compact analysis for teams, writers and digital product makers.</p>\n          <small>11:15 · 6 min</small>\n        </article>\n        <article class=\"story-card\">\n          <a class=\"media-frame media-frame--card\" href=\"articles.html\">\n            <img src=\"../assets/guide.jpg\" alt=\"A practical website check before publication\" loading=\"lazy\" data-template-slot=\"post.image.2\" data-slot=\"post.image.2\" data-slot-kind=\"image\">\n          </a>\n          <span class=\"eyebrow\">Guide</span>\n          <h3><a href=\"articles.html\">A practical website check before publication</a></h3>\n          <p>A step-by-step list covering content, routes, imagery, themes and responsive behavior.</p>\n          <small>15:20 · 8 min</small>\n        </article>\n        <article class=\"story-card\">\n          <a class=\"media-frame media-frame--card\" href=\"articles.html\">\n            <img src=\"../assets/workspace.jpg\" alt=\"How a small team can preserve its editorial rhythm\" loading=\"lazy\" data-template-slot=\"post.image.3\" data-slot=\"post.image.3\" data-slot-kind=\"image\">\n          </a>\n          <span class=\"eyebrow\">Work</span>\n          <h3><a href=\"articles.html\">How a small team can preserve its editorial rhythm</a></h3>\n          <p>Clear roles, a calm release process and one shared view of the project.</p>\n          <small>Today · 5 min</small>\n        </article>\n        <article class=\"story-card\">\n          <a class=\"media-frame media-frame--card\" href=\"articles.html\">\n            <img src=\"../assets/city.jpg\" alt=\"Wide layouts give digital journals their character back\" loading=\"lazy\" data-template-slot=\"post.image.4\" data-slot=\"post.image.4\" data-slot-kind=\"image\">\n          </a>\n          <span class=\"eyebrow\">Opinion</span>\n          <h3><a href=\"articles.html\">Wide layouts give digital journals their character back</a></h3>\n          <p>Why density, scale and breathing room matter more than endless identical cards.</p>\n          <small>Column · 7 min</small>\n        </article>\n    </section>\n\n    <section class=\"editorial-band\">\n      <article class=\"long-read\">\n        <a class=\"media-frame media-frame--long\" href=\"articles.html\">\n          <img src=\"../assets/main.jpg\" alt=\"How independent digital journals assemble a modern publishing system\" loading=\"lazy\" data-template-slot=\"premium.feature.image\" data-slot=\"premium.feature.image\" data-slot-kind=\"image\">\n        </a>\n        <div>\n          <p class=\"eyebrow\">Long read</p>\n          <h2>How independent digital journals assemble a modern publishing system</h2>\n          <p>Calm magazine rhythm, strong hierarchy, real imagery and enough space for thoughtful reading.</p>\n          <small>Editorial desk · 12 min</small>\n        </div>\n      </article>\n      <aside class=\"editors-pick\">\n        <p class=\"eyebrow\">Editor’s pick</p>\n        <h3>A strong template creates rhythm instead of repeating identical cards.</h3>\n        <p>Different story scales, clear metadata and a wide grid make the homepage feel like a real publication.</p>\n        <ul>\n          <li><a href=\"articles.html\">The return of long-form reading</a></li><li><a href=\"articles.html\">Templates that feel like real websites</a></li><li><a href=\"articles.html\">What makes a news portal convincing</a></li>\n        </ul>\n      </aside>\n    </section>\n  </main>"
+        },
+        "articles": {
+          "title": "Articles",
+          "summary": "The Northline Journal article archive.",
+          "documentTitle": "Articles · Northline Journal",
+          "html": "<!doctype html>\n<html lang=\"en\" data-theme=\"light\">\n<head>\n  <meta charset=\"utf-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <title>Articles · Northline Journal</title>\n  <meta name=\"description\" content=\"The Northline Journal article archive.\">\n  <meta property=\"og:type\" content=\"website\">\n  <meta property=\"og:locale\" content=\"en_US\">\n  <meta property=\"og:title\" content=\"Articles · Northline Journal\">\n  <meta property=\"og:description\" content=\"The Northline Journal article archive.\">\n  <meta name=\"theme-color\" content=\"#c83e2b\">\n  <script>\n    try {\n      const queryTheme = new URLSearchParams(location.search).get(\"theme\");\n      const savedTheme = localStorage.getItem(\"irgeztne-blog-news-canon-theme\");\n      document.documentElement.dataset.theme =\n        queryTheme === \"dark\" || queryTheme === \"light\"\n          ? queryTheme\n          : savedTheme === \"dark\" || savedTheme === \"light\"\n            ? savedTheme\n            : \"light\";\n    } catch {}\n  </script>\n  <link rel=\"stylesheet\" href=\"../shared/styles.css\">\n  <script src=\"../shared/site.js\" defer></script>\n</head>\n<body data-page=\"articles\" data-nav-open=\"false\">\n  \n  <header class=\"site-header\">\n    <div class=\"header-shell\">\n      <a class=\"brand\" href=\"index.html\" aria-label=\"Northline Journal\">\n        <strong>Northline</strong>\n        <span>Journal</span>\n        <small>Independent digital journal</small>\n      </a>\n      <button class=\"menu-toggle\" type=\"button\" data-menu-toggle aria-expanded=\"false\" aria-label=\"Open menu\">☰</button>\n      <nav class=\"site-nav\" aria-label=\"Main navigation\">\n        <a href=\"index.html\">Home</a>\n        <a href=\"articles.html\" aria-current=\"page\">Articles</a>\n        <a href=\"topics.html\">Topics</a>\n        <a href=\"about.html\">About</a>\n      </nav>\n      <div class=\"header-actions\">\n        <a class=\"subscribe-link\" href=\"about.html#subscribe\">Subscribe</a>\n        <button\n          class=\"theme-toggle\"\n          type=\"button\"\n          data-theme-toggle\n          data-label-dark=\"Switch to dark theme\"\n          data-label-light=\"Switch to light theme\"\n          aria-label=\"Switch to dark theme\"\n        >☾</button>\n      </div>\n    </div>\n    <nav class=\"section-nav\" aria-label=\"Editorial sections\">\n      <div class=\"section-shell\">\n        <a href=\"topics.html#technology\">Technology</a><a href=\"topics.html#business\">Business</a><a href=\"topics.html#culture\">Culture</a><a href=\"topics.html#design\">Design</a><a href=\"topics.html#guides\">Guides</a><a href=\"topics.html#opinion\">Opinion</a>\n      </div>\n    </nav>\n  </header>\n  <main class=\"main-shell\">\n    \n    <section class=\"page-intro\">\n      <div>\n        <p class=\"eyebrow\">Archive</p>\n        <h1>Stories, news and practical guides</h1>\n        <p>Features, quick updates, reviews and columns in one wide editorial grid.</p>\n      </div>\n      <aside><strong>24 stories · updated today</strong></aside>\n    </section>\n\n    <section class=\"filter-bar\" aria-label=\"Filters\">\n      <strong>Filters</strong>\n      <a aria-current=\"true\" href=\"articles.html\">All</a>\n      <a href=\"topics.html#technology\">Technology</a><a href=\"topics.html#business\">Business</a><a href=\"topics.html#culture\">Culture</a><a href=\"topics.html#design\">Design</a><a href=\"topics.html#guides\">Guides</a><a href=\"topics.html#opinion\">Opinion</a>\n    </section>\n\n    <section class=\"article-grid\">\n      \n        <article class=\"archive-card archive-card--lead\">\n          <a class=\"media-frame media-frame--archive\" href=\"#article-1\">\n            <img src=\"../assets/main.jpg\" alt=\"How modern web products are changing small editorial teams\" loading=\"lazy\" data-template-slot=\"archive.image.1\" data-slot=\"archive.image.1\" data-slot-kind=\"image\">\n          </a>\n          <div>\n            <span class=\"eyebrow\">Main story</span>\n            <h2 id=\"article-1\">How modern web products are changing small editorial teams</h2>\n            <p>A long read about new tools, clear structure and a calmer publishing process.</p>\n            <small>Editorial desk · 12 min</small>\n            <a class=\"text-link\" href=\"#article-1\">Read story →</a>\n          </div>\n        </article>\n        <article class=\"archive-card\">\n          <a class=\"media-frame media-frame--archive\" href=\"#article-2\">\n            <img src=\"../assets/tech.jpg\" alt=\"New tools make publishing faster and calmer\" loading=\"lazy\" data-template-slot=\"archive.image.2\" data-slot=\"archive.image.2\" data-slot-kind=\"image\">\n          </a>\n          <div>\n            <span class=\"eyebrow\">Technology</span>\n            <h2 id=\"article-2\">New tools make publishing faster and calmer</h2>\n            <p>How automation removes repetitive work and leaves more time for the story.</p>\n            <small>09:40 · 4 min</small>\n            <a class=\"text-link\" href=\"#article-2\">Read story →</a>\n          </div>\n        </article>\n        <article class=\"archive-card\">\n          <a class=\"media-frame media-frame--archive\" href=\"#article-3\">\n            <img src=\"../assets/business.jpg\" alt=\"Why product pages need a clearer structure\" loading=\"lazy\" data-template-slot=\"archive.image.3\" data-slot=\"archive.image.3\" data-slot-kind=\"image\">\n          </a>\n          <div>\n            <span class=\"eyebrow\">Business</span>\n            <h2 id=\"article-3\">Why product pages need a clearer structure</h2>\n            <p>A compact analysis for teams, writers and digital product makers.</p>\n            <small>11:15 · 6 min</small>\n            <a class=\"text-link\" href=\"#article-3\">Read story →</a>\n          </div>\n        </article>\n        <article class=\"archive-card\">\n          <a class=\"media-frame media-frame--archive\" href=\"#article-4\">\n            <img src=\"../assets/guide.jpg\" alt=\"A practical website check before publication\" loading=\"lazy\" data-template-slot=\"archive.image.4\" data-slot=\"archive.image.4\" data-slot-kind=\"image\">\n          </a>\n          <div>\n            <span class=\"eyebrow\">Guide</span>\n            <h2 id=\"article-4\">A practical website check before publication</h2>\n            <p>A step-by-step list covering content, routes, imagery, themes and responsive behavior.</p>\n            <small>15:20 · 8 min</small>\n            <a class=\"text-link\" href=\"#article-4\">Read story →</a>\n          </div>\n        </article>\n        <article class=\"archive-card\">\n          <a class=\"media-frame media-frame--archive\" href=\"#article-5\">\n            <img src=\"../assets/workspace.jpg\" alt=\"How a small team can preserve its editorial rhythm\" loading=\"lazy\" data-template-slot=\"archive.image.5\" data-slot=\"archive.image.5\" data-slot-kind=\"image\">\n          </a>\n          <div>\n            <span class=\"eyebrow\">Work</span>\n            <h2 id=\"article-5\">How a small team can preserve its editorial rhythm</h2>\n            <p>Clear roles, a calm release process and one shared view of the project.</p>\n            <small>Today · 5 min</small>\n            <a class=\"text-link\" href=\"#article-5\">Read story →</a>\n          </div>\n        </article>\n        <article class=\"archive-card\">\n          <a class=\"media-frame media-frame--archive\" href=\"#article-6\">\n            <img src=\"../assets/city.jpg\" alt=\"Wide layouts give digital journals their character back\" loading=\"lazy\" data-template-slot=\"archive.image.6\" data-slot=\"archive.image.6\" data-slot-kind=\"image\">\n          </a>\n          <div>\n            <span class=\"eyebrow\">Opinion</span>\n            <h2 id=\"article-6\">Wide layouts give digital journals their character back</h2>\n            <p>Why density, scale and breathing room matter more than endless identical cards.</p>\n            <small>Column · 7 min</small>\n            <a class=\"text-link\" href=\"#article-6\">Read story →</a>\n          </div>\n        </article>\n    </section>\n\n    <section class=\"archive-callout\">\n      <div>\n        <p class=\"eyebrow\">Edition archive</p>\n        <h2>Stories can be organized by date, topic, author or publication format.</h2>\n      </div>\n      <a class=\"button\" href=\"topics.html\">Explore topics</a>\n    </section>\n  </main>\n  \n  <footer class=\"site-footer\">\n    <div class=\"footer-shell\">\n      <div class=\"footer-brand\">\n        <strong>Northline Journal</strong>\n        <p>Stories, analysis and practical guides for modern teams.</p>\n        <small>Northline Journal · editorial template</small>\n      </div>\n      <nav class=\"footer-nav\" aria-label=\"Footer navigation\">\n        <a href=\"articles.html\">Archive</a>\n        <a href=\"topics.html\">All topics</a>\n        <a href=\"about.html\">Editorial desk</a>\n        <a href=\"rss.xml\">RSS</a>\n      </nav>\n      <div class=\"footer-meta\">\n        <span>© 2026 Northline Journal</span>\n        <a href=\"mailto:editor@northline.example\">editor@northline.example</a>\n      </div>\n    </div>\n  </footer>\n</body>\n</html>\n",
+          "main": "<main class=\"main-shell\">\n    \n    <section class=\"page-intro\">\n      <div>\n        <p class=\"eyebrow\">Archive</p>\n        <h1>Stories, news and practical guides</h1>\n        <p>Features, quick updates, reviews and columns in one wide editorial grid.</p>\n      </div>\n      <aside><strong>24 stories · updated today</strong></aside>\n    </section>\n\n    <section class=\"filter-bar\" aria-label=\"Filters\">\n      <strong>Filters</strong>\n      <a aria-current=\"true\" href=\"articles.html\">All</a>\n      <a href=\"topics.html#technology\">Technology</a><a href=\"topics.html#business\">Business</a><a href=\"topics.html#culture\">Culture</a><a href=\"topics.html#design\">Design</a><a href=\"topics.html#guides\">Guides</a><a href=\"topics.html#opinion\">Opinion</a>\n    </section>\n\n    <section class=\"article-grid\">\n      \n        <article class=\"archive-card archive-card--lead\">\n          <a class=\"media-frame media-frame--archive\" href=\"#article-1\">\n            <img src=\"../assets/main.jpg\" alt=\"How modern web products are changing small editorial teams\" loading=\"lazy\" data-template-slot=\"archive.image.1\" data-slot=\"archive.image.1\" data-slot-kind=\"image\">\n          </a>\n          <div>\n            <span class=\"eyebrow\">Main story</span>\n            <h2 id=\"article-1\">How modern web products are changing small editorial teams</h2>\n            <p>A long read about new tools, clear structure and a calmer publishing process.</p>\n            <small>Editorial desk · 12 min</small>\n            <a class=\"text-link\" href=\"#article-1\">Read story →</a>\n          </div>\n        </article>\n        <article class=\"archive-card\">\n          <a class=\"media-frame media-frame--archive\" href=\"#article-2\">\n            <img src=\"../assets/tech.jpg\" alt=\"New tools make publishing faster and calmer\" loading=\"lazy\" data-template-slot=\"archive.image.2\" data-slot=\"archive.image.2\" data-slot-kind=\"image\">\n          </a>\n          <div>\n            <span class=\"eyebrow\">Technology</span>\n            <h2 id=\"article-2\">New tools make publishing faster and calmer</h2>\n            <p>How automation removes repetitive work and leaves more time for the story.</p>\n            <small>09:40 · 4 min</small>\n            <a class=\"text-link\" href=\"#article-2\">Read story →</a>\n          </div>\n        </article>\n        <article class=\"archive-card\">\n          <a class=\"media-frame media-frame--archive\" href=\"#article-3\">\n            <img src=\"../assets/business.jpg\" alt=\"Why product pages need a clearer structure\" loading=\"lazy\" data-template-slot=\"archive.image.3\" data-slot=\"archive.image.3\" data-slot-kind=\"image\">\n          </a>\n          <div>\n            <span class=\"eyebrow\">Business</span>\n            <h2 id=\"article-3\">Why product pages need a clearer structure</h2>\n            <p>A compact analysis for teams, writers and digital product makers.</p>\n            <small>11:15 · 6 min</small>\n            <a class=\"text-link\" href=\"#article-3\">Read story →</a>\n          </div>\n        </article>\n        <article class=\"archive-card\">\n          <a class=\"media-frame media-frame--archive\" href=\"#article-4\">\n            <img src=\"../assets/guide.jpg\" alt=\"A practical website check before publication\" loading=\"lazy\" data-template-slot=\"archive.image.4\" data-slot=\"archive.image.4\" data-slot-kind=\"image\">\n          </a>\n          <div>\n            <span class=\"eyebrow\">Guide</span>\n            <h2 id=\"article-4\">A practical website check before publication</h2>\n            <p>A step-by-step list covering content, routes, imagery, themes and responsive behavior.</p>\n            <small>15:20 · 8 min</small>\n            <a class=\"text-link\" href=\"#article-4\">Read story →</a>\n          </div>\n        </article>\n        <article class=\"archive-card\">\n          <a class=\"media-frame media-frame--archive\" href=\"#article-5\">\n            <img src=\"../assets/workspace.jpg\" alt=\"How a small team can preserve its editorial rhythm\" loading=\"lazy\" data-template-slot=\"archive.image.5\" data-slot=\"archive.image.5\" data-slot-kind=\"image\">\n          </a>\n          <div>\n            <span class=\"eyebrow\">Work</span>\n            <h2 id=\"article-5\">How a small team can preserve its editorial rhythm</h2>\n            <p>Clear roles, a calm release process and one shared view of the project.</p>\n            <small>Today · 5 min</small>\n            <a class=\"text-link\" href=\"#article-5\">Read story →</a>\n          </div>\n        </article>\n        <article class=\"archive-card\">\n          <a class=\"media-frame media-frame--archive\" href=\"#article-6\">\n            <img src=\"../assets/city.jpg\" alt=\"Wide layouts give digital journals their character back\" loading=\"lazy\" data-template-slot=\"archive.image.6\" data-slot=\"archive.image.6\" data-slot-kind=\"image\">\n          </a>\n          <div>\n            <span class=\"eyebrow\">Opinion</span>\n            <h2 id=\"article-6\">Wide layouts give digital journals their character back</h2>\n            <p>Why density, scale and breathing room matter more than endless identical cards.</p>\n            <small>Column · 7 min</small>\n            <a class=\"text-link\" href=\"#article-6\">Read story →</a>\n          </div>\n        </article>\n    </section>\n\n    <section class=\"archive-callout\">\n      <div>\n        <p class=\"eyebrow\">Edition archive</p>\n        <h2>Stories can be organized by date, topic, author or publication format.</h2>\n      </div>\n      <a class=\"button\" href=\"topics.html\">Explore topics</a>\n    </section>\n  </main>"
+        },
+        "topics": {
+          "title": "Topics",
+          "summary": "Northline Journal topics and sections.",
+          "documentTitle": "Topics · Northline Journal",
+          "html": "<!doctype html>\n<html lang=\"en\" data-theme=\"light\">\n<head>\n  <meta charset=\"utf-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <title>Topics · Northline Journal</title>\n  <meta name=\"description\" content=\"Northline Journal topics and sections.\">\n  <meta property=\"og:type\" content=\"website\">\n  <meta property=\"og:locale\" content=\"en_US\">\n  <meta property=\"og:title\" content=\"Topics · Northline Journal\">\n  <meta property=\"og:description\" content=\"Northline Journal topics and sections.\">\n  <meta name=\"theme-color\" content=\"#c83e2b\">\n  <script>\n    try {\n      const queryTheme = new URLSearchParams(location.search).get(\"theme\");\n      const savedTheme = localStorage.getItem(\"irgeztne-blog-news-canon-theme\");\n      document.documentElement.dataset.theme =\n        queryTheme === \"dark\" || queryTheme === \"light\"\n          ? queryTheme\n          : savedTheme === \"dark\" || savedTheme === \"light\"\n            ? savedTheme\n            : \"light\";\n    } catch {}\n  </script>\n  <link rel=\"stylesheet\" href=\"../shared/styles.css\">\n  <script src=\"../shared/site.js\" defer></script>\n</head>\n<body data-page=\"topics\" data-nav-open=\"false\">\n  \n  <header class=\"site-header\">\n    <div class=\"header-shell\">\n      <a class=\"brand\" href=\"index.html\" aria-label=\"Northline Journal\">\n        <strong>Northline</strong>\n        <span>Journal</span>\n        <small>Independent digital journal</small>\n      </a>\n      <button class=\"menu-toggle\" type=\"button\" data-menu-toggle aria-expanded=\"false\" aria-label=\"Open menu\">☰</button>\n      <nav class=\"site-nav\" aria-label=\"Main navigation\">\n        <a href=\"index.html\">Home</a>\n        <a href=\"articles.html\">Articles</a>\n        <a href=\"topics.html\" aria-current=\"page\">Topics</a>\n        <a href=\"about.html\">About</a>\n      </nav>\n      <div class=\"header-actions\">\n        <a class=\"subscribe-link\" href=\"about.html#subscribe\">Subscribe</a>\n        <button\n          class=\"theme-toggle\"\n          type=\"button\"\n          data-theme-toggle\n          data-label-dark=\"Switch to dark theme\"\n          data-label-light=\"Switch to light theme\"\n          aria-label=\"Switch to dark theme\"\n        >☾</button>\n      </div>\n    </div>\n    <nav class=\"section-nav\" aria-label=\"Editorial sections\">\n      <div class=\"section-shell\">\n        <a href=\"topics.html#technology\">Technology</a><a href=\"topics.html#business\">Business</a><a href=\"topics.html#culture\">Culture</a><a href=\"topics.html#design\">Design</a><a href=\"topics.html#guides\">Guides</a><a href=\"topics.html#opinion\">Opinion</a>\n      </div>\n    </nav>\n  </header>\n  <main class=\"main-shell\">\n    \n    <section class=\"page-intro page-intro--topics\">\n      <div>\n        <p class=\"eyebrow\">Journal navigation</p>\n        <h1>Topics that help readers see the connections</h1>\n        <p>Sections bring together news, explainers, long reads and practical guides.</p>\n      </div>\n      <aside class=\"topic-index\">\n        <a href=\"#technology\"><span>01</span>Technology</a><a href=\"#business\"><span>02</span>Business</a><a href=\"#culture\"><span>03</span>Culture</a><a href=\"#design\"><span>04</span>Design</a><a href=\"#guides\"><span>05</span>Guides</a><a href=\"#opinion\"><span>06</span>Opinion</a>\n      </aside>\n    </section>\n\n    <section class=\"topics-layout\">\n      <div class=\"topic-grid\">\n        \n          <article class=\"topic-card\" id=\"technology\">\n            <div class=\"topic-number\">01</div>\n            <p class=\"eyebrow\">8 stories</p>\n            <h2>Technology</h2>\n            <p>Tools, products and the digital environment.</p>\n            <a class=\"text-link\" href=\"articles.html\">Open topic →</a>\n          </article>\n          <article class=\"topic-card\" id=\"business\">\n            <div class=\"topic-number\">02</div>\n            <p class=\"eyebrow\">5 stories</p>\n            <h2>Business</h2>\n            <p>Markets, teams and how modern companies work.</p>\n            <a class=\"text-link\" href=\"articles.html\">Open topic →</a>\n          </article>\n          <article class=\"topic-card\" id=\"culture\">\n            <div class=\"topic-number\">03</div>\n            <p class=\"eyebrow\">4 stories</p>\n            <h2>Culture</h2>\n            <p>Ideas, media and changes in everyday life.</p>\n            <a class=\"text-link\" href=\"articles.html\">Open topic →</a>\n          </article>\n          <article class=\"topic-card\" id=\"design\">\n            <div class=\"topic-number\">04</div>\n            <p class=\"eyebrow\">6 stories</p>\n            <h2>Design</h2>\n            <p>Interfaces, visual systems and clear products.</p>\n            <a class=\"text-link\" href=\"articles.html\">Open topic →</a>\n          </article>\n          <article class=\"topic-card\" id=\"guides\">\n            <div class=\"topic-number\">05</div>\n            <p class=\"eyebrow\">7 stories</p>\n            <h2>Guides</h2>\n            <p>Practical instructions without unnecessary complexity.</p>\n            <a class=\"text-link\" href=\"articles.html\">Open topic →</a>\n          </article>\n          <article class=\"topic-card\" id=\"opinion\">\n            <div class=\"topic-number\">06</div>\n            <p class=\"eyebrow\">4 stories</p>\n            <h2>Opinion</h2>\n            <p>Columns and editorial observations.</p>\n            <a class=\"text-link\" href=\"articles.html\">Open topic →</a>\n          </article>\n      </div>\n      <aside class=\"topics-trending\">\n        <p class=\"eyebrow\">Popular across topics</p>\n        <h2>The week’s most-read stories from different editorial directions.</h2>\n        \n          <a href=\"articles.html\">\n            <span>01</span>\n            <strong>The return of long-form reading</strong>\n          </a>\n          <a href=\"articles.html\">\n            <span>02</span>\n            <strong>Templates that feel like real websites</strong>\n          </a>\n          <a href=\"articles.html\">\n            <span>03</span>\n            <strong>What makes a news portal convincing</strong>\n          </a>\n          <a href=\"articles.html\">\n            <span>04</span>\n            <strong>Why publications need their own visual rhythm</strong>\n          </a>\n      </aside>\n    </section>\n  </main>\n  \n  <footer class=\"site-footer\">\n    <div class=\"footer-shell\">\n      <div class=\"footer-brand\">\n        <strong>Northline Journal</strong>\n        <p>Stories, analysis and practical guides for modern teams.</p>\n        <small>Northline Journal · editorial template</small>\n      </div>\n      <nav class=\"footer-nav\" aria-label=\"Footer navigation\">\n        <a href=\"articles.html\">Archive</a>\n        <a href=\"topics.html\">All topics</a>\n        <a href=\"about.html\">Editorial desk</a>\n        <a href=\"rss.xml\">RSS</a>\n      </nav>\n      <div class=\"footer-meta\">\n        <span>© 2026 Northline Journal</span>\n        <a href=\"mailto:editor@northline.example\">editor@northline.example</a>\n      </div>\n    </div>\n  </footer>\n</body>\n</html>\n",
+          "main": "<main class=\"main-shell\">\n    \n    <section class=\"page-intro page-intro--topics\">\n      <div>\n        <p class=\"eyebrow\">Journal navigation</p>\n        <h1>Topics that help readers see the connections</h1>\n        <p>Sections bring together news, explainers, long reads and practical guides.</p>\n      </div>\n      <aside class=\"topic-index\">\n        <a href=\"#technology\"><span>01</span>Technology</a><a href=\"#business\"><span>02</span>Business</a><a href=\"#culture\"><span>03</span>Culture</a><a href=\"#design\"><span>04</span>Design</a><a href=\"#guides\"><span>05</span>Guides</a><a href=\"#opinion\"><span>06</span>Opinion</a>\n      </aside>\n    </section>\n\n    <section class=\"topics-layout\">\n      <div class=\"topic-grid\">\n        \n          <article class=\"topic-card\" id=\"technology\">\n            <div class=\"topic-number\">01</div>\n            <p class=\"eyebrow\">8 stories</p>\n            <h2>Technology</h2>\n            <p>Tools, products and the digital environment.</p>\n            <a class=\"text-link\" href=\"articles.html\">Open topic →</a>\n          </article>\n          <article class=\"topic-card\" id=\"business\">\n            <div class=\"topic-number\">02</div>\n            <p class=\"eyebrow\">5 stories</p>\n            <h2>Business</h2>\n            <p>Markets, teams and how modern companies work.</p>\n            <a class=\"text-link\" href=\"articles.html\">Open topic →</a>\n          </article>\n          <article class=\"topic-card\" id=\"culture\">\n            <div class=\"topic-number\">03</div>\n            <p class=\"eyebrow\">4 stories</p>\n            <h2>Culture</h2>\n            <p>Ideas, media and changes in everyday life.</p>\n            <a class=\"text-link\" href=\"articles.html\">Open topic →</a>\n          </article>\n          <article class=\"topic-card\" id=\"design\">\n            <div class=\"topic-number\">04</div>\n            <p class=\"eyebrow\">6 stories</p>\n            <h2>Design</h2>\n            <p>Interfaces, visual systems and clear products.</p>\n            <a class=\"text-link\" href=\"articles.html\">Open topic →</a>\n          </article>\n          <article class=\"topic-card\" id=\"guides\">\n            <div class=\"topic-number\">05</div>\n            <p class=\"eyebrow\">7 stories</p>\n            <h2>Guides</h2>\n            <p>Practical instructions without unnecessary complexity.</p>\n            <a class=\"text-link\" href=\"articles.html\">Open topic →</a>\n          </article>\n          <article class=\"topic-card\" id=\"opinion\">\n            <div class=\"topic-number\">06</div>\n            <p class=\"eyebrow\">4 stories</p>\n            <h2>Opinion</h2>\n            <p>Columns and editorial observations.</p>\n            <a class=\"text-link\" href=\"articles.html\">Open topic →</a>\n          </article>\n      </div>\n      <aside class=\"topics-trending\">\n        <p class=\"eyebrow\">Popular across topics</p>\n        <h2>The week’s most-read stories from different editorial directions.</h2>\n        \n          <a href=\"articles.html\">\n            <span>01</span>\n            <strong>The return of long-form reading</strong>\n          </a>\n          <a href=\"articles.html\">\n            <span>02</span>\n            <strong>Templates that feel like real websites</strong>\n          </a>\n          <a href=\"articles.html\">\n            <span>03</span>\n            <strong>What makes a news portal convincing</strong>\n          </a>\n          <a href=\"articles.html\">\n            <span>04</span>\n            <strong>Why publications need their own visual rhythm</strong>\n          </a>\n      </aside>\n    </section>\n  </main>"
+        },
+        "about": {
+          "title": "About",
+          "summary": "About the Northline Journal editorial desk and principles.",
+          "documentTitle": "About · Northline Journal",
+          "html": "<!doctype html>\n<html lang=\"en\" data-theme=\"light\">\n<head>\n  <meta charset=\"utf-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <title>About · Northline Journal</title>\n  <meta name=\"description\" content=\"About the Northline Journal editorial desk and principles.\">\n  <meta property=\"og:type\" content=\"website\">\n  <meta property=\"og:locale\" content=\"en_US\">\n  <meta property=\"og:title\" content=\"About · Northline Journal\">\n  <meta property=\"og:description\" content=\"About the Northline Journal editorial desk and principles.\">\n  <meta name=\"theme-color\" content=\"#c83e2b\">\n  <script>\n    try {\n      const queryTheme = new URLSearchParams(location.search).get(\"theme\");\n      const savedTheme = localStorage.getItem(\"irgeztne-blog-news-canon-theme\");\n      document.documentElement.dataset.theme =\n        queryTheme === \"dark\" || queryTheme === \"light\"\n          ? queryTheme\n          : savedTheme === \"dark\" || savedTheme === \"light\"\n            ? savedTheme\n            : \"light\";\n    } catch {}\n  </script>\n  <link rel=\"stylesheet\" href=\"../shared/styles.css\">\n  <script src=\"../shared/site.js\" defer></script>\n</head>\n<body data-page=\"about\" data-nav-open=\"false\">\n  \n  <header class=\"site-header\">\n    <div class=\"header-shell\">\n      <a class=\"brand\" href=\"index.html\" aria-label=\"Northline Journal\">\n        <strong>Northline</strong>\n        <span>Journal</span>\n        <small>Independent digital journal</small>\n      </a>\n      <button class=\"menu-toggle\" type=\"button\" data-menu-toggle aria-expanded=\"false\" aria-label=\"Open menu\">☰</button>\n      <nav class=\"site-nav\" aria-label=\"Main navigation\">\n        <a href=\"index.html\">Home</a>\n        <a href=\"articles.html\">Articles</a>\n        <a href=\"topics.html\">Topics</a>\n        <a href=\"about.html\" aria-current=\"page\">About</a>\n      </nav>\n      <div class=\"header-actions\">\n        <a class=\"subscribe-link\" href=\"about.html#subscribe\">Subscribe</a>\n        <button\n          class=\"theme-toggle\"\n          type=\"button\"\n          data-theme-toggle\n          data-label-dark=\"Switch to dark theme\"\n          data-label-light=\"Switch to light theme\"\n          aria-label=\"Switch to dark theme\"\n        >☾</button>\n      </div>\n    </div>\n    <nav class=\"section-nav\" aria-label=\"Editorial sections\">\n      <div class=\"section-shell\">\n        <a href=\"topics.html#technology\">Technology</a><a href=\"topics.html#business\">Business</a><a href=\"topics.html#culture\">Culture</a><a href=\"topics.html#design\">Design</a><a href=\"topics.html#guides\">Guides</a><a href=\"topics.html#opinion\">Opinion</a>\n      </div>\n    </nav>\n  </header>\n  <main class=\"main-shell\">\n    \n    <section class=\"page-intro page-intro--about\">\n      <div>\n        <p class=\"eyebrow\">About the journal</p>\n        <h1>An independent digital publication about work, technology and ideas</h1>\n        <p>Northline Journal explains change without rushing and shows how new tools affect people, teams and digital products.</p>\n      </div>\n    </section>\n\n    <section class=\"mission-grid\">\n      <div class=\"mission-copy\">\n        <p class=\"eyebrow\">Editorial mission</p>\n        <h2>Give readers context, verifiable facts and practical value. Short updates explain what happened; long reads show the causes and consequences.</h2>\n      </div>\n      <figure class=\"mission-image\">\n        <img src=\"../assets/main.jpg\" alt=\"A small editorial desk with a wide view\" loading=\"lazy\" data-template-slot=\"about.image\" data-slot=\"about.image\" data-slot-kind=\"image\">\n      </figure>\n    </section>\n\n    <section class=\"principles-section\">\n      <div class=\"section-heading section-heading--compact\">\n        <div>\n          <p class=\"eyebrow\">Our principles</p>\n          <h2>Our principles</h2>\n        </div>\n      </div>\n      <div class=\"principle-grid\">\n        \n          <article>\n            <span>01</span>\n            <h3>Clarity</h3>\n            <p>Complex subjects are explained in precise, plain language.</p>\n          </article>\n          <article>\n            <span>02</span>\n            <h3>Context</h3>\n            <p>Facts come with sources, periods and useful explanation.</p>\n          </article>\n          <article>\n            <span>03</span>\n            <h3>Rhythm</h3>\n            <p>Readers choose between a quick brief and a long read.</p>\n          </article>\n          <article>\n            <span>04</span>\n            <h3>Independence</h3>\n            <p>Editorial logic is not shaped by advertising noise.</p>\n          </article>\n      </div>\n    </section>\n\n    <section class=\"team-subscribe\">\n      <article>\n        <p class=\"eyebrow\">A small editorial desk with a wide view</p>\n        <h2>A small editorial desk with a wide view</h2>\n        <p>Writers, researchers and designers work as one team: checking data, connecting topics and making stories worth returning to.</p>\n      </article>\n      <form\n        id=\"subscribe\"\n        class=\"subscribe-form\"\n        data-demo-form\n        data-demo-message=\"This is a template demonstration form.\"\n      >\n        <p class=\"eyebrow\">Get the next edition</p>\n        <h2>Get the next edition</h2>\n        <p>One calm brief with the essential stories. This demo form does not send data.</p>\n        <label>\n          <span>Email address</span>\n          <input type=\"email\" placeholder=\"reader@example.com\" required>\n        </label>\n        <button class=\"button\" type=\"submit\">Subscribe</button>\n        <p class=\"form-status\" data-form-status tabindex=\"-1\" aria-live=\"polite\"></p>\n      </form>\n    </section>\n  </main>\n  \n  <footer class=\"site-footer\">\n    <div class=\"footer-shell\">\n      <div class=\"footer-brand\">\n        <strong>Northline Journal</strong>\n        <p>Stories, analysis and practical guides for modern teams.</p>\n        <small>Northline Journal · editorial template</small>\n      </div>\n      <nav class=\"footer-nav\" aria-label=\"Footer navigation\">\n        <a href=\"articles.html\">Archive</a>\n        <a href=\"topics.html\">All topics</a>\n        <a href=\"about.html\">Editorial desk</a>\n        <a href=\"rss.xml\">RSS</a>\n      </nav>\n      <div class=\"footer-meta\">\n        <span>© 2026 Northline Journal</span>\n        <a href=\"mailto:editor@northline.example\">editor@northline.example</a>\n      </div>\n    </div>\n  </footer>\n</body>\n</html>\n",
+          "main": "<main class=\"main-shell\">\n    \n    <section class=\"page-intro page-intro--about\">\n      <div>\n        <p class=\"eyebrow\">About the journal</p>\n        <h1>An independent digital publication about work, technology and ideas</h1>\n        <p>Northline Journal explains change without rushing and shows how new tools affect people, teams and digital products.</p>\n      </div>\n    </section>\n\n    <section class=\"mission-grid\">\n      <div class=\"mission-copy\">\n        <p class=\"eyebrow\">Editorial mission</p>\n        <h2>Give readers context, verifiable facts and practical value. Short updates explain what happened; long reads show the causes and consequences.</h2>\n      </div>\n      <figure class=\"mission-image\">\n        <img src=\"../assets/main.jpg\" alt=\"A small editorial desk with a wide view\" loading=\"lazy\" data-template-slot=\"about.image\" data-slot=\"about.image\" data-slot-kind=\"image\">\n      </figure>\n    </section>\n\n    <section class=\"principles-section\">\n      <div class=\"section-heading section-heading--compact\">\n        <div>\n          <p class=\"eyebrow\">Our principles</p>\n          <h2>Our principles</h2>\n        </div>\n      </div>\n      <div class=\"principle-grid\">\n        \n          <article>\n            <span>01</span>\n            <h3>Clarity</h3>\n            <p>Complex subjects are explained in precise, plain language.</p>\n          </article>\n          <article>\n            <span>02</span>\n            <h3>Context</h3>\n            <p>Facts come with sources, periods and useful explanation.</p>\n          </article>\n          <article>\n            <span>03</span>\n            <h3>Rhythm</h3>\n            <p>Readers choose between a quick brief and a long read.</p>\n          </article>\n          <article>\n            <span>04</span>\n            <h3>Independence</h3>\n            <p>Editorial logic is not shaped by advertising noise.</p>\n          </article>\n      </div>\n    </section>\n\n    <section class=\"team-subscribe\">\n      <article>\n        <p class=\"eyebrow\">A small editorial desk with a wide view</p>\n        <h2>A small editorial desk with a wide view</h2>\n        <p>Writers, researchers and designers work as one team: checking data, connecting topics and making stories worth returning to.</p>\n      </article>\n      <form\n        id=\"subscribe\"\n        class=\"subscribe-form\"\n        data-demo-form\n        data-demo-message=\"This is a template demonstration form.\"\n      >\n        <p class=\"eyebrow\">Get the next edition</p>\n        <h2>Get the next edition</h2>\n        <p>One calm brief with the essential stories. This demo form does not send data.</p>\n        <label>\n          <span>Email address</span>\n          <input type=\"email\" placeholder=\"reader@example.com\" required>\n        </label>\n        <button class=\"button\" type=\"submit\">Subscribe</button>\n        <p class=\"form-status\" data-form-status tabindex=\"-1\" aria-live=\"polite\"></p>\n      </form>\n    </section>\n  </main>"
+        }
+      }
+    },
+    "rss": {
+      "ru": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<rss version=\"2.0\">\n  <channel>\n    <title>Northline Journal — материалы</title>\n    <link>index.html</link>\n    <description>Демонстрационная RSS-лента шаблона Northline Journal.</description>\n    <language>ru</language>\n    \n    <item>\n      <title>Как современные веб-продукты меняют работу небольших редакций</title>\n      <link>articles.html#article-1</link>\n      <description>Большой материал о новых инструментах, ясной структуре и спокойном процессе публикации.</description>\n      <guid>northline-ru-1</guid>\n    </item>\n    <item>\n      <title>Новые инструменты делают публикацию быстрее и спокойнее</title>\n      <link>articles.html#article-2</link>\n      <description>Как автоматизация убирает повторяющиеся операции и оставляет больше времени для содержания.</description>\n      <guid>northline-ru-2</guid>\n    </item>\n    <item>\n      <title>Почему продуктовым страницам нужна более ясная структура</title>\n      <link>articles.html#article-3</link>\n      <description>Короткий разбор для команд, авторов и создателей цифровых сервисов.</description>\n      <guid>northline-ru-3</guid>\n    </item>\n  </channel>\n</rss>\n",
+      "en": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<rss version=\"2.0\">\n  <channel>\n    <title>Northline Journal — stories</title>\n    <link>index.html</link>\n    <description>Demonstration RSS feed for the Northline Journal template.</description>\n    <language>en</language>\n    \n    <item>\n      <title>How modern web products are changing small editorial teams</title>\n      <link>articles.html#article-1</link>\n      <description>A long read about new tools, clear structure and a calmer publishing process.</description>\n      <guid>northline-en-1</guid>\n    </item>\n    <item>\n      <title>New tools make publishing faster and calmer</title>\n      <link>articles.html#article-2</link>\n      <description>How automation removes repetitive work and leaves more time for the story.</description>\n      <guid>northline-en-2</guid>\n    </item>\n    <item>\n      <title>Why product pages need a clearer structure</title>\n      <link>articles.html#article-3</link>\n      <description>A compact analysis for teams, writers and digital product makers.</description>\n      <guid>northline-en-3</guid>\n    </item>\n  </channel>\n</rss>\n"
+    }
+  },
+  "studio-portfolio": {
+    "assetBase": "assets/template/portfolio/",
+    "css": "*{box-sizing:border-box}\n:root{\n  color-scheme:light;\n  --bg:#f2ece4;\n  --paper:#fffaf4;\n  --paper-2:#eadfd2;\n  --ink:#11100f;\n  --muted:#6a625b;\n  --line:#d6cabd;\n  --accent:#b96f41;\n  --accent-2:#176f62;\n  --accent-soft:#f0d8c7;\n  --shadow:0 24px 72px rgba(46,31,21,.12);\n  --radius:34px;\n}\nhtml[data-theme=\"dark\"]{\n  color-scheme:dark;\n  --bg:#0c0f12;\n  --paper:#14191f;\n  --paper-2:#1b2229;\n  --ink:#f7f0e7;\n  --muted:#b7afa5;\n  --line:#303943;\n  --accent:#e1a171;\n  --accent-2:#76cfbc;\n  --accent-soft:#38271f;\n  --shadow:0 26px 78px rgba(0,0,0,.32);\n}\nhtml{scroll-behavior:smooth;overflow-x:clip}\nbody{\n  margin:0;\n  min-width:320px;\n  overflow-x:clip;\n  background:\n    radial-gradient(circle at 8% 0,rgba(185,111,65,.15),transparent 31%),\n    radial-gradient(circle at 94% 4%,rgba(23,111,98,.11),transparent 34%),\n    linear-gradient(180deg,var(--paper),var(--bg));\n  color:var(--ink);\n  font-family:Inter,\"Segoe UI\",Arial,sans-serif;\n  -webkit-font-smoothing:antialiased;\n}\na{color:inherit}\nbutton{font:inherit}\nfigure{margin:0}\nimg{display:block;width:100%;height:100%;object-fit:cover}\n.shell{width:min(calc(100% - 64px),1760px);margin:0 auto}\n.site-header{\n  position:sticky;\n  top:0;\n  z-index:50;\n  width:100%;\n  min-height:112px;\n  border-bottom:1px solid var(--line);\n  background:var(--paper);\n  box-shadow:0 12px 32px rgba(25,18,13,.08);\n}\n.header-inner{\n  min-height:112px;\n  padding:14px 0;\n  display:grid;\n  grid-template-columns:auto 1fr auto;\n  gap:22px;\n  align-items:center;\n}\n.brand{display:flex;align-items:center;gap:13px;text-decoration:none}\n.brand-mark{\n  width:50px;height:50px;display:grid;place-items:center;border-radius:15px;\n  background:var(--ink);color:var(--paper);font-size:24px;font-weight:950;\n}\n.brand-copy strong{display:block;font-size:21px;letter-spacing:-.045em}\n.brand-copy small{display:block;margin-top:3px;color:var(--muted);font-size:12px;font-weight:800}\n.main-nav{display:flex;justify-content:center;align-items:center;gap:7px}\n.main-nav a,.header-cta,.theme-toggle,.menu-toggle,.button{\n  min-height:43px;display:inline-flex;align-items:center;justify-content:center;\n  border:1px solid var(--line);border-radius:999px;padding:0 15px;\n  background:var(--paper);color:var(--ink);text-decoration:none;font-weight:850;\n}\n.main-nav a[aria-current=\"page\"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}\n.header-actions{display:flex;align-items:center;gap:8px}\n.header-cta{background:var(--accent);border-color:var(--accent);color:#fff}\n.theme-toggle,.menu-toggle{width:44px;padding:0;cursor:pointer;background:var(--ink);border-color:var(--ink);color:var(--paper)}\n.menu-toggle{display:none}\n.main{padding:30px 0 72px}\n.eyebrow{color:var(--accent);font-size:12px;font-weight:950;letter-spacing:.14em;text-transform:uppercase}\n.display{margin:14px 0 18px;font-size:clamp(50px,6vw,96px);line-height:.89;letter-spacing:-.082em;text-wrap:balance}\n.lead{max-width:780px;margin:0;color:var(--muted);font-size:19px;line-height:1.68}\n.button{min-height:49px;padding:0 19px}\n.button-primary{background:var(--ink);border-color:var(--ink);color:var(--paper)}\n.button-accent{background:var(--accent);border-color:var(--accent);color:#fff}\n.button-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px}\n.hero{min-height:720px;display:grid;grid-template-columns:minmax(0,.86fr) minmax(560px,1.14fr);gap:24px}\n.hero-copy,.hero-media,.panel,.work-card,.note-card,.quote-card,.contact-card{\n  border:1px solid var(--line);border-radius:var(--radius);background:var(--paper);box-shadow:var(--shadow)\n}\n.hero-copy{padding:46px;display:flex;flex-direction:column;justify-content:space-between}\n.hero-meta{display:flex;justify-content:space-between;gap:24px;align-items:flex-end;margin-top:50px;padding-top:22px;border-top:1px solid var(--line)}\n.hero-meta strong{display:block;font-size:22px;letter-spacing:-.04em}\n.hero-meta span{display:block;margin-top:5px;color:var(--muted);font-size:13px;font-weight:750}\n.hero-media{position:relative;min-height:720px;overflow:hidden}\n.hero-media:after{content:\"\";position:absolute;inset:27px;border:1px solid rgba(255,255,255,.36);border-radius:27px;pointer-events:none}\n.hero-media img{object-position:center}\n.media-label{position:absolute;z-index:2;left:34px;bottom:34px;padding:10px 13px;border:1px solid rgba(255,255,255,.32);border-radius:999px;background:rgba(8,10,12,.52);color:#fff;font-size:11px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;backdrop-filter:blur(12px)}\n.discipline-strip{margin-top:22px;padding:18px 22px;display:flex;align-items:center;gap:24px;flex-wrap:wrap;border:1px solid var(--line);border-radius:24px;background:var(--paper);box-shadow:var(--shadow)}\n.discipline-strip strong{font-size:18px;letter-spacing:-.02em}\n.discipline-strip span{margin-left:auto;color:var(--muted);font-weight:750}\n.section-head{margin:72px 0 22px;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(360px,.68fr);gap:34px;align-items:end}\n.section-head h2,.page-intro h1,.panel h2,.contact-card h2{margin:10px 0 0;font-size:clamp(38px,4.8vw,76px);line-height:.93;letter-spacing:-.075em;text-wrap:balance}\n.section-head p,.panel p,.note-card p,.quote-card p,.contact-card p{margin:0;color:var(--muted);font-size:17px;line-height:1.66}\n.works-grid{display:grid;grid-template-columns:1.22fr .78fr;gap:22px}\n.work-card{position:relative;min-height:410px;overflow:hidden;display:flex;align-items:flex-end;color:#fff;text-decoration:none}\n.work-card:after{content:\"\";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.03),rgba(0,0,0,.78))}\n.work-card img{position:absolute;inset:0;transition:transform .55s ease}\n.work-card:hover img{transform:scale(1.025)}\n.work-card-copy{position:relative;z-index:2;width:100%;padding:30px}\n.work-card h2,.work-card h3{margin:9px 0 8px;max-width:880px;font-size:clamp(32px,3.7vw,59px);line-height:.95;letter-spacing:-.07em;text-wrap:balance}\n.work-card p{max-width:680px;margin:0;color:rgba(255,255,255,.78);line-height:1.58}\n.work-featured{grid-row:span 2;min-height:720px}\n.work-featured img{object-position:center}\n.work-small{min-height:349px}\n.work-city img{object-position:center 55%}\n.work-studio img{object-position:center 48%}\n.note-card{padding:34px;min-height:310px;display:flex;flex-direction:column;justify-content:space-between;background:var(--ink);color:var(--paper)}\n.note-card h3{margin:12px 0 18px;font-size:clamp(30px,3.3vw,52px);line-height:.96;letter-spacing:-.065em;text-wrap:balance}\n.note-card p{color:color-mix(in srgb,var(--paper) 72%,transparent)}\n.split-panel{margin-top:22px;display:grid;grid-template-columns:1.1fr .9fr;gap:22px}\n.panel{padding:38px}\n.panel h2{font-size:clamp(36px,4.2vw,66px)}\n.panel-list{display:grid;gap:0;margin-top:26px}\n.panel-list div{display:grid;grid-template-columns:48px 1fr;gap:18px;padding:20px 0;border-top:1px solid var(--line)}\n.panel-list strong{color:var(--accent);font-size:13px}\n.panel-list h3{margin:0 0 7px;font-size:24px;letter-spacing:-.04em}\n.portrait-panel{min-height:580px;padding:0;overflow:hidden;position:relative}\n.portrait-panel:after{content:\"\";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(0,0,0,.55))}\n.portrait-panel img{object-position:center}\n.portrait-caption{position:absolute;z-index:2;left:30px;right:30px;bottom:28px;color:#fff}\n.portrait-caption strong{display:block;font-size:28px;letter-spacing:-.04em}\n.portrait-caption span{display:block;margin-top:5px;color:rgba(255,255,255,.76)}\n.process-grid{margin-top:22px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}\n.process-grid article{padding:28px;border:1px solid var(--line);border-radius:25px;background:var(--paper)}\n.process-grid span{color:var(--accent);font-size:13px;font-weight:950}\n.process-grid h3{margin:13px 0 8px;font-size:28px;letter-spacing:-.05em}\n.process-grid p{margin:0;color:var(--muted);line-height:1.62}\n.quote-card{margin-top:22px;padding:44px;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(280px,.55fr);gap:36px;align-items:end;background:var(--ink);color:var(--paper)}\n.quote-card blockquote{margin:0;font-size:clamp(36px,4.5vw,70px);line-height:.96;letter-spacing:-.07em;text-wrap:balance}\n.quote-card p{color:color-mix(in srgb,var(--paper) 72%,transparent)}\n.page-intro{min-height:420px;padding:54px 0 34px;display:flex;flex-direction:column;justify-content:flex-end;border-bottom:1px solid var(--line)}\n.page-intro h1{max-width:1280px;font-size:clamp(52px,7vw,108px)}\n.page-intro .lead{max-width:880px}\n.project-list{display:grid;gap:22px;margin-top:30px}\n.project-row{display:grid;grid-template-columns:minmax(300px,.72fr) 1fr;min-height:470px;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--paper);box-shadow:var(--shadow)}\n.project-row:nth-child(even){grid-template-columns:1fr minmax(300px,.72fr)}\n.project-row:nth-child(even) .project-media{order:2}\n.project-media{position:relative;min-height:470px;overflow:hidden}\n.project-media img{transition:transform .55s ease}\n.project-row:hover .project-media img{transform:scale(1.025)}\n.project-body{padding:42px;display:flex;flex-direction:column;justify-content:space-between}\n.project-body h2{margin:11px 0 16px;font-size:clamp(38px,4vw,66px);line-height:.95;letter-spacing:-.07em;text-wrap:balance}\n.project-body p{max-width:760px;margin:0;color:var(--muted);font-size:17px;line-height:1.65}\n.project-meta{display:flex;justify-content:space-between;gap:20px;margin-top:34px;padding-top:20px;border-top:1px solid var(--line);color:var(--muted);font-size:13px;font-weight:800}\n.about-hero{margin-top:30px;display:grid;grid-template-columns:minmax(0,.85fr) minmax(520px,1.15fr);gap:22px}\n.about-copy{min-height:640px;padding:44px;display:flex;flex-direction:column;justify-content:space-between}\n.about-copy h2{font-size:clamp(43px,5.2vw,80px)}\n.about-copy .lead{font-size:18px}\n.about-media{min-height:640px;padding:0;overflow:hidden}\n.about-media img{object-position:center}\n.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:28px}\n.fact{padding:20px;border:1px solid var(--line);border-radius:20px;background:var(--paper-2)}\n.fact strong{display:block;font-size:28px;letter-spacing:-.05em}\n.fact span{display:block;margin-top:5px;color:var(--muted);font-size:12px;font-weight:800}\n.contact-layout{margin-top:30px;display:grid;grid-template-columns:minmax(0,1.12fr) minmax(360px,.58fr);gap:22px}\n.contact-card{padding:44px}\n.contact-main{min-height:590px;display:flex;flex-direction:column;justify-content:space-between;background:var(--ink);color:var(--paper)}\n.contact-main h2{font-size:clamp(46px,5.7vw,88px)}\n.contact-main p{max-width:720px;color:color-mix(in srgb,var(--paper) 72%,transparent)}\n.contact-link{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:20px 0;border-top:1px solid color-mix(in srgb,var(--paper) 22%,transparent);text-decoration:none;font-size:clamp(22px,2.2vw,34px);font-weight:800;letter-spacing:-.04em}\n.contact-side{display:flex;flex-direction:column;justify-content:space-between}\n.brief-label{display:inline-flex;align-items:center;gap:10px;color:var(--accent-2);font-size:13px;font-weight:900}\n.brief-label:before{content:\"\";width:9px;height:9px;border-radius:50%;background:currentColor;box-shadow:0 0 0 6px color-mix(in srgb,currentColor 15%,transparent)}\n.contact-side dl{margin:36px 0 0}\n.contact-side div{padding:18px 0;border-top:1px solid var(--line)}\n.contact-side dt{color:var(--muted);font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.1em}\n.contact-side dd{margin:7px 0 0;font-size:20px;font-weight:800;letter-spacing:-.025em}\n.site-footer{padding:36px 0 48px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:26px;color:var(--muted)}\n.site-footer strong{display:block;color:var(--ink);font-size:20px;letter-spacing:-.035em}\n.site-footer span{display:block;margin-top:5px;font-size:13px}\n.footer-nav{display:flex;gap:16px;flex-wrap:wrap}\n.footer-nav a{text-decoration:none;color:var(--ink);font-weight:850}\nhtml[lang=\"ru\"] .display{font-size:clamp(45px,5.35vw,84px);line-height:.92;letter-spacing:-.072em}\nhtml[lang=\"ru\"] .page-intro h1{font-size:clamp(48px,6.1vw,94px);line-height:.94}\nhtml[lang=\"ru\"] .section-head h2,html[lang=\"ru\"] .panel h2,html[lang=\"ru\"] .contact-card h2{letter-spacing:-.064em}\n@media(max-width:1260px){\n  .header-inner{grid-template-columns:auto auto}.main-nav{grid-column:1/-1;grid-row:2;justify-content:flex-start;padding-bottom:12px}.header-actions{justify-self:end}\n  .hero,.about-hero{grid-template-columns:1fr}.hero,.hero-media{min-height:auto}.hero-media{min-height:600px}.about-media{min-height:560px}\n  .section-head{grid-template-columns:1fr}.section-head p{max-width:760px}\n}\n@media(max-width:920px){\n  .shell{width:min(calc(100% - 34px),1760px)}\n  .works-grid,.split-panel,.quote-card,.contact-layout,.project-row,.project-row:nth-child(even){grid-template-columns:1fr}\n  .work-featured{grid-row:auto;min-height:610px}.work-small{min-height:420px}\n  .project-row:nth-child(even) .project-media{order:0}.project-media{min-height:380px}\n  .process-grid,.facts{grid-template-columns:1fr}\n  .discipline-strip span{width:100%;margin-left:0}\n}\n@media(max-width:720px){\n  .shell{width:min(calc(100% - 28px),1760px)}\n  .site-header{min-height:84px}.header-inner{min-height:84px;padding:10px 0;grid-template-columns:1fr auto;gap:10px}\n  .brand-copy small{display:none}.brand-mark{width:44px;height:44px;border-radius:13px}\n  .header-cta{display:none}.menu-toggle{display:inline-flex}\n  .main-nav{display:none;grid-column:1/-1;padding:0 0 14px;flex-direction:column;align-items:stretch}\n  .main-nav[data-open=\"true\"]{display:flex}.main-nav a{width:100%;justify-content:flex-start}\n  .main{padding-top:18px}\n  .hero-copy,.panel,.project-body,.contact-card{padding:25px}.hero-media{min-height:470px}\n  .display,html[lang=\"ru\"] .display{font-size:clamp(40px,13vw,58px)}\n  .lead{font-size:17px}.hero-meta{align-items:flex-start;flex-direction:column}\n  .section-head{margin-top:54px}.section-head h2{font-size:clamp(36px,11vw,53px)}\n  .work-featured{min-height:520px}.work-card-copy{padding:23px}.work-card h2,.work-card h3{font-size:38px}\n  .quote-card{padding:28px}.quote-card blockquote{font-size:39px}\n  .page-intro{min-height:340px;padding-top:36px}.page-intro h1,html[lang=\"ru\"] .page-intro h1{font-size:clamp(44px,13.5vw,65px)}\n  .project-media{min-height:310px}.project-body h2{font-size:39px}.project-meta{flex-direction:column;gap:6px}\n  .about-copy{min-height:auto}.about-media{min-height:430px}\n  .contact-main{min-height:520px}.contact-link{font-size:21px}\n  .site-footer{flex-direction:column}\n}\n@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.work-card img,.project-media img{transition:none}}\n",
+    "js": "(()=>{\n  const root=document.documentElement;\n  const themeButton=document.querySelector('[data-theme-toggle]');\n  const menuButton=document.querySelector('[data-menu-toggle]');\n  const nav=document.querySelector('[data-main-nav]');\n  const key='aster-works-theme';\n  function preferredTheme(){\n    const queryTheme=new URLSearchParams(location.search).get('theme');\n    if(queryTheme==='dark'||queryTheme==='light')return queryTheme;\n    try{\n      const stored=localStorage.getItem(key);\n      if(stored==='dark'||stored==='light')return stored;\n    }catch(_error){}\n    return window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';\n  }\n  function syncOfflineLinks(theme){\n    if(location.protocol!=='file:')return;\n    document.querySelectorAll('a[href$=\".html\"],a[href*=\".html?\"],a[href*=\".html#\"]').forEach(link=>{\n      const raw=link.getAttribute('href');\n      if(!raw)return;\n      const target=new URL(raw,location.href);\n      target.searchParams.set('theme',theme);\n      const file=target.pathname.split('/').pop();\n      link.setAttribute('href',file+target.search+target.hash);\n    });\n  }\n  function setTheme(theme,persist=true){\n    root.dataset.theme=theme;\n    if(themeButton){\n      themeButton.textContent=theme==='dark'?'☀':'☾';\n      themeButton.setAttribute('aria-pressed',String(theme==='dark'));\n      themeButton.setAttribute('aria-label',theme==='dark'?themeButton.dataset.labelLight:themeButton.dataset.labelDark);\n    }\n    if(persist){\n      try{localStorage.setItem(key,theme)}catch(_error){}\n    }\n    syncOfflineLinks(theme);\n  }\n  setTheme(preferredTheme(),false);\n  themeButton?.addEventListener('click',()=>{\n    const next=root.dataset.theme==='dark'?'light':'dark';\n    setTheme(next);\n  });\n  menuButton?.addEventListener('click',()=>{\n    const open=nav?.dataset.open!=='true';\n    if(nav)nav.dataset.open=String(open);\n    menuButton.setAttribute('aria-expanded',String(open));\n  });\n  nav?.querySelectorAll('a').forEach(link=>link.addEventListener('click',()=>{\n    nav.dataset.open='false';\n    menuButton?.setAttribute('aria-expanded','false');\n  }));\n  document.addEventListener('keydown',event=>{\n    if(event.key==='Escape'&&nav){\n      nav.dataset.open='false';\n      menuButton?.setAttribute('aria-expanded','false');\n    }\n  });\n})();\n",
+    "light": "#f3efe9",
+    "dark": "#111315",
+    "pages": {
+      "ru": {
+        "index": {
+          "title": "Главная",
+          "summary": "Авторское портфолио Aster Works: проекты, подход и контакты.",
+          "documentTitle": "Aster Works — авторское портфолио",
+          "html": "<!doctype html>\n<html lang=\"ru\" data-theme=\"light\">\n<head>\n  <meta charset=\"utf-8\">\n  <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n  <meta name=\"description\" content=\"Авторское портфолио Aster Works: проекты, подход и контакты.\">\n  <title>Aster Works — авторское портфолио</title>\n  <script>\n    (() => {\n      const queryTheme = new URLSearchParams(location.search).get(\"theme\");\n      let theme = queryTheme === \"dark\" || queryTheme === \"light\" ? queryTheme : null;\n      if (!theme) {\n        try {\n          const savedTheme = localStorage.getItem(\"aster-works-theme\");\n          if (savedTheme === \"dark\" || savedTheme === \"light\") theme = savedTheme;\n        } catch {}\n      }\n      if (!theme && window.matchMedia?.(\"(prefers-color-scheme: dark)\").matches) theme = \"dark\";\n      document.documentElement.dataset.theme = theme || \"light\";\n    })();\n  </script>\n  <link rel=\"stylesheet\" href=\"../style.css\">\n</head>\n<body>\n  <header class=\"site-header\"><div class=\"header-inner shell\">\n    <a class=\"brand\" href=\"index.html\" aria-label=\"Aster Works — главная\">\n      <span class=\"brand-mark\">A</span><span class=\"brand-copy\"><strong>Aster Works</strong><small>Портфолио / авторский сайт</small></span>\n    </a>\n    <nav class=\"main-nav\" data-main-nav data-open=\"false\" aria-label=\"Основная навигация\">\n      <a href=\"index.html\" aria-current=\"page\">Главная</a><a href=\"works.html\">Работы</a><a href=\"about.html\">Обо мне</a><a href=\"about.html#process\">Процесс</a><a href=\"contact.html\">Контакт</a>\n    </nav>\n    <div class=\"header-actions\">\n      <a class=\"header-cta\" href=\"contact.html\">Обсудить проект</a>\n      <button class=\"theme-toggle\" type=\"button\" data-theme-toggle data-label-light=\"Включить светлую тему\" data-label-dark=\"Включить тёмную тему\" aria-label=\"Включить тёмную тему\">☾</button>\n      <button class=\"menu-toggle\" type=\"button\" data-menu-toggle aria-label=\"Открыть меню\" aria-expanded=\"false\">☰</button>\n    </div>\n  </div></header>\n  <main class=\"main shell\">\n    <section class=\"hero\">\n      <div class=\"hero-copy\">\n        <div><span class=\"eyebrow\">Независимый автор · цифровые проекты</span><h1 class=\"display\">Собираю ясные истории из сложных идей.</h1><p class=\"lead\">Дизайн, цифровые продукты и редакционные проекты — от первого исследования до цельной публикации.</p><div class=\"button-row\"><a class=\"button button-primary\" href=\"works.html\">Смотреть работы</a><a class=\"button\" href=\"about.html\">Познакомиться</a></div></div>\n        <div class=\"hero-meta\"><div><strong>12 проектов</strong><span>в отобранном архиве</span></div><div><strong>6 направлений</strong><span>от стратегии до публикации</span></div></div>\n      </div>\n      <figure class=\"hero-media\"><img src=\"../assets/portfolio-hero-studio.webp\" alt=\"Авторская студия с макетами и материалами для цифровых проектов\"><figcaption class=\"media-label\">Авторская студия · 2026</figcaption></figure>\n    </section>\n    <div class=\"discipline-strip\"><strong>Айдентика</strong><strong>Интерфейсы</strong><strong>Редактура</strong><strong>Фотография</strong><span>Портфолио для автора, которому важен контекст.</span></div>\n    <section class=\"section-head\"><div><span class=\"eyebrow\">Избранные работы</span><h2>Разные проекты — с разным визуальным весом.</h2></div><p>Большой кейс, самостоятельная серия и короткое наблюдение не обязаны выглядеть одинаково. Эта подборка сохраняет их собственный ритм.</p></section>\n    <section class=\"works-grid\" aria-label=\"Избранные проекты\">\n      <a class=\"work-card work-featured\" href=\"works.html#serein\"><img src=\"../assets/portfolio-product-interface.webp\" alt=\"Рабочее пространство с макетом спокойного модульного интерфейса\"><span class=\"work-card-copy\"><span class=\"eyebrow\">Главный кейс</span><h2>Serein: цифровая среда для сосредоточенной работы.</h2><p>Исследование, продуктовая логика, интерфейс и запуск.</p></span></a>\n      <a class=\"work-card work-small work-city\" href=\"works.html#city\"><img src=\"../assets/portfolio-editorial-city.webp\" alt=\"Современный город в вечернем свете\"><span class=\"work-card-copy\"><span class=\"eyebrow\">Редакционная серия</span><h3>Город после шести.</h3></span></a>\n      <a class=\"work-card work-small\" href=\"works.html#fieldwork\"><img src=\"../assets/portfolio-identity-system.webp\" alt=\"Материалы абстрактной визуальной системы на рабочем столе\"><span class=\"work-card-copy\"><span class=\"eyebrow\">Айдентика</span><h3>Fieldwork: система, которая оставляет воздух.</h3></span></a>\n    </section>\n    <section class=\"split-panel\">\n      <article class=\"note-card\"><div><span class=\"eyebrow\">Принцип отбора</span><h3>Портфолио — не склад выполненных задач.</h3></div><p>Здесь остаются проекты, в которых видны мысль, решение и результат. Остальное сохраняется в рабочем архиве.</p></article>\n      <article class=\"panel\"><span class=\"eyebrow\">Как я работаю</span><h2>От вопроса к форме.</h2><div class=\"panel-list\"><div><strong>01</strong><span><h3>Слушаю</h3><p>Разбираю задачу, контекст и реальные ограничения.</p></span></div><div><strong>02</strong><span><h3>Собираю</h3><p>Связываю исследование, содержание и визуальную систему.</p></span></div><div><strong>03</strong><span><h3>Проверяю</h3><p>Довожу решение до состояния, которым можно пользоваться.</p></span></div></div></article>\n    </section>\n    <section class=\"quote-card\"><blockquote>«Хорошая форма не закрывает смысл. Она помогает его увидеть».</blockquote><p>Работаю с независимыми авторами, культурными проектами и небольшими командами, которым нужен цельный результат без лишнего шума.</p></section>\n  </main>\n  <footer class=\"site-footer shell\"><div><strong>Aster Works</strong><span>Авторское портфолио · 2026</span></div><nav class=\"footer-nav\" aria-label=\"Навигация в подвале\"><a href=\"index.html\">Главная</a><a href=\"works.html\">Работы</a><a href=\"about.html\">Обо мне</a><a href=\"about.html#process\">Процесс</a><a href=\"contact.html\">Контакт</a></nav></footer>\n  <script src=\"../site.js\"></script>\n</body>\n</html>\n",
+          "main": "<main class=\"main shell\">\n    <section class=\"hero\">\n      <div class=\"hero-copy\">\n        <div><span class=\"eyebrow\">Независимый автор · цифровые проекты</span><h1 class=\"display\">Собираю ясные истории из сложных идей.</h1><p class=\"lead\">Дизайн, цифровые продукты и редакционные проекты — от первого исследования до цельной публикации.</p><div class=\"button-row\"><a class=\"button button-primary\" href=\"works.html\">Смотреть работы</a><a class=\"button\" href=\"about.html\">Познакомиться</a></div></div>\n        <div class=\"hero-meta\"><div><strong>12 проектов</strong><span>в отобранном архиве</span></div><div><strong>6 направлений</strong><span>от стратегии до публикации</span></div></div>\n      </div>\n      <figure class=\"hero-media\"><img src=\"../assets/portfolio-hero-studio.webp\" alt=\"Авторская студия с макетами и материалами для цифровых проектов\"><figcaption class=\"media-label\">Авторская студия · 2026</figcaption></figure>\n    </section>\n    <div class=\"discipline-strip\"><strong>Айдентика</strong><strong>Интерфейсы</strong><strong>Редактура</strong><strong>Фотография</strong><span>Портфолио для автора, которому важен контекст.</span></div>\n    <section class=\"section-head\"><div><span class=\"eyebrow\">Избранные работы</span><h2>Разные проекты — с разным визуальным весом.</h2></div><p>Большой кейс, самостоятельная серия и короткое наблюдение не обязаны выглядеть одинаково. Эта подборка сохраняет их собственный ритм.</p></section>\n    <section class=\"works-grid\" aria-label=\"Избранные проекты\">\n      <a class=\"work-card work-featured\" href=\"works.html#serein\"><img src=\"../assets/portfolio-product-interface.webp\" alt=\"Рабочее пространство с макетом спокойного модульного интерфейса\"><span class=\"work-card-copy\"><span class=\"eyebrow\">Главный кейс</span><h2>Serein: цифровая среда для сосредоточенной работы.</h2><p>Исследование, продуктовая логика, интерфейс и запуск.</p></span></a>\n      <a class=\"work-card work-small work-city\" href=\"works.html#city\"><img src=\"../assets/portfolio-editorial-city.webp\" alt=\"Современный город в вечернем свете\"><span class=\"work-card-copy\"><span class=\"eyebrow\">Редакционная серия</span><h3>Город после шести.</h3></span></a>\n      <a class=\"work-card work-small\" href=\"works.html#fieldwork\"><img src=\"../assets/portfolio-identity-system.webp\" alt=\"Материалы абстрактной визуальной системы на рабочем столе\"><span class=\"work-card-copy\"><span class=\"eyebrow\">Айдентика</span><h3>Fieldwork: система, которая оставляет воздух.</h3></span></a>\n    </section>\n    <section class=\"split-panel\">\n      <article class=\"note-card\"><div><span class=\"eyebrow\">Принцип отбора</span><h3>Портфолио — не склад выполненных задач.</h3></div><p>Здесь остаются проекты, в которых видны мысль, решение и результат. Остальное сохраняется в рабочем архиве.</p></article>\n      <article class=\"panel\"><span class=\"eyebrow\">Как я работаю</span><h2>От вопроса к форме.</h2><div class=\"panel-list\"><div><strong>01</strong><span><h3>Слушаю</h3><p>Разбираю задачу, контекст и реальные ограничения.</p></span></div><div><strong>02</strong><span><h3>Собираю</h3><p>Связываю исследование, содержание и визуальную систему.</p></span></div><div><strong>03</strong><span><h3>Проверяю</h3><p>Довожу решение до состояния, которым можно пользоваться.</p></span></div></div></article>\n    </section>\n    <section class=\"quote-card\"><blockquote>«Хорошая форма не закрывает смысл. Она помогает его увидеть».</blockquote><p>Работаю с независимыми авторами, культурными проектами и небольшими командами, которым нужен цельный результат без лишнего шума.</p></section>\n  </main>"
+        },
+        "works": {
+          "title": "Работы",
+          "summary": "Избранные проекты Aster Works.",
+          "documentTitle": "Работы — Aster Works",
+          "html": "<!doctype html>\n<html lang=\"ru\" data-theme=\"light\">\n<head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"description\" content=\"Избранные проекты Aster Works.\"><title>Работы — Aster Works</title>\n  <script>\n    (() => {\n      const queryTheme = new URLSearchParams(location.search).get(\"theme\");\n      let theme = queryTheme === \"dark\" || queryTheme === \"light\" ? queryTheme : null;\n      if (!theme) {\n        try {\n          const savedTheme = localStorage.getItem(\"aster-works-theme\");\n          if (savedTheme === \"dark\" || savedTheme === \"light\") theme = savedTheme;\n        } catch {}\n      }\n      if (!theme && window.matchMedia?.(\"(prefers-color-scheme: dark)\").matches) theme = \"dark\";\n      document.documentElement.dataset.theme = theme || \"light\";\n    })();\n  </script>\n<link rel=\"stylesheet\" href=\"../style.css\"></head>\n<body>\n  <header class=\"site-header\"><div class=\"header-inner shell\">\n    <a class=\"brand\" href=\"index.html\" aria-label=\"Aster Works — главная\"><span class=\"brand-mark\">A</span><span class=\"brand-copy\"><strong>Aster Works</strong><small>Портфолио / авторский сайт</small></span></a>\n    <nav class=\"main-nav\" data-main-nav data-open=\"false\" aria-label=\"Основная навигация\"><a href=\"index.html\">Главная</a><a href=\"works.html\" aria-current=\"page\">Работы</a><a href=\"about.html\">Обо мне</a><a href=\"about.html#process\">Процесс</a><a href=\"contact.html\">Контакт</a></nav>\n    <div class=\"header-actions\"><a class=\"header-cta\" href=\"contact.html\">Обсудить проект</a><button class=\"theme-toggle\" type=\"button\" data-theme-toggle data-label-light=\"Включить светлую тему\" data-label-dark=\"Включить тёмную тему\" aria-label=\"Включить тёмную тему\">☾</button><button class=\"menu-toggle\" type=\"button\" data-menu-toggle aria-label=\"Открыть меню\" aria-expanded=\"false\">☰</button></div>\n  </div></header>\n  <main class=\"main shell\">\n    <header class=\"page-intro\"><span class=\"eyebrow\">Избранный архив · 2023–2026</span><h1>Работы, в которых виден путь от идеи до результата.</h1><p class=\"lead\">Три разных масштаба: цифровой продукт, визуальная система и редакционное наблюдение.</p></header>\n    <section class=\"project-list\" aria-label=\"Список проектов\">\n      <article class=\"project-row\" id=\"serein\"><figure class=\"project-media\"><img src=\"../assets/portfolio-product-interface.webp\" alt=\"Рабочее пространство с макетом спокойного модульного интерфейса\"></figure><div class=\"project-body\"><div><span class=\"eyebrow\">Цифровой продукт · 2026</span><h2>Serein — рабочая среда</h2><p>Спокойная рабочая среда для небольшой распределённой команды. В проект вошли исследование сценариев, информационная архитектура, интерфейс и редакционный язык запуска.</p></div><div class=\"project-meta\"><span>Роль: стратегия и дизайн</span><span>12 недель</span></div></div></article>\n      <article class=\"project-row\" id=\"fieldwork\"><figure class=\"project-media\"><img src=\"../assets/portfolio-identity-system.webp\" alt=\"Материалы абстрактной визуальной системы на рабочем столе\"></figure><div class=\"project-body\"><div><span class=\"eyebrow\">Айдентика · 2025</span><h2>Fieldwork — культурная лаборатория</h2><p>Гибкая система для лаборатории городских исследований: строгая основа, живые цветовые акценты и набор форматов для событий, публикаций и архива.</p></div><div class=\"project-meta\"><span>Роль: арт-дирекция</span><span>8 недель</span></div></div></article>\n      <article class=\"project-row\" id=\"city\"><figure class=\"project-media\"><img src=\"../assets/portfolio-editorial-city.webp\" alt=\"Современный город в вечернем свете\"></figure><div class=\"project-body\"><div><span class=\"eyebrow\">Фото и текст · 2024</span><h2>Город после шести</h2><p>Небольшая авторская серия о том, как деловой город меняется после окончания рабочего дня. Фотографии, полевые заметки и короткие истории собраны в единый визуальный ритм.</p></div><div class=\"project-meta\"><span>Роль: автор и фотограф</span><span>18 материалов</span></div></div></article>\n    </section>\n    <section class=\"quote-card\"><blockquote>Нужен похожий разбор и цельная форма?</blockquote><p><a class=\"button button-accent\" href=\"contact.html\">Обсудить проект</a></p></section>\n  </main>\n  <footer class=\"site-footer shell\"><div><strong>Aster Works</strong><span>Авторское портфолио · 2026</span></div><nav class=\"footer-nav\" aria-label=\"Навигация в подвале\"><a href=\"index.html\">Главная</a><a href=\"works.html\">Работы</a><a href=\"about.html\">Обо мне</a><a href=\"about.html#process\">Процесс</a><a href=\"contact.html\">Контакт</a></nav></footer>\n  <script src=\"../site.js\"></script>\n</body>\n</html>\n",
+          "main": "<main class=\"main shell\">\n    <header class=\"page-intro\"><span class=\"eyebrow\">Избранный архив · 2023–2026</span><h1>Работы, в которых виден путь от идеи до результата.</h1><p class=\"lead\">Три разных масштаба: цифровой продукт, визуальная система и редакционное наблюдение.</p></header>\n    <section class=\"project-list\" aria-label=\"Список проектов\">\n      <article class=\"project-row\" id=\"serein\"><figure class=\"project-media\"><img src=\"../assets/portfolio-product-interface.webp\" alt=\"Рабочее пространство с макетом спокойного модульного интерфейса\"></figure><div class=\"project-body\"><div><span class=\"eyebrow\">Цифровой продукт · 2026</span><h2>Serein — рабочая среда</h2><p>Спокойная рабочая среда для небольшой распределённой команды. В проект вошли исследование сценариев, информационная архитектура, интерфейс и редакционный язык запуска.</p></div><div class=\"project-meta\"><span>Роль: стратегия и дизайн</span><span>12 недель</span></div></div></article>\n      <article class=\"project-row\" id=\"fieldwork\"><figure class=\"project-media\"><img src=\"../assets/portfolio-identity-system.webp\" alt=\"Материалы абстрактной визуальной системы на рабочем столе\"></figure><div class=\"project-body\"><div><span class=\"eyebrow\">Айдентика · 2025</span><h2>Fieldwork — культурная лаборатория</h2><p>Гибкая система для лаборатории городских исследований: строгая основа, живые цветовые акценты и набор форматов для событий, публикаций и архива.</p></div><div class=\"project-meta\"><span>Роль: арт-дирекция</span><span>8 недель</span></div></div></article>\n      <article class=\"project-row\" id=\"city\"><figure class=\"project-media\"><img src=\"../assets/portfolio-editorial-city.webp\" alt=\"Современный город в вечернем свете\"></figure><div class=\"project-body\"><div><span class=\"eyebrow\">Фото и текст · 2024</span><h2>Город после шести</h2><p>Небольшая авторская серия о том, как деловой город меняется после окончания рабочего дня. Фотографии, полевые заметки и короткие истории собраны в единый визуальный ритм.</p></div><div class=\"project-meta\"><span>Роль: автор и фотограф</span><span>18 материалов</span></div></div></article>\n    </section>\n    <section class=\"quote-card\"><blockquote>Нужен похожий разбор и цельная форма?</blockquote><p><a class=\"button button-accent\" href=\"contact.html\">Обсудить проект</a></p></section>\n  </main>"
+        },
+        "about": {
+          "title": "О себе",
+          "summary": "Об авторе Aster Works и рабочем процессе.",
+          "documentTitle": "Обо мне — Aster Works",
+          "html": "<!doctype html>\n<html lang=\"ru\" data-theme=\"light\">\n<head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"description\" content=\"Об авторе Aster Works и рабочем процессе.\"><title>Обо мне — Aster Works</title>\n  <script>\n    (() => {\n      const queryTheme = new URLSearchParams(location.search).get(\"theme\");\n      let theme = queryTheme === \"dark\" || queryTheme === \"light\" ? queryTheme : null;\n      if (!theme) {\n        try {\n          const savedTheme = localStorage.getItem(\"aster-works-theme\");\n          if (savedTheme === \"dark\" || savedTheme === \"light\") theme = savedTheme;\n        } catch {}\n      }\n      if (!theme && window.matchMedia?.(\"(prefers-color-scheme: dark)\").matches) theme = \"dark\";\n      document.documentElement.dataset.theme = theme || \"light\";\n    })();\n  </script>\n<link rel=\"stylesheet\" href=\"../style.css\"></head>\n<body>\n  <header class=\"site-header\"><div class=\"header-inner shell\">\n    <a class=\"brand\" href=\"index.html\" aria-label=\"Aster Works — главная\"><span class=\"brand-mark\">A</span><span class=\"brand-copy\"><strong>Aster Works</strong><small>Портфолио / авторский сайт</small></span></a>\n    <nav class=\"main-nav\" data-main-nav data-open=\"false\" aria-label=\"Основная навигация\"><a href=\"index.html\">Главная</a><a href=\"works.html\">Работы</a><a href=\"about.html\" aria-current=\"page\">Обо мне</a><a href=\"about.html#process\">Процесс</a><a href=\"contact.html\">Контакт</a></nav>\n    <div class=\"header-actions\"><a class=\"header-cta\" href=\"contact.html\">Обсудить проект</a><button class=\"theme-toggle\" type=\"button\" data-theme-toggle data-label-light=\"Включить светлую тему\" data-label-dark=\"Включить тёмную тему\" aria-label=\"Включить тёмную тему\">☾</button><button class=\"menu-toggle\" type=\"button\" data-menu-toggle aria-label=\"Открыть меню\" aria-expanded=\"false\">☰</button></div>\n  </div></header>\n  <main class=\"main shell\">\n    <header class=\"page-intro\"><span class=\"eyebrow\">Обо мне</span><h1>Независимый дизайнер и редактор цифровых историй.</h1><p class=\"lead\">Помогаю небольшим командам превращать сложный материал в ясный продукт, публикацию или визуальную систему.</p></header>\n    <section class=\"about-hero\">\n      <article class=\"panel about-copy\"><div><span class=\"eyebrow\">Подход</span><h2>Содержание сначала. Форма — вслед за ним.</h2><p class=\"lead\">Я начинаю не с готового стиля, а с разговора, исследования и структуры. Поэтому результат не выглядит случайной оболочкой: он продолжает логику самого проекта.</p></div><div class=\"facts\"><div class=\"fact\"><strong>9 лет</strong><span>в цифровом дизайне</span></div><div class=\"fact\"><strong>28</strong><span>завершённых запусков</span></div><div class=\"fact\"><strong>4</strong><span>долгих партнёрства</span></div></div></article>\n      <figure class=\"panel about-media\"><img src=\"../assets/portfolio-author-process.webp\" alt=\"Руки автора раскладывают макеты и материалы проекта\"></figure>\n    </section>\n    <section class=\"section-head\" id=\"process\"><div><span class=\"eyebrow\">Процесс</span><h2>Три понятных этапа без чёрного ящика.</h2></div><p>На каждом этапе видны решения, промежуточные материалы и следующий шаг. Проект остаётся общим разговором, а не закрытым производством.</p></section>\n    <section class=\"process-grid\"><article><span>01 · Рамка</span><h3>Понять задачу</h3><p>Цель, аудитория, содержание, ограничения и критерии готовности.</p></article><article><span>02 · Система</span><h3>Собрать решение</h3><p>Архитектура, визуальное направление, прототипы и рабочие сценарии.</p></article><article><span>03 · Выпуск</span><h3>Проверить в жизни</h3><p>Адаптация, доступность, финальный контент и аккуратная передача.</p></article></section>\n    <section class=\"split-panel\"><article class=\"panel\"><span class=\"eyebrow\">Могу помочь</span><h2>Стратегия, дизайн и редактура.</h2><div class=\"panel-list\"><div><strong>01</strong><span><h3>Цифровые продукты</h3><p>Структура, интерфейс, дизайн-система и запуск.</p></span></div><div><strong>02</strong><span><h3>Авторские сайты</h3><p>Портфолио, журналы, культурные и исследовательские проекты.</p></span></div><div><strong>03</strong><span><h3>Редакционные серии</h3><p>Содержание, визуальный ритм и публикационные форматы.</p></span></div></div></article><article class=\"note-card\"><div><span class=\"eyebrow\">Сейчас</span><h3>Открыт для одного нового проекта этой осенью.</h3></div><p><a class=\"button button-accent\" href=\"contact.html\">Написать о задаче</a></p></article></section>\n  </main>\n  <footer class=\"site-footer shell\"><div><strong>Aster Works</strong><span>Авторское портфолио · 2026</span></div><nav class=\"footer-nav\" aria-label=\"Навигация в подвале\"><a href=\"index.html\">Главная</a><a href=\"works.html\">Работы</a><a href=\"about.html\">Обо мне</a><a href=\"about.html#process\">Процесс</a><a href=\"contact.html\">Контакт</a></nav></footer>\n  <script src=\"../site.js\"></script>\n</body>\n</html>\n",
+          "main": "<main class=\"main shell\">\n    <header class=\"page-intro\"><span class=\"eyebrow\">Обо мне</span><h1>Независимый дизайнер и редактор цифровых историй.</h1><p class=\"lead\">Помогаю небольшим командам превращать сложный материал в ясный продукт, публикацию или визуальную систему.</p></header>\n    <section class=\"about-hero\">\n      <article class=\"panel about-copy\"><div><span class=\"eyebrow\">Подход</span><h2>Содержание сначала. Форма — вслед за ним.</h2><p class=\"lead\">Я начинаю не с готового стиля, а с разговора, исследования и структуры. Поэтому результат не выглядит случайной оболочкой: он продолжает логику самого проекта.</p></div><div class=\"facts\"><div class=\"fact\"><strong>9 лет</strong><span>в цифровом дизайне</span></div><div class=\"fact\"><strong>28</strong><span>завершённых запусков</span></div><div class=\"fact\"><strong>4</strong><span>долгих партнёрства</span></div></div></article>\n      <figure class=\"panel about-media\"><img src=\"../assets/portfolio-author-process.webp\" alt=\"Руки автора раскладывают макеты и материалы проекта\"></figure>\n    </section>\n    <section class=\"section-head\" id=\"process\"><div><span class=\"eyebrow\">Процесс</span><h2>Три понятных этапа без чёрного ящика.</h2></div><p>На каждом этапе видны решения, промежуточные материалы и следующий шаг. Проект остаётся общим разговором, а не закрытым производством.</p></section>\n    <section class=\"process-grid\"><article><span>01 · Рамка</span><h3>Понять задачу</h3><p>Цель, аудитория, содержание, ограничения и критерии готовности.</p></article><article><span>02 · Система</span><h3>Собрать решение</h3><p>Архитектура, визуальное направление, прототипы и рабочие сценарии.</p></article><article><span>03 · Выпуск</span><h3>Проверить в жизни</h3><p>Адаптация, доступность, финальный контент и аккуратная передача.</p></article></section>\n    <section class=\"split-panel\"><article class=\"panel\"><span class=\"eyebrow\">Могу помочь</span><h2>Стратегия, дизайн и редактура.</h2><div class=\"panel-list\"><div><strong>01</strong><span><h3>Цифровые продукты</h3><p>Структура, интерфейс, дизайн-система и запуск.</p></span></div><div><strong>02</strong><span><h3>Авторские сайты</h3><p>Портфолио, журналы, культурные и исследовательские проекты.</p></span></div><div><strong>03</strong><span><h3>Редакционные серии</h3><p>Содержание, визуальный ритм и публикационные форматы.</p></span></div></div></article><article class=\"note-card\"><div><span class=\"eyebrow\">Сейчас</span><h3>Открыт для одного нового проекта этой осенью.</h3></div><p><a class=\"button button-accent\" href=\"contact.html\">Написать о задаче</a></p></article></section>\n  </main>"
+        },
+        "contact": {
+          "title": "Контакт",
+          "summary": "Связаться с Aster Works и обсудить проект.",
+          "documentTitle": "Контакт — Aster Works",
+          "html": "<!doctype html>\n<html lang=\"ru\" data-theme=\"light\">\n<head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"description\" content=\"Связаться с Aster Works и обсудить проект.\"><title>Контакт — Aster Works</title>\n  <script>\n    (() => {\n      const queryTheme = new URLSearchParams(location.search).get(\"theme\");\n      let theme = queryTheme === \"dark\" || queryTheme === \"light\" ? queryTheme : null;\n      if (!theme) {\n        try {\n          const savedTheme = localStorage.getItem(\"aster-works-theme\");\n          if (savedTheme === \"dark\" || savedTheme === \"light\") theme = savedTheme;\n        } catch {}\n      }\n      if (!theme && window.matchMedia?.(\"(prefers-color-scheme: dark)\").matches) theme = \"dark\";\n      document.documentElement.dataset.theme = theme || \"light\";\n    })();\n  </script>\n<link rel=\"stylesheet\" href=\"../style.css\"></head>\n<body>\n  <header class=\"site-header\"><div class=\"header-inner shell\">\n    <a class=\"brand\" href=\"index.html\" aria-label=\"Aster Works — главная\"><span class=\"brand-mark\">A</span><span class=\"brand-copy\"><strong>Aster Works</strong><small>Портфолио / авторский сайт</small></span></a>\n    <nav class=\"main-nav\" data-main-nav data-open=\"false\" aria-label=\"Основная навигация\"><a href=\"index.html\">Главная</a><a href=\"works.html\">Работы</a><a href=\"about.html\">Обо мне</a><a href=\"about.html#process\">Процесс</a><a href=\"contact.html\" aria-current=\"page\">Контакт</a></nav>\n    <div class=\"header-actions\"><a class=\"header-cta\" href=\"contact.html\">Обсудить проект</a><button class=\"theme-toggle\" type=\"button\" data-theme-toggle data-label-light=\"Включить светлую тему\" data-label-dark=\"Включить тёмную тему\" aria-label=\"Включить тёмную тему\">☾</button><button class=\"menu-toggle\" type=\"button\" data-menu-toggle aria-label=\"Открыть меню\" aria-expanded=\"false\">☰</button></div>\n  </div></header>\n  <main class=\"main shell\">\n    <header class=\"page-intro\"><span class=\"eyebrow\">Контакт</span><h1>Расскажи, что хочешь сделать.</h1><p class=\"lead\">Достаточно нескольких предложений: что за проект, на какой он стадии и где сейчас особенно нужна помощь.</p></header>\n    <section class=\"contact-layout\">\n      <article class=\"contact-card contact-main\"><div><span class=\"eyebrow\">Начать разговор</span><h2>Письмо — лучший первый шаг.</h2><p>Расскажи о задаче в свободной форме. Если проект подходит, следующим шагом станет короткое знакомство и понятный план работы.</p></div><div><a class=\"contact-link\" href=\"mailto:hello@asterworks.example\"><span>hello@asterworks.example</span><span aria-hidden=\"true\">↗</span></a></div></article>\n      <aside class=\"contact-card contact-side\"><div><span class=\"brief-label\">Короткий бриф</span><dl><div><dt>Задача</dt><dd>Контекст и желаемый результат</dd></div><div><dt>Материалы</dt><dd>Ссылки, тексты или референсы</dd></div><div><dt>Срок</dt><dd>Желаемая дата запуска</dd></div></dl></div><p>Не обязательно заполнять формальный бриф: нескольких ясных предложений достаточно для начала.</p></aside>\n    </section>\n    <section class=\"section-head\"><div><span class=\"eyebrow\">Перед письмом</span><h2>Три вещи, которые помогут начать быстрее.</h2></div><p>Не нужен подробный бриф. Достаточно коротко обозначить задачу, желаемый результат и реальный срок.</p></section>\n    <section class=\"process-grid\"><article><span>01</span><h3>Что создаём?</h3><p>Сайт, цифровой продукт, визуальную систему или серию материалов.</p></article><article><span>02</span><h3>Для кого?</h3><p>Кто будет пользоваться результатом и что для него важно.</p></article><article><span>03</span><h3>Когда?</h3><p>Желаемый срок и события, к которым проект должен быть готов.</p></article></section>\n  </main>\n  <footer class=\"site-footer shell\"><div><strong>Aster Works</strong><span>Авторское портфолио · 2026</span></div><nav class=\"footer-nav\" aria-label=\"Навигация в подвале\"><a href=\"index.html\">Главная</a><a href=\"works.html\">Работы</a><a href=\"about.html\">Обо мне</a><a href=\"about.html#process\">Процесс</a><a href=\"contact.html\">Контакт</a></nav></footer>\n  <script src=\"../site.js\"></script>\n</body>\n</html>\n",
+          "main": "<main class=\"main shell\">\n    <header class=\"page-intro\"><span class=\"eyebrow\">Контакт</span><h1>Расскажи, что хочешь сделать.</h1><p class=\"lead\">Достаточно нескольких предложений: что за проект, на какой он стадии и где сейчас особенно нужна помощь.</p></header>\n    <section class=\"contact-layout\">\n      <article class=\"contact-card contact-main\"><div><span class=\"eyebrow\">Начать разговор</span><h2>Письмо — лучший первый шаг.</h2><p>Расскажи о задаче в свободной форме. Если проект подходит, следующим шагом станет короткое знакомство и понятный план работы.</p></div><div><a class=\"contact-link\" href=\"mailto:hello@asterworks.example\"><span>hello@asterworks.example</span><span aria-hidden=\"true\">↗</span></a></div></article>\n      <aside class=\"contact-card contact-side\"><div><span class=\"brief-label\">Короткий бриф</span><dl><div><dt>Задача</dt><dd>Контекст и желаемый результат</dd></div><div><dt>Материалы</dt><dd>Ссылки, тексты или референсы</dd></div><div><dt>Срок</dt><dd>Желаемая дата запуска</dd></div></dl></div><p>Не обязательно заполнять формальный бриф: нескольких ясных предложений достаточно для начала.</p></aside>\n    </section>\n    <section class=\"section-head\"><div><span class=\"eyebrow\">Перед письмом</span><h2>Три вещи, которые помогут начать быстрее.</h2></div><p>Не нужен подробный бриф. Достаточно коротко обозначить задачу, желаемый результат и реальный срок.</p></section>\n    <section class=\"process-grid\"><article><span>01</span><h3>Что создаём?</h3><p>Сайт, цифровой продукт, визуальную систему или серию материалов.</p></article><article><span>02</span><h3>Для кого?</h3><p>Кто будет пользоваться результатом и что для него важно.</p></article><article><span>03</span><h3>Когда?</h3><p>Желаемый срок и события, к которым проект должен быть готов.</p></article></section>\n  </main>"
+        }
+      },
+      "en": {
+        "index": {
+          "title": "Home",
+          "summary": "Aster Works portfolio: selected projects, approach and contact.",
+          "documentTitle": "Aster Works — independent portfolio",
+          "html": "<!doctype html>\n<html lang=\"en\" data-theme=\"light\">\n<head>\n  <meta charset=\"utf-8\">\n  <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n  <meta name=\"description\" content=\"Aster Works portfolio: selected projects, approach and contact.\">\n  <title>Aster Works — independent portfolio</title>\n  <script>\n    (() => {\n      const queryTheme = new URLSearchParams(location.search).get(\"theme\");\n      let theme = queryTheme === \"dark\" || queryTheme === \"light\" ? queryTheme : null;\n      if (!theme) {\n        try {\n          const savedTheme = localStorage.getItem(\"aster-works-theme\");\n          if (savedTheme === \"dark\" || savedTheme === \"light\") theme = savedTheme;\n        } catch {}\n      }\n      if (!theme && window.matchMedia?.(\"(prefers-color-scheme: dark)\").matches) theme = \"dark\";\n      document.documentElement.dataset.theme = theme || \"light\";\n    })();\n  </script>\n  <link rel=\"stylesheet\" href=\"../style.css\">\n</head>\n<body>\n  <header class=\"site-header\"><div class=\"header-inner shell\">\n    <a class=\"brand\" href=\"index.html\" aria-label=\"Aster Works — home\">\n      <span class=\"brand-mark\">A</span><span class=\"brand-copy\"><strong>Aster Works</strong><small>Portfolio / personal site</small></span>\n    </a>\n    <nav class=\"main-nav\" data-main-nav data-open=\"false\" aria-label=\"Main navigation\">\n      <a href=\"index.html\" aria-current=\"page\">Home</a><a href=\"works.html\">Works</a><a href=\"about.html\">About</a><a href=\"about.html#process\">Process</a><a href=\"contact.html\">Contact</a>\n    </nav>\n    <div class=\"header-actions\">\n      <a class=\"header-cta\" href=\"contact.html\">Discuss a project</a>\n      <button class=\"theme-toggle\" type=\"button\" data-theme-toggle data-label-light=\"Switch to light theme\" data-label-dark=\"Switch to dark theme\" aria-label=\"Switch to dark theme\">☾</button>\n      <button class=\"menu-toggle\" type=\"button\" data-menu-toggle aria-label=\"Open menu\" aria-expanded=\"false\">☰</button>\n    </div>\n  </div></header>\n  <main class=\"main shell\">\n    <section class=\"hero\">\n      <div class=\"hero-copy\">\n        <div><span class=\"eyebrow\">Independent creator · digital projects</span><h1 class=\"display\">I turn complex ideas into clear stories.</h1><p class=\"lead\">Design, digital products and editorial projects — from the first round of research to a coherent publication.</p><div class=\"button-row\"><a class=\"button button-primary\" href=\"works.html\">View works</a><a class=\"button\" href=\"about.html\">Meet the creator</a></div></div>\n        <div class=\"hero-meta\"><div><strong>12 projects</strong><span>in the selected archive</span></div><div><strong>6 disciplines</strong><span>from strategy to publication</span></div></div>\n      </div>\n      <figure class=\"hero-media\"><img src=\"../assets/portfolio-hero-studio.webp\" alt=\"An independent studio with layouts and materials for digital projects\"><figcaption class=\"media-label\">Independent studio · 2026</figcaption></figure>\n    </section>\n    <div class=\"discipline-strip\"><strong>Identity</strong><strong>Interfaces</strong><strong>Editorial</strong><strong>Photography</strong><span>A portfolio for a creator who values context.</span></div>\n    <section class=\"section-head\"><div><span class=\"eyebrow\">Selected works</span><h2>Different projects deserve different visual weight.</h2></div><p>A major case, an independent series and a short observation do not need to look identical. This selection keeps their own rhythm intact.</p></section>\n    <section class=\"works-grid\" aria-label=\"Selected projects\">\n      <a class=\"work-card work-featured\" href=\"works.html#serein\"><img src=\"../assets/portfolio-product-interface.webp\" alt=\"A calm workspace with a modular interface study\"><span class=\"work-card-copy\"><span class=\"eyebrow\">Featured case</span><h2>Serein: a digital environment for focused work.</h2><p>Research, product logic, interface and launch.</p></span></a>\n      <a class=\"work-card work-small work-city\" href=\"works.html#city\"><img src=\"../assets/portfolio-editorial-city.webp\" alt=\"A modern city in evening light\"><span class=\"work-card-copy\"><span class=\"eyebrow\">Editorial series</span><h3>The City After Six.</h3></span></a>\n      <a class=\"work-card work-small\" href=\"works.html#fieldwork\"><img src=\"../assets/portfolio-identity-system.webp\" alt=\"Abstract visual identity materials arranged on a worktable\"><span class=\"work-card-copy\"><span class=\"eyebrow\">Identity</span><h3>Fieldwork: a system with room to breathe.</h3></span></a>\n    </section>\n    <section class=\"split-panel\">\n      <article class=\"note-card\"><div><span class=\"eyebrow\">Selection principle</span><h3>A portfolio is not a warehouse of finished tasks.</h3></div><p>What stays here are projects where the thought, the decision and the result are visible. Everything else belongs in the working archive.</p></article>\n      <article class=\"panel\"><span class=\"eyebrow\">How I work</span><h2>From question to form.</h2><div class=\"panel-list\"><div><strong>01</strong><span><h3>Listen</h3><p>Understand the task, context and real constraints.</p></span></div><div><strong>02</strong><span><h3>Build</h3><p>Connect research, content and the visual system.</p></span></div><div><strong>03</strong><span><h3>Test</h3><p>Bring the solution to a state people can actually use.</p></span></div></div></article>\n    </section>\n    <section class=\"quote-card\"><blockquote>“Good form does not cover meaning. It helps people see it.”</blockquote><p>I work with independent creators, cultural projects and small teams looking for a coherent result without unnecessary noise.</p></section>\n  </main>\n  <footer class=\"site-footer shell\"><div><strong>Aster Works</strong><span>Independent portfolio · 2026</span></div><nav class=\"footer-nav\" aria-label=\"Footer navigation\"><a href=\"index.html\">Home</a><a href=\"works.html\">Works</a><a href=\"about.html\">About</a><a href=\"about.html#process\">Process</a><a href=\"contact.html\">Contact</a></nav></footer>\n  <script src=\"../site.js\"></script>\n</body>\n</html>\n",
+          "main": "<main class=\"main shell\">\n    <section class=\"hero\">\n      <div class=\"hero-copy\">\n        <div><span class=\"eyebrow\">Independent creator · digital projects</span><h1 class=\"display\">I turn complex ideas into clear stories.</h1><p class=\"lead\">Design, digital products and editorial projects — from the first round of research to a coherent publication.</p><div class=\"button-row\"><a class=\"button button-primary\" href=\"works.html\">View works</a><a class=\"button\" href=\"about.html\">Meet the creator</a></div></div>\n        <div class=\"hero-meta\"><div><strong>12 projects</strong><span>in the selected archive</span></div><div><strong>6 disciplines</strong><span>from strategy to publication</span></div></div>\n      </div>\n      <figure class=\"hero-media\"><img src=\"../assets/portfolio-hero-studio.webp\" alt=\"An independent studio with layouts and materials for digital projects\"><figcaption class=\"media-label\">Independent studio · 2026</figcaption></figure>\n    </section>\n    <div class=\"discipline-strip\"><strong>Identity</strong><strong>Interfaces</strong><strong>Editorial</strong><strong>Photography</strong><span>A portfolio for a creator who values context.</span></div>\n    <section class=\"section-head\"><div><span class=\"eyebrow\">Selected works</span><h2>Different projects deserve different visual weight.</h2></div><p>A major case, an independent series and a short observation do not need to look identical. This selection keeps their own rhythm intact.</p></section>\n    <section class=\"works-grid\" aria-label=\"Selected projects\">\n      <a class=\"work-card work-featured\" href=\"works.html#serein\"><img src=\"../assets/portfolio-product-interface.webp\" alt=\"A calm workspace with a modular interface study\"><span class=\"work-card-copy\"><span class=\"eyebrow\">Featured case</span><h2>Serein: a digital environment for focused work.</h2><p>Research, product logic, interface and launch.</p></span></a>\n      <a class=\"work-card work-small work-city\" href=\"works.html#city\"><img src=\"../assets/portfolio-editorial-city.webp\" alt=\"A modern city in evening light\"><span class=\"work-card-copy\"><span class=\"eyebrow\">Editorial series</span><h3>The City After Six.</h3></span></a>\n      <a class=\"work-card work-small\" href=\"works.html#fieldwork\"><img src=\"../assets/portfolio-identity-system.webp\" alt=\"Abstract visual identity materials arranged on a worktable\"><span class=\"work-card-copy\"><span class=\"eyebrow\">Identity</span><h3>Fieldwork: a system with room to breathe.</h3></span></a>\n    </section>\n    <section class=\"split-panel\">\n      <article class=\"note-card\"><div><span class=\"eyebrow\">Selection principle</span><h3>A portfolio is not a warehouse of finished tasks.</h3></div><p>What stays here are projects where the thought, the decision and the result are visible. Everything else belongs in the working archive.</p></article>\n      <article class=\"panel\"><span class=\"eyebrow\">How I work</span><h2>From question to form.</h2><div class=\"panel-list\"><div><strong>01</strong><span><h3>Listen</h3><p>Understand the task, context and real constraints.</p></span></div><div><strong>02</strong><span><h3>Build</h3><p>Connect research, content and the visual system.</p></span></div><div><strong>03</strong><span><h3>Test</h3><p>Bring the solution to a state people can actually use.</p></span></div></div></article>\n    </section>\n    <section class=\"quote-card\"><blockquote>“Good form does not cover meaning. It helps people see it.”</blockquote><p>I work with independent creators, cultural projects and small teams looking for a coherent result without unnecessary noise.</p></section>\n  </main>"
+        },
+        "works": {
+          "title": "Works",
+          "summary": "Selected projects by Aster Works.",
+          "documentTitle": "Works — Aster Works",
+          "html": "<!doctype html>\n<html lang=\"en\" data-theme=\"light\">\n<head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"description\" content=\"Selected projects by Aster Works.\"><title>Works — Aster Works</title>\n  <script>\n    (() => {\n      const queryTheme = new URLSearchParams(location.search).get(\"theme\");\n      let theme = queryTheme === \"dark\" || queryTheme === \"light\" ? queryTheme : null;\n      if (!theme) {\n        try {\n          const savedTheme = localStorage.getItem(\"aster-works-theme\");\n          if (savedTheme === \"dark\" || savedTheme === \"light\") theme = savedTheme;\n        } catch {}\n      }\n      if (!theme && window.matchMedia?.(\"(prefers-color-scheme: dark)\").matches) theme = \"dark\";\n      document.documentElement.dataset.theme = theme || \"light\";\n    })();\n  </script>\n<link rel=\"stylesheet\" href=\"../style.css\"></head>\n<body>\n  <header class=\"site-header\"><div class=\"header-inner shell\">\n    <a class=\"brand\" href=\"index.html\" aria-label=\"Aster Works — home\"><span class=\"brand-mark\">A</span><span class=\"brand-copy\"><strong>Aster Works</strong><small>Portfolio / personal site</small></span></a>\n    <nav class=\"main-nav\" data-main-nav data-open=\"false\" aria-label=\"Main navigation\"><a href=\"index.html\">Home</a><a href=\"works.html\" aria-current=\"page\">Works</a><a href=\"about.html\">About</a><a href=\"about.html#process\">Process</a><a href=\"contact.html\">Contact</a></nav>\n    <div class=\"header-actions\"><a class=\"header-cta\" href=\"contact.html\">Discuss a project</a><button class=\"theme-toggle\" type=\"button\" data-theme-toggle data-label-light=\"Switch to light theme\" data-label-dark=\"Switch to dark theme\" aria-label=\"Switch to dark theme\">☾</button><button class=\"menu-toggle\" type=\"button\" data-menu-toggle aria-label=\"Open menu\" aria-expanded=\"false\">☰</button></div>\n  </div></header>\n  <main class=\"main shell\">\n    <header class=\"page-intro\"><span class=\"eyebrow\">Selected archive · 2023–2026</span><h1>Work that shows the path from idea to outcome.</h1><p class=\"lead\">Three different scales: a digital product, a visual system and an editorial observation.</p></header>\n    <section class=\"project-list\" aria-label=\"Project list\">\n      <article class=\"project-row\" id=\"serein\"><figure class=\"project-media\"><img src=\"../assets/portfolio-product-interface.webp\" alt=\"A calm workspace with a modular interface study\"></figure><div class=\"project-body\"><div><span class=\"eyebrow\">Digital product · 2026</span><h2>Serein Workspace</h2><p>A focused work environment for a small distributed team. The project included scenario research, information architecture, interface design and the editorial language for launch.</p></div><div class=\"project-meta\"><span>Role: strategy and design</span><span>12 weeks</span></div></div></article>\n      <article class=\"project-row\" id=\"fieldwork\"><figure class=\"project-media\"><img src=\"../assets/portfolio-identity-system.webp\" alt=\"Abstract visual identity materials arranged on a worktable\"></figure><div class=\"project-body\"><div><span class=\"eyebrow\">Identity · 2025</span><h2>Fieldwork Cultural Lab</h2><p>A flexible system for an urban research lab: a disciplined foundation, lively color accents and formats for events, publications and the archive.</p></div><div class=\"project-meta\"><span>Role: art direction</span><span>8 weeks</span></div></div></article>\n      <article class=\"project-row\" id=\"city\"><figure class=\"project-media\"><img src=\"../assets/portfolio-editorial-city.webp\" alt=\"A modern city in evening light\"></figure><div class=\"project-body\"><div><span class=\"eyebrow\">Photography and writing · 2024</span><h2>The City After Six</h2><p>A compact author-led series about how a business district changes after the working day ends. Photographs, field notes and short stories form a single visual rhythm.</p></div><div class=\"project-meta\"><span>Role: author and photographer</span><span>18 stories</span></div></div></article>\n    </section>\n    <section class=\"quote-card\"><blockquote>Need the same clarity and a coherent form?</blockquote><p><a class=\"button button-accent\" href=\"contact.html\">Discuss a project</a></p></section>\n  </main>\n  <footer class=\"site-footer shell\"><div><strong>Aster Works</strong><span>Independent portfolio · 2026</span></div><nav class=\"footer-nav\" aria-label=\"Footer navigation\"><a href=\"index.html\">Home</a><a href=\"works.html\">Works</a><a href=\"about.html\">About</a><a href=\"about.html#process\">Process</a><a href=\"contact.html\">Contact</a></nav></footer>\n  <script src=\"../site.js\"></script>\n</body>\n</html>\n",
+          "main": "<main class=\"main shell\">\n    <header class=\"page-intro\"><span class=\"eyebrow\">Selected archive · 2023–2026</span><h1>Work that shows the path from idea to outcome.</h1><p class=\"lead\">Three different scales: a digital product, a visual system and an editorial observation.</p></header>\n    <section class=\"project-list\" aria-label=\"Project list\">\n      <article class=\"project-row\" id=\"serein\"><figure class=\"project-media\"><img src=\"../assets/portfolio-product-interface.webp\" alt=\"A calm workspace with a modular interface study\"></figure><div class=\"project-body\"><div><span class=\"eyebrow\">Digital product · 2026</span><h2>Serein Workspace</h2><p>A focused work environment for a small distributed team. The project included scenario research, information architecture, interface design and the editorial language for launch.</p></div><div class=\"project-meta\"><span>Role: strategy and design</span><span>12 weeks</span></div></div></article>\n      <article class=\"project-row\" id=\"fieldwork\"><figure class=\"project-media\"><img src=\"../assets/portfolio-identity-system.webp\" alt=\"Abstract visual identity materials arranged on a worktable\"></figure><div class=\"project-body\"><div><span class=\"eyebrow\">Identity · 2025</span><h2>Fieldwork Cultural Lab</h2><p>A flexible system for an urban research lab: a disciplined foundation, lively color accents and formats for events, publications and the archive.</p></div><div class=\"project-meta\"><span>Role: art direction</span><span>8 weeks</span></div></div></article>\n      <article class=\"project-row\" id=\"city\"><figure class=\"project-media\"><img src=\"../assets/portfolio-editorial-city.webp\" alt=\"A modern city in evening light\"></figure><div class=\"project-body\"><div><span class=\"eyebrow\">Photography and writing · 2024</span><h2>The City After Six</h2><p>A compact author-led series about how a business district changes after the working day ends. Photographs, field notes and short stories form a single visual rhythm.</p></div><div class=\"project-meta\"><span>Role: author and photographer</span><span>18 stories</span></div></div></article>\n    </section>\n    <section class=\"quote-card\"><blockquote>Need the same clarity and a coherent form?</blockquote><p><a class=\"button button-accent\" href=\"contact.html\">Discuss a project</a></p></section>\n  </main>"
+        },
+        "about": {
+          "title": "About",
+          "summary": "About Aster Works and the creative process.",
+          "documentTitle": "About — Aster Works",
+          "html": "<!doctype html>\n<html lang=\"en\" data-theme=\"light\">\n<head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"description\" content=\"About Aster Works and the creative process.\"><title>About — Aster Works</title>\n  <script>\n    (() => {\n      const queryTheme = new URLSearchParams(location.search).get(\"theme\");\n      let theme = queryTheme === \"dark\" || queryTheme === \"light\" ? queryTheme : null;\n      if (!theme) {\n        try {\n          const savedTheme = localStorage.getItem(\"aster-works-theme\");\n          if (savedTheme === \"dark\" || savedTheme === \"light\") theme = savedTheme;\n        } catch {}\n      }\n      if (!theme && window.matchMedia?.(\"(prefers-color-scheme: dark)\").matches) theme = \"dark\";\n      document.documentElement.dataset.theme = theme || \"light\";\n    })();\n  </script>\n<link rel=\"stylesheet\" href=\"../style.css\"></head>\n<body>\n  <header class=\"site-header\"><div class=\"header-inner shell\">\n    <a class=\"brand\" href=\"index.html\" aria-label=\"Aster Works — home\"><span class=\"brand-mark\">A</span><span class=\"brand-copy\"><strong>Aster Works</strong><small>Portfolio / personal site</small></span></a>\n    <nav class=\"main-nav\" data-main-nav data-open=\"false\" aria-label=\"Main navigation\"><a href=\"index.html\">Home</a><a href=\"works.html\">Works</a><a href=\"about.html\" aria-current=\"page\">About</a><a href=\"about.html#process\">Process</a><a href=\"contact.html\">Contact</a></nav>\n    <div class=\"header-actions\"><a class=\"header-cta\" href=\"contact.html\">Discuss a project</a><button class=\"theme-toggle\" type=\"button\" data-theme-toggle data-label-light=\"Switch to light theme\" data-label-dark=\"Switch to dark theme\" aria-label=\"Switch to dark theme\">☾</button><button class=\"menu-toggle\" type=\"button\" data-menu-toggle aria-label=\"Open menu\" aria-expanded=\"false\">☰</button></div>\n  </div></header>\n  <main class=\"main shell\">\n    <header class=\"page-intro\"><span class=\"eyebrow\">About</span><h1>Independent designer and editor of digital stories.</h1><p class=\"lead\">I help small teams turn complex material into a clear product, publication or visual system.</p></header>\n    <section class=\"about-hero\">\n      <article class=\"panel about-copy\"><div><span class=\"eyebrow\">Approach</span><h2>Content first. Form follows.</h2><p class=\"lead\">I do not begin with a ready-made style. I begin with conversation, research and structure. The result is not a random shell; it continues the logic of the project itself.</p></div><div class=\"facts\"><div class=\"fact\"><strong>9 years</strong><span>in digital design</span></div><div class=\"fact\"><strong>28</strong><span>completed launches</span></div><div class=\"fact\"><strong>4</strong><span>long partnerships</span></div></div></article>\n      <figure class=\"panel about-media\"><img src=\"../assets/portfolio-author-process.webp\" alt=\"A creator's hands arranging project layouts and materials\"></figure>\n    </section>\n    <section class=\"section-head\" id=\"process\"><div><span class=\"eyebrow\">Process</span><h2>Three clear stages, with no black box.</h2></div><p>Decisions, working materials and the next step stay visible throughout. The project remains a shared conversation, not a closed production line.</p></section>\n    <section class=\"process-grid\"><article><span>01 · Frame</span><h3>Understand the task</h3><p>Goal, audience, content, constraints and a shared definition of done.</p></article><article><span>02 · System</span><h3>Build the solution</h3><p>Architecture, visual direction, prototypes and working scenarios.</p></article><article><span>03 · Release</span><h3>Test it in life</h3><p>Responsive behavior, accessibility, final content and a clean handoff.</p></article></section>\n    <section class=\"split-panel\"><article class=\"panel\"><span class=\"eyebrow\">I can help with</span><h2>Strategy, design and editing.</h2><div class=\"panel-list\"><div><strong>01</strong><span><h3>Digital products</h3><p>Structure, interface, design system and launch.</p></span></div><div><strong>02</strong><span><h3>Author-led sites</h3><p>Portfolios, journals, cultural and research projects.</p></span></div><div><strong>03</strong><span><h3>Editorial series</h3><p>Content, visual rhythm and publication formats.</p></span></div></div></article><article class=\"note-card\"><div><span class=\"eyebrow\">Now</span><h3>Available for one new project this autumn.</h3></div><p><a class=\"button button-accent\" href=\"contact.html\">Share your brief</a></p></article></section>\n  </main>\n  <footer class=\"site-footer shell\"><div><strong>Aster Works</strong><span>Independent portfolio · 2026</span></div><nav class=\"footer-nav\" aria-label=\"Footer navigation\"><a href=\"index.html\">Home</a><a href=\"works.html\">Works</a><a href=\"about.html\">About</a><a href=\"about.html#process\">Process</a><a href=\"contact.html\">Contact</a></nav></footer>\n  <script src=\"../site.js\"></script>\n</body>\n</html>\n",
+          "main": "<main class=\"main shell\">\n    <header class=\"page-intro\"><span class=\"eyebrow\">About</span><h1>Independent designer and editor of digital stories.</h1><p class=\"lead\">I help small teams turn complex material into a clear product, publication or visual system.</p></header>\n    <section class=\"about-hero\">\n      <article class=\"panel about-copy\"><div><span class=\"eyebrow\">Approach</span><h2>Content first. Form follows.</h2><p class=\"lead\">I do not begin with a ready-made style. I begin with conversation, research and structure. The result is not a random shell; it continues the logic of the project itself.</p></div><div class=\"facts\"><div class=\"fact\"><strong>9 years</strong><span>in digital design</span></div><div class=\"fact\"><strong>28</strong><span>completed launches</span></div><div class=\"fact\"><strong>4</strong><span>long partnerships</span></div></div></article>\n      <figure class=\"panel about-media\"><img src=\"../assets/portfolio-author-process.webp\" alt=\"A creator's hands arranging project layouts and materials\"></figure>\n    </section>\n    <section class=\"section-head\" id=\"process\"><div><span class=\"eyebrow\">Process</span><h2>Three clear stages, with no black box.</h2></div><p>Decisions, working materials and the next step stay visible throughout. The project remains a shared conversation, not a closed production line.</p></section>\n    <section class=\"process-grid\"><article><span>01 · Frame</span><h3>Understand the task</h3><p>Goal, audience, content, constraints and a shared definition of done.</p></article><article><span>02 · System</span><h3>Build the solution</h3><p>Architecture, visual direction, prototypes and working scenarios.</p></article><article><span>03 · Release</span><h3>Test it in life</h3><p>Responsive behavior, accessibility, final content and a clean handoff.</p></article></section>\n    <section class=\"split-panel\"><article class=\"panel\"><span class=\"eyebrow\">I can help with</span><h2>Strategy, design and editing.</h2><div class=\"panel-list\"><div><strong>01</strong><span><h3>Digital products</h3><p>Structure, interface, design system and launch.</p></span></div><div><strong>02</strong><span><h3>Author-led sites</h3><p>Portfolios, journals, cultural and research projects.</p></span></div><div><strong>03</strong><span><h3>Editorial series</h3><p>Content, visual rhythm and publication formats.</p></span></div></div></article><article class=\"note-card\"><div><span class=\"eyebrow\">Now</span><h3>Available for one new project this autumn.</h3></div><p><a class=\"button button-accent\" href=\"contact.html\">Share your brief</a></p></article></section>\n  </main>"
+        },
+        "contact": {
+          "title": "Contact",
+          "summary": "Contact Aster Works to discuss a project.",
+          "documentTitle": "Contact — Aster Works",
+          "html": "<!doctype html>\n<html lang=\"en\" data-theme=\"light\">\n<head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"description\" content=\"Contact Aster Works to discuss a project.\"><title>Contact — Aster Works</title>\n  <script>\n    (() => {\n      const queryTheme = new URLSearchParams(location.search).get(\"theme\");\n      let theme = queryTheme === \"dark\" || queryTheme === \"light\" ? queryTheme : null;\n      if (!theme) {\n        try {\n          const savedTheme = localStorage.getItem(\"aster-works-theme\");\n          if (savedTheme === \"dark\" || savedTheme === \"light\") theme = savedTheme;\n        } catch {}\n      }\n      if (!theme && window.matchMedia?.(\"(prefers-color-scheme: dark)\").matches) theme = \"dark\";\n      document.documentElement.dataset.theme = theme || \"light\";\n    })();\n  </script>\n<link rel=\"stylesheet\" href=\"../style.css\"></head>\n<body>\n  <header class=\"site-header\"><div class=\"header-inner shell\">\n    <a class=\"brand\" href=\"index.html\" aria-label=\"Aster Works — home\"><span class=\"brand-mark\">A</span><span class=\"brand-copy\"><strong>Aster Works</strong><small>Portfolio / personal site</small></span></a>\n    <nav class=\"main-nav\" data-main-nav data-open=\"false\" aria-label=\"Main navigation\"><a href=\"index.html\">Home</a><a href=\"works.html\">Works</a><a href=\"about.html\">About</a><a href=\"about.html#process\">Process</a><a href=\"contact.html\" aria-current=\"page\">Contact</a></nav>\n    <div class=\"header-actions\"><a class=\"header-cta\" href=\"contact.html\">Discuss a project</a><button class=\"theme-toggle\" type=\"button\" data-theme-toggle data-label-light=\"Switch to light theme\" data-label-dark=\"Switch to dark theme\" aria-label=\"Switch to dark theme\">☾</button><button class=\"menu-toggle\" type=\"button\" data-menu-toggle aria-label=\"Open menu\" aria-expanded=\"false\">☰</button></div>\n  </div></header>\n  <main class=\"main shell\">\n    <header class=\"page-intro\"><span class=\"eyebrow\">Contact</span><h1>Tell me what you want to make.</h1><p class=\"lead\">A few sentences are enough: what the project is, where it stands now and where you need the most help.</p></header>\n    <section class=\"contact-layout\">\n      <article class=\"contact-card contact-main\"><div><span class=\"eyebrow\">Start a conversation</span><h2>Email is the best first step.</h2><p>Describe the task in your own words. If the project is a good fit, the next step will be a short introduction and a clear plan.</p></div><div><a class=\"contact-link\" href=\"mailto:hello@asterworks.example\"><span>hello@asterworks.example</span><span aria-hidden=\"true\">↗</span></a></div></article>\n      <aside class=\"contact-card contact-side\"><div><span class=\"brief-label\">Short brief</span><dl><div><dt>Goal</dt><dd>Context and desired outcome</dd></div><div><dt>Materials</dt><dd>Links, copy or references</dd></div><div><dt>Timeline</dt><dd>Preferred launch date</dd></div></dl></div><p>A formal brief is not required: a few clear sentences are enough to begin.</p></aside>\n    </section>\n    <section class=\"section-head\"><div><span class=\"eyebrow\">Before you write</span><h2>Three things that help us begin faster.</h2></div><p>You do not need a detailed brief. A short note about the task, the desired outcome and the real deadline is enough.</p></section>\n    <section class=\"process-grid\"><article><span>01</span><h3>What are we making?</h3><p>A site, digital product, visual system or editorial series.</p></article><article><span>02</span><h3>Who is it for?</h3><p>Who will use the result and what matters to them.</p></article><article><span>03</span><h3>When?</h3><p>The target date and any event the project must support.</p></article></section>\n  </main>\n  <footer class=\"site-footer shell\"><div><strong>Aster Works</strong><span>Independent portfolio · 2026</span></div><nav class=\"footer-nav\" aria-label=\"Footer navigation\"><a href=\"index.html\">Home</a><a href=\"works.html\">Works</a><a href=\"about.html\">About</a><a href=\"about.html#process\">Process</a><a href=\"contact.html\">Contact</a></nav></footer>\n  <script src=\"../site.js\"></script>\n</body>\n</html>\n",
+          "main": "<main class=\"main shell\">\n    <header class=\"page-intro\"><span class=\"eyebrow\">Contact</span><h1>Tell me what you want to make.</h1><p class=\"lead\">A few sentences are enough: what the project is, where it stands now and where you need the most help.</p></header>\n    <section class=\"contact-layout\">\n      <article class=\"contact-card contact-main\"><div><span class=\"eyebrow\">Start a conversation</span><h2>Email is the best first step.</h2><p>Describe the task in your own words. If the project is a good fit, the next step will be a short introduction and a clear plan.</p></div><div><a class=\"contact-link\" href=\"mailto:hello@asterworks.example\"><span>hello@asterworks.example</span><span aria-hidden=\"true\">↗</span></a></div></article>\n      <aside class=\"contact-card contact-side\"><div><span class=\"brief-label\">Short brief</span><dl><div><dt>Goal</dt><dd>Context and desired outcome</dd></div><div><dt>Materials</dt><dd>Links, copy or references</dd></div><div><dt>Timeline</dt><dd>Preferred launch date</dd></div></dl></div><p>A formal brief is not required: a few clear sentences are enough to begin.</p></aside>\n    </section>\n    <section class=\"section-head\"><div><span class=\"eyebrow\">Before you write</span><h2>Three things that help us begin faster.</h2></div><p>You do not need a detailed brief. A short note about the task, the desired outcome and the real deadline is enough.</p></section>\n    <section class=\"process-grid\"><article><span>01</span><h3>What are we making?</h3><p>A site, digital product, visual system or editorial series.</p></article><article><span>02</span><h3>Who is it for?</h3><p>Who will use the result and what matters to them.</p></article><article><span>03</span><h3>When?</h3><p>The target date and any event the project must support.</p></article></section>\n  </main>"
+        }
+      }
+    }
+  },
+  "agency-studio": {
+    "assetBase": "assets/template/agency/",
+    "css": "*{box-sizing:border-box}\n:root{\n  --bg:#f2ede5;\n  --paper:#fffdf8;\n  --panel:#e9ded2;\n  --ink:#11100f;\n  --muted:#6d645c;\n  --line:#d4c7ba;\n  --accent:#ee5f3f;\n  --violet:#6f4de2;\n  --header:#fffdf8;\n  --shadow:0 28px 80px rgba(46,30,21,.11);\n}\nhtml[data-theme=\"dark\"]{\n  --bg:#0b0d11;\n  --paper:#12171e;\n  --panel:#1a212a;\n  --ink:#f6f0e8;\n  --muted:#b9afa5;\n  --line:#2d3641;\n  --accent:#ff7656;\n  --violet:#9b86ff;\n  --header:#12171e;\n  --shadow:0 28px 80px rgba(0,0,0,.34);\n}\nhtml{scroll-behavior:smooth;overflow-x:clip}\nbody{\n  margin:0;\n  min-width:320px;\n  overflow-x:clip;\n  background:\n    radial-gradient(circle at 10% 0,rgba(238,95,63,.13),transparent 32%),\n    radial-gradient(circle at 92% 3%,rgba(111,77,226,.12),transparent 30%),\n    var(--bg);\n  color:var(--ink);\n  font-family:Inter,Arial,sans-serif;\n}\nbutton,a{font:inherit}\na{color:inherit}\nimg{display:block;width:100%}\n.site-header{\n  position:sticky;\n  top:0;\n  z-index:50;\n  width:100%;\n  min-height:108px;\n  background:var(--header);\n  border-bottom:1px solid var(--line);\n}\n.header-inner{\n  width:min(100% - 64px,1720px);\n  min-height:108px;\n  margin:0 auto;\n  display:grid;\n  grid-template-columns:auto 1fr auto;\n  align-items:center;\n  gap:24px;\n}\n.brand{display:flex;align-items:center;gap:13px;text-decoration:none;min-width:max-content}\n.brand-mark{width:52px;height:52px;display:grid;place-items:center;border-radius:16px;background:var(--ink);color:var(--paper);font-size:24px;font-weight:950}\n.brand strong{display:block;font-size:21px;letter-spacing:-.045em}\n.brand small{display:block;margin-top:4px;color:var(--muted);font-size:12px;font-weight:850;letter-spacing:.03em}\n.main-nav{display:flex;justify-content:center;align-items:center;gap:8px}\n.main-nav a,.header-cta,.theme-toggle,.menu-toggle,.button{\n  min-height:44px;\n  display:inline-flex;\n  align-items:center;\n  justify-content:center;\n  border:1px solid var(--line);\n  border-radius:999px;\n  padding:0 15px;\n  background:var(--paper);\n  color:var(--ink);\n  text-decoration:none;\n  font-weight:900;\n}\n.main-nav a[aria-current=\"page\"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}\n.header-actions{display:flex;align-items:center;gap:9px}\n.header-cta,.button.primary{background:var(--accent);border-color:var(--accent);color:#fff}\n.theme-toggle,.menu-toggle{width:46px;padding:0;cursor:pointer;background:var(--ink);border-color:var(--ink);color:var(--paper)}\n.menu-toggle{display:none}\nmain{width:min(100% - 64px,1720px);margin:0 auto;padding:30px 0 70px}\n.hero{display:grid;grid-template-columns:minmax(0,.92fr) minmax(520px,1.08fr);gap:24px;align-items:stretch}\n.surface{border:1px solid var(--line);border-radius:36px;background:var(--paper);box-shadow:var(--shadow)}\n.hero-copy{padding:40px;display:flex;flex-direction:column}\n.eyebrow{color:var(--accent);font-size:12px;font-weight:950;letter-spacing:.15em;text-transform:uppercase}\nh1,h2,h3,p{margin-top:0}\nh1{margin:16px 0 18px;font-size:clamp(46px,4.6vw,70px);line-height:.93;letter-spacing:-.068em;text-wrap:balance}\n.lead{max-width:820px;color:var(--muted);font-size:18px;line-height:1.58}\n.hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}\n.button{min-height:50px;padding:0 19px}\n.button.secondary{background:transparent}\n.metrics{margin-top:28px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}\n.metric{padding:16px;border:1px solid var(--line);border-radius:22px;background:var(--panel)}\n.metric strong{display:block;font-size:27px;letter-spacing:-.06em}\n.metric span{display:block;margin-top:5px;color:var(--muted);font-size:13px;font-weight:850}\n.hero-media{position:relative;overflow:hidden;min-height:560px;background:#191817}\n.hero-media img{position:absolute;inset:0;height:100%;object-fit:cover}\n.hero-media:after{content:\"\";position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(9,8,8,.76))}\n.media-note{position:absolute;z-index:2;left:34px;right:34px;bottom:34px;padding:23px;border:1px solid rgba(255,255,255,.3);border-radius:26px;background:rgba(12,12,14,.63);color:#fff}\n.media-note span{font-size:11px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.7)}\n.media-note strong{display:block;margin-top:10px;font-size:clamp(28px,3vw,50px);line-height:.97;letter-spacing:-.06em}\n.focus-strip{margin-top:22px;padding:18px 22px;display:flex;align-items:center;gap:24px;flex-wrap:wrap}\n.focus-strip strong{margin-right:auto}\n.focus-strip span{color:var(--muted);font-weight:900}\n.section-head{margin:60px 0 22px;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(340px,.62fr);gap:32px;align-items:end}\n.section-head h2,.page-intro h1,.manifesto h2,.contact-panel h2{margin:12px 0 0;font-size:clamp(36px,4.6vw,70px);line-height:.95;letter-spacing:-.07em;text-wrap:balance}\n.section-head p{margin:0;color:var(--muted);font-size:17px;line-height:1.65}\n.case-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:22px}\n.case-card{position:relative;overflow:hidden;min-height:310px;color:#fff}\n.case-card.large{min-height:642px}\n.case-side{display:grid;gap:22px}\n.case-card img{position:absolute;inset:0;height:100%;object-fit:cover}\n.case-card:after{content:\"\";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.04),rgba(0,0,0,.8))}\n.case-copy{position:absolute;z-index:2;left:30px;right:30px;bottom:28px}\n.case-copy h3{margin:10px 0 0;font-size:clamp(27px,3vw,47px);line-height:.98;letter-spacing:-.06em;text-wrap:balance}\n.case-card.large .case-copy h3{font-size:clamp(38px,4.7vw,72px)}\n.case-copy p{max-width:750px;margin:12px 0 0;color:rgba(255,255,255,.8);line-height:1.55}\n.service-grid,.process-grid,.proof-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}\n.service-card,.process-card,.proof-card{padding:24px;border:1px solid var(--line);border-radius:25px;background:var(--paper)}\n.service-card span,.process-card span{color:var(--accent);font-weight:950}\n.service-card h3,.process-card h3,.proof-card h3{margin:13px 0 8px;font-size:27px;letter-spacing:-.05em}\n.service-card p,.process-card p,.proof-card p{margin:0;color:var(--muted);line-height:1.55}\n.manifesto{margin-top:22px;padding:38px;display:grid;grid-template-columns:minmax(0,1fr) minmax(340px,.64fr);gap:30px;align-items:center;background:var(--ink);color:var(--paper)}\n.manifesto p{margin:0;color:color-mix(in srgb,var(--paper) 72%,transparent);font-size:17px;line-height:1.7}\n.page-intro{padding:44px;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(340px,.56fr);gap:34px;align-items:end}\n.page-intro p{margin:0;color:var(--muted);font-size:18px;line-height:1.65}\n.media-band{margin-top:22px;overflow:hidden;min-height:500px}\n.media-band img{height:500px;object-fit:cover}\n.detail-list{margin-top:22px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}\n.detail-card{padding:28px}\n.detail-card strong{display:block;color:var(--accent);font-size:12px;letter-spacing:.14em;text-transform:uppercase}\n.detail-card h2{margin:12px 0 10px;font-size:34px;letter-spacing:-.06em}\n.detail-card p{margin:0;color:var(--muted);line-height:1.6}\n.service-stack{margin-top:22px;display:grid;gap:16px}\n.service-row{padding:30px;display:grid;grid-template-columns:80px minmax(260px,.65fr) 1fr;gap:24px;align-items:start}\n.service-row>span{font-size:26px;font-weight:950;color:var(--accent)}\n.service-row h2{margin:0;font-size:36px;letter-spacing:-.06em}\n.service-row p{margin:0;color:var(--muted);line-height:1.65}\n.process-rail{margin-top:22px;padding:34px}\n.process-rail .process-grid{margin-top:24px}\n.process-media{margin-top:22px;display:grid;grid-template-columns:1.05fr .95fr;gap:22px}\n.process-media .media-band{margin:0;min-height:520px}\n.process-media .media-band img{height:520px}\n.process-note{padding:36px;display:flex;flex-direction:column;justify-content:center}\n.process-note h2{margin:12px 0 14px;font-size:clamp(36px,4vw,60px);line-height:.96;letter-spacing:-.065em}\n.process-note p{margin:0;color:var(--muted);font-size:17px;line-height:1.7}\n.contact-layout{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(400px,.7fr);gap:22px}\n.contact-panel{padding:42px}\n.contact-panel p{color:var(--muted);font-size:18px;line-height:1.65}\n.brief-list{margin:24px 0 0;padding:0;list-style:none;display:grid;gap:11px}\n.brief-list li{padding:14px 16px;border:1px solid var(--line);border-radius:16px;background:var(--panel);font-weight:850}\n.contact-card{padding:34px;background:var(--ink);color:var(--paper)}\n.contact-card h2{margin:14px 0 12px;font-size:39px;line-height:1;letter-spacing:-.06em}\n.contact-card p{color:color-mix(in srgb,var(--paper) 70%,transparent);line-height:1.65}\n.contact-card .button{margin-top:18px}\n.site-footer{width:100%;border-top:1px solid var(--line);background:var(--header)}\n.footer-inner{width:min(100% - 64px,1720px);margin:0 auto;padding:36px 0 48px;display:flex;justify-content:space-between;gap:24px;color:var(--muted)}\n.footer-inner strong{display:block;color:var(--ink);font-size:20px}\n.footer-inner span{display:block;margin-top:5px}\n.footer-inner nav{display:flex;gap:15px;flex-wrap:wrap}\n.footer-inner a{color:var(--ink);text-decoration:none;font-weight:900}\n@media(max-width:1260px){\n  .header-inner{grid-template-columns:auto auto}.main-nav{grid-column:1/-1;grid-row:2;padding-bottom:18px;justify-content:flex-start}.site-header,.header-inner{min-height:auto}.header-inner{padding:18px 0}.header-actions{justify-self:end}\n  .hero,.section-head,.page-intro,.manifesto,.process-media,.contact-layout{grid-template-columns:1fr}.hero,.hero-media{min-height:auto}.hero-media{min-height:570px}.service-grid,.process-grid{grid-template-columns:repeat(2,1fr)}\n}\n@media(max-width:780px){\n  .header-inner,main,.footer-inner{width:min(100% - 30px,1720px)}\n  .header-inner{grid-template-columns:1fr auto}.brand small,.header-cta{display:none}.menu-toggle{display:inline-flex}.main-nav{display:none;grid-column:1/-1;padding-bottom:16px;flex-direction:column;align-items:stretch}.main-nav.is-open{display:flex}.main-nav a{justify-content:flex-start}\n  main{padding-top:18px}.hero-copy,.page-intro,.manifesto,.contact-panel,.contact-card,.process-rail{padding:24px}.hero h1,.page-intro h1{font-size:43px}.hero-media{min-height:470px}.metrics,.service-grid,.process-grid,.proof-grid,.detail-list{grid-template-columns:1fr}.section-head{margin-top:44px}.section-head h2{font-size:41px}.case-grid{grid-template-columns:1fr}.case-card.large{min-height:520px}.service-row{grid-template-columns:1fr;gap:10px}.footer-inner{flex-direction:column}.process-media .media-band,.process-media .media-band img,.media-band,.media-band img{min-height:380px;height:380px}.contact-layout{grid-template-columns:1fr}\n}\n@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}\n",
+    "js": "(()=>{\n  const root=document.documentElement;\n  const themeButton=document.querySelector('[data-theme-toggle]');\n  const menuButton=document.querySelector('[data-menu-toggle]');\n  const nav=document.querySelector('.main-nav');\n  const key='vector-atelier-theme';\n  const queryTheme=new URLSearchParams(location.search).get('theme');\n  let saved=null;\n  try{saved=localStorage.getItem(key)}catch(_error){}\n  if(queryTheme==='dark'||queryTheme==='light')root.dataset.theme=queryTheme;\n  else if(saved==='dark'||saved==='light')root.dataset.theme=saved;\n  else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)root.dataset.theme='dark';\n  const syncOfflineLinks=()=>{\n    if(location.protocol!=='file:')return;\n    document.querySelectorAll('a[href$=\".html\"],a[href*=\".html?\"],a[href*=\".html#\"]').forEach(link=>{\n      const raw=link.getAttribute('href');\n      if(!raw)return;\n      const target=new URL(raw,location.href);\n      target.searchParams.set('theme',root.dataset.theme);\n      const file=target.pathname.split('/').pop();\n      link.setAttribute('href',file+target.search+target.hash);\n    });\n  };\n  const syncTheme=()=>{\n    const dark=root.dataset.theme==='dark';\n    if(themeButton){\n      themeButton.textContent=dark?'☀':'☾';\n      themeButton.setAttribute('aria-label',dark?themeButton.dataset.lightLabel:themeButton.dataset.darkLabel);\n    }\n    syncOfflineLinks();\n  };\n  syncTheme();\n  themeButton?.addEventListener('click',()=>{\n    root.dataset.theme=root.dataset.theme==='dark'?'light':'dark';\n    try{localStorage.setItem(key,root.dataset.theme)}catch(_error){}\n    syncTheme();\n  });\n  menuButton?.addEventListener('click',()=>{\n    const open=nav.classList.toggle('is-open');\n    menuButton.setAttribute('aria-expanded',String(open));\n  });\n  nav?.querySelectorAll('a').forEach(link=>link.addEventListener('click',()=>{\n    nav.classList.remove('is-open');\n    menuButton?.setAttribute('aria-expanded','false');\n  }));\n  document.addEventListener('keydown',event=>{\n    if(event.key==='Escape'){\n      nav?.classList.remove('is-open');\n      menuButton?.setAttribute('aria-expanded','false');\n    }\n  });\n})();\n",
+    "light": "#f4efe9",
+    "dark": "#101114",
+    "pages": {
+      "ru": {
+        "index": {
+          "title": "Главная",
+          "summary": "Vector Atelier — стратегия, дизайн и цифровые запуски.",
+          "documentTitle": "Vector Atelier · Агентство и креативная студия",
+          "html": "<!doctype html>\n<html lang=\"ru\" data-theme=\"light\">\n<head>\n  <meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n  <meta name=\"description\" content=\"Vector Atelier — стратегия, дизайн и цифровые запуски.\">\n  <title>Vector Atelier · Агентство и креативная студия</title>\n  <script>\n    (() => {\n      const queryTheme = new URLSearchParams(location.search).get(\"theme\");\n      let theme = queryTheme === \"dark\" || queryTheme === \"light\" ? queryTheme : null;\n      if (!theme) {\n        try {\n          const savedTheme = localStorage.getItem(\"vector-atelier-theme\");\n          if (savedTheme === \"dark\" || savedTheme === \"light\") theme = savedTheme;\n        } catch {}\n      }\n      if (!theme && window.matchMedia?.(\"(prefers-color-scheme: dark)\").matches) theme = \"dark\";\n      document.documentElement.dataset.theme = theme || \"light\";\n    })();\n  </script>\n  <link rel=\"stylesheet\" href=\"../style.css\">\n</head>\n<body>\n  <header class=\"site-header\"><div class=\"header-inner\">\n    <a class=\"brand\" href=\"index.html\"><span class=\"brand-mark\">V</span><span><strong>Vector Atelier</strong><small>Агентство · Креативная студия</small></span></a>\n    <nav class=\"main-nav\" aria-label=\"Основная навигация\"><a href=\"index.html\" aria-current=\"page\">Главная</a><a href=\"cases.html\">Кейсы</a><a href=\"services.html\">Услуги</a><a href=\"process.html\">Процесс</a><a href=\"contact.html\">Контакт</a></nav>\n    <div class=\"header-actions\"><a class=\"header-cta\" href=\"contact.html\">Обсудить проект</a><button class=\"theme-toggle\" data-theme-toggle data-dark-label=\"Включить тёмную тему\" data-light-label=\"Включить светлую тему\" aria-label=\"Включить тёмную тему\">☾</button><button class=\"menu-toggle\" data-menu-toggle aria-label=\"Открыть меню\" aria-expanded=\"false\">≡</button></div>\n  </div></header>\n  <main>\n    <section class=\"hero\">\n      <div class=\"hero-copy surface\"><span class=\"eyebrow\">Стратегия · Дизайн · Запуск</span><h1>Собираем сильные системы для новых идей.</h1><p class=\"lead\">Помогаем продуктам и организациям найти ясное направление, получить цельный визуальный язык и выйти к аудитории без лишнего шума.</p><div class=\"hero-actions\"><a class=\"button primary\" href=\"cases.html\">Смотреть кейсы</a><a class=\"button secondary\" href=\"services.html\">Наши услуги</a></div><div class=\"metrics\"><div class=\"metric\"><strong>18</strong><span>подготовленных запусков</span></div><div class=\"metric\"><strong>4</strong><span>ключевых направления</span></div><div class=\"metric\"><strong>1</strong><span>команда на весь цикл</span></div></div></div>\n      <div class=\"hero-media surface\"><img src=\"../assets/agency-architecture.webp\" alt=\"Архитектурное пространство с бетонными объёмами и цветовыми акцентами\"><div class=\"media-note\"><span>Система студии</span><strong>От замысла к узнаваемому присутствию</strong></div></div>\n    </section>\n    <section class=\"focus-strip surface\" aria-label=\"Направления студии\"><strong>Не отдельные украшения, а связная система решений</strong><span>Бренд</span><span>Веб</span><span>Контент</span><span>Запуск</span><span>Развитие</span></section>\n    <section class=\"section-head\"><div><span class=\"eyebrow\">Избранные кейсы</span><h2>Показываем работу как историю решений.</h2></div><p>Каждый кейс раскрывает задачу, направление, систему материалов и результат — без случайной галереи миниатюр.</p></section>\n    <section class=\"case-grid\">\n      <article class=\"case-card large surface\"><img src=\"../assets/agency-identity.webp\" alt=\"Фрагменты фирменной системы в оранжевом, фиолетовом и графитовом цветах\"><div class=\"case-copy\"><span class=\"eyebrow\">Фирменная система</span><h3>Orbis: единый язык для растущей платформы</h3><p>Стратегия, визуальная система и набор материалов для последовательного запуска.</p></div></article>\n      <div class=\"case-side\"><article class=\"case-card surface\"><img src=\"../assets/agency-digital.webp\" alt=\"Экран с цифровой дизайн-системой\"><div class=\"case-copy\"><span class=\"eyebrow\">Цифровой продукт</span><h3>Helio: интерфейс с ясной иерархией</h3></div></article><article class=\"case-card surface\"><img src=\"../assets/agency-process.webp\" alt=\"Рабочий стол с эскизами и образцами материалов\"><div class=\"case-copy\"><span class=\"eyebrow\">Исследование</span><h3>Полевые заметки: от материала к образу</h3></div></article></div>\n    </section>\n    <section class=\"section-head\"><div><span class=\"eyebrow\">Услуги</span><h2>Четыре направления, один цельный процесс.</h2></div><p>Состав работ можно адаптировать под отдельную задачу или объединить в полный цикл.</p></section>\n    <section class=\"service-grid\"><article class=\"service-card\"><span>01</span><h3>Стратегия</h3><p>Позиционирование, аудитория, смысловая структура и план запуска.</p></article><article class=\"service-card\"><span>02</span><h3>Дизайн</h3><p>Фирменный стиль, визуальная система, сетки и правила применения.</p></article><article class=\"service-card\"><span>03</span><h3>Веб</h3><p>Лендинги, продуктовые и редакционные сайты, интерфейсы.</p></article><article class=\"service-card\"><span>04</span><h3>Запуск</h3><p>Контент, материалы, публикация и поддержка первого этапа.</p></article></section>\n    <section class=\"manifesto surface\"><div><span class=\"eyebrow\">Принцип студии</span><h2>Сильный результат начинается с ясного решения.</h2></div><p>Мы соединяем стратегию, форму и технологию. Поэтому сайт, фирменный стиль и материалы запуска говорят одним голосом и помогают проекту двигаться дальше.</p></section>\n  </main>\n  <footer class=\"site-footer\"><div class=\"footer-inner\"><div><strong>Vector Atelier</strong><span>Агентство и креативная студия</span></div><nav aria-label=\"Навигация в подвале\"><a href=\"index.html\">Главная</a><a href=\"cases.html\">Кейсы</a><a href=\"services.html\">Услуги</a><a href=\"process.html\">Процесс</a><a href=\"contact.html\">Контакт</a></nav></div></footer>\n  <script src=\"../site.js\"></script>\n</body></html>\n",
+          "main": "<main>\n    <section class=\"hero\">\n      <div class=\"hero-copy surface\"><span class=\"eyebrow\">Стратегия · Дизайн · Запуск</span><h1>Собираем сильные системы для новых идей.</h1><p class=\"lead\">Помогаем продуктам и организациям найти ясное направление, получить цельный визуальный язык и выйти к аудитории без лишнего шума.</p><div class=\"hero-actions\"><a class=\"button primary\" href=\"cases.html\">Смотреть кейсы</a><a class=\"button secondary\" href=\"services.html\">Наши услуги</a></div><div class=\"metrics\"><div class=\"metric\"><strong>18</strong><span>подготовленных запусков</span></div><div class=\"metric\"><strong>4</strong><span>ключевых направления</span></div><div class=\"metric\"><strong>1</strong><span>команда на весь цикл</span></div></div></div>\n      <div class=\"hero-media surface\"><img src=\"../assets/agency-architecture.webp\" alt=\"Архитектурное пространство с бетонными объёмами и цветовыми акцентами\"><div class=\"media-note\"><span>Система студии</span><strong>От замысла к узнаваемому присутствию</strong></div></div>\n    </section>\n    <section class=\"focus-strip surface\" aria-label=\"Направления студии\"><strong>Не отдельные украшения, а связная система решений</strong><span>Бренд</span><span>Веб</span><span>Контент</span><span>Запуск</span><span>Развитие</span></section>\n    <section class=\"section-head\"><div><span class=\"eyebrow\">Избранные кейсы</span><h2>Показываем работу как историю решений.</h2></div><p>Каждый кейс раскрывает задачу, направление, систему материалов и результат — без случайной галереи миниатюр.</p></section>\n    <section class=\"case-grid\">\n      <article class=\"case-card large surface\"><img src=\"../assets/agency-identity.webp\" alt=\"Фрагменты фирменной системы в оранжевом, фиолетовом и графитовом цветах\"><div class=\"case-copy\"><span class=\"eyebrow\">Фирменная система</span><h3>Orbis: единый язык для растущей платформы</h3><p>Стратегия, визуальная система и набор материалов для последовательного запуска.</p></div></article>\n      <div class=\"case-side\"><article class=\"case-card surface\"><img src=\"../assets/agency-digital.webp\" alt=\"Экран с цифровой дизайн-системой\"><div class=\"case-copy\"><span class=\"eyebrow\">Цифровой продукт</span><h3>Helio: интерфейс с ясной иерархией</h3></div></article><article class=\"case-card surface\"><img src=\"../assets/agency-process.webp\" alt=\"Рабочий стол с эскизами и образцами материалов\"><div class=\"case-copy\"><span class=\"eyebrow\">Исследование</span><h3>Полевые заметки: от материала к образу</h3></div></article></div>\n    </section>\n    <section class=\"section-head\"><div><span class=\"eyebrow\">Услуги</span><h2>Четыре направления, один цельный процесс.</h2></div><p>Состав работ можно адаптировать под отдельную задачу или объединить в полный цикл.</p></section>\n    <section class=\"service-grid\"><article class=\"service-card\"><span>01</span><h3>Стратегия</h3><p>Позиционирование, аудитория, смысловая структура и план запуска.</p></article><article class=\"service-card\"><span>02</span><h3>Дизайн</h3><p>Фирменный стиль, визуальная система, сетки и правила применения.</p></article><article class=\"service-card\"><span>03</span><h3>Веб</h3><p>Лендинги, продуктовые и редакционные сайты, интерфейсы.</p></article><article class=\"service-card\"><span>04</span><h3>Запуск</h3><p>Контент, материалы, публикация и поддержка первого этапа.</p></article></section>\n    <section class=\"manifesto surface\"><div><span class=\"eyebrow\">Принцип студии</span><h2>Сильный результат начинается с ясного решения.</h2></div><p>Мы соединяем стратегию, форму и технологию. Поэтому сайт, фирменный стиль и материалы запуска говорят одним голосом и помогают проекту двигаться дальше.</p></section>\n  </main>"
+        },
+        "cases": {
+          "title": "Кейсы",
+          "summary": "Избранные кейсы Vector Atelier.",
+          "documentTitle": "Кейсы · Vector Atelier",
+          "html": "<!doctype html>\n<html lang=\"ru\" data-theme=\"light\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"description\" content=\"Избранные кейсы Vector Atelier.\"><title>Кейсы · Vector Atelier</title>\n  <script>\n    (() => {\n      const queryTheme = new URLSearchParams(location.search).get(\"theme\");\n      let theme = queryTheme === \"dark\" || queryTheme === \"light\" ? queryTheme : null;\n      if (!theme) {\n        try {\n          const savedTheme = localStorage.getItem(\"vector-atelier-theme\");\n          if (savedTheme === \"dark\" || savedTheme === \"light\") theme = savedTheme;\n        } catch {}\n      }\n      if (!theme && window.matchMedia?.(\"(prefers-color-scheme: dark)\").matches) theme = \"dark\";\n      document.documentElement.dataset.theme = theme || \"light\";\n    })();\n  </script>\n<link rel=\"stylesheet\" href=\"../style.css\"></head>\n<body><header class=\"site-header\"><div class=\"header-inner\"><a class=\"brand\" href=\"index.html\"><span class=\"brand-mark\">V</span><span><strong>Vector Atelier</strong><small>Агентство · Креативная студия</small></span></a><nav class=\"main-nav\" aria-label=\"Основная навигация\"><a href=\"index.html\">Главная</a><a href=\"cases.html\" aria-current=\"page\">Кейсы</a><a href=\"services.html\">Услуги</a><a href=\"process.html\">Процесс</a><a href=\"contact.html\">Контакт</a></nav><div class=\"header-actions\"><a class=\"header-cta\" href=\"contact.html\">Обсудить проект</a><button class=\"theme-toggle\" data-theme-toggle data-dark-label=\"Включить тёмную тему\" data-light-label=\"Включить светлую тему\" aria-label=\"Включить тёмную тему\">☾</button><button class=\"menu-toggle\" data-menu-toggle aria-label=\"Открыть меню\" aria-expanded=\"false\">≡</button></div></div></header>\n<main><section class=\"page-intro surface\"><div><span class=\"eyebrow\">Кейсы</span><h1>Работа, в которой виден ход мысли.</h1></div><p>Не только финальная картинка: задача, направление, система и то, как решение продолжает работать после запуска.</p></section>\n<section class=\"case-grid\" style=\"margin-top:22px\"><article class=\"case-card large surface\"><img src=\"../assets/agency-identity.webp\" alt=\"Материалы фирменной системы Orbis\"><div class=\"case-copy\"><span class=\"eyebrow\">Orbis · Фирменная система</span><h3>Единый язык для растущей платформы</h3><p>Позиционирование, цвет, типографика и модульный набор носителей.</p></div></article><div class=\"case-side\"><article class=\"case-card surface\"><img src=\"../assets/agency-digital.webp\" alt=\"Цифровая дизайн-система Helio\"><div class=\"case-copy\"><span class=\"eyebrow\">Helio · Цифровой продукт</span><h3>Интерфейс с ясной иерархией</h3></div></article><article class=\"case-card surface\"><img src=\"../assets/agency-architecture.webp\" alt=\"Пространственная концепция Forma\"><div class=\"case-copy\"><span class=\"eyebrow\">Forma · Пространство</span><h3>Архитектурный образ бренда</h3></div></article></div></section>\n<section class=\"section-head\"><div><span class=\"eyebrow\">Четвёртый кейс</span><h2>Полевые заметки: исследование через материал.</h2></div><p>Наблюдение, коллаж и тактильные образцы превратились в гибкий визуальный язык для культурной программы.</p></section><section class=\"media-band surface\"><img src=\"../assets/agency-process.webp\" alt=\"Эскизы и материалы проекта «Полевые заметки»\"></section>\n<section class=\"detail-list\"><article class=\"detail-card surface\"><strong>Задача</strong><h2>Собрать направление</h2><p>Соединить разные темы программы в узнаваемую, но не жёсткую систему.</p></article><article class=\"detail-card surface\"><strong>Решение</strong><h2>Модульный язык</h2><p>Цветовые поля, фактуры и сетка, которые меняются вместе с содержанием.</p></article><article class=\"detail-card surface\"><strong>Результат</strong><h2>Единое присутствие</h2><p>Материалы для сайта, событий, публикаций и партнёрских площадок.</p></article></section></main>\n<footer class=\"site-footer\"><div class=\"footer-inner\"><div><strong>Vector Atelier</strong><span>Агентство и креативная студия</span></div><nav aria-label=\"Навигация в подвале\"><a href=\"index.html\">Главная</a><a href=\"cases.html\">Кейсы</a><a href=\"services.html\">Услуги</a><a href=\"process.html\">Процесс</a><a href=\"contact.html\">Контакт</a></nav></div></footer><script src=\"../site.js\"></script></body></html>\n",
+          "main": "<main><section class=\"page-intro surface\"><div><span class=\"eyebrow\">Кейсы</span><h1>Работа, в которой виден ход мысли.</h1></div><p>Не только финальная картинка: задача, направление, система и то, как решение продолжает работать после запуска.</p></section>\n<section class=\"case-grid\" style=\"margin-top:22px\"><article class=\"case-card large surface\"><img src=\"../assets/agency-identity.webp\" alt=\"Материалы фирменной системы Orbis\"><div class=\"case-copy\"><span class=\"eyebrow\">Orbis · Фирменная система</span><h3>Единый язык для растущей платформы</h3><p>Позиционирование, цвет, типографика и модульный набор носителей.</p></div></article><div class=\"case-side\"><article class=\"case-card surface\"><img src=\"../assets/agency-digital.webp\" alt=\"Цифровая дизайн-система Helio\"><div class=\"case-copy\"><span class=\"eyebrow\">Helio · Цифровой продукт</span><h3>Интерфейс с ясной иерархией</h3></div></article><article class=\"case-card surface\"><img src=\"../assets/agency-architecture.webp\" alt=\"Пространственная концепция Forma\"><div class=\"case-copy\"><span class=\"eyebrow\">Forma · Пространство</span><h3>Архитектурный образ бренда</h3></div></article></div></section>\n<section class=\"section-head\"><div><span class=\"eyebrow\">Четвёртый кейс</span><h2>Полевые заметки: исследование через материал.</h2></div><p>Наблюдение, коллаж и тактильные образцы превратились в гибкий визуальный язык для культурной программы.</p></section><section class=\"media-band surface\"><img src=\"../assets/agency-process.webp\" alt=\"Эскизы и материалы проекта «Полевые заметки»\"></section>\n<section class=\"detail-list\"><article class=\"detail-card surface\"><strong>Задача</strong><h2>Собрать направление</h2><p>Соединить разные темы программы в узнаваемую, но не жёсткую систему.</p></article><article class=\"detail-card surface\"><strong>Решение</strong><h2>Модульный язык</h2><p>Цветовые поля, фактуры и сетка, которые меняются вместе с содержанием.</p></article><article class=\"detail-card surface\"><strong>Результат</strong><h2>Единое присутствие</h2><p>Материалы для сайта, событий, публикаций и партнёрских площадок.</p></article></section></main>"
+        },
+        "services": {
+          "title": "Услуги",
+          "summary": "Услуги Vector Atelier: стратегия, дизайн, веб и запуск.",
+          "documentTitle": "Услуги · Vector Atelier",
+          "html": "<!doctype html>\n<html lang=\"ru\" data-theme=\"light\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"description\" content=\"Услуги Vector Atelier: стратегия, дизайн, веб и запуск.\"><title>Услуги · Vector Atelier</title>\n  <script>\n    (() => {\n      const queryTheme = new URLSearchParams(location.search).get(\"theme\");\n      let theme = queryTheme === \"dark\" || queryTheme === \"light\" ? queryTheme : null;\n      if (!theme) {\n        try {\n          const savedTheme = localStorage.getItem(\"vector-atelier-theme\");\n          if (savedTheme === \"dark\" || savedTheme === \"light\") theme = savedTheme;\n        } catch {}\n      }\n      if (!theme && window.matchMedia?.(\"(prefers-color-scheme: dark)\").matches) theme = \"dark\";\n      document.documentElement.dataset.theme = theme || \"light\";\n    })();\n  </script>\n<link rel=\"stylesheet\" href=\"../style.css\"></head>\n<body><header class=\"site-header\"><div class=\"header-inner\"><a class=\"brand\" href=\"index.html\"><span class=\"brand-mark\">V</span><span><strong>Vector Atelier</strong><small>Агентство · Креативная студия</small></span></a><nav class=\"main-nav\" aria-label=\"Основная навигация\"><a href=\"index.html\">Главная</a><a href=\"cases.html\">Кейсы</a><a href=\"services.html\" aria-current=\"page\">Услуги</a><a href=\"process.html\">Процесс</a><a href=\"contact.html\">Контакт</a></nav><div class=\"header-actions\"><a class=\"header-cta\" href=\"contact.html\">Обсудить проект</a><button class=\"theme-toggle\" data-theme-toggle data-dark-label=\"Включить тёмную тему\" data-light-label=\"Включить светлую тему\" aria-label=\"Включить тёмную тему\">☾</button><button class=\"menu-toggle\" data-menu-toggle aria-label=\"Открыть меню\" aria-expanded=\"false\">≡</button></div></div></header>\n<main><section class=\"page-intro surface\"><div><span class=\"eyebrow\">Услуги</span><h1>От направления до уверенного запуска.</h1></div><p>Можно начать с одной задачи или собрать полный маршрут: исследование, система, цифровой продукт и материалы для выхода к аудитории.</p></section>\n<section class=\"service-stack\"><article class=\"service-row surface\"><span>01</span><h2>Стратегия</h2><p>Исследуем контекст и аудиторию, уточняем позиционирование, формулируем историю продукта и собираем структуру коммуникации.</p></article><article class=\"service-row surface\"><span>02</span><h2>Дизайн</h2><p>Создаём фирменный стиль, типографику, цвет, графические принципы и систему носителей, которую команда сможет развивать.</p></article><article class=\"service-row surface\"><span>03</span><h2>Веб</h2><p>Проектируем структуру, прототипы и интерфейс для лендингов, продуктовых, редакционных и корпоративных сайтов.</p></article><article class=\"service-row surface\"><span>04</span><h2>Запуск</h2><p>Готовим контент и материалы, проверяем целостность публикации и поддерживаем первые итерации после выхода.</p></article></section>\n<section class=\"manifesto surface\"><div><span class=\"eyebrow\">Формат сотрудничества</span><h2>Команда под задачу, а не лишние уровни управления.</h2></div><p>Состав специалистов меняется вместе с проектом, но направление и ответственность остаются едиными. Это сохраняет скорость и цельность результата.</p></section></main>\n<footer class=\"site-footer\"><div class=\"footer-inner\"><div><strong>Vector Atelier</strong><span>Агентство и креативная студия</span></div><nav aria-label=\"Навигация в подвале\"><a href=\"index.html\">Главная</a><a href=\"cases.html\">Кейсы</a><a href=\"services.html\">Услуги</a><a href=\"process.html\">Процесс</a><a href=\"contact.html\">Контакт</a></nav></div></footer><script src=\"../site.js\"></script></body></html>\n",
+          "main": "<main><section class=\"page-intro surface\"><div><span class=\"eyebrow\">Услуги</span><h1>От направления до уверенного запуска.</h1></div><p>Можно начать с одной задачи или собрать полный маршрут: исследование, система, цифровой продукт и материалы для выхода к аудитории.</p></section>\n<section class=\"service-stack\"><article class=\"service-row surface\"><span>01</span><h2>Стратегия</h2><p>Исследуем контекст и аудиторию, уточняем позиционирование, формулируем историю продукта и собираем структуру коммуникации.</p></article><article class=\"service-row surface\"><span>02</span><h2>Дизайн</h2><p>Создаём фирменный стиль, типографику, цвет, графические принципы и систему носителей, которую команда сможет развивать.</p></article><article class=\"service-row surface\"><span>03</span><h2>Веб</h2><p>Проектируем структуру, прототипы и интерфейс для лендингов, продуктовых, редакционных и корпоративных сайтов.</p></article><article class=\"service-row surface\"><span>04</span><h2>Запуск</h2><p>Готовим контент и материалы, проверяем целостность публикации и поддерживаем первые итерации после выхода.</p></article></section>\n<section class=\"manifesto surface\"><div><span class=\"eyebrow\">Формат сотрудничества</span><h2>Команда под задачу, а не лишние уровни управления.</h2></div><p>Состав специалистов меняется вместе с проектом, но направление и ответственность остаются едиными. Это сохраняет скорость и цельность результата.</p></section></main>"
+        },
+        "process": {
+          "title": "Процесс",
+          "summary": "Процесс работы Vector Atelier.",
+          "documentTitle": "Процесс · Vector Atelier",
+          "html": "<!doctype html>\n<html lang=\"ru\" data-theme=\"light\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"description\" content=\"Процесс работы Vector Atelier.\"><title>Процесс · Vector Atelier</title>\n  <script>\n    (() => {\n      const queryTheme = new URLSearchParams(location.search).get(\"theme\");\n      let theme = queryTheme === \"dark\" || queryTheme === \"light\" ? queryTheme : null;\n      if (!theme) {\n        try {\n          const savedTheme = localStorage.getItem(\"vector-atelier-theme\");\n          if (savedTheme === \"dark\" || savedTheme === \"light\") theme = savedTheme;\n        } catch {}\n      }\n      if (!theme && window.matchMedia?.(\"(prefers-color-scheme: dark)\").matches) theme = \"dark\";\n      document.documentElement.dataset.theme = theme || \"light\";\n    })();\n  </script>\n<link rel=\"stylesheet\" href=\"../style.css\"></head>\n<body><header class=\"site-header\"><div class=\"header-inner\"><a class=\"brand\" href=\"index.html\"><span class=\"brand-mark\">V</span><span><strong>Vector Atelier</strong><small>Агентство · Креативная студия</small></span></a><nav class=\"main-nav\" aria-label=\"Основная навигация\"><a href=\"index.html\">Главная</a><a href=\"cases.html\">Кейсы</a><a href=\"services.html\">Услуги</a><a href=\"process.html\" aria-current=\"page\">Процесс</a><a href=\"contact.html\">Контакт</a></nav><div class=\"header-actions\"><a class=\"header-cta\" href=\"contact.html\">Обсудить проект</a><button class=\"theme-toggle\" data-theme-toggle data-dark-label=\"Включить тёмную тему\" data-light-label=\"Включить светлую тему\" aria-label=\"Включить тёмную тему\">☾</button><button class=\"menu-toggle\" data-menu-toggle aria-label=\"Открыть меню\" aria-expanded=\"false\">≡</button></div></div></header>\n<main><section class=\"page-intro surface\"><div><span class=\"eyebrow\">Процесс</span><h1>Спокойный маршрут от запроса до запуска.</h1></div><p>На каждом этапе понятны цель, результат и следующий шаг. Процесс остаётся гибким, но не теряет направление.</p></section>\n<section class=\"process-rail surface\"><span class=\"eyebrow\">Четыре этапа</span><div class=\"process-grid\"><article class=\"process-card\"><span>01</span><h3>Разобраться</h3><p>Понять задачу, контекст, аудиторию и ограничения.</p></article><article class=\"process-card\"><span>02</span><h3>Собрать</h3><p>Превратить наблюдения в структуру и визуальное направление.</p></article><article class=\"process-card\"><span>03</span><h3>Сделать</h3><p>Подготовить систему, страницы, контент и материалы.</p></article><article class=\"process-card\"><span>04</span><h3>Запустить</h3><p>Проверить, опубликовать и наметить следующую итерацию.</p></article></div></section>\n<section class=\"process-media\"><div class=\"media-band surface\"><img src=\"../assets/agency-process.webp\" alt=\"Работа с эскизами, цветом и образцами материалов\"></div><article class=\"process-note surface\"><span class=\"eyebrow\">Совместная работа</span><h2>Решения видны не только в финале.</h2><p>Промежуточные материалы помогают сверять направление до того, как оно станет дорогим в производстве. Команда клиента понимает логику системы и может продолжать её после запуска.</p></article></section>\n<section class=\"detail-list\"><article class=\"detail-card surface\"><strong>Сверка</strong><h2>Короткие циклы</h2><p>Регулярные контрольные точки вместо одной большой неожиданности в конце.</p></article><article class=\"detail-card surface\"><strong>Материалы</strong><h2>Рабочая система</h2><p>Макеты, правила и компоненты передаются в пригодном для развития виде.</p></article><article class=\"detail-card surface\"><strong>Продолжение</strong><h2>После запуска</h2><p>При необходимости поддерживаем первые обновления и расширение системы.</p></article></section></main>\n<footer class=\"site-footer\"><div class=\"footer-inner\"><div><strong>Vector Atelier</strong><span>Агентство и креативная студия</span></div><nav aria-label=\"Навигация в подвале\"><a href=\"index.html\">Главная</a><a href=\"cases.html\">Кейсы</a><a href=\"services.html\">Услуги</a><a href=\"process.html\">Процесс</a><a href=\"contact.html\">Контакт</a></nav></div></footer><script src=\"../site.js\"></script></body></html>\n",
+          "main": "<main><section class=\"page-intro surface\"><div><span class=\"eyebrow\">Процесс</span><h1>Спокойный маршрут от запроса до запуска.</h1></div><p>На каждом этапе понятны цель, результат и следующий шаг. Процесс остаётся гибким, но не теряет направление.</p></section>\n<section class=\"process-rail surface\"><span class=\"eyebrow\">Четыре этапа</span><div class=\"process-grid\"><article class=\"process-card\"><span>01</span><h3>Разобраться</h3><p>Понять задачу, контекст, аудиторию и ограничения.</p></article><article class=\"process-card\"><span>02</span><h3>Собрать</h3><p>Превратить наблюдения в структуру и визуальное направление.</p></article><article class=\"process-card\"><span>03</span><h3>Сделать</h3><p>Подготовить систему, страницы, контент и материалы.</p></article><article class=\"process-card\"><span>04</span><h3>Запустить</h3><p>Проверить, опубликовать и наметить следующую итерацию.</p></article></div></section>\n<section class=\"process-media\"><div class=\"media-band surface\"><img src=\"../assets/agency-process.webp\" alt=\"Работа с эскизами, цветом и образцами материалов\"></div><article class=\"process-note surface\"><span class=\"eyebrow\">Совместная работа</span><h2>Решения видны не только в финале.</h2><p>Промежуточные материалы помогают сверять направление до того, как оно станет дорогим в производстве. Команда клиента понимает логику системы и может продолжать её после запуска.</p></article></section>\n<section class=\"detail-list\"><article class=\"detail-card surface\"><strong>Сверка</strong><h2>Короткие циклы</h2><p>Регулярные контрольные точки вместо одной большой неожиданности в конце.</p></article><article class=\"detail-card surface\"><strong>Материалы</strong><h2>Рабочая система</h2><p>Макеты, правила и компоненты передаются в пригодном для развития виде.</p></article><article class=\"detail-card surface\"><strong>Продолжение</strong><h2>После запуска</h2><p>При необходимости поддерживаем первые обновления и расширение системы.</p></article></section></main>"
+        },
+        "contact": {
+          "title": "Контакт",
+          "summary": "Обсудить проект с Vector Atelier.",
+          "documentTitle": "Контакт · Vector Atelier",
+          "html": "<!doctype html>\n<html lang=\"ru\" data-theme=\"light\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"description\" content=\"Обсудить проект с Vector Atelier.\"><title>Контакт · Vector Atelier</title>\n  <script>\n    (() => {\n      const queryTheme = new URLSearchParams(location.search).get(\"theme\");\n      let theme = queryTheme === \"dark\" || queryTheme === \"light\" ? queryTheme : null;\n      if (!theme) {\n        try {\n          const savedTheme = localStorage.getItem(\"vector-atelier-theme\");\n          if (savedTheme === \"dark\" || savedTheme === \"light\") theme = savedTheme;\n        } catch {}\n      }\n      if (!theme && window.matchMedia?.(\"(prefers-color-scheme: dark)\").matches) theme = \"dark\";\n      document.documentElement.dataset.theme = theme || \"light\";\n    })();\n  </script>\n<link rel=\"stylesheet\" href=\"../style.css\"></head>\n<body><header class=\"site-header\"><div class=\"header-inner\"><a class=\"brand\" href=\"index.html\"><span class=\"brand-mark\">V</span><span><strong>Vector Atelier</strong><small>Агентство · Креативная студия</small></span></a><nav class=\"main-nav\" aria-label=\"Основная навигация\"><a href=\"index.html\">Главная</a><a href=\"cases.html\">Кейсы</a><a href=\"services.html\">Услуги</a><a href=\"process.html\">Процесс</a><a href=\"contact.html\" aria-current=\"page\">Контакт</a></nav><div class=\"header-actions\"><a class=\"header-cta\" href=\"contact.html\">Обсудить проект</a><button class=\"theme-toggle\" data-theme-toggle data-dark-label=\"Включить тёмную тему\" data-light-label=\"Включить светлую тему\" aria-label=\"Включить тёмную тему\">☾</button><button class=\"menu-toggle\" data-menu-toggle aria-label=\"Открыть меню\" aria-expanded=\"false\">≡</button></div></div></header>\n<main><section class=\"contact-layout\"><div class=\"contact-panel surface\"><span class=\"eyebrow\">Контакт</span><h2>Расскажите, что должно измениться после проекта.</h2><p>Для первого разговора не нужен готовый бриф. Достаточно описать задачу, текущую ситуацию и желаемый результат.</p><ul class=\"brief-list\"><li>Что вы создаёте или меняете?</li><li>Для кого предназначен проект?</li><li>Что уже есть на старте?</li><li>Какой результат будет полезным?</li></ul></div><aside class=\"contact-card surface\"><span class=\"eyebrow\">Место для вашей связи</span><h2>Подключите удобный канал.</h2><p>Замените этот нейтральный блок формой, адресом электронной почты, календарём встречи или собственной системой заявок.</p><span class=\"button primary\">Контакт владельца сайта</span></aside></section>\n<section class=\"section-head\"><div><span class=\"eyebrow\">Что дальше</span><h2>Сначала уточним задачу и подходящий формат.</h2></div><p>После первого контакта можно определить состав работ, контрольные точки и материалы, необходимые для уверенного старта.</p></section><section class=\"proof-grid\"><article class=\"proof-card\"><h3>Знакомство</h3><p>Коротко обсуждаем контекст, цель и ограничения.</p></article><article class=\"proof-card\"><h3>Предложение</h3><p>Фиксируем объём, этапы и ожидаемые результаты.</p></article><article class=\"proof-card\"><h3>Старт</h3><p>Собираем материалы и начинаем первый рабочий цикл.</p></article><article class=\"proof-card\"><h3>Сверка</h3><p>Показываем направление до глубокой реализации.</p></article></section></main>\n<footer class=\"site-footer\"><div class=\"footer-inner\"><div><strong>Vector Atelier</strong><span>Агентство и креативная студия</span></div><nav aria-label=\"Навигация в подвале\"><a href=\"index.html\">Главная</a><a href=\"cases.html\">Кейсы</a><a href=\"services.html\">Услуги</a><a href=\"process.html\">Процесс</a><a href=\"contact.html\">Контакт</a></nav></div></footer><script src=\"../site.js\"></script></body></html>\n",
+          "main": "<main><section class=\"contact-layout\"><div class=\"contact-panel surface\"><span class=\"eyebrow\">Контакт</span><h2>Расскажите, что должно измениться после проекта.</h2><p>Для первого разговора не нужен готовый бриф. Достаточно описать задачу, текущую ситуацию и желаемый результат.</p><ul class=\"brief-list\"><li>Что вы создаёте или меняете?</li><li>Для кого предназначен проект?</li><li>Что уже есть на старте?</li><li>Какой результат будет полезным?</li></ul></div><aside class=\"contact-card surface\"><span class=\"eyebrow\">Место для вашей связи</span><h2>Подключите удобный канал.</h2><p>Замените этот нейтральный блок формой, адресом электронной почты, календарём встречи или собственной системой заявок.</p><span class=\"button primary\">Контакт владельца сайта</span></aside></section>\n<section class=\"section-head\"><div><span class=\"eyebrow\">Что дальше</span><h2>Сначала уточним задачу и подходящий формат.</h2></div><p>После первого контакта можно определить состав работ, контрольные точки и материалы, необходимые для уверенного старта.</p></section><section class=\"proof-grid\"><article class=\"proof-card\"><h3>Знакомство</h3><p>Коротко обсуждаем контекст, цель и ограничения.</p></article><article class=\"proof-card\"><h3>Предложение</h3><p>Фиксируем объём, этапы и ожидаемые результаты.</p></article><article class=\"proof-card\"><h3>Старт</h3><p>Собираем материалы и начинаем первый рабочий цикл.</p></article><article class=\"proof-card\"><h3>Сверка</h3><p>Показываем направление до глубокой реализации.</p></article></section></main>"
+        }
+      },
+      "en": {
+        "index": {
+          "title": "Home",
+          "summary": "Vector Atelier — strategy, design and digital launches.",
+          "documentTitle": "Vector Atelier · Agency and creative studio",
+          "html": "<!doctype html>\n<html lang=\"en\" data-theme=\"light\">\n<head>\n  <meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n  <meta name=\"description\" content=\"Vector Atelier — strategy, design and digital launches.\">\n  <title>Vector Atelier · Agency and creative studio</title>\n  <script>\n    (() => {\n      const queryTheme = new URLSearchParams(location.search).get(\"theme\");\n      let theme = queryTheme === \"dark\" || queryTheme === \"light\" ? queryTheme : null;\n      if (!theme) {\n        try {\n          const savedTheme = localStorage.getItem(\"vector-atelier-theme\");\n          if (savedTheme === \"dark\" || savedTheme === \"light\") theme = savedTheme;\n        } catch {}\n      }\n      if (!theme && window.matchMedia?.(\"(prefers-color-scheme: dark)\").matches) theme = \"dark\";\n      document.documentElement.dataset.theme = theme || \"light\";\n    })();\n  </script>\n  <link rel=\"stylesheet\" href=\"../style.css\">\n</head>\n<body>\n  <header class=\"site-header\"><div class=\"header-inner\">\n    <a class=\"brand\" href=\"index.html\"><span class=\"brand-mark\">V</span><span><strong>Vector Atelier</strong><small>Agency · Creative studio</small></span></a>\n    <nav class=\"main-nav\" aria-label=\"Main navigation\"><a href=\"index.html\" aria-current=\"page\">Home</a><a href=\"cases.html\">Cases</a><a href=\"services.html\">Services</a><a href=\"process.html\">Process</a><a href=\"contact.html\">Contact</a></nav>\n    <div class=\"header-actions\"><a class=\"header-cta\" href=\"contact.html\">Discuss a project</a><button class=\"theme-toggle\" data-theme-toggle data-dark-label=\"Use dark theme\" data-light-label=\"Use light theme\" aria-label=\"Use dark theme\">☾</button><button class=\"menu-toggle\" data-menu-toggle aria-label=\"Open menu\" aria-expanded=\"false\">≡</button></div>\n  </div></header>\n  <main>\n    <section class=\"hero\">\n      <div class=\"hero-copy surface\"><span class=\"eyebrow\">Strategy · Design · Launch</span><h1>We build strong systems for new ideas.</h1><p class=\"lead\">We help products and organizations find a clear direction, develop a coherent visual language and meet their audience without unnecessary noise.</p><div class=\"hero-actions\"><a class=\"button primary\" href=\"cases.html\">View cases</a><a class=\"button secondary\" href=\"services.html\">Our services</a></div><div class=\"metrics\"><div class=\"metric\"><strong>18</strong><span>launches prepared</span></div><div class=\"metric\"><strong>4</strong><span>core disciplines</span></div><div class=\"metric\"><strong>1</strong><span>team across the journey</span></div></div></div>\n      <div class=\"hero-media surface\"><img src=\"../assets/agency-architecture.webp\" alt=\"Architectural space with concrete forms and color accents\"><div class=\"media-note\"><span>Studio system</span><strong>From an initial thought to a recognizable presence</strong></div></div>\n    </section>\n    <section class=\"focus-strip surface\" aria-label=\"Studio disciplines\"><strong>A connected system of decisions, not separate decoration</strong><span>Brand</span><span>Web</span><span>Content</span><span>Launch</span><span>Growth</span></section>\n    <section class=\"section-head\"><div><span class=\"eyebrow\">Selected cases</span><h2>We present the work as a story of decisions.</h2></div><p>Each case explains the challenge, direction, system of materials and outcome — not just a random gallery of thumbnails.</p></section>\n    <section class=\"case-grid\">\n      <article class=\"case-card large surface\"><img src=\"../assets/agency-identity.webp\" alt=\"Identity system in orange, violet and graphite\"><div class=\"case-copy\"><span class=\"eyebrow\">Identity system</span><h3>Orbis: one language for a growing platform</h3><p>Strategy, visual system and a coordinated set of launch materials.</p></div></article>\n      <div class=\"case-side\"><article class=\"case-card surface\"><img src=\"../assets/agency-digital.webp\" alt=\"Screen displaying a digital design system\"><div class=\"case-copy\"><span class=\"eyebrow\">Digital product</span><h3>Helio: an interface with a clear hierarchy</h3></div></article><article class=\"case-card surface\"><img src=\"../assets/agency-process.webp\" alt=\"Desk with sketches and material samples\"><div class=\"case-copy\"><span class=\"eyebrow\">Research</span><h3>Field Notes: from material to visual language</h3></div></article></div>\n    </section>\n    <section class=\"section-head\"><div><span class=\"eyebrow\">Services</span><h2>Four disciplines, one coherent process.</h2></div><p>Engage one discipline for a focused challenge or combine them into a complete journey.</p></section>\n    <section class=\"service-grid\"><article class=\"service-card\"><span>01</span><h3>Strategy</h3><p>Positioning, audience, narrative structure and launch planning.</p></article><article class=\"service-card\"><span>02</span><h3>Design</h3><p>Identity, visual system, grids and practical guidelines.</p></article><article class=\"service-card\"><span>03</span><h3>Web</h3><p>Landing pages, product and editorial sites, interfaces.</p></article><article class=\"service-card\"><span>04</span><h3>Launch</h3><p>Content, assets, publishing and early-stage support.</p></article></section>\n    <section class=\"manifesto surface\"><div><span class=\"eyebrow\">Studio principle</span><h2>A strong result starts with a clear decision.</h2></div><p>We connect strategy, form and technology. The site, identity and launch materials then speak with one voice and give the project room to grow.</p></section>\n  </main>\n  <footer class=\"site-footer\"><div class=\"footer-inner\"><div><strong>Vector Atelier</strong><span>Agency and creative studio</span></div><nav aria-label=\"Footer navigation\"><a href=\"index.html\">Home</a><a href=\"cases.html\">Cases</a><a href=\"services.html\">Services</a><a href=\"process.html\">Process</a><a href=\"contact.html\">Contact</a></nav></div></footer>\n  <script src=\"../site.js\"></script>\n</body></html>\n",
+          "main": "<main>\n    <section class=\"hero\">\n      <div class=\"hero-copy surface\"><span class=\"eyebrow\">Strategy · Design · Launch</span><h1>We build strong systems for new ideas.</h1><p class=\"lead\">We help products and organizations find a clear direction, develop a coherent visual language and meet their audience without unnecessary noise.</p><div class=\"hero-actions\"><a class=\"button primary\" href=\"cases.html\">View cases</a><a class=\"button secondary\" href=\"services.html\">Our services</a></div><div class=\"metrics\"><div class=\"metric\"><strong>18</strong><span>launches prepared</span></div><div class=\"metric\"><strong>4</strong><span>core disciplines</span></div><div class=\"metric\"><strong>1</strong><span>team across the journey</span></div></div></div>\n      <div class=\"hero-media surface\"><img src=\"../assets/agency-architecture.webp\" alt=\"Architectural space with concrete forms and color accents\"><div class=\"media-note\"><span>Studio system</span><strong>From an initial thought to a recognizable presence</strong></div></div>\n    </section>\n    <section class=\"focus-strip surface\" aria-label=\"Studio disciplines\"><strong>A connected system of decisions, not separate decoration</strong><span>Brand</span><span>Web</span><span>Content</span><span>Launch</span><span>Growth</span></section>\n    <section class=\"section-head\"><div><span class=\"eyebrow\">Selected cases</span><h2>We present the work as a story of decisions.</h2></div><p>Each case explains the challenge, direction, system of materials and outcome — not just a random gallery of thumbnails.</p></section>\n    <section class=\"case-grid\">\n      <article class=\"case-card large surface\"><img src=\"../assets/agency-identity.webp\" alt=\"Identity system in orange, violet and graphite\"><div class=\"case-copy\"><span class=\"eyebrow\">Identity system</span><h3>Orbis: one language for a growing platform</h3><p>Strategy, visual system and a coordinated set of launch materials.</p></div></article>\n      <div class=\"case-side\"><article class=\"case-card surface\"><img src=\"../assets/agency-digital.webp\" alt=\"Screen displaying a digital design system\"><div class=\"case-copy\"><span class=\"eyebrow\">Digital product</span><h3>Helio: an interface with a clear hierarchy</h3></div></article><article class=\"case-card surface\"><img src=\"../assets/agency-process.webp\" alt=\"Desk with sketches and material samples\"><div class=\"case-copy\"><span class=\"eyebrow\">Research</span><h3>Field Notes: from material to visual language</h3></div></article></div>\n    </section>\n    <section class=\"section-head\"><div><span class=\"eyebrow\">Services</span><h2>Four disciplines, one coherent process.</h2></div><p>Engage one discipline for a focused challenge or combine them into a complete journey.</p></section>\n    <section class=\"service-grid\"><article class=\"service-card\"><span>01</span><h3>Strategy</h3><p>Positioning, audience, narrative structure and launch planning.</p></article><article class=\"service-card\"><span>02</span><h3>Design</h3><p>Identity, visual system, grids and practical guidelines.</p></article><article class=\"service-card\"><span>03</span><h3>Web</h3><p>Landing pages, product and editorial sites, interfaces.</p></article><article class=\"service-card\"><span>04</span><h3>Launch</h3><p>Content, assets, publishing and early-stage support.</p></article></section>\n    <section class=\"manifesto surface\"><div><span class=\"eyebrow\">Studio principle</span><h2>A strong result starts with a clear decision.</h2></div><p>We connect strategy, form and technology. The site, identity and launch materials then speak with one voice and give the project room to grow.</p></section>\n  </main>"
+        },
+        "cases": {
+          "title": "Cases",
+          "summary": "Selected work by Vector Atelier.",
+          "documentTitle": "Cases · Vector Atelier",
+          "html": "<!doctype html>\n<html lang=\"en\" data-theme=\"light\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"description\" content=\"Selected work by Vector Atelier.\"><title>Cases · Vector Atelier</title>\n  <script>\n    (() => {\n      const queryTheme = new URLSearchParams(location.search).get(\"theme\");\n      let theme = queryTheme === \"dark\" || queryTheme === \"light\" ? queryTheme : null;\n      if (!theme) {\n        try {\n          const savedTheme = localStorage.getItem(\"vector-atelier-theme\");\n          if (savedTheme === \"dark\" || savedTheme === \"light\") theme = savedTheme;\n        } catch {}\n      }\n      if (!theme && window.matchMedia?.(\"(prefers-color-scheme: dark)\").matches) theme = \"dark\";\n      document.documentElement.dataset.theme = theme || \"light\";\n    })();\n  </script>\n<link rel=\"stylesheet\" href=\"../style.css\"></head>\n<body><header class=\"site-header\"><div class=\"header-inner\"><a class=\"brand\" href=\"index.html\"><span class=\"brand-mark\">V</span><span><strong>Vector Atelier</strong><small>Agency · Creative studio</small></span></a><nav class=\"main-nav\" aria-label=\"Main navigation\"><a href=\"index.html\">Home</a><a href=\"cases.html\" aria-current=\"page\">Cases</a><a href=\"services.html\">Services</a><a href=\"process.html\">Process</a><a href=\"contact.html\">Contact</a></nav><div class=\"header-actions\"><a class=\"header-cta\" href=\"contact.html\">Discuss a project</a><button class=\"theme-toggle\" data-theme-toggle data-dark-label=\"Use dark theme\" data-light-label=\"Use light theme\" aria-label=\"Use dark theme\">☾</button><button class=\"menu-toggle\" data-menu-toggle aria-label=\"Open menu\" aria-expanded=\"false\">≡</button></div></div></header>\n<main><section class=\"page-intro surface\"><div><span class=\"eyebrow\">Cases</span><h1>Work that makes the thinking visible.</h1></div><p>More than the final image: the challenge, direction, system and the way each decision keeps working after launch.</p></section>\n<section class=\"case-grid\" style=\"margin-top:22px\"><article class=\"case-card large surface\"><img src=\"../assets/agency-identity.webp\" alt=\"Materials from the Orbis identity system\"><div class=\"case-copy\"><span class=\"eyebrow\">Orbis · Identity system</span><h3>One language for a growing platform</h3><p>Positioning, color, typography and a modular family of applications.</p></div></article><div class=\"case-side\"><article class=\"case-card surface\"><img src=\"../assets/agency-digital.webp\" alt=\"Helio digital design system\"><div class=\"case-copy\"><span class=\"eyebrow\">Helio · Digital product</span><h3>An interface with a clear hierarchy</h3></div></article><article class=\"case-card surface\"><img src=\"../assets/agency-architecture.webp\" alt=\"Forma spatial concept\"><div class=\"case-copy\"><span class=\"eyebrow\">Forma · Space</span><h3>An architectural expression of the brand</h3></div></article></div></section>\n<section class=\"section-head\"><div><span class=\"eyebrow\">Fourth case</span><h2>Field Notes: research through material.</h2></div><p>Observation, collage and tactile samples became a flexible visual language for a cultural program.</p></section><section class=\"media-band surface\"><img src=\"../assets/agency-process.webp\" alt=\"Sketches and materials for Field Notes\"></section>\n<section class=\"detail-list\"><article class=\"detail-card surface\"><strong>Challenge</strong><h2>Find a direction</h2><p>Connect the program's different themes in a recognizable but flexible system.</p></article><article class=\"detail-card surface\"><strong>Response</strong><h2>Modular language</h2><p>Color fields, texture and a grid that can adapt alongside the content.</p></article><article class=\"detail-card surface\"><strong>Outcome</strong><h2>One presence</h2><p>Materials for the site, events, publications and partner venues.</p></article></section></main>\n<footer class=\"site-footer\"><div class=\"footer-inner\"><div><strong>Vector Atelier</strong><span>Agency and creative studio</span></div><nav aria-label=\"Footer navigation\"><a href=\"index.html\">Home</a><a href=\"cases.html\">Cases</a><a href=\"services.html\">Services</a><a href=\"process.html\">Process</a><a href=\"contact.html\">Contact</a></nav></div></footer><script src=\"../site.js\"></script></body></html>\n",
+          "main": "<main><section class=\"page-intro surface\"><div><span class=\"eyebrow\">Cases</span><h1>Work that makes the thinking visible.</h1></div><p>More than the final image: the challenge, direction, system and the way each decision keeps working after launch.</p></section>\n<section class=\"case-grid\" style=\"margin-top:22px\"><article class=\"case-card large surface\"><img src=\"../assets/agency-identity.webp\" alt=\"Materials from the Orbis identity system\"><div class=\"case-copy\"><span class=\"eyebrow\">Orbis · Identity system</span><h3>One language for a growing platform</h3><p>Positioning, color, typography and a modular family of applications.</p></div></article><div class=\"case-side\"><article class=\"case-card surface\"><img src=\"../assets/agency-digital.webp\" alt=\"Helio digital design system\"><div class=\"case-copy\"><span class=\"eyebrow\">Helio · Digital product</span><h3>An interface with a clear hierarchy</h3></div></article><article class=\"case-card surface\"><img src=\"../assets/agency-architecture.webp\" alt=\"Forma spatial concept\"><div class=\"case-copy\"><span class=\"eyebrow\">Forma · Space</span><h3>An architectural expression of the brand</h3></div></article></div></section>\n<section class=\"section-head\"><div><span class=\"eyebrow\">Fourth case</span><h2>Field Notes: research through material.</h2></div><p>Observation, collage and tactile samples became a flexible visual language for a cultural program.</p></section><section class=\"media-band surface\"><img src=\"../assets/agency-process.webp\" alt=\"Sketches and materials for Field Notes\"></section>\n<section class=\"detail-list\"><article class=\"detail-card surface\"><strong>Challenge</strong><h2>Find a direction</h2><p>Connect the program's different themes in a recognizable but flexible system.</p></article><article class=\"detail-card surface\"><strong>Response</strong><h2>Modular language</h2><p>Color fields, texture and a grid that can adapt alongside the content.</p></article><article class=\"detail-card surface\"><strong>Outcome</strong><h2>One presence</h2><p>Materials for the site, events, publications and partner venues.</p></article></section></main>"
+        },
+        "services": {
+          "title": "Services",
+          "summary": "Vector Atelier services: strategy, design, web and launch.",
+          "documentTitle": "Services · Vector Atelier",
+          "html": "<!doctype html>\n<html lang=\"en\" data-theme=\"light\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"description\" content=\"Vector Atelier services: strategy, design, web and launch.\"><title>Services · Vector Atelier</title>\n  <script>\n    (() => {\n      const queryTheme = new URLSearchParams(location.search).get(\"theme\");\n      let theme = queryTheme === \"dark\" || queryTheme === \"light\" ? queryTheme : null;\n      if (!theme) {\n        try {\n          const savedTheme = localStorage.getItem(\"vector-atelier-theme\");\n          if (savedTheme === \"dark\" || savedTheme === \"light\") theme = savedTheme;\n        } catch {}\n      }\n      if (!theme && window.matchMedia?.(\"(prefers-color-scheme: dark)\").matches) theme = \"dark\";\n      document.documentElement.dataset.theme = theme || \"light\";\n    })();\n  </script>\n<link rel=\"stylesheet\" href=\"../style.css\"></head>\n<body><header class=\"site-header\"><div class=\"header-inner\"><a class=\"brand\" href=\"index.html\"><span class=\"brand-mark\">V</span><span><strong>Vector Atelier</strong><small>Agency · Creative studio</small></span></a><nav class=\"main-nav\" aria-label=\"Main navigation\"><a href=\"index.html\">Home</a><a href=\"cases.html\">Cases</a><a href=\"services.html\" aria-current=\"page\">Services</a><a href=\"process.html\">Process</a><a href=\"contact.html\">Contact</a></nav><div class=\"header-actions\"><a class=\"header-cta\" href=\"contact.html\">Discuss a project</a><button class=\"theme-toggle\" data-theme-toggle data-dark-label=\"Use dark theme\" data-light-label=\"Use light theme\" aria-label=\"Use dark theme\">☾</button><button class=\"menu-toggle\" data-menu-toggle aria-label=\"Open menu\" aria-expanded=\"false\">≡</button></div></div></header>\n<main><section class=\"page-intro surface\"><div><span class=\"eyebrow\">Services</span><h1>From direction to a confident launch.</h1></div><p>Start with one focused challenge or build a complete journey across research, system design, digital product and launch materials.</p></section>\n<section class=\"service-stack\"><article class=\"service-row surface\"><span>01</span><h2>Strategy</h2><p>We study the context and audience, clarify positioning, shape the product story and organize the communication structure.</p></article><article class=\"service-row surface\"><span>02</span><h2>Design</h2><p>We create identity, typography, color, graphic principles and a family of applications that the team can extend.</p></article><article class=\"service-row surface\"><span>03</span><h2>Web</h2><p>We design structure, prototypes and interfaces for landing pages, product, editorial and corporate sites.</p></article><article class=\"service-row surface\"><span>04</span><h2>Launch</h2><p>We prepare content and assets, check the published experience and support the first round of iteration.</p></article></section>\n<section class=\"manifesto surface\"><div><span class=\"eyebrow\">Ways of working</span><h2>A team shaped around the challenge, without unnecessary layers.</h2></div><p>The mix of specialists changes with the project, while direction and responsibility remain unified. This protects both speed and coherence.</p></section></main>\n<footer class=\"site-footer\"><div class=\"footer-inner\"><div><strong>Vector Atelier</strong><span>Agency and creative studio</span></div><nav aria-label=\"Footer navigation\"><a href=\"index.html\">Home</a><a href=\"cases.html\">Cases</a><a href=\"services.html\">Services</a><a href=\"process.html\">Process</a><a href=\"contact.html\">Contact</a></nav></div></footer><script src=\"../site.js\"></script></body></html>\n",
+          "main": "<main><section class=\"page-intro surface\"><div><span class=\"eyebrow\">Services</span><h1>From direction to a confident launch.</h1></div><p>Start with one focused challenge or build a complete journey across research, system design, digital product and launch materials.</p></section>\n<section class=\"service-stack\"><article class=\"service-row surface\"><span>01</span><h2>Strategy</h2><p>We study the context and audience, clarify positioning, shape the product story and organize the communication structure.</p></article><article class=\"service-row surface\"><span>02</span><h2>Design</h2><p>We create identity, typography, color, graphic principles and a family of applications that the team can extend.</p></article><article class=\"service-row surface\"><span>03</span><h2>Web</h2><p>We design structure, prototypes and interfaces for landing pages, product, editorial and corporate sites.</p></article><article class=\"service-row surface\"><span>04</span><h2>Launch</h2><p>We prepare content and assets, check the published experience and support the first round of iteration.</p></article></section>\n<section class=\"manifesto surface\"><div><span class=\"eyebrow\">Ways of working</span><h2>A team shaped around the challenge, without unnecessary layers.</h2></div><p>The mix of specialists changes with the project, while direction and responsibility remain unified. This protects both speed and coherence.</p></section></main>"
+        },
+        "process": {
+          "title": "Process",
+          "summary": "The Vector Atelier working process.",
+          "documentTitle": "Process · Vector Atelier",
+          "html": "<!doctype html>\n<html lang=\"en\" data-theme=\"light\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"description\" content=\"The Vector Atelier working process.\"><title>Process · Vector Atelier</title>\n  <script>\n    (() => {\n      const queryTheme = new URLSearchParams(location.search).get(\"theme\");\n      let theme = queryTheme === \"dark\" || queryTheme === \"light\" ? queryTheme : null;\n      if (!theme) {\n        try {\n          const savedTheme = localStorage.getItem(\"vector-atelier-theme\");\n          if (savedTheme === \"dark\" || savedTheme === \"light\") theme = savedTheme;\n        } catch {}\n      }\n      if (!theme && window.matchMedia?.(\"(prefers-color-scheme: dark)\").matches) theme = \"dark\";\n      document.documentElement.dataset.theme = theme || \"light\";\n    })();\n  </script>\n<link rel=\"stylesheet\" href=\"../style.css\"></head>\n<body><header class=\"site-header\"><div class=\"header-inner\"><a class=\"brand\" href=\"index.html\"><span class=\"brand-mark\">V</span><span><strong>Vector Atelier</strong><small>Agency · Creative studio</small></span></a><nav class=\"main-nav\" aria-label=\"Main navigation\"><a href=\"index.html\">Home</a><a href=\"cases.html\">Cases</a><a href=\"services.html\">Services</a><a href=\"process.html\" aria-current=\"page\">Process</a><a href=\"contact.html\">Contact</a></nav><div class=\"header-actions\"><a class=\"header-cta\" href=\"contact.html\">Discuss a project</a><button class=\"theme-toggle\" data-theme-toggle data-dark-label=\"Use dark theme\" data-light-label=\"Use light theme\" aria-label=\"Use dark theme\">☾</button><button class=\"menu-toggle\" data-menu-toggle aria-label=\"Open menu\" aria-expanded=\"false\">≡</button></div></div></header>\n<main><section class=\"page-intro surface\"><div><span class=\"eyebrow\">Process</span><h1>A calm path from request to launch.</h1></div><p>Every stage has a clear purpose, output and next step. The process remains flexible without losing direction.</p></section>\n<section class=\"process-rail surface\"><span class=\"eyebrow\">Four stages</span><div class=\"process-grid\"><article class=\"process-card\"><span>01</span><h3>Discover</h3><p>Understand the challenge, context, audience and constraints.</p></article><article class=\"process-card\"><span>02</span><h3>Shape</h3><p>Turn observations into structure and visual direction.</p></article><article class=\"process-card\"><span>03</span><h3>Build</h3><p>Prepare the system, pages, content and launch assets.</p></article><article class=\"process-card\"><span>04</span><h3>Launch</h3><p>Check, publish and define the next useful iteration.</p></article></div></section>\n<section class=\"process-media\"><div class=\"media-band surface\"><img src=\"../assets/agency-process.webp\" alt=\"Working with sketches, color and material samples\"></div><article class=\"process-note surface\"><span class=\"eyebrow\">Working together</span><h2>The decisions are visible before the final delivery.</h2><p>Intermediate materials help everyone check the direction before it becomes expensive to produce. The client's team understands the logic and can continue the system after launch.</p></article></section>\n<section class=\"detail-list\"><article class=\"detail-card surface\"><strong>Reviews</strong><h2>Short cycles</h2><p>Regular decision points instead of one large surprise at the end.</p></article><article class=\"detail-card surface\"><strong>Materials</strong><h2>Working system</h2><p>Layouts, principles and components are delivered in a form the team can extend.</p></article><article class=\"detail-card surface\"><strong>Continuity</strong><h2>After launch</h2><p>When needed, we support early updates and the next stage of the system.</p></article></section></main>\n<footer class=\"site-footer\"><div class=\"footer-inner\"><div><strong>Vector Atelier</strong><span>Agency and creative studio</span></div><nav aria-label=\"Footer navigation\"><a href=\"index.html\">Home</a><a href=\"cases.html\">Cases</a><a href=\"services.html\">Services</a><a href=\"process.html\">Process</a><a href=\"contact.html\">Contact</a></nav></div></footer><script src=\"../site.js\"></script></body></html>\n",
+          "main": "<main><section class=\"page-intro surface\"><div><span class=\"eyebrow\">Process</span><h1>A calm path from request to launch.</h1></div><p>Every stage has a clear purpose, output and next step. The process remains flexible without losing direction.</p></section>\n<section class=\"process-rail surface\"><span class=\"eyebrow\">Four stages</span><div class=\"process-grid\"><article class=\"process-card\"><span>01</span><h3>Discover</h3><p>Understand the challenge, context, audience and constraints.</p></article><article class=\"process-card\"><span>02</span><h3>Shape</h3><p>Turn observations into structure and visual direction.</p></article><article class=\"process-card\"><span>03</span><h3>Build</h3><p>Prepare the system, pages, content and launch assets.</p></article><article class=\"process-card\"><span>04</span><h3>Launch</h3><p>Check, publish and define the next useful iteration.</p></article></div></section>\n<section class=\"process-media\"><div class=\"media-band surface\"><img src=\"../assets/agency-process.webp\" alt=\"Working with sketches, color and material samples\"></div><article class=\"process-note surface\"><span class=\"eyebrow\">Working together</span><h2>The decisions are visible before the final delivery.</h2><p>Intermediate materials help everyone check the direction before it becomes expensive to produce. The client's team understands the logic and can continue the system after launch.</p></article></section>\n<section class=\"detail-list\"><article class=\"detail-card surface\"><strong>Reviews</strong><h2>Short cycles</h2><p>Regular decision points instead of one large surprise at the end.</p></article><article class=\"detail-card surface\"><strong>Materials</strong><h2>Working system</h2><p>Layouts, principles and components are delivered in a form the team can extend.</p></article><article class=\"detail-card surface\"><strong>Continuity</strong><h2>After launch</h2><p>When needed, we support early updates and the next stage of the system.</p></article></section></main>"
+        },
+        "contact": {
+          "title": "Contact",
+          "summary": "Discuss a project with Vector Atelier.",
+          "documentTitle": "Contact · Vector Atelier",
+          "html": "<!doctype html>\n<html lang=\"en\" data-theme=\"light\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"description\" content=\"Discuss a project with Vector Atelier.\"><title>Contact · Vector Atelier</title>\n  <script>\n    (() => {\n      const queryTheme = new URLSearchParams(location.search).get(\"theme\");\n      let theme = queryTheme === \"dark\" || queryTheme === \"light\" ? queryTheme : null;\n      if (!theme) {\n        try {\n          const savedTheme = localStorage.getItem(\"vector-atelier-theme\");\n          if (savedTheme === \"dark\" || savedTheme === \"light\") theme = savedTheme;\n        } catch {}\n      }\n      if (!theme && window.matchMedia?.(\"(prefers-color-scheme: dark)\").matches) theme = \"dark\";\n      document.documentElement.dataset.theme = theme || \"light\";\n    })();\n  </script>\n<link rel=\"stylesheet\" href=\"../style.css\"></head>\n<body><header class=\"site-header\"><div class=\"header-inner\"><a class=\"brand\" href=\"index.html\"><span class=\"brand-mark\">V</span><span><strong>Vector Atelier</strong><small>Agency · Creative studio</small></span></a><nav class=\"main-nav\" aria-label=\"Main navigation\"><a href=\"index.html\">Home</a><a href=\"cases.html\">Cases</a><a href=\"services.html\">Services</a><a href=\"process.html\">Process</a><a href=\"contact.html\" aria-current=\"page\">Contact</a></nav><div class=\"header-actions\"><a class=\"header-cta\" href=\"contact.html\">Discuss a project</a><button class=\"theme-toggle\" data-theme-toggle data-dark-label=\"Use dark theme\" data-light-label=\"Use light theme\" aria-label=\"Use dark theme\">☾</button><button class=\"menu-toggle\" data-menu-toggle aria-label=\"Open menu\" aria-expanded=\"false\">≡</button></div></div></header>\n<main><section class=\"contact-layout\"><div class=\"contact-panel surface\"><span class=\"eyebrow\">Contact</span><h2>Tell us what should change after the project.</h2><p>You do not need a finished brief for the first conversation. Describe the challenge, current situation and the outcome you want to create.</p><ul class=\"brief-list\"><li>What are you creating or changing?</li><li>Who is the project for?</li><li>What do you already have?</li><li>What outcome would be useful?</li></ul></div><aside class=\"contact-card surface\"><span class=\"eyebrow\">Your contact area</span><h2>Connect the channel that fits.</h2><p>Replace this neutral block with a form, email address, meeting calendar or your own request system.</p><span class=\"button primary\">Site owner's contact</span></aside></section>\n<section class=\"section-head\"><div><span class=\"eyebrow\">What happens next</span><h2>We first clarify the challenge and the right format.</h2></div><p>After the initial contact, define the scope, decision points and materials needed for a confident start.</p></section><section class=\"proof-grid\"><article class=\"proof-card\"><h3>Introduction</h3><p>Discuss the context, purpose and constraints.</p></article><article class=\"proof-card\"><h3>Proposal</h3><p>Define the scope, stages and expected outputs.</p></article><article class=\"proof-card\"><h3>Start</h3><p>Gather materials and begin the first working cycle.</p></article><article class=\"proof-card\"><h3>Review</h3><p>Confirm the direction before deeper production.</p></article></section></main>\n<footer class=\"site-footer\"><div class=\"footer-inner\"><div><strong>Vector Atelier</strong><span>Agency and creative studio</span></div><nav aria-label=\"Footer navigation\"><a href=\"index.html\">Home</a><a href=\"cases.html\">Cases</a><a href=\"services.html\">Services</a><a href=\"process.html\">Process</a><a href=\"contact.html\">Contact</a></nav></div></footer><script src=\"../site.js\"></script></body></html>\n",
+          "main": "<main><section class=\"contact-layout\"><div class=\"contact-panel surface\"><span class=\"eyebrow\">Contact</span><h2>Tell us what should change after the project.</h2><p>You do not need a finished brief for the first conversation. Describe the challenge, current situation and the outcome you want to create.</p><ul class=\"brief-list\"><li>What are you creating or changing?</li><li>Who is the project for?</li><li>What do you already have?</li><li>What outcome would be useful?</li></ul></div><aside class=\"contact-card surface\"><span class=\"eyebrow\">Your contact area</span><h2>Connect the channel that fits.</h2><p>Replace this neutral block with a form, email address, meeting calendar or your own request system.</p><span class=\"button primary\">Site owner's contact</span></aside></section>\n<section class=\"section-head\"><div><span class=\"eyebrow\">What happens next</span><h2>We first clarify the challenge and the right format.</h2></div><p>After the initial contact, define the scope, decision points and materials needed for a confident start.</p></section><section class=\"proof-grid\"><article class=\"proof-card\"><h3>Introduction</h3><p>Discuss the context, purpose and constraints.</p></article><article class=\"proof-card\"><h3>Proposal</h3><p>Define the scope, stages and expected outputs.</p></article><article class=\"proof-card\"><h3>Start</h3><p>Gather materials and begin the first working cycle.</p></article><article class=\"proof-card\"><h3>Review</h3><p>Confirm the direction before deeper production.</p></article></section></main>"
+        }
+      }
+    }
+  }
+};
+
+
+/* IRGEZTNE_BLOG_ARTICLE_ROUTES_V098H
+   Blog cards now open real editable article pages. Existing authored content is
+   preserved: migration only adds missing detail pages and rewrites untouched
+   archive-style links inside known official article cards. */
+  var BLOG_ARTICLES_V098H = {"ru":[{"slug":"article-modern-web-products","title":"Как современные веб-продукты меняют работу небольших редакций","summary":"Большой материал о новых инструментах, ясной структуре и спокойном процессе публикации.","category":"Главная тема","meta":"Редакция · 12 минут","image":"main.jpg","imageAlt":"Рабочее место небольшой цифровой редакции","intro":"Небольшой редакции не нужен тяжёлый издательский комбинат. Ей нужна понятная система, в которой идея проходит путь от черновика до публикации без потери контекста.","sections":[["От набора инструментов к единому маршруту",["Редакционная работа часто распадается между заметками, файлами, сообщениями и разными панелями публикации. Проблема возникает не из-за нехватки функций, а из-за отсутствия последовательного маршрута.","Современный веб-продукт связывает материал, изображения, метаданные, проверку страницы и публикацию в одном рабочем пространстве. Автор видит не только текст, но и то, как он станет частью сайта."]],["Структура снижает количество повторной работы",["Ясные поля для заголовка, описания, темы, автора и статуса позволяют не собирать одну и ту же информацию заново перед каждым выпуском. Подготовленная структура не ограничивает автора, а снимает техническую нагрузку.","Особенно важна предсказуемость: изображение должно оставаться на выбранном месте, ссылка — вести к настоящему материалу, а предпросмотр — совпадать с опубликованной страницей."]],["Спокойный выпуск — это характеристика продукта",["Хорошая система не заставляет команду постоянно помнить внутренние правила. Она показывает следующий шаг, предупреждает о пропусках и оставляет человеку право принять итоговое решение.","Для небольшой команды это означает меньше аварийных исправлений, понятную ответственность и больше времени на содержание, ради которого издание вообще существует."]]]},{"slug":"article-publishing-tools","title":"Новые инструменты делают публикацию быстрее и спокойнее","summary":"Как автоматизация убирает повторяющиеся операции и оставляет больше времени для содержания.","category":"Технологии","meta":"09:40 · 4 минуты","image":"tech.jpg","imageAlt":"Компьютеры и цифровые инструменты редакции","intro":"Автоматизация полезна не тогда, когда заменяет редактора, а когда убирает действия, которые не требуют редакционного решения.","sections":[["Что действительно стоит автоматизировать",["Проверку обязательных полей, подготовку изображений, сохранение версии, создание предпросмотра и сборку файлов можно выполнять одинаково каждый раз. Это снижает вероятность случайной ошибки.","Сам текст, композиция материала и выбор акцентов остаются работой автора и редактора. Инструмент должен ускорять рутину, а не принимать содержательные решения вместо команды."]],["Один результат во всех режимах",["Редактор, предпросмотр, браузер и экспорт должны показывать одну и ту же структуру. Когда размер или положение изображения меняется между режимами, команда тратит время не на выпуск, а на поиск причины расхождения.","Поэтому качество редактора определяется не количеством кнопок, а надёжностью перехода от действия пользователя к готовой странице."]],["Меньше переключений — больше внимания",["Когда файлы, страницы, медиа и публикация связаны, редактор реже покидает рабочий контекст. Короткие повторяемые операции становятся фоновыми, а внимание остаётся на логике материала."]]]},{"slug":"article-clear-product-pages","title":"Почему продуктовым страницам нужна более ясная структура","summary":"Короткий разбор для команд, авторов и создателей цифровых сервисов.","category":"Бизнес","meta":"11:15 · 6 минут","image":"business.jpg","imageAlt":"Материалы для проектирования продуктовой страницы","intro":"Посетитель должен быстро понять, что перед ним, для кого это создано и какое действие имеет смысл сделать дальше.","sections":[["Первый экран отвечает на три вопроса",["Название продукта без объяснения редко создаёт ясность. Рядом нужны конкретная польза, понятная аудитория и следующий шаг.","Сильный первый экран не пытается рассказать всё. Он задаёт направление, после чего доказательства, сценарии и детали раскрываются ниже."]],["Доказательства важнее громких формулировок",["Примеры, показатели, процесс, ограничения и реальные изображения делают предложение убедительным. Они помогают посетителю сравнить обещание с собственными задачами.","Каждый блок должен продолжать предыдущий, а не существовать как отдельная декоративная карточка."]],["Структуру должно быть легко обновлять",["Продуктовая страница меняется вместе с продуктом. Если редактирование требует ручной перестройки всей страницы, информация быстро устаревает. Подготовленные секции и понятные медиаслоты позволяют обновлять содержание без разрушения композиции."]]]},{"slug":"article-prepublish-check","title":"Практическая проверка сайта перед публикацией","summary":"Пошаговый список: содержание, маршруты, изображения, темы и адаптивность.","category":"Гайд","meta":"15:20 · 8 минут","image":"guide.jpg","imageAlt":"Рабочий стол с материалами для проверки сайта","intro":"Проверка перед публикацией должна быть короткой, повторяемой и одинаковой для каждой страницы.","sections":[["Содержание и маршруты",["Проверьте заголовок страницы, краткое описание, подписи изображений и состояние публикации. Все кнопки должны вести к существующим страницам или понятным действиям.","Отдельно пройдите путь посетителя: главная, раздел, материал и возврат назад. Якорь внутри архива не должен выдавать себя за самостоятельную статью."]],["Медиа и визуальные режимы",["Сравните редактор, встроенный предпросмотр и страницу в отдельном браузере. Размер, выравнивание и порядок изображений или видео должны совпадать.","Проверьте светлую и тёмную темы, а также обе языковые версии, когда сайт действительно поддерживает два языка."]],["Финальная сборка",["Откройте экспорт локально, проверьте главную страницу, вложенные маршруты, favicon и отсутствие пропавших файлов. Только после этого отправляйте сборку на сервер."]]]},{"slug":"article-editorial-rhythm","title":"Как сохранить редакционный ритм в небольшой команде","summary":"Распределение ролей, спокойный выпуск и единая картина проекта.","category":"Рабочая среда","meta":"Сегодня · 5 минут","image":"workspace.jpg","imageAlt":"Небольшая команда работает с редакционными материалами","intro":"Редакционный ритм появляется не из постоянной спешки, а из понятных точек передачи работы.","sections":[["Один материал — один ответственный маршрут",["Автор готовит содержание, редактор проверяет смысл и структуру, а публикационный этап подтверждает техническую готовность. Роли могут совмещаться, но переходы между ними должны оставаться видимыми.","Статус материала помогает команде понимать, что требует внимания сейчас, а что уже готово."]],["Короткие циклы вместо большого аврала",["Небольшие регулярные проверки позволяют замечать проблему до финальной сборки. Изображение, ссылка или метаданные исправляются в контексте, а не за минуту до публикации.","Такой ритм снижает напряжение и делает дату выпуска предсказуемее."]],["Общая картина сохраняет направление",["Команде нужен единый обзор страниц, материалов, файлов и будущих задач. Это помогает не терять решения в переписке и не создавать вторые версии уже существующей работы."]]]},{"slug":"article-wide-layouts","title":"Широкие макеты возвращают цифровым изданиям характер","summary":"Почему плотность, масштаб и воздух важнее бесконечной сетки одинаковых карточек.","category":"Мнение","meta":"Колонка · 7 минут","image":"city.jpg","imageAlt":"Широкая городская композиция для редакционного материала","intro":"Широкий макет ценен не сам по себе. Он даёт редакции больше способов показать иерархию материалов.","sections":[["Разный масштаб создаёт редакционный голос",["Главная тема может занимать большую площадь, короткая новость — компактную колонку, а подборка — отдельную полосу. Когда все карточки одинаковы, важность материалов становится неразличимой.","Ширина позволяет соединять крупное изображение, выразительный заголовок и вспомогательные истории без ощущения тесноты."]],["Воздух — часть структуры",["Свободное пространство отделяет смысловые группы и помогает читать страницу быстрее. Оно не является потерянным местом, если поддерживает иерархию.","Плотность должна меняться: насыщенный новостной участок может соседствовать со спокойным длинным материалом."]],["Адаптивность не должна уничтожать характер",["На небольшом экране композиция перестраивается, но порядок и смысловые акценты сохраняются. Хороший широкий шаблон остаётся узнаваемым после перехода к одной колонке."]]]}],"en":[{"slug":"article-modern-web-products","title":"How modern web products are changing small editorial teams","summary":"A long read about new tools, clear structure and a calmer publishing process.","category":"Lead story","meta":"Editorial desk · 12 min","image":"main.jpg","imageAlt":"A workspace for a small digital editorial team","intro":"A small publication does not need a heavy publishing factory. It needs a clear system that carries an idea from draft to release without losing context.","sections":[["From a collection of tools to one route",["Editorial work is often scattered across notes, files, messages and publishing panels. The difficulty is not a lack of features but the absence of a dependable path.","A modern web product connects the story, imagery, metadata, page review and publishing in one workspace. The writer can see not only the text but how it becomes part of the site."]],["Structure reduces repeated work",["Clear fields for titles, summaries, topics, authors and status prevent the same information from being rebuilt for every release. Prepared structure removes technical weight without restricting the writer.","Predictability matters most: an image should stay where it was placed, a link should open a real story, and preview should match the published page."]],["A calm release is a product feature",["A good system does not require the team to remember every internal rule. It reveals the next step, warns about gaps and leaves the final decision to people.","For a small team, that means fewer emergency fixes, clearer ownership and more time for the content that gives the publication a reason to exist."]]]},{"slug":"article-publishing-tools","title":"New tools make publishing faster and calmer","summary":"How automation removes repetitive work and leaves more time for the story.","category":"Technology","meta":"09:40 · 4 min","image":"tech.jpg","imageAlt":"Computers and digital publishing tools","intro":"Automation is useful when it removes actions that do not require an editorial decision, not when it tries to replace the editor.","sections":[["What is worth automating",["Required-field checks, image preparation, version saving, preview creation and file packaging can run the same way every time. This reduces accidental errors.","The story, composition and choice of emphasis remain the work of writers and editors. A tool should accelerate routine, not make editorial judgments for the team."]],["One result in every mode",["The editor, preview, browser and export should display the same structure. When image size or position changes between modes, the team spends time investigating the tool instead of preparing the release.","The quality of an editor is therefore defined less by the number of buttons than by the reliability of the path from an action to the finished page."]],["Fewer switches protect attention",["When files, pages, media and publishing are connected, the editor leaves the working context less often. Repeated operations fade into the background and attention stays on the logic of the story."]]]},{"slug":"article-clear-product-pages","title":"Why product pages need a clearer structure","summary":"A compact analysis for teams, writers and digital product makers.","category":"Business","meta":"11:15 · 6 min","image":"business.jpg","imageAlt":"Materials used to plan a product page","intro":"A visitor should quickly understand what the product is, who it is for and which next action makes sense.","sections":[["The first screen answers three questions",["A product name rarely creates clarity by itself. It needs a concrete benefit, a recognizable audience and a next step.","A strong opening does not try to explain everything. It sets direction, while evidence, scenarios and details unfold below."]],["Evidence is stronger than loud language",["Examples, metrics, process, limitations and real imagery make an offer convincing. They help visitors compare the promise with their own situation.","Every section should continue the previous one instead of behaving like an isolated decorative card."]],["The structure must remain easy to update",["A product page changes with the product. When every update requires rebuilding the whole page, information becomes stale. Prepared sections and clear media slots let teams refresh content without breaking the composition."]]]},{"slug":"article-prepublish-check","title":"A practical website check before publication","summary":"A step-by-step list covering content, routes, imagery, themes and responsive behavior.","category":"Guide","meta":"15:20 · 8 min","image":"guide.jpg","imageAlt":"A desk prepared for a website review","intro":"A pre-publication review should be short, repeatable and consistent across every page.","sections":[["Content and routes",["Check the page title, summary, image descriptions and publication status. Every button should lead to an existing page or a clear action.","Walk through the visitor route: home, section, story and back again. An anchor inside an archive should not pretend to be a standalone article."]],["Media and visual modes",["Compare the editor, embedded preview and the page in an external browser. Size, alignment and order of images or video should match.","Review light and dark themes, plus both language versions when the site genuinely supports two languages."]],["The final package",["Open the export locally and check the home page, nested routes, favicon and missing files. Only then send the package to the server."]]]},{"slug":"article-editorial-rhythm","title":"How a small team can preserve its editorial rhythm","summary":"Clear roles, a calm release process and one shared view of the project.","category":"Work","meta":"Today · 5 min","image":"workspace.jpg","imageAlt":"A small team working with editorial material","intro":"Editorial rhythm comes from clear handoffs, not from permanent urgency.","sections":[["One story, one visible route",["The writer prepares the content, the editor checks meaning and structure, and the publishing stage confirms technical readiness. Roles may overlap, but the handoffs should remain visible.","A material status helps the team see what needs attention now and what is already ready."]],["Short cycles prevent the final rush",["Small regular reviews reveal problems before the final build. An image, route or metadata issue is fixed in context rather than minutes before release.","This rhythm reduces tension and makes publication dates more predictable."]],["A shared view protects direction",["The team needs one overview of pages, stories, files and upcoming work. It keeps decisions out of scattered messages and prevents duplicate versions of work that already exists."]]]},{"slug":"article-wide-layouts","title":"Wide layouts give digital journals their character back","summary":"Why density, scale and breathing room matter more than endless identical cards.","category":"Opinion","meta":"Column · 7 min","image":"city.jpg","imageAlt":"A wide city composition for an editorial story","intro":"A wide layout is not valuable by itself. It gives an editorial team more ways to express hierarchy.","sections":[["Different scales create an editorial voice",["The lead story can occupy a large field, a short update can use a compact column, and a collection can become its own band. When every card is identical, importance becomes invisible.","Width allows a large image, an expressive headline and supporting stories to coexist without feeling crowded."]],["Breathing room is structural",["Space separates meaningful groups and makes a page faster to read. It is not wasted when it reinforces hierarchy.","Density should vary: a busy news area can sit beside a calm long-form story."]],["Responsive design should preserve character",["On a small screen the composition changes, but order and emphasis remain. A strong wide template is still recognizable after it becomes a single column."]]]}]};
+
+  function blogArticleMainV098H(article, lang) {
+    var isRussian = lang === 'ru';
+    var backText = isRussian ? '← Вернуться ко всем материалам' : '← Back to all articles';
+    var contentsText = isRussian ? 'В этом материале' : 'In this story';
+    var continueText = isRussian ? 'Продолжить чтение' : 'Continue reading';
+    var sections = (article.sections || []).map(function (section, index) {
+      return '<section id="section-' + (index + 1) + '"><h2>' + escapeHtml(section[0]) + '</h2>' +
+        (section[1] || []).map(function (paragraph) { return '<p>' + escapeHtml(paragraph) + '</p>'; }).join('') +
+      '</section>';
+    }).join('');
+    var contents = (article.sections || []).map(function (section, index) {
+      return '<li><a href="#section-' + (index + 1) + '">' + escapeHtml(section[0]) + '</a></li>';
+    }).join('');
+    return '<main class="main-shell article-detail-shell-v098h">' +
+      '<nav class="article-breadcrumb-v098h" aria-label="' + (isRussian ? 'Материалы' : 'Articles') + '"><a href="articles.html">' + backText + '</a></nav>' +
+      '<article class="article-detail-v098h">' +
+        '<header class="article-detail-header-v098h"><p class="eyebrow">' + escapeHtml(article.category) + '</p><h1>' + escapeHtml(article.title) + '</h1><p class="article-detail-lead-v098h">' + escapeHtml(article.summary) + '</p><div class="article-detail-meta-v098h"><span>' + escapeHtml(article.meta) + '</span></div></header>' +
+        '<figure class="media-frame article-detail-media-v098h"><img src="../assets/' + escapeHtml(article.image) + '" alt="' + escapeHtml(article.imageAlt) + '" loading="eager" data-template-slot="article.' + escapeHtml(article.slug) + '.image" data-slot-kind="image"></figure>' +
+        '<div class="article-detail-layout-v098h"><div class="article-detail-body-v098h"><p class="article-detail-intro-v098h">' + escapeHtml(article.intro) + '</p>' + sections + '</div>' +
+        '<aside class="article-detail-aside-v098h"><strong>' + contentsText + '</strong><ol>' + contents + '</ol><a class="text-link" href="articles.html">' + continueText + ' →</a></aside></div>' +
+      '</article></main>';
+  }
+
+  function blogArticleEntryV098H(record, lang, article) {
+    var archive = record && record.pages && record.pages[lang] && record.pages[lang].articles;
+    if (!archive) return null;
+    var main = blogArticleMainV098H(article, lang);
+    var documentTitle = article.title + ' · Northline Journal';
+    var html = String(archive.html || '')
+      .replace(/<main\b[^>]*>[\s\S]*?<\/main>/i, main)
+      .replace(/<title>[\s\S]*?<\/title>/i, '<title>' + escapeHtml(documentTitle) + '</title>')
+      .replace(/<meta name="description" content="[^"]*">/i, '<meta name="description" content="' + escapeHtml(article.summary) + '">')
+      .replace(/<meta property="og:title" content="[^"]*">/i, '<meta property="og:title" content="' + escapeHtml(documentTitle) + '">')
+      .replace(/<meta property="og:description" content="[^"]*">/i, '<meta property="og:description" content="' + escapeHtml(article.summary) + '">')
+      .replace('body data-page="articles"', 'body data-page="article"');
+    return {
+      title: article.title,
+      summary: article.summary,
+      documentTitle: documentTitle,
+      html: html,
+      main: main,
+      inMenu: false
+    };
+  }
+
+  function rewriteBlogArticleLinksV098H(html, lang) {
+    var definitions = BLOG_ARTICLES_V098H[lang] || BLOG_ARTICLES_V098H.en || [];
+    return String(html || '').replace(/<article\b[\s\S]*?<\/article>/gi, function (articleBlock) {
+      var definition = definitions.find(function (candidate) {
+        return articleBlock.indexOf(candidate.title) !== -1;
+      });
+      if (!definition) return articleBlock;
+      return articleBlock.replace(
+        /href=(["'])(?:articles\.html(?:#[^"']*)?|#article-\d+)\1/gi,
+        function (match, quote) { return 'href=' + quote + definition.slug + '.html' + quote; }
+      );
+    });
+  }
+
+  function installBlogArticleRoutesV098H() {
+    var record = OFFICIAL_FOUR_CANON_V098A['blog-news'];
+    if (!record || record.__articleRoutesV098H) return;
+    ['ru', 'en'].forEach(function (lang) {
+      var pageMap = record.pages[lang] || record.pages.en;
+      (BLOG_ARTICLES_V098H[lang] || []).forEach(function (article, index) {
+        pageMap[article.slug] = blogArticleEntryV098H(record, lang, article);
+        if (record.rss && record.rss[lang] && index < 3) {
+          record.rss[lang] = record.rss[lang].replace(
+            'articles.html#article-' + (index + 1),
+            article.slug + '.html'
+          );
+        }
+      });
+      ['index', 'articles'].forEach(function (slug) {
+        var entry = pageMap[slug];
+        if (!entry) return;
+        entry.main = rewriteBlogArticleLinksV098H(entry.main, lang);
+        entry.html = rewriteBlogArticleLinksV098H(entry.html, lang);
+      });
+    });
+    record.css = String(record.css || '') + "\n\n/* IRGEZTNE_BLOG_ARTICLE_ROUTES_V098H */\n.article-detail-shell-v098h{padding-block:44px 96px}\n.article-breadcrumb-v098h{margin-bottom:24px}\n.article-breadcrumb-v098h a{color:var(--muted);font-weight:800;text-decoration:none}\n.article-breadcrumb-v098h a:hover{color:var(--accent)}\n.article-detail-v098h{border:1px solid var(--line);border-radius:var(--radius-xl);background:var(--panel);box-shadow:var(--shadow);overflow:hidden}\n.article-detail-header-v098h{max-width:1180px;padding:clamp(34px,6vw,88px) clamp(26px,6vw,96px) 40px}\n.article-detail-header-v098h h1{max-width:1100px;margin:12px 0 22px;font-size:clamp(44px,6.8vw,112px);line-height:.94;letter-spacing:-.065em}\n.article-detail-lead-v098h{max-width:900px;margin:0;color:var(--muted);font-size:clamp(20px,2vw,30px);line-height:1.45}\n.article-detail-meta-v098h{display:flex;gap:16px;flex-wrap:wrap;margin-top:24px;color:var(--muted);font-weight:800}\n.article-detail-media-v098h{height:min(62vw,760px);margin:0;border-radius:0;border-inline:0}\n.article-detail-layout-v098h{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:clamp(30px,5vw,84px);padding:clamp(34px,6vw,88px) clamp(26px,6vw,96px) clamp(46px,7vw,104px)}\n.article-detail-body-v098h{max-width:920px;font-family:Georgia,\"Times New Roman\",serif;font-size:clamp(19px,1.35vw,23px);line-height:1.78}\n.article-detail-intro-v098h{margin-top:0;color:var(--ink);font-size:1.2em;line-height:1.55}\n.article-detail-body-v098h section{scroll-margin-top:calc(var(--header-height) + 28px)}\n.article-detail-body-v098h h2{margin:2.1em 0 .65em;font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-size:clamp(30px,3vw,52px);line-height:1.05;letter-spacing:-.045em}\n.article-detail-body-v098h p{margin:0 0 1.25em}\n.article-detail-aside-v098h{position:sticky;top:calc(var(--header-height) + 24px);align-self:start;padding:24px;border:1px solid var(--line);border-radius:var(--radius-lg);background:var(--panel-soft)}\n.article-detail-aside-v098h strong{display:block;margin-bottom:14px}\n.article-detail-aside-v098h ol{display:grid;gap:11px;margin:0 0 22px;padding-left:20px;color:var(--muted)}\n.article-detail-aside-v098h a{text-decoration:none}\n.article-detail-aside-v098h li a:hover{color:var(--accent)}\n@media(max-width:900px){.article-detail-layout-v098h{grid-template-columns:1fr}.article-detail-aside-v098h{position:static;order:-1}.article-detail-media-v098h{height:58vw}}\n@media(max-width:620px){.article-detail-shell-v098h{padding-block:22px 60px}.article-detail-header-v098h h1{font-size:clamp(40px,13vw,64px)}.article-detail-layout-v098h{padding-inline:22px}.article-detail-media-v098h{height:70vw}}\n";
+    record.__articleRoutesV098H = true;
+  }
+
+  installBlogArticleRoutesV098H();
+
+  function officialFourRecordV098A(templateId) {
+    var id = normalizeOfficialTemplateIdV068C(templateId);
+    return OFFICIAL_FOUR_CANON_V098A[id] || null;
+  }
+
+  function officialFourStarterPagesV098A(templateId) {
+    var record = officialFourRecordV098A(templateId);
+    if (!record) return null;
+    var lang = currentLang() === 'ru' ? 'ru' : 'en';
+    var pages = record.pages[lang] || record.pages.en || {};
+    return Object.keys(pages).map(function (slug) {
+      var item = pages[slug];
+      return {
+        title: item.title,
+        slug: slug,
+        summary: item.summary,
+        bodyHtml: item.main,
+        inMenu: item.inMenu !== false
+      };
+    });
+  }
+
+  function officialFourThemeBackgroundV098A(record, mode) {
+    return mode === 'dark' ? (record.dark || '#07111f') : (record.light || '#ffffff');
+  }
+
+  /* IRGEZTNE_OFFICIAL_FOUR_BRAND_SLOT_V098F
+     A configured site logo owns one header slot. It replaces a template's
+     demo mark instead of being appended beside it. Business and Blog have no
+     native mark, so their text is wrapped and the logo is placed to its left. */
+  function applyOfficialFourBrandLogoV098F(html, templateId, site, logoLetters) {
+    if (!logoLetters) return html;
+    var id = normalizeOfficialTemplateIdV068C(templateId);
+    var logoSize = logoHeaderSizePx(site.logoHeaderSize);
+    var logoFontSize = logoHeaderFontSizePx(logoLetters, site.logoHeaderSize);
+    var logoMarkup = '<span class="irgeztne-site-logo-v098f" aria-hidden="true" style="' +
+      'background:' + escapeHtml(site.logoBackgroundColor || site.accentColor || '#2f7be6') + ';' +
+      'color:' + escapeHtml(site.logoTextColor || '#ffffff') + ';' +
+      'border-radius:' + escapeHtml(logoCssRadius(site.logoShape || 'rounded')) + ';' +
+      'width:' + logoSize + 'px;height:' + logoSize + 'px;' +
+      'font-family:' + escapeHtml(logoFontFamily(site)) + ';' +
+      'font-weight:' + escapeHtml(site.logoWeight || '900') + ';' +
+      'font-size:' + logoFontSize + 'px">' + escapeHtml(logoLetters) + '</span>';
+    var replaced = false;
+    html = html.replace(
+      /(<a\b[^>]*class=["'][^"']*\bbrand\b[^"']*["'][^>]*>)([\s\S]*?)(<\/a>)/i,
+      function (match, opening, inner, closing) {
+        replaced = true;
+        opening = opening.replace(/class=(["'])([^"']*)\1/i, function (classMatch, quote, classes) {
+          return 'class=' + quote + classes + ' irgeztne-brand-logo-v098f irgeztne-brand-logo-v098f--' + id + quote;
+        });
+        var nativeMark = /<([a-z0-9]+)\b[^>]*class=["'][^"']*\bbrand-mark\b[^"']*["'][^>]*>[\s\S]*?<\/\1>/i;
+        if (nativeMark.test(inner)) {
+          inner = inner.replace(nativeMark, logoMarkup);
+        } else {
+          inner = logoMarkup + '<span class="irgeztne-site-brand-copy-v098f">' + inner + '</span>';
+        }
+        return opening + inner + closing;
+      }
+    );
+    if (!replaced) return html;
+    var brandStyle = '<style data-irgeztne-brand-slot-v098f="' + escapeHtml(id) + '">' +
+      '.irgeztne-brand-logo-v098f{display:flex!important;flex-direction:row!important;align-items:center!important;gap:12px!important}' +
+      '.irgeztne-site-logo-v098f{display:inline-grid!important;place-items:center!important;flex:0 0 auto!important;min-width:0!important;max-width:none!important;padding:0!important;margin:0!important;line-height:1!important;letter-spacing:.02em!important;font-style:normal!important;text-transform:none!important}' +
+      '.irgeztne-brand-logo-v098f>.irgeztne-site-brand-copy-v098f{display:flex!important;flex-direction:column!important;align-items:flex-start!important;min-width:0!important;margin:0!important;color:inherit!important;font:inherit!important;letter-spacing:normal!important}' +
+      '.irgeztne-brand-logo-v098f--blog-news>.irgeztne-site-brand-copy-v098f{display:grid!important;grid-template-columns:auto auto!important;gap:7px!important;align-items:baseline!important}' +
+      '.irgeztne-brand-logo-v098f--blog-news>.irgeztne-site-brand-copy-v098f>small{grid-column:1/-1!important}' +
+      '</style>';
+    return html.replace(/<\/head>/i, brandStyle + '</head>');
+  }
+
+  /* IRGEZTNE_OFFICIAL_FOUR_THEME_RUNTIME_V098D
+     Run embedded template JS after the generated body exists. */
+  function renderOfficialFourV098A(state, page, options) {
+    options = options || {};
+    var site = state && state.site || {};
+    var id = normalizeOfficialTemplateIdV068C(
+      site.activeTemplate || site.templateId || site.template || ''
+    );
+    var record = officialFourRecordV098A(id);
+    if (!record) return '';
+    var lang = siteThemeLangCode(site);
+    var pageMap = record.pages[lang] || record.pages.en || {};
+    var slug = String(page && page.slug || 'index');
+    var exactEntry = pageMap[slug] || null;
+    var entry = exactEntry || pageMap.index;
+    if (!entry) return '';
+
+    var html = String(entry.html || '');
+    var editableMain = String(page && page.bodyHtml || entry.main || '');
+    var hasAuthoredH1 = /<h1\b/i.test(editableMain);
+    var fallbackHeading = !exactEntry && !hasAuthoredH1
+      ? '<h1>' + escapeHtml(pageLabel(page)) + '</h1>'
+      : '';
+    if (!/<main\b/i.test(editableMain)) {
+      var opening = String(entry.main || '').match(/<main\b[^>]*>/i);
+      editableMain = (opening ? opening[0] : '<main>') + fallbackHeading + editableMain + '</main>';
+    } else if (fallbackHeading) {
+      editableMain = editableMain.replace(/<main\b[^>]*>/i, function (openingTag) {
+        return openingTag + fallbackHeading;
+      });
+    }
+    html = html.replace(/<main\b[^>]*>[\s\S]*?<\/main>/i, editableMain);
+
+    html = html.replace(
+      /<link\b[^>]*rel=["']stylesheet["'][^>]*>/i,
+      '<style data-irgeztne-official-four-v098a="' + escapeHtml(id) + '">' +
+        /* IRGEZTNE_MEDIA_RENDER_PARITY_V098G
+           Editor media size/alignment classes must survive Preview, browser and ZIP. */
+        (String(record.css || '') + '\n' + siteGeneratedEditorContentCssV076C())
+          .replace(/<\/style/gi, '<\\/style') +
+      '</style>'
+    );
+    var officialFourRuntimeV098D =
+      '<script data-irgeztne-official-four-runtime-v098d="' + escapeHtml(id) + '">' +
+        String(record.js || '').replace(/<\/script/gi, '<\\/script') +
+      '</script>';
+    html = html.replace(
+      /<script\b[^>]*src=["'][^"']*site\.js["'][^>]*><\/script>/i,
+      ''
+    );
+    html = html.replace(/<\/body>/i, officialFourRuntimeV098D + '</body>');
+    html = html.replace(/\.\.\/assets\//g, record.assetBase);
+    html = html.replace(/<html\b([^>]*)lang=["'][^"']+["']/i, '<html$1lang="' + escapeHtml(lang) + '"');
+
+    var boot = '<script>' +
+      generatedThemeBootV097A('#ffffff', '#07111f')
+        .replace(/<\/script/gi, '<\\/script') +
+      '</script>';
+    var bootInserted = false;
+    html = html.replace(/<meta name="viewport"[^>]*>/i, function (viewportTag) {
+      bootInserted = true;
+      return viewportTag + boot;
+    });
+    if (!bootInserted) html = html.replace(/<head>/i, '<head>' + boot);
+    html = html.replace(/<\/head>/i, faviconHeadTags() + '</head>');
+    html = html.replace(/<body([^>]*)>/i, '<body$1><script>' +
+      generatedThemeBodySyncV096C().replace(/<\/script/gi, '<\\/script') +
+      '</script>');
+
+    var siteName = escapeHtml(String(site.name || '').trim());
+    if (siteName) {
+      var brandTokens = {
+        'business-product': ['Meridian'],
+        'blog-news': ['Northline Journal', 'Northline'],
+        'studio-portfolio': ['Aster Works'],
+        'agency-studio': ['Vector Atelier']
+      };
+      (brandTokens[id] || []).forEach(function (token) {
+        html = html.split(token).join(siteName);
+      });
+    }
+
+    var logoLetters = normalizeLooseLogoLettersV069E(site.logoLetters || '');
+    html = applyOfficialFourBrandLogoV098F(html, id, site, logoLetters);
+    html = html.replace(
+      /<\/head>/i,
+      '<style>.irgeztne-extra-footer-links-v098a{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}.irgeztne-extra-footer-links-v098a a{color:inherit;font-weight:800;text-decoration:none}</style></head>'
+    );
+
+    var packageSlugs = Object.keys(pageMap);
+    var publicPages = publicPagesV091A(state);
+    var extraMenuLinks = publicPages.filter(function (candidate) {
+      return candidate && candidate.inMenu === true && packageSlugs.indexOf(String(candidate.slug || '')) === -1;
+    }).map(function (candidate) {
+      var href = options.linkMode === 'hash'
+        ? '#' + escapeHtml(candidate.slug || 'page')
+        : escapeHtml(pageFileName(candidate));
+      return '<a href="' + href + '">' + escapeHtml(pageLabel(candidate)) + '</a>';
+    }).join('');
+    if (extraMenuLinks) {
+      html = html.replace(
+        /(<nav\b[^>]*class=["'][^"']*(?:site-nav|main-nav)[^"']*["'][^>]*>[\s\S]*?)(<\/nav>)/i,
+        '$1' + extraMenuLinks + '$2'
+      );
+    }
+
+    var extraFooterLinks = publicPages.filter(function (candidate) {
+      return candidate && candidate.inFooter === true && packageSlugs.indexOf(String(candidate.slug || '')) === -1;
+    }).map(function (candidate) {
+      var href = options.linkMode === 'hash'
+        ? '#' + escapeHtml(candidate.slug || 'page')
+        : escapeHtml(pageFileName(candidate));
+      return '<a href="' + href + '">' + escapeHtml(pageLabel(candidate)) + '</a>';
+    }).join('');
+    if (extraFooterLinks) {
+      html = html.replace(
+        /<\/footer>/i,
+        '<div class="irgeztne-extra-footer-links-v098a">' + extraFooterLinks + '</div></footer>'
+      );
+    }
+
+    // IRGEZTNE_WIDGET_HOST_SURFACE_OFFICIAL_FOUR_R1W9H
+    var widgetPageTopR1W9H = renderWorkshopWidgetSlotR1W9H(state, page, 'page-top');
+    var widgetAfterHeaderR1W9H = renderWorkshopWidgetSlotR1W9H(state, page, 'after-header');
+    var widgetMainStartR1W9H = renderWorkshopWidgetSlotR1W9H(state, page, 'main-start');
+    var widgetMainEndR1W9H = renderWorkshopWidgetSlotR1W9H(state, page, 'main-end');
+    var widgetBeforeFooterR1W9H = renderWorkshopWidgetSlotR1W9H(state, page, 'before-footer');
+    var widgetPageBottomR1W9H = renderWorkshopWidgetSlotR1W9H(state, page, 'page-bottom');
+    var widgetFloatingR1W9H = renderWorkshopWidgetSlotR1W9H(state, page, 'floating');
+    html = html.replace(/<\/head>/i, '<style data-irgeztne-widget-host-r1w9h="1">' + workshopWidgetHostCssR1W9H() + '</style></head>');
+    html = html.replace(/(<body\b[^>]*>)/i, '$1' + widgetPageTopR1W9H);
+    html = html.replace(/<\/header>/i, '</header>' + widgetAfterHeaderR1W9H);
+    html = html.replace(/(<main\b[^>]*>)/i, '$1' + widgetMainStartR1W9H);
+    html = html.replace(/<\/main>/i, widgetMainEndR1W9H + '</main>' + widgetPageBottomR1W9H);
+    html = html.replace(/(<footer\b[^>]*>)/i, widgetBeforeFooterR1W9H + '$1');
+    html = html.replace(/<\/body>/i, widgetFloatingR1W9H + '<script data-irgeztne-widget-host-r1w9h="1">' + workshopWidgetHostBridgeScriptR1W9H().replace(/<\/script/gi, '<\\/script') + '</script></body>');
+    return html;
+  }
+
+  function officialFourExtraEntriesV098A(state) {
+    var site = state && state.site || {};
+    var id = normalizeOfficialTemplateIdV068C(
+      site.activeTemplate || site.templateId || site.template || ''
+    );
+    var record = officialFourRecordV098A(id);
+    if (!record || !record.rss) return {};
+    var lang = siteThemeLangCode(site);
+    return { 'rss.xml': record.rss[lang] || record.rss.en || '' };
   }
 
   function persistSelectedOfficialTemplateV068C(templateId) {
@@ -411,8 +1083,64 @@
     return page;
   }
 
+  function portfolioHomeStarterV094A() {
+    return '' +
+      '<div class="ir-portfolio-home-v094a">' +
+        '<section class="ir-portfolio-hero-v094a">' +
+          '<div class="ir-portfolio-hero-copy-v094a">' +
+            '<span class="ir-wide-eyebrow-v094a">' + escapeHtml(t('Portfolio / Personal', 'Портфолио / личный сайт')) + '</span>' +
+            '<h1>' + escapeHtml(t('A visual portfolio for work, cases and creative projects.', 'Визуальное портфолио для работ, кейсов и творческих проектов.')) + '</h1>' +
+            '<p>' + escapeHtml(t('A calm, curated website for a creator, independent professional or small studio.', 'Спокойный, собранный сайт для автора, независимого специалиста или небольшой студии.')) + '</p>' +
+            '<div class="ir-wide-actions-v094a"><a href="#selected-work">' + escapeHtml(t('View works', 'Смотреть работы')) + '</a><a class="is-secondary" href="contact.html">' + escapeHtml(t('Contact', 'Контакты')) + '</a></div>' +
+          '</div>' +
+          '<aside class="ir-portfolio-hero-visual-v094a" data-template-slot="hero.visual" data-slot-kind="image">' +
+            '<span>' + escapeHtml(t('Selected project preview', 'Превью избранного проекта')) + '</span>' +
+            '<div><strong>01</strong><small>Aster Works</small></div>' +
+          '</aside>' +
+        '</section>' +
+        '<section class="ir-wide-strip-v094a"><strong>Design</strong><strong>Writing</strong><strong>Photography</strong><strong>Products</strong><span>' + escapeHtml(t('Different projects need different visual weight.', 'Разным проектам нужен разный визуальный вес.')) + '</span></section>' +
+        '<section class="ir-wide-heading-v094a" id="selected-work"><div><span class="ir-wide-eyebrow-v094a">' + escapeHtml(t('Selected work', 'Избранные работы')) + '</span><h2>' + escapeHtml(t('Show the strongest work first.', 'Сначала покажите самую сильную работу.')) + '</h2></div><p>' + escapeHtml(t('Large cases, smaller projects, notes and process blocks create hierarchy instead of an equal card grid.', 'Большие кейсы, малые проекты, заметки и процесс создают иерархию вместо одинаковой сетки карточек.')) + '</p></section>' +
+        '<section class="ir-portfolio-work-grid-v094a">' +
+          '<article class="is-featured" data-template-slot="works.featured.image" data-slot-kind="image"><div><span class="ir-wide-eyebrow-v094a">' + escapeHtml(t('Featured case', 'Главный кейс')) + '</span><h3>' + escapeHtml(t('A full project story with room for context.', 'Полная история проекта с местом для контекста.')) + '</h3><p>' + escapeHtml(t('Use the large visual for the work that best explains your direction.', 'Используйте большой визуал для работы, которая лучше всего объясняет ваше направление.')) + '</p></div></article>' +
+          '<article class="is-small is-coral" data-template-slot="works.second.image" data-slot-kind="image"><div><span class="ir-wide-eyebrow-v094a">Editorial</span><h3>' + escapeHtml(t('Identity and content direction.', 'Айдентика и направление контента.')) + '</h3></div></article>' +
+          '<article class="is-small is-teal" data-template-slot="works.third.image" data-slot-kind="image"><div><span class="ir-wide-eyebrow-v094a">Product</span><h3>' + escapeHtml(t('Interface, launch and presentation.', 'Интерфейс, запуск и презентация.')) + '</h3></div></article>' +
+          '<article class="is-note"><span class="ir-wide-eyebrow-v094a">' + escapeHtml(t('Portfolio logic', 'Логика портфолио')) + '</span><h3>' + escapeHtml(t('Curated, not automatically filled.', 'Отобрано, а не заполнено автоматически.')) + '</h3><p>' + escapeHtml(t('Replace the prepared visual areas with your own works, screenshots or project images.', 'Замените подготовленные визуальные области собственными работами, скриншотами или изображениями проектов.')) + '</p></article>' +
+        '</section>' +
+        '<section class="ir-wide-split-v094a"><div><span class="ir-wide-eyebrow-v094a">' + escapeHtml(t('About', 'О себе')) + '</span><h2>' + escapeHtml(t('Keep the creator present without turning the whole page into a profile.', 'Покажите автора, не превращая всю страницу в анкету.')) + '</h2></div><p>' + escapeHtml(t('Add a concise biography, focus, working method and the kinds of projects you want to receive.', 'Добавьте короткую биографию, фокус, метод работы и типы проектов, которые хотите получать.')) + '</p></section>' +
+        '<section class="ir-wide-process-v094a"><div><span>01</span><h3>' + escapeHtml(t('Brief', 'Задача')) + '</h3><p>' + escapeHtml(t('Goal, audience and direction.', 'Цель, аудитория и направление.')) + '</p></div><div><span>02</span><h3>' + escapeHtml(t('Create', 'Создание')) + '</h3><p>' + escapeHtml(t('Drafts, visuals and milestones.', 'Черновики, визуалы и этапы.')) + '</p></div><div><span>03</span><h3>' + escapeHtml(t('Publish', 'Публикация')) + '</h3><p>' + escapeHtml(t('Final work with context and contact.', 'Итоговая работа с контекстом и контактом.')) + '</p></div></section>' +
+        '<section class="ir-wide-contact-v094a"><div><span class="ir-wide-eyebrow-v094a">' + escapeHtml(t('Contact', 'Контакты')) + '</span><h2>' + escapeHtml(t('Invite the right conversation.', 'Пригласите к нужному разговору.')) + '</h2><p>' + escapeHtml(t('Add email, request form or collaboration route.', 'Добавьте email, форму заявки или путь к сотрудничеству.')) + '</p></div><a href="mailto:hello@example.com">' + escapeHtml(t('Write a message', 'Написать сообщение')) + '</a></section>' +
+      '</div>';
+  }
+
+  function agencyHomeStarterV094A() {
+    return '' +
+      '<div class="ir-agency-home-v094a">' +
+        '<section class="ir-agency-hero-v094a">' +
+          '<div class="ir-agency-hero-copy-v094a">' +
+            '<span class="ir-wide-eyebrow-v094a">' + escapeHtml(t('Agency / Studio', 'Агентство / студия')) + '</span>' +
+            '<h1>' + escapeHtml(t('A bold studio page for strategy, design and digital launches.', 'Выразительный сайт студии для стратегии, дизайна и цифровых запусков.')) + '</h1>' +
+            '<p>' + escapeHtml(t('Present cases, services, process and a clear project request in one wide system.', 'Покажите кейсы, услуги, процесс и понятную заявку на проект в одной широкой системе.')) + '</p>' +
+            '<div class="ir-wide-actions-v094a"><a href="#cases">' + escapeHtml(t('View cases', 'Смотреть кейсы')) + '</a><a class="is-secondary" href="#services">' + escapeHtml(t('Services', 'Услуги')) + '</a></div>' +
+            '<div class="ir-agency-metrics-v094a"><div><strong>18</strong><span>' + escapeHtml(t('launches prepared', 'запусков подготовлено')) + '</span></div><div><strong>4.8</strong><span>' + escapeHtml(t('project score', 'оценка проектов')) + '</span></div><div><strong>EN/RU</strong><span>' + escapeHtml(t('localized', 'локализовано')) + '</span></div></div>' +
+          '</div>' +
+          '<aside class="ir-agency-hero-visual-v094a" data-template-slot="hero.visual" data-slot-kind="image"><div><span>' + escapeHtml(t('Studio focus', 'Фокус студии')) + '</span><strong>' + escapeHtml(t('Strategy → Design → Launch', 'Стратегия → Дизайн → Запуск')) + '</strong></div></aside>' +
+        '</section>' +
+        '<section class="ir-wide-strip-v094a"><strong>Strategy</strong><strong>Identity</strong><strong>Web</strong><strong>Launch</strong><span>' + escapeHtml(t('Strong decisions, clear presentation.', 'Сильные решения, ясная презентация.')) + '</span></section>' +
+        '<section class="ir-wide-heading-v094a" id="cases"><div><span class="ir-wide-eyebrow-v094a">' + escapeHtml(t('Selected cases', 'Избранные кейсы')) + '</span><h2>' + escapeHtml(t('Show the work as a story, not a pile of thumbnails.', 'Покажите работу как историю, а не как стопку миниатюр.')) + '</h2></div><p>' + escapeHtml(t('Use one leading case and supporting projects to explain scope, choices and results.', 'Используйте один ведущий кейс и дополнительные проекты, чтобы объяснить объём, решения и результаты.')) + '</p></section>' +
+        '<section class="ir-agency-case-grid-v094a">' +
+          '<article class="is-featured" data-template-slot="cases.featured.image" data-slot-kind="image"><div><span class="ir-wide-eyebrow-v094a">' + escapeHtml(t('Featured launch', 'Главный запуск')) + '</span><h3>' + escapeHtml(t('A complete launch system for a growing product.', 'Полная система запуска для растущего продукта.')) + '</h3><p>' + escapeHtml(t('Goal, process, visual direction and result.', 'Цель, процесс, визуальное направление и результат.')) + '</p></div></article>' +
+          '<div class="ir-agency-case-side-v094a"><article class="is-violet"><span class="ir-wide-eyebrow-v094a">' + escapeHtml(t('Brand system', 'Система бренда')) + '</span><h3>' + escapeHtml(t('A coherent identity across touchpoints.', 'Цельная айдентика во всех точках контакта.')) + '</h3></article><article class="is-orange"><span class="ir-wide-eyebrow-v094a">' + escapeHtml(t('Web studio', 'Веб-студия')) + '</span><h3>' + escapeHtml(t('A launch-ready digital presence.', 'Цифровое присутствие, готовое к запуску.')) + '</h3></article></div>' +
+        '</section>' +
+        '<section class="ir-agency-services-v094a" id="services"><div class="ir-wide-heading-v094a"><div><span class="ir-wide-eyebrow-v094a">' + escapeHtml(t('Services', 'Услуги')) + '</span><h2>' + escapeHtml(t('Clear offers make the studio easier to hire.', 'Понятные предложения упрощают выбор студии.')) + '</h2></div><p>' + escapeHtml(t('Keep the service structure concrete and connected to outcomes.', 'Сделайте структуру услуг конкретной и связанной с результатами.')) + '</p></div><div class="ir-agency-services-grid-v094a"><article><span>01</span><h3>' + escapeHtml(t('Strategy', 'Стратегия')) + '</h3><p>' + escapeHtml(t('Positioning, audience and product story.', 'Позиционирование, аудитория и история продукта.')) + '</p></article><article><span>02</span><h3>' + escapeHtml(t('Design', 'Дизайн')) + '</h3><p>' + escapeHtml(t('Identity, interface and visual language.', 'Айдентика, интерфейс и визуальный язык.')) + '</p></article><article><span>03</span><h3>Web</h3><p>' + escapeHtml(t('Landing pages, sites and documentation.', 'Лендинги, сайты и документация.')) + '</p></article><article><span>04</span><h3>' + escapeHtml(t('Launch', 'Запуск')) + '</h3><p>' + escapeHtml(t('Content, publishing and go-live support.', 'Контент, публикация и сопровождение запуска.')) + '</p></article></div></section>' +
+        '<section class="ir-wide-split-v094a is-inverse"><div><span class="ir-wide-eyebrow-v094a">' + escapeHtml(t('Studio principle', 'Принцип студии')) + '</span><h2>' + escapeHtml(t('Premium means stronger decisions, not more noise.', 'Премиальность — это более сильные решения, а не больше шума.')) + '</h2></div><p>' + escapeHtml(t('Use hierarchy, evidence and restraint to make the work feel intentional.', 'Используйте иерархию, доказательства и сдержанность, чтобы работа выглядела осмысленной.')) + '</p></section>' +
+        '<section class="ir-wide-contact-v094a"><div><span class="ir-wide-eyebrow-v094a">' + escapeHtml(t('Project request', 'Заявка на проект')) + '</span><h2>' + escapeHtml(t('Give visitors a clear next step.', 'Дайте посетителю понятный следующий шаг.')) + '</h2><p>' + escapeHtml(t('Add a brief, email, booking link or consultation request.', 'Добавьте бриф, email, ссылку записи или заявку на консультацию.')) + '</p></div><a href="mailto:hello@example.com">' + escapeHtml(t('Send request', 'Отправить заявку')) + '</a></section>' +
+      '</div>';
+  }
+
   function starterPagesForTemplateV068C(templateId) {
     var id = normalizeOfficialTemplateIdV068C(templateId);
+    var officialFourPagesV098A = officialFourStarterPagesV098A(id);
+    if (officialFourPagesV098A) return officialFourPagesV098A;
 
 
 
@@ -437,7 +1165,12 @@
 
           '<section class="hero" id="product">' +
             '<div class="hero-copy">' +
-              '<p class="kicker">Landing / Product</p>' +
+              landingI18nV086A(
+                'Landing / Product',
+                'Лендинг / продукт',
+                'p',
+                'kicker'
+              ) +
 
               landingI18nV086A(
                 'Turn first impression into action.',
@@ -528,7 +1261,12 @@
           '<section id="features">' +
             '<div class="section-head">' +
               '<div>' +
-                '<p class="kicker">Features</p>' +
+                landingI18nV086A(
+                  'Features',
+                  'Возможности',
+                  'p',
+                  'kicker'
+                ) +
 
                 landingI18nV086A(
                   'A landing page needs rhythm, proof and one clear action.',
@@ -550,7 +1288,7 @@
 
                 landingI18nV086A(
                   'Hero with purpose',
-                  'Hero с задачей',
+                  'Первый экран с задачей',
                   'h3'
                 ) +
 
@@ -601,7 +1339,12 @@
               ' data-slot="feature.productVisual"' +
               ' data-slot-kind="image">' +
 
-              '<p class="kicker">Product visual</p>' +
+              landingI18nV086A(
+                'Product visual',
+                'Визуал продукта',
+                'p',
+                'kicker'
+              ) +
 
               landingI18nV086A(
                 'Show the product before visitors have to imagine it.',
@@ -610,13 +1353,23 @@
               ) +
 
               '<div class="landing-interface-v086a">' +
-                '<div><strong>84%</strong><span>Tasks organised</span></div>' +
+                '<div><strong>84%</strong>' +
+                  landingI18nV086A(
+                    'Tasks organised',
+                    'Задачи организованы'
+                  ) +
+                '</div>' +
                 '<i></i><i></i><i></i>' +
               '</div>' +
             '</article>' +
 
             '<article class="section-card">' +
-              '<p class="kicker">Product story</p>' +
+              landingI18nV086A(
+                'Product story',
+                'История продукта',
+                'p',
+                'kicker'
+              ) +
 
               landingI18nV086A(
                 'Connect the problem, the interface and the result.',
@@ -635,7 +1388,12 @@
           '<section id="workflow">' +
             '<div class="section-head">' +
               '<div>' +
-                '<p class="kicker">Workflow</p>' +
+                landingI18nV086A(
+                  'Workflow',
+                  'Сценарий',
+                  'p',
+                  'kicker'
+                ) +
 
                 landingI18nV086A(
                   'Guide the visitor from interest to a useful result.',
@@ -704,7 +1462,12 @@
 
           '<section class="scenario landing-proof-v086a" id="proof">' +
             '<article class="section-card">' +
-              '<p class="kicker">Proof</p>' +
+              landingI18nV086A(
+                'Proof',
+                'Доказательства',
+                'p',
+                'kicker'
+              ) +
 
               landingI18nV086A(
                 'Use facts instead of empty promises.',
@@ -746,7 +1509,12 @@
           '<section id="faq">' +
             '<div class="section-head">' +
               '<div>' +
-                '<p class="kicker">FAQ</p>' +
+                landingI18nV086A(
+                  'FAQ',
+                  'Частые вопросы',
+                  'p',
+                  'kicker'
+                ) +
 
                 landingI18nV086A(
                   'Answer doubts before the visitor leaves.',
@@ -809,7 +1577,12 @@
 
           '<section class="final-cta" id="cta">' +
             '<div>' +
-              '<p class="kicker">CTA</p>' +
+              landingI18nV086A(
+                'Next step',
+                'Следующий шаг',
+                'p',
+                'kicker'
+              ) +
 
               landingI18nV086A(
                 'Give visitors a clear next step.',
@@ -839,7 +1612,7 @@
           slug: 'index',
           summary: t(
             'A wide product landing with hero, product visual, benefits, workflow, proof, FAQ and CTA.',
-            'Широкий продуктовый лендинг с hero, визуалом продукта, преимуществами, сценарием, доказательствами, FAQ и CTA.'
+            'Широкий продуктовый лендинг с первым экраном, визуалом продукта, преимуществами, сценарием, доказательствами, частыми вопросами и понятным целевым действием.'
           ),
           bodyHtml: landingHomeV086A
         }
@@ -868,7 +1641,7 @@
               '<p>' +
                 docsTextV085A(
                   'Clean navigation, readable articles, code examples, callouts, API cards and a real documentation rhythm.',
-                  'Чистая навигация, читаемые статьи, примеры кода, callout-блоки, API-карточки и настоящий ритм документации.'
+                  'Чистая навигация, читаемые статьи, примеры кода, выделенные блоки, API-карточки и настоящий ритм документации.'
                 ) +
               '</p>' +
               '<div class="docs-hero-actions-v085a">' +
@@ -1015,7 +1788,9 @@
           '</section>' +
 
           '<section id="faq" class="docs-article-v085a">' +
-            '<span class="docs-eyebrow-v085a">FAQ</span>' +
+            '<span class="docs-eyebrow-v085a">' +
+              docsTextV085A('FAQ', 'Частые вопросы') +
+            '</span>' +
             '<h2>' +
               docsTextV085A(
                 'Answer common questions before they become friction.',
@@ -1044,7 +1819,7 @@
               '</summary><p>' +
                 docsTextV085A(
                   'It is optional and useful mainly for changelogs or product updates.',
-                  'Он необязателен и полезен прежде всего для changelog или обновлений продукта.'
+                  'Он необязателен и полезен прежде всего для журнала изменений или обновлений продукта.'
                 ) +
               '</p></details>' +
 
@@ -1069,7 +1844,7 @@
           slug: 'index',
           summary: t(
             'A wide documentation home with quick start, API examples and FAQ.',
-            'Широкая главная документации с быстрым стартом, API-примерами и FAQ.'
+            'Широкая главная документации с быстрым стартом, API-примерами и частыми вопросами.'
           ),
           bodyHtml: docsHomeV085A
         },
@@ -1206,7 +1981,7 @@
           slug: 'reference',
           summary: t(
             'Settings, endpoints and exact technical details.',
-            'Настройки, endpoints и точные технические детали.'
+            'Настройки, методы API и точные технические детали.'
           ),
           bodyHtml:
             '<section id="settings" class="docs-article-v085a">' +
@@ -1280,12 +2055,13 @@
     // IRGEZTNE_BUSINESS_PRODUCT_STARTER_V069A
     if (id === 'business-product') return [
       { title: t('Home', 'Главная'), slug: 'index', summary: t('A business website for a product, service or company.', 'Бизнес-сайт для продукта, услуги или компании.'), bodyHtml:
+        '<div class="ir-business-home-v095a">' +
         '<section style="display:grid;grid-template-columns:minmax(0,1.05fr) minmax(280px,.95fr);gap:34px;align-items:center;margin:10px 0 34px">' +
           '<div><p style="margin:0 0 12px;color:var(--button-accent);font-weight:900;letter-spacing:.08em;text-transform:uppercase;font-size:13px">' + escapeHtml(t('Business / Product', 'Бизнес / продукт')) + '</p>' +
           '<h2 style="font-size:clamp(34px,5vw,58px);line-height:.98;letter-spacing:-.055em;margin:0 0 18px">' + escapeHtml(t('Present products and services clearly', 'Покажите продукты и услуги понятно')) + '</h2>' +
           '<p style="font-size:18px;line-height:1.7;color:var(--muted);margin:0 0 22px">' + escapeHtml(t('A calm business structure for a company, product, offer, service page or small studio.', 'Спокойная бизнес-структура для компании, продукта, предложения, услуги или небольшой студии.')) + '</p>' +
           '<div style="display:flex;flex-wrap:wrap;gap:10px"><a href="#services" style="display:inline-flex;padding:12px 16px;border-radius:999px;background:var(--button-accent);color:#fff;text-decoration:none;font-weight:900">' + escapeHtml(t('View services', 'Смотреть услуги')) + '</a><a href="contact.html" style="display:inline-flex;padding:12px 16px;border-radius:999px;border:1px solid var(--line);color:var(--ink);text-decoration:none;font-weight:900">' + escapeHtml(t('Contact', 'Контакты')) + '</a></div></div>' +
-          '<div style="border-radius:34px;min-height:320px;background:radial-gradient(circle at 72% 26%,rgba(255,255,255,.72) 0 34px,transparent 35px),linear-gradient(135deg,color-mix(in srgb,var(--button-accent) 80%,#0f172a),color-mix(in srgb,var(--button-accent) 35%,#f8fafc));box-shadow:0 28px 70px color-mix(in srgb,var(--button-accent) 28%,transparent);position:relative;overflow:hidden">' +
+          '<div class="ir-business-hero-visual-v095a" data-template-slot="hero.productVisual" data-slot="hero.productVisual" data-slot-kind="image" style="border-radius:34px;min-height:420px;background:radial-gradient(circle at 72% 26%,rgba(255,255,255,.72) 0 34px,transparent 35px),linear-gradient(135deg,color-mix(in srgb,var(--button-accent) 80%,#0f172a),color-mix(in srgb,var(--button-accent) 35%,#f8fafc));box-shadow:0 28px 70px color-mix(in srgb,var(--button-accent) 28%,transparent);position:relative;overflow:hidden">' +
             '<div style="position:absolute;left:28px;right:28px;bottom:28px;border-radius:24px;background:rgba(255,255,255,.82);backdrop-filter:blur(14px);padding:20px;color:#0f172a"><strong style="display:block;font-size:18px;margin-bottom:8px">' + escapeHtml(t('Business card', 'Карточка бизнеса')) + '</strong><span style="display:block;color:#475569;line-height:1.5">' + escapeHtml(t('Offer, trust, services and next step in one clean layout.', 'Предложение, доверие, услуги и следующий шаг в одном чистом макете.')) + '</span></div>' +
           '</div>' +
         '</section>' +
@@ -1294,7 +2070,16 @@
           '<article style="border:1px solid var(--line);border-radius:24px;padding:22px;background:var(--panel-bg)"><strong style="display:block;font-size:18px;margin-bottom:8px">' + escapeHtml(t('Process', 'Процесс')) + '</strong><p style="color:var(--muted);line-height:1.65;margin:0">' + escapeHtml(t('Explain how work happens from request to result.', 'Объясните, как проходит работа от заявки до результата.')) + '</p></article>' +
           '<article style="border:1px solid var(--line);border-radius:24px;padding:22px;background:var(--panel-bg)"><strong style="display:block;font-size:18px;margin-bottom:8px">' + escapeHtml(t('Trust', 'Доверие')) + '</strong><p style="color:var(--muted);line-height:1.65;margin:0">' + escapeHtml(t('Add proof, numbers, testimonials or guarantees.', 'Добавьте доказательства, цифры, отзывы или гарантии.')) + '</p></article>' +
         '</section>' +
-        '<section style="margin:34px 0;border:1px solid var(--line);border-radius:28px;padding:26px;background:var(--soft-bg)"><h2 style="margin-top:0">' + escapeHtml(t('Why choose this offer', 'Почему выбирают это предложение')) + '</h2><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px"><div><strong>01</strong><p style="color:var(--muted);line-height:1.6">' + escapeHtml(t('Clear value for the customer.', 'Понятная ценность для клиента.')) + '</p></div><div><strong>02</strong><p style="color:var(--muted);line-height:1.6">' + escapeHtml(t('Simple structure without visual noise.', 'Простая структура без визуального шума.')) + '</p></div><div><strong>03</strong><p style="color:var(--muted);line-height:1.6">' + escapeHtml(t('Direct path to contact or purchase.', 'Прямой путь к контакту или покупке.')) + '</p></div></div></section>' },
+        '<section class="ir-business-showcase-v095a">' +
+          '<div class="ir-business-feature-visual-v095a" data-template-slot="feature.image" data-slot="feature.image" data-slot-kind="image"></div>' +
+          '<article><span>' + escapeHtml(t('Working method', 'Метод работы')) + '</span><h2>' + escapeHtml(t('Show how the offer becomes a result.', 'Покажите, как предложение превращается в результат.')) + '</h2><p>' + escapeHtml(t('Use this section for the team, process, product workflow or service delivery.', 'Используйте этот раздел для команды, процесса, продуктового сценария или выполнения услуги.')) + '</p><div><strong>01</strong><strong>02</strong><strong>03</strong></div></article>' +
+        '</section>' +
+        '<section class="ir-business-case-v095a">' +
+          '<article><span>' + escapeHtml(t('Case study', 'Кейс')) + '</span><h2>' + escapeHtml(t('Connect the work with evidence.', 'Свяжите работу с доказательствами.')) + '</h2><p>' + escapeHtml(t('Add the starting point, the decision and a measurable result.', 'Добавьте исходную точку, принятое решение и измеримый результат.')) + '</p><div class="ir-business-case-metrics-v095a"><div><strong>+42%</strong><small>' + escapeHtml(t('clearer conversion path', 'понятнее путь конверсии')) + '</small></div><div><strong>3×</strong><small>' + escapeHtml(t('faster first response', 'быстрее первый ответ')) + '</small></div></div></article>' +
+          '<div class="ir-business-case-visual-v095a" data-template-slot="case.image" data-slot="case.image" data-slot-kind="image"></div>' +
+        '</section>' +
+        '<section style="margin:34px 0;border:1px solid var(--line);border-radius:28px;padding:26px;background:var(--soft-bg)"><h2 style="margin-top:0">' + escapeHtml(t('Why choose this offer', 'Почему выбирают это предложение')) + '</h2><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px"><div><strong>01</strong><p style="color:var(--muted);line-height:1.6">' + escapeHtml(t('Clear value for the customer.', 'Понятная ценность для клиента.')) + '</p></div><div><strong>02</strong><p style="color:var(--muted);line-height:1.6">' + escapeHtml(t('Simple structure without visual noise.', 'Простая структура без визуального шума.')) + '</p></div><div><strong>03</strong><p style="color:var(--muted);line-height:1.6">' + escapeHtml(t('Direct path to contact or purchase.', 'Прямой путь к контакту или покупке.')) + '</p></div></div></section>' +
+        '</div>' },
       { title: t('Services', 'Услуги'), slug: 'services', summary: t('Services and offers.', 'Услуги и предложения.'), bodyHtml:
         '<h2>' + escapeHtml(t('Services and offers', 'Услуги и предложения')) + '</h2>' +
         '<p>' + escapeHtml(t('Use this page to explain your main services, packages or product lines.', 'Используйте эту страницу, чтобы объяснить основные услуги, пакеты или продуктовые направления.')) + '</p>' +
@@ -1314,7 +2099,7 @@
     ];
 
     if (id === 'agency-studio') return [
-      { title: t('Home', 'Главная'), slug: 'index', summary: t('A studio website for cases, services and team.', 'Сайт студии для кейсов, услуг и команды.'), bodyHtml: '<div class="ir-starter-work"><div><h2>' + escapeHtml(t('Selected cases', 'Избранные кейсы')) + '</h2><p>' + escapeHtml(t('Show several strong works and explain the result.', 'Покажите несколько сильных работ и объясните результат.')) + '</p></div><div><h2>' + escapeHtml(t('Services', 'Услуги')) + '</h2><p>' + escapeHtml(t('Design, web, branding, content or development.', 'Дизайн, веб, брендинг, контент или разработка.')) + '</p></div></div>' },
+      { title: t('Home', 'Главная'), slug: 'index', summary: t('A studio website for cases, services and team.', 'Сайт студии для кейсов, услуг и команды.'), bodyHtml: agencyHomeStarterV094A() },
       { title: t('Cases', 'Кейсы'), slug: 'cases', summary: t('Projects and case studies.', 'Проекты и кейсы.'), bodyHtml: '<h2>' + escapeHtml(t('Cases', 'Кейсы')) + '</h2><p>' + escapeHtml(t('Add project cards, results and screenshots.', 'Добавьте карточки проектов, результаты и скриншоты.')) + '</p>' },
       { title: t('Services', 'Услуги'), slug: 'services', summary: t('Studio services.', 'Услуги студии.'), bodyHtml: '<h2>' + escapeHtml(t('Studio services', 'Услуги студии')) + '</h2><p>' + escapeHtml(t('Describe what the studio can do for clients.', 'Опишите, что студия может сделать для клиентов.')) + '</p>' },
       { title: t('Contact', 'Контакты'), slug: 'contact', summary: t('Project request and contacts.', 'Заявка на проект и контакты.'), bodyHtml: '<h2>' + escapeHtml(t('Start a project', 'Начать проект')) + '</h2><p>' + escapeHtml(t('Add a short project request and contact details.', 'Добавьте короткую заявку на проект и контактные данные.')) + '</p>' }
@@ -1327,12 +2112,12 @@
         '<section class="ir-news-home-v069h">' +
           '<div class="ir-news-masthead-v069h"><div><p>' + escapeHtml(t('Newsroom', 'Редакция')) + '</p><h2>' + escapeHtml(t('Latest stories, news and guides', 'Последние материалы, новости и гайды')) + '</h2></div><a href="articles.html">' + escapeHtml(t('All articles', 'Все статьи')) + '</a></div>' +
           '<div class="ir-news-grid-v069h">' +
-            '<article class="ir-news-card-v069h ir-news-card--lead-v069h"><div class="ir-news-thumb-v069h"></div><span>' + escapeHtml(t('Main story', 'Главная тема')) + '</span><h3>' + escapeHtml(t('Big headline for the main publication', 'Большой заголовок главной публикации')) + '</h3><p>' + escapeHtml(t('Use this card for the most important article, review, announcement or editorial material.', 'Используйте эту карточку для самой важной статьи, обзора, объявления или редакционного материала.')) + '</p><small>8 min read · Today</small></article>' +
-            '<article class="ir-news-card-v069h"><div class="ir-news-thumb-v069h ir-news-thumb-v069h--blue"></div><span>' + escapeHtml(t('News', 'Новости')) + '</span><h3>' + escapeHtml(t('Short update from the project', 'Короткое обновление проекта')) + '</h3><p>' + escapeHtml(t('A compact news card for quick updates and announcements.', 'Компактная новостная карточка для быстрых обновлений и объявлений.')) + '</p><small>News · 3 min</small></article>' +
-            '<article class="ir-news-card-v069h"><div class="ir-news-thumb-v069h ir-news-thumb-v069h--violet"></div><span>' + escapeHtml(t('Review', 'Обзор')) + '</span><h3>' + escapeHtml(t('Product or market analysis', 'Обзор продукта или рынка')) + '</h3><p>' + escapeHtml(t('Use this format for reviews, comparisons and explanations.', 'Используйте этот формат для обзоров, сравнений и объяснений.')) + '</p><small>Review · 6 min</small></article>' +
-            '<article class="ir-news-card-v069h"><span>' + escapeHtml(t('Guide', 'Гайд')) + '</span><h3>' + escapeHtml(t('Practical guide for readers', 'Практический гайд для читателей')) + '</h3><p>' + escapeHtml(t('Step-by-step material with useful examples and clear structure.', 'Пошаговый материал с полезными примерами и понятной структурой.')) + '</p><small>Guide · 5 min</small></article>' +
-            '<article class="ir-news-card-v069h"><span>' + escapeHtml(t('Update', 'Обновление')) + '</span><h3>' + escapeHtml(t('Release notes and changes', 'Заметки релиза и изменения')) + '</h3><p>' + escapeHtml(t('A place for changelog, release notes or progress reports.', 'Место для changelog, заметок релиза или отчётов о прогрессе.')) + '</p><small>Update · 2 min</small></article>' +
-            '<article class="ir-news-card-v069h"><span>' + escapeHtml(t('Opinion', 'Мнение')) + '</span><h3>' + escapeHtml(t('Editorial note or column', 'Редакционная заметка или колонка')) + '</h3><p>' + escapeHtml(t('Short opinion, observation or project note from the author.', 'Короткое мнение, наблюдение или заметка проекта от автора.')) + '</p><small>Opinion · 4 min</small></article>' +
+            '<article class="ir-news-card-v069h ir-news-card--lead-v069h"><div class="ir-news-thumb-v069h ir-news-thumb-v095a--main" data-template-slot="hero.image" data-slot="hero.image" data-slot-kind="image"></div><span>' + escapeHtml(t('Main story', 'Главная тема')) + '</span><h3>' + escapeHtml(t('Big headline for the main publication', 'Большой заголовок главной публикации')) + '</h3><p>' + escapeHtml(t('Use this card for the most important article, review, announcement or editorial material.', 'Используйте эту карточку для самой важной статьи, обзора, объявления или редакционного материала.')) + '</p><small>8 min read · Today</small></article>' +
+            '<article class="ir-news-card-v069h"><div class="ir-news-thumb-v069h ir-news-thumb-v069h--blue ir-news-thumb-v095a--tech" data-template-slot="featured.secondaryImage" data-slot="featured.secondaryImage" data-slot-kind="image"></div><span>' + escapeHtml(t('News', 'Новости')) + '</span><h3>' + escapeHtml(t('Short update from the project', 'Короткое обновление проекта')) + '</h3><p>' + escapeHtml(t('A compact news card for quick updates and announcements.', 'Компактная новостная карточка для быстрых обновлений и объявлений.')) + '</p><small>News · 3 min</small></article>' +
+            '<article class="ir-news-card-v069h"><div class="ir-news-thumb-v069h ir-news-thumb-v069h--violet ir-news-thumb-v095a--business" data-template-slot="post.image.1" data-slot="post.image.1" data-slot-kind="image"></div><span>' + escapeHtml(t('Review', 'Обзор')) + '</span><h3>' + escapeHtml(t('Product or market analysis', 'Обзор продукта или рынка')) + '</h3><p>' + escapeHtml(t('Use this format for reviews, comparisons and explanations.', 'Используйте этот формат для обзоров, сравнений и объяснений.')) + '</p><small>Review · 6 min</small></article>' +
+            '<article class="ir-news-card-v069h"><div class="ir-news-thumb-v069h ir-news-thumb-v095a--guide" data-template-slot="post.image.2" data-slot="post.image.2" data-slot-kind="image"></div><span>' + escapeHtml(t('Guide', 'Гайд')) + '</span><h3>' + escapeHtml(t('Practical guide for readers', 'Практический гайд для читателей')) + '</h3><p>' + escapeHtml(t('Step-by-step material with useful examples and clear structure.', 'Пошаговый материал с полезными примерами и понятной структурой.')) + '</p><small>Guide · 5 min</small></article>' +
+            '<article class="ir-news-card-v069h"><div class="ir-news-thumb-v069h ir-news-thumb-v095a--workspace" data-template-slot="post.image.3" data-slot="post.image.3" data-slot-kind="image"></div><span>' + escapeHtml(t('Update', 'Обновление')) + '</span><h3>' + escapeHtml(t('Release notes and changes', 'Заметки релиза и изменения')) + '</h3><p>' + escapeHtml(t('A place for changelog, release notes or progress reports.', 'Место для changelog, заметок релиза или отчётов о прогрессе.')) + '</p><small>Update · 2 min</small></article>' +
+            '<article class="ir-news-card-v069h"><div class="ir-news-thumb-v069h ir-news-thumb-v095a--city" data-template-slot="post.image.4" data-slot="post.image.4" data-slot-kind="image"></div><span>' + escapeHtml(t('Opinion', 'Мнение')) + '</span><h3>' + escapeHtml(t('Editorial note or column', 'Редакционная заметка или колонка')) + '</h3><p>' + escapeHtml(t('Short opinion, observation or project note from the author.', 'Короткое мнение, наблюдение или заметка проекта от автора.')) + '</p><small>Opinion · 4 min</small></article>' +
           '</div>' +
           '<section class="ir-news-strip-v069h"><strong>' + escapeHtml(t('Topics', 'Темы')) + '</strong><a href="topics.html">Technology</a><a href="topics.html">Business</a><a href="topics.html">Guides</a><a href="topics.html">Updates</a><a href="topics.html">Opinion</a></section>' +
         '</section>' },
@@ -1355,7 +2140,7 @@
     ];
 
     if (id === 'studio-portfolio') return [
-      { title: t('Home', 'Главная'), slug: 'index', summary: t('A portfolio website for works, projects and identity.', 'Сайт-портфолио для работ, проектов и образа.'), bodyHtml: '<div class="ir-starter-work"><div><h2>' + escapeHtml(t('Featured work', 'Избранная работа')) + '</h2><p>' + escapeHtml(t('Place the strongest project here.', 'Разместите здесь самый сильный проект.')) + '</p></div><div><h2>' + escapeHtml(t('Profile', 'Профиль')) + '</h2><p>' + escapeHtml(t('Short bio, focus and contact direction.', 'Коротко о себе, фокус и направление контакта.')) + '</p></div></div>' },
+      { title: t('Home', 'Главная'), slug: 'index', summary: t('A portfolio website for works, projects and identity.', 'Сайт-портфолио для работ, проектов и образа.'), bodyHtml: portfolioHomeStarterV094A() },
       { title: t('Works', 'Работы'), slug: 'works', summary: t('Selected works and projects.', 'Избранные работы и проекты.'), bodyHtml: '<h2>' + escapeHtml(t('Works', 'Работы')) + '</h2><p>' + escapeHtml(t('Add selected works, screenshots and descriptions.', 'Добавьте избранные работы, скриншоты и описания.')) + '</p>' },
       { title: t('About', 'О себе'), slug: 'about', summary: t('About the author or studio.', 'Об авторе или студии.'), bodyHtml: '<h2>' + escapeHtml(t('About', 'О себе')) + '</h2><p>' + escapeHtml(t('Tell who you are and what you create.', 'Расскажите, кто вы и что создаёте.')) + '</p>' },
       { title: t('Contact', 'Контакты'), slug: 'contact', summary: t('Contact and collaboration.', 'Контакты и сотрудничество.'), bodyHtml: '<h2>' + escapeHtml(t('Contact', 'Контакты')) + '</h2><p>' + escapeHtml(t('Add contact and collaboration details.', 'Добавьте контакты и условия сотрудничества.')) + '</p>' }
@@ -1368,7 +2153,7 @@
     ];
   }
 
-  function applyOfficialTemplateStarterV068C(state, templateId) {
+  function applyOfficialTemplateStarterV068C(state, templateId, options) {
     var id = normalizeOfficialTemplateIdV068C(templateId);
     var pages = starterPagesForTemplateV068C(id).map(createStarterPageV068C);
     var meta = officialTemplateMetaV068C(id);
@@ -1398,7 +2183,9 @@
     state.activePageId = pages[0] ? pages[0].id : state.activePageId;
     state.updatedAt = new Date().toISOString();
 
-    persistSelectedOfficialTemplateV068C(id);
+    if (!options || options.persistSelection !== false) {
+      persistSelectedOfficialTemplateV068C(id);
+    }
     return state;
   }
 
@@ -1440,7 +2227,15 @@
     state.site.author = profile.author;
     state.site.icon = profile.icon;
     state.site.siteColor = profile.color;
-    state.site.logoLetters = normalizeLogoLetters(state.site.logoLetters || initialsFromName(profile.name), profile.name);
+    /*
+       IRGEZTNE_SITE_NAME_LOGO_SPLIT_V092D
+       The local site name is identity text, not a logo source. Preserve only
+       an explicitly stored logo mark; an empty logo stays empty.
+    */
+    state.site.logoLetters = String(state.site.logoLetters || '')
+      .toUpperCase()
+      .replace(/[^0-9A-ZА-ЯЁ]/gi, '')
+      .slice(0, 3);
     if (!state.site.accentColor) state.site.accentColor = profile.color;
     return state;
   }
@@ -1470,19 +2265,21 @@
       state = applySiteProfileToState(state, profile);
       return Object.assign({}, profile, { state: state });
     });
-    if (!sites.length) {
+    if (!sites.length && !Array.isArray(manager.sites)) {
       var legacy = safeJsonParse(localStorage.getItem(STORAGE_KEY), null);
-      var state = normalizeState(legacy || initialState());
-      var profile = profileFromState(state, { id: state.site && state.site.localSiteId });
-      state = applySiteProfileToState(state, profile);
-      sites.push(Object.assign({}, profile, { state: state }));
+      if (legacy) {
+        var state = normalizeState(legacy);
+        var profile = profileFromState(state, { id: state.site && state.site.localSiteId });
+        state = applySiteProfileToState(state, profile);
+        sites.push(Object.assign({}, profile, { state: state }));
+      }
     }
-    var activeSiteId = manager.activeSiteId && sites.some(function (site) { return site.id === manager.activeSiteId; }) ? manager.activeSiteId : sites[0].id;
+    var activeSiteId = manager.activeSiteId && sites.some(function (site) { return site.id === manager.activeSiteId; }) ? manager.activeSiteId : (sites[0] ? sites[0].id : '');
     return {
       version: 1,
       activeSiteId: activeSiteId,
       sites: sites,
-      createdAt: manager.createdAt || sites[0].createdAt || new Date().toISOString(),
+      createdAt: manager.createdAt || (sites[0] && sites[0].createdAt) || new Date().toISOString(),
       updatedAt: manager.updatedAt || new Date().toISOString()
     };
   }
@@ -1585,7 +2382,10 @@
       author: '',
       icon: '☕',
       color: '#2f7be6',
-      template: 'project-landing'
+      template: 'project-landing',
+      templateSource: 'webstudio-official',
+      workshopPackageId: '',
+      workshopTemplateTitle: ''
     };
   }
 
@@ -1883,6 +2683,49 @@
     return emergencyStarterBodyHtmlV081C();
   }
 
+
+  function migrateBlogArticleRoutesV098H(state) {
+    if (!state || !state.site || !Array.isArray(state.pages)) return state;
+    var templateId = normalizeOfficialTemplateIdV068C(
+      state.site.activeTemplate || state.site.templateId || state.site.template || ''
+    );
+    if (templateId !== 'blog-news') return state;
+
+    var lang = siteThemeLangCode(state.site);
+    var record = officialFourRecordV098A('blog-news');
+    var pageMap = record && (record.pages[lang] || record.pages.en);
+    var definitions = BLOG_ARTICLES_V098H[lang] || BLOG_ARTICLES_V098H.en || [];
+    var archivePage = state.pages.find(function (page) { return page && page.slug === 'articles'; }) || null;
+
+    definitions.forEach(function (definition) {
+      var exists = state.pages.some(function (page) {
+        return page && String(page.slug || '') === definition.slug;
+      });
+      if (exists || !pageMap || !pageMap[definition.slug]) return;
+      var entry = pageMap[definition.slug];
+      var detailPage = createStarterPageV068C({
+        title: entry.title,
+        slug: definition.slug,
+        summary: entry.summary,
+        bodyHtml: entry.main,
+        inMenu: false
+      });
+      detailPage.parentId = archivePage ? archivePage.id : '';
+      detailPage.order = state.pages.length;
+      state.pages.push(detailPage);
+    });
+
+    state.pages.forEach(function (page) {
+      if (!page || (page.slug !== 'index' && page.slug !== 'articles')) return;
+      var repairedBody = rewriteBlogArticleLinksV098H(page.bodyHtml, lang);
+      if (repairedBody !== page.bodyHtml) {
+        page.bodyHtml = repairedBody;
+        page.updatedAt = new Date().toISOString();
+      }
+    });
+    return state;
+  }
+
   function normalizeState(state) {
     var base = initialState();
     if (!state || typeof state !== 'object') state = base;
@@ -1923,9 +2766,10 @@
       page.status = normalizePageStatusV091B(page.status, 'published');
       page.inFooter = page.inFooter === true;
       page.footerGroup = normalizeFooterGroup(page.footerGroup, page);
-      /* v7g1h-fix: ordinary pages are shown in the header by default.
-         Footer pages move out of the header; parent pages still create dropdowns. */
-      page.inMenu = page.inFooter ? false : true;
+      /* IRGEZTNE_PAGE_MENU_VISIBILITY_V096A
+         Preserve an explicit menu opt-out. Older pages without this field
+         still keep the established default and appear in navigation. */
+      page.inMenu = page.inFooter ? false : page.inMenu !== false;
       page.parentId = page.parentId || '';
       if (page.parentId === page.id || isChildOf({ pages: state.pages }, page.parentId, page.id)) page.parentId = '';
       page.order = Number.isFinite(Number(page.order)) ? Number(page.order) : index;
@@ -1935,6 +2779,8 @@
       return page;
     });
     migrateDocumentationHomeV092A(state);
+    migrateUntouchedOfficialStarterV095A(state);
+    migrateBlogArticleRoutesV098H(state);
     if (!state.activePageId || !state.pages.some(function (page) { return page.id === state.activePageId; })) {
       state.activePageId = state.pages[0].id;
     }
@@ -1994,13 +2840,76 @@
     damagedHome.slug = 'index';
     damagedHome.summary = t(
       'A wide documentation home with quick start, API examples and FAQ.',
-      'Широкая главная документации с быстрым стартом, API-примерами и FAQ.'
+      'Широкая главная документации с быстрым стартом, API-примерами и частыми вопросами.'
     );
     damagedHome.type = 'home';
     damagedHome.pagePreset = 'landing';
     damagedHome.bodyHtml = closeFirstDocumentationStarterFaqV092A(damagedHome.bodyHtml);
     return state;
   }
+
+  /*
+     IRGEZTNE_UNTOUCHED_OFFICIAL_STARTER_MIGRATION_V095A
+     Upgrade only the known compact starter bodies shipped by earlier
+     Workspace builds. User-authored pages and edited starter HTML are never
+     replaced.
+  */
+  function migrateUntouchedOfficialStarterV095A(state) {
+    if (!state || !state.site || !Array.isArray(state.pages)) return state;
+
+    var templateId = normalizeOfficialTemplateIdV068C(
+      state.site.activeTemplate ||
+      state.site.templateId ||
+      state.site.template ||
+      ''
+    );
+    var home = findHomePage(state) || state.pages.find(function (page) {
+      return page && page.slug === 'index';
+    });
+    if (!home) return state;
+
+    var body = String(home.bodyHtml || '');
+    var knownCompactBody = false;
+
+    if (templateId === 'business-product') {
+      knownCompactBody =
+        body.indexOf('ir-starter-grid') !== -1 &&
+        body.indexOf('ir-business-home-v095a') === -1;
+    } else if (templateId === 'blog-news') {
+      knownCompactBody =
+        body.indexOf('ir-starter-news') !== -1 &&
+        body.indexOf('ir-news-home-v069h') === -1;
+    } else if (templateId === 'studio-portfolio') {
+      knownCompactBody =
+        body.indexOf('ir-starter-work') !== -1 &&
+        body.indexOf('ir-portfolio-home-v094a') === -1;
+    } else if (templateId === 'agency-studio') {
+      knownCompactBody =
+        body.indexOf('ir-starter-work') !== -1 &&
+        body.indexOf('ir-agency-home-v094a') === -1;
+    }
+
+    if (!knownCompactBody) return state;
+
+    var previousLang = generatedSiteLangOverrideV094C;
+    generatedSiteLangOverrideV094C = siteThemeLangCode(state.site);
+    try {
+      var starterHome = starterPagesForTemplateV068C(templateId).find(function (page) {
+        return page && page.slug === 'index';
+      });
+      if (starterHome && String(starterHome.bodyHtml || '').trim()) {
+        home.bodyHtml = starterHome.bodyHtml;
+        home.summary = starterHome.summary || home.summary;
+        home.updatedAt = new Date().toISOString();
+        state.__irgeztneOfficialTemplateStarterV095A = templateId;
+      }
+    } finally {
+      generatedSiteLangOverrideV094C = previousLang;
+    }
+
+    return state;
+  }
+
   function readLegacyСтраницы() {
     var legacy = safeJsonParse(localStorage.getItem(LEGACY_PAGES_KEY), null);
     if (!legacy || !Array.isArray(legacy.pages) || !legacy.pages.length) return [];
@@ -2049,12 +2958,7 @@
     state.updatedAt = new Date().toISOString();
     var manager = readSiteManager();
     var active = activeSiteEntry(manager);
-    if (!active) {
-      var profileNew = profileFromState(state, {});
-      active = Object.assign({}, profileNew, { state: state });
-      manager.sites.push(active);
-      manager.activeSiteId = active.id;
-    }
+    if (!active) return; // A saved site is created only by an explicit Create site action.
     var profile = profileFromState(state, active);
     state = applySiteProfileToState(state, profile);
     var index = manager.sites.findIndex(function (site) { return site.id === active.id; });
@@ -2292,7 +3196,7 @@
   }
 
   function safeLogoFontSize(site) {
-    return logoFontSizeForLetters(site && (site.logoLetters || initialsFromName(site.name)) || 'PS');
+    return logoFontSizeForLetters(site && site.logoLetters || '');
   }
 
   function logoHeaderSizePx(value) {
@@ -2357,14 +3261,13 @@
     );
 
     /*
-       IRGEZTNE_FAVICON_LETTERS_ONLY_V084U
+       IRGEZTNE_IDENTITY_EXPLICIT_ONLY_V092E
        site.icon is a local Sites-manager marker only.
-       Empty favicon override follows the website logo.
+       Website name, local marker and logo are not favicon sources.
+       An unconfigured favicon remains an intentionally blank tile until the
+       user chooses its own letters in Design.
     */
-    if (!letters) letters = cleanLetters(site.logoLetters, 2);
-    if (!letters) letters = cleanLetters(initialsFromName(site.name || 'Project Studio'), 2);
-
-    return letters || 'PS';
+    return letters;
   }
 
   function faviconFontSizeForLetters(letters) {
@@ -2517,7 +3420,7 @@
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.font = String(site.logoWeight || '900') + ' ' + (safeLogoFontSize(site) * scale) + 'px ' + logoFontFamily(site);
-      ctx.fillText(normalizeLogoLetters(site.logoLetters || initialsFromName(site.name), site.name), 128 * scale, 148 * scale);
+      ctx.fillText(normalizeLooseLogoLettersV069E(site.logoLetters || ''), 128 * scale, 148 * scale);
       return dataUrlToBase64(canvas.toDataURL('image/png'));
     } catch (error) {
       log('Logo PNG generation failed', error);
@@ -2613,6 +3516,30 @@
     if (fav) fav.src = dataUrlSvg(svgFavicon(site || {}, 256));
   }
 
+  /* IRGEZTNE_IDENTITY_HEADER_LIVE_V098F
+     Design fields auto-save. Keep the Web Studio header mark in the same
+     state immediately, without requiring a tab switch or reopening Studio. */
+  function updateIdentityHeaderLogoV098F(site) {
+    if (!overlay) return;
+    site = site || {};
+    var pill = overlay.querySelector('.ir-site-studio-v5-header-site');
+    if (!pill) return;
+    var mark = normalizeLooseLogoLettersV069E(site.logoLetters || '').slice(0, 3);
+    var icon = pill.querySelector('.ir-site-studio-v5-header-site-icon');
+    if (!mark) {
+      if (icon && icon.parentNode) icon.parentNode.removeChild(icon);
+      return;
+    }
+    if (!icon) {
+      icon = document.createElement('span');
+      icon.className = 'ir-site-studio-v5-header-site-icon';
+      pill.insertBefore(icon, pill.firstChild);
+    }
+    icon.textContent = mark;
+    icon.style.setProperty('--site-color', site.logoBackgroundColor || site.accentColor || site.siteColor || '#2f7be6');
+    icon.style.color = site.logoTextColor || '#ffffff';
+  }
+
   async function downloadFaviconPack() {
     var state = readState();
     var pack = createFaviconPackage(state.site || {});
@@ -2669,14 +3596,26 @@
   }
 
 
-  function siteThemeLangCode() {
-    return t('en', 'ru');
+  function siteThemeLangCode(site) {
+    var configured = String(
+      generatedSiteSettingV067F(
+        site || {},
+        'general.language',
+        ''
+      ) || ''
+    ).toLowerCase();
+
+    if (configured === 'ru' || configured === 'en') {
+      return configured;
+    }
+
+    return currentLang() === 'ru' ? 'ru' : 'en';
   }
 
   function currentSitePublicBaseUrl(state) {
     try {
       var settings = normalizePublishSettings((state.site || {}).publishSettings || {});
-      var order = [settings.selectedProvider, 'netlify', 'vercel', 'cloudflare', 'github', 'gitlab', 'manual', 'ftp', 'sftp'].filter(Boolean);
+      var order = [settings.selectedProvider, 'netlify', 'cloudflare', 'ftp', 'ftps', 'sftp', 'manual', 'github', 'gitlab'].filter(Boolean);
       var seen = {};
       for (var i = 0; i < order.length; i += 1) {
         var id = order[i];
@@ -2761,8 +3700,8 @@
   function generatedSiteCssV5() {
     return [
       '*{box-sizing:border-box}',
-      'html{scroll-behavior:smooth}',
-      'body{margin:0;font-family:var(--font-body);color:var(--ink);background:var(--site-bg);transition:background .18s ease,color .18s ease}',
+      'html{scroll-behavior:smooth;scroll-padding-top:104px}',
+      'body{margin:0;font-family:var(--font-body);color:var(--ink);background:var(--site-bg)}',
       'body[data-theme="dark"]{--ink:#eef6ff;--muted:#a9bad2;--line:rgba(148,163,184,.28);--site-bg:#07111f;--panel-bg:rgba(15,31,53,.78);--panel-strong:rgba(18,38,64,.92);--soft-bg:rgba(255,255,255,.06);--shadow:0 32px 90px rgba(0,0,0,.34)}',
       'body[data-theme="light"]{--panel-bg:rgba(255,255,255,.74);--panel-strong:#fff;--soft-bg:rgba(255,255,255,.78);--shadow:0 32px 90px rgba(15,23,42,.12)}',
       '.page{width:min(1680px,calc(100vw - 48px));margin:0 auto;padding:26px 0 52px}',
@@ -2785,21 +3724,81 @@
       "/* IRGEZTNE_WEBSTUDIO_FOOTER_GROUPS_V059B2 */.site-footer.has-footer-links{grid-template-columns:minmax(260px,1fr) repeat(auto-fit,minmax(150px,190px))!important;align-items:start!important}.footer-column{min-width:140px!important}.footer-title{white-space:normal!important}.ir-site-studio-v5-mini-label{display:block;margin:10px 0 6px;color:var(--muted);font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.08em}",
       '@media(max-width:900px){.site-header{align-items:flex-start;flex-direction:column}.site-nav{justify-content:flex-start;margin-left:0}.site-footer.has-footer-links{display:flex}.site-footer.has-footer-links .footer-links{max-width:none}.footer-links,.footer-social-links{justify-content:flex-start}.hero{padding-top:38px}}',
       '@media(max-width:620px){.page{width:min(100% - 28px,1680px)}h1{font-size:42px}.brand{min-width:0}.site-nav{gap:8px}.nav-link{min-height:34px;padding:7px 11px}.theme-toggle{width:34px;min-width:34px;height:34px}}'
-    ].join('\n');
+    ].join('\n') + '\n' + siteGeneratedEditorContentCssV076C() + '\n' +
+      '/* R1W9H: Widget geometry is injected by workshopWidgetHostCssR1W9H(), not legacy bodyHtml CSS. */';
+  }
+
+  function generatedThemeBootV097A(lightBackground, darkBackground) {
+    /* IRGEZTNE_SITE_FIRST_FRAME_V097A
+       Resolve both the persisted theme and the document canvas color before
+       the first paint. The root background is critical because the full
+       product stylesheet may be loaded from a separate package file. */
+    var light = normalizeHexColor(lightBackground, '#ffffff');
+    var dark = normalizeHexColor(darkBackground, '#07111f');
+    return [
+      '(function(){',
+      'var key="irgeztne.site.theme";',
+      'var backgrounds={light:' + JSON.stringify(light) + ',dark:' + JSON.stringify(dark) + '};',
+      'var theme="";',
+      'try{var value=new URL(window.location.href).searchParams.get("theme");if(value==="dark"||value==="light")theme=value;}catch(error){}',
+      'if(!theme){try{var saved=localStorage.getItem(key);if(saved==="dark"||saved==="light")theme=saved;}catch(error){}}',
+      'if(!theme)theme="light";',
+      'document.documentElement.setAttribute("data-theme",theme);',
+      'document.documentElement.style.colorScheme=theme;',
+      'document.documentElement.style.backgroundColor=backgrounds[theme];',
+      'window.__IRGEZTNE_INITIAL_THEME__=theme;',
+      'window.__IRGEZTNE_THEME_BACKGROUNDS__=backgrounds;',
+      '})();'
+    ].join('');
+  }
+
+  function generatedThemeBodySyncV096C() {
+    return '(function(){var theme=document.documentElement.getAttribute("data-theme")==="dark"?"dark":"light";document.body.setAttribute("data-theme",theme);})();';
   }
 
   function generatedSiteJsV5() {
-    return '(function(){\n' +
-      '  var key="irgeztne.site.theme";\n' +
-      '  function isRu(){return (document.documentElement.lang||"").toLowerCase().indexOf("ru")===0;}\n' +
-      '  function label(theme){return theme==="dark"?(isRu()?"Светлый режим":"Light mode"):(isRu()?"Тёмный режим":"Dark mode");}\n' +
-      '  function icon(theme){return theme==="dark"?"☀":"☾";}\n' +
-      '  function apply(theme){document.body.setAttribute("data-theme",theme);document.querySelectorAll("[data-theme-toggle]").forEach(function(btn){var text=label(theme);btn.textContent=icon(theme);btn.setAttribute("aria-label",text);btn.setAttribute("title",text);});}\n' +
-      '  var saved="light";try{saved=localStorage.getItem(key)||"light";}catch(e){}\n' +
-      '  if(saved!=="dark") saved="light";\n' +
-      '  apply(saved);\n' +
-      '  document.addEventListener("click",function(event){var btn=event.target.closest&&event.target.closest("[data-theme-toggle]");if(!btn)return;var next=document.body.getAttribute("data-theme")==="dark"?"light":"dark";try{localStorage.setItem(key,next);}catch(e){}apply(next);});\n' +
-      '})();\n';
+    return [
+      '(function(){',
+      '  var key="irgeztne.site.theme";',
+      '  function isRu(){return (document.documentElement.lang||"").toLowerCase().indexOf("ru")===0;}',
+      '  function label(theme){return theme==="dark"?(isRu()?"Светлый режим":"Light mode"):(isRu()?"Тёмный режим":"Dark mode");}',
+      '  function icon(theme){return theme==="dark"?"☀":"☾";}',
+      '  function normalizeTheme(theme){return theme==="dark"?"dark":"light";}',
+      '  function saveTheme(theme){try{localStorage.setItem(key,theme);}catch(error){}}',
+      '  function decorateInternalLinks(theme){document.querySelectorAll("a[href]").forEach(function(link){var raw=link.getAttribute("href")||"";if(!raw||raw.charAt(0)==="#"||/^(mailto:|tel:|javascript:|data:)/i.test(raw))return;try{var url=new URL(raw,window.location.href);var sameOrigin=url.origin===window.location.origin;var sameFile=window.location.protocol==="file:"&&url.protocol==="file:";if(!sameOrigin&&!sameFile)return;if(!/\\.html?$/i.test(url.pathname))return;url.searchParams.set("theme",theme);link.setAttribute("href",url.href);}catch(error){}});}',
+      '  function apply(theme,persist){theme=normalizeTheme(theme);var backgrounds=window.__IRGEZTNE_THEME_BACKGROUNDS__||{light:"#ffffff",dark:"#07111f"};document.documentElement.setAttribute("data-theme",theme);document.documentElement.style.colorScheme=theme;document.documentElement.style.backgroundColor=backgrounds[theme];if(document.body)document.body.setAttribute("data-theme",theme);if(persist)saveTheme(theme);document.querySelectorAll("[data-theme-toggle]").forEach(function(btn){var text=label(theme);btn.textContent=icon(theme);btn.setAttribute("aria-label",text);btn.setAttribute("title",text);});decorateInternalLinks(theme);}',
+      '  function ready(callback){if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",callback,{once:true});else callback();}',
+      '  function initDocsSearchV096A(){',
+      '    var input=document.querySelector("[data-docs-search-v096a]");',
+      '    var results=document.querySelector("[data-docs-search-results-v096a]");',
+      '    var source=document.querySelector("[data-docs-search-index-v096a]");',
+      '    if(!input||!results||!source)return;',
+      '    var pages=[];try{pages=JSON.parse(source.textContent||"[]");}catch(error){pages=[];}',
+      '    var activeIndex=-1;',
+      '    function normalized(value){return String(value||"").toLocaleLowerCase().replace(/\\s+/g," ").trim();}',
+      '    function close(){results.hidden=true;results.replaceChildren();input.setAttribute("aria-expanded","false");input.removeAttribute("aria-activedescendant");activeIndex=-1;}',
+      '    function options(){return Array.from(results.querySelectorAll("a[role=option]"));}',
+      '    function activate(next){var list=options();if(!list.length)return;activeIndex=(next+list.length)%list.length;list.forEach(function(item,index){item.setAttribute("aria-selected",index===activeIndex?"true":"false");});var active=list[activeIndex];active.id="docs-search-option-v096a-"+activeIndex;input.setAttribute("aria-activedescendant",active.id);active.scrollIntoView({block:"nearest"});}',
+      '    function open(){results.hidden=false;input.setAttribute("aria-expanded","true");}',
+      '    function render(){',
+      '      var query=normalized(input.value);results.replaceChildren();activeIndex=-1;',
+      '      if(query.length<2){close();return;}',
+      '      var matches=pages.map(function(page){var title=normalized(page.title);var summary=normalized(page.summary);var text=normalized(page.text);var score=(title.indexOf(query)!==-1?8:0)+(summary.indexOf(query)!==-1?4:0)+(text.indexOf(query)!==-1?1:0);return {page:page,score:score};}).filter(function(item){return item.score>0;}).sort(function(a,b){return b.score-a.score||String(a.page.title||"").localeCompare(String(b.page.title||""));}).slice(0,8);',
+      '      if(!matches.length){var empty=document.createElement("div");empty.className="docs-search-empty-v096a";empty.textContent=input.getAttribute("data-empty-label")||"Nothing found";results.appendChild(empty);open();return;}',
+      '      matches.forEach(function(match,index){var page=match.page||{};var link=document.createElement("a");link.href=page.href||"#";link.setAttribute("role","option");link.setAttribute("aria-selected","false");link.id="docs-search-option-v096a-"+index;var title=document.createElement("strong");title.textContent=page.title||page.href||"";link.appendChild(title);if(page.summary){var summary=document.createElement("small");summary.textContent=page.summary;link.appendChild(summary);}results.appendChild(link);});',
+      '      open();',
+      '    }',
+      '    input.addEventListener("input",render);',
+      '    input.addEventListener("focus",function(){if(normalized(input.value).length>=2)render();});',
+      '    input.addEventListener("keydown",function(event){var list=options();if(event.key==="ArrowDown"&&list.length){event.preventDefault();activate(activeIndex+1);}else if(event.key==="ArrowUp"&&list.length){event.preventDefault();activate(activeIndex<0?list.length-1:activeIndex-1);}else if(event.key==="Enter"&&activeIndex>=0&&list[activeIndex]){event.preventDefault();list[activeIndex].click();}else if(event.key==="Escape"){close();input.blur();}});',
+      '    document.addEventListener("click",function(event){if(!event.target.closest||!event.target.closest(".docs-header-search-v096a"))close();});',
+      '  }',
+      '  var saved=normalizeTheme(window.__IRGEZTNE_INITIAL_THEME__||document.documentElement.getAttribute("data-theme"));',
+      '  ready(function(){apply(saved,false);initDocsSearchV096A();});',
+      '  document.addEventListener("click",function(event){var btn=event.target.closest&&event.target.closest("[data-theme-toggle]");if(!btn)return;var next=document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark";apply(next,true);});',
+      '})();',
+      ''
+    ].join('\n');
   }
 
 
@@ -2859,70 +3858,29 @@
   /* IRGEZTNE_TEMPLATE_ID_BRIDGE_V072C */
   function officialTemplateIdFromStateV072A(state) {
     var site = state && state.site || {};
-    var values = [];
+    var directId =
+      site.activeTemplate ||
+      site.templateId ||
+      site.template ||
+      site.officialTemplateId ||
+      (state && (
+        state.activeTemplate ||
+        state.templateId ||
+        state.template ||
+        state.officialTemplateId ||
+        state.__irgeztneOfficialTemplateStarterV071A
+      )) ||
+      '';
 
-    function add(value) {
-      if (!value) return;
-
-      if (typeof value === 'string' || typeof value === 'number') {
-        values.push(String(value));
-        return;
-      }
-
-      if (typeof value === 'object') {
-        [
-          'id',
-          'key',
-          'slug',
-          'value',
-          'name',
-          'title',
-          'label',
-          'type',
-          'template',
-          'templateId',
-          'activeTemplate',
-          'officialTemplateId'
-        ].forEach(function (key) {
-          if (value && value[key]) values.push(String(value[key]));
-        });
-      }
-    }
-
-    [
-      site.templateId,
-      site.template,
-      site.activeTemplate,
-      site.officialTemplateId,
-      site.templateVariant,
-      site.templateName,
-      site.type,
-      site.kind,
-      site.description,
-      site.tagline,
-      state && state.templateId,
-      state && state.template,
-      state && state.activeTemplate,
-      state && state.officialTemplateId,
-      state && state.__irgeztneOfficialTemplateStarterV071A
-    ].forEach(add);
-
-    try {
-      add(localStorage.getItem('irgeztne:selected-template'));
-      add(localStorage.getItem('irgeztne:official-template'));
-    } catch (_) {}
-
-    var raw = values.join(' ').toLowerCase();
-    var flat = raw.replace(/[\\/_\-]+/g, ' ');
-
-    if (/landing\s*\/\s*product|landing product|product landing|project landing|modern landing|landing|лендинг|продуктовый лендинг/.test(flat)) return 'landing-product';
-    if (/business\s*\/\s*product|business product|product business|business|бизнес|продукт/.test(flat)) return 'business-product';
-    if (/portfolio\s*\/\s*personal|portfolio personal|portfolio|personal|портфолио|персональный/.test(flat)) return 'portfolio-personal';
-    if (/agency\s*\/\s*studio|agency studio|agency|studio|агентство|студия/.test(flat)) return 'agency-studio';
-    if (/blog\s*\/\s*news|blog news|blog|news|журнал|новости|блог/.test(flat)) return 'blog-news';
-    if (/documentation|knowledge|docs|documentation wide|документация|знания/.test(flat)) return 'documentation';
-
-    return '';
+    /*
+       IRGEZTNE_OFFICIAL_TEMPLATE_DIRECT_OWNER_V095A
+       A website owns its template identity. Never infer the renderer from
+       the site name/tagline or from the last gallery selection in global
+       localStorage.
+    */
+    return directId
+      ? officialTemplateProductIdV095A(directId)
+      : '';
   }
 
   function pageBySlugV072A(state, slug) {
@@ -2943,14 +3901,18 @@
   function i18nSpanV072A(pair, className, tagName) {
     tagName = tagName || 'span';
     pair = pair || {};
-    return '<' + tagName + (className ? ' class="' + escapeHtml(className) + '"' : '') + ' data-i18n-text="1" data-en="' + escapeHtml(pair.en || pair.ru || '') + '" data-ru="' + escapeHtml(pair.ru || pair.en || '') + '">' + escapeHtml(pair.ru || pair.en || '') + '</' + tagName + '>';
+    var initialTextV096A = t(
+      pair.en || pair.ru || '',
+      pair.ru || pair.en || ''
+    );
+    return '<' + tagName + (className ? ' class="' + escapeHtml(className) + '"' : '') + ' data-i18n-text="1" data-en="' + escapeHtml(pair.en || pair.ru || '') + '" data-ru="' + escapeHtml(pair.ru || pair.en || '') + '">' + escapeHtml(initialTextV096A) + '</' + tagName + '>';
   }
 
   function landingCssV072A(accent) {
     return '' +
       ':root{--bg:#f4efe8;--paper:#fffaf2;--panel:#eee4d8;--ink:#101010;--muted:#665f58;--line:#dccfc1;--accent:' + accent + ';--shadow:0 28px 80px rgba(46,30,18,.14)}' +
       'html[data-theme="dark"]{--bg:#0b1013;--paper:#12191f;--panel:#18222a;--ink:#f7f0e8;--muted:#b7afa6;--line:#2c3843;--shadow:0 28px 80px rgba(0,0,0,.38)}' +
-      '*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 72% 8%,color-mix(in srgb,var(--accent) 18%,transparent),transparent 38%),var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif}' +
+      '*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:104px}body{margin:0;background:radial-gradient(circle at 72% 8%,color-mix(in srgb,var(--accent) 18%,transparent),transparent 38%),var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif}' +
       'a{color:inherit;text-decoration:none}/* IRGEZTNE_LANDING_FULL_WIDTH_V086B *//* IRGEZTNE_LANDING_SINGLE_LANGUAGE_V086C */.page{width:100%;max-width:none;margin:0;padding:34px clamp(22px,2.2vw,44px) 54px}' +
       '/* IRGEZTNE_LANDING_HEADER_STRUCTURE_V072F */.site-header{position:sticky;top:0;z-index:80;display:flex;align-items:center;justify-content:space-between;gap:24px;width:100%;padding:18px clamp(22px,2.2vw,44px);border-bottom:1px solid var(--line);backdrop-filter:blur(18px);background:color-mix(in srgb,var(--bg) 94%,transparent);box-shadow:0 12px 38px rgba(16,16,16,.055)}' +
       '.brand{display:flex;align-items:center;gap:13px}.logo{width:54px;height:54px;border-radius:17px;display:grid;place-items:center;background:var(--ink);color:var(--bg);font-weight:950;font-size:22px}.brand strong{display:block;font-size:20px}.brand span{display:block;color:var(--muted);font-weight:700;font-size:13px}' +
@@ -2987,9 +3949,9 @@
       'function themeFromStorage(){try{var value=localStorage.getItem(storageKey);return value==="dark"||value==="light"?value:"";}catch(error){return "";}}',
       'function saveTheme(theme){try{localStorage.setItem(storageKey,theme);}catch(error){}}',
       'function decorateInternalLinks(theme){document.querySelectorAll("a[href]").forEach(function(link){var raw=link.getAttribute("href")||"";if(!raw||raw.charAt(0)==="#"||/^(mailto:|tel:|javascript:|data:)/i.test(raw))return;try{var url=new URL(raw,window.location.href);var sameOrigin=url.origin===window.location.origin;var sameFile=window.location.protocol==="file:"&&url.protocol==="file:";if(!sameOrigin&&!sameFile)return;if(!/\\.html?$/i.test(url.pathname))return;url.searchParams.set("theme",theme);link.setAttribute("href",url.href);}catch(error){}});}',
-      'function applyTheme(theme,persist){activeTheme=normalizeTheme(theme);document.documentElement.setAttribute("data-theme",activeTheme);if(persist)saveTheme(activeTheme);document.querySelectorAll("[data-theme-toggle]").forEach(function(btn){var label=themeLabel(activeTheme);btn.textContent=themeIcon(activeTheme);btn.setAttribute("aria-label",label);btn.setAttribute("title",label);});decorateInternalLinks(activeTheme);}',
-      'var initialTheme=themeFromUrl()||themeFromStorage()||normalizeTheme(document.documentElement.getAttribute("data-theme"));',
-      'applyTheme(initialTheme,true);',
+      'function applyTheme(theme,persist){activeTheme=normalizeTheme(theme);var backgrounds=window.__IRGEZTNE_THEME_BACKGROUNDS__||{light:"#f4efe8",dark:"#0b1013"};document.documentElement.setAttribute("data-theme",activeTheme);document.documentElement.style.colorScheme=activeTheme;document.documentElement.style.backgroundColor=backgrounds[activeTheme];if(document.body)document.body.setAttribute("data-theme",activeTheme);if(persist)saveTheme(activeTheme);document.querySelectorAll("[data-theme-toggle]").forEach(function(btn){var label=themeLabel(activeTheme);btn.textContent=themeIcon(activeTheme);btn.setAttribute("aria-label",label);btn.setAttribute("title",label);});decorateInternalLinks(activeTheme);}',
+      'var initialTheme=themeFromUrl()||themeFromStorage()||window.__IRGEZTNE_INITIAL_THEME__||normalizeTheme(document.documentElement.getAttribute("data-theme"));',
+      'applyTheme(initialTheme,false);',
       'document.addEventListener("DOMContentLoaded",function(){setLang(document.documentElement.lang==="en"?"en":"ru");applyTheme(activeTheme,false);});',
       'document.addEventListener("click",function(event){var toggle=event.target.closest&&event.target.closest("[data-theme-toggle]");if(!toggle)return;event.preventDefault();var next=activeTheme==="dark"?"light":"dark";applyTheme(next,true);});',
       'window.addEventListener("storage",function(event){if(event.key===storageKey&&(event.newValue==="dark"||event.newValue==="light"))applyTheme(event.newValue,false);});',
@@ -3013,7 +3975,7 @@
       'main iframe{max-width:100%;border:0;border-radius:18px}' +
       'html,body{max-width:100%;overflow-x:hidden}' +
       'main{min-width:0;max-width:100%;overflow-x:hidden}' +
-      'main figure.ewb-video,main figure.ewb-video-card{display:block;box-sizing:border-box;max-width:100%;width:min(100%,620px);margin:28px auto;clear:both}' +
+      'main figure.ewb-image,main figure.ewb-video,main figure.ewb-video-card{display:block;box-sizing:border-box;max-width:100%;width:min(100%,620px);margin:28px auto;clear:both}' +
       'main figure.is-size-small{width:min(100%,360px)}' +
       'main figure.is-size-medium{width:min(100%,620px)}' +
       'main figure.is-size-large{width:min(100%,820px)}' +
@@ -3021,10 +3983,85 @@
       'main figure.is-align-left{margin-left:0;margin-right:auto}' +
       'main figure.is-align-center{margin-left:auto;margin-right:auto}' +
       'main figure.is-align-right{margin-left:auto;margin-right:0}' +
+      'main figure.ewb-image.is-align-left:not(.is-size-full){float:left;clear:none;margin:6px 24px 18px 0}' +
+      'main figure.ewb-image.is-align-right:not(.is-size-full){float:right;clear:none;margin:6px 0 18px 24px}' +
+      'main figure.ewb-image.is-align-center,main figure.ewb-image.is-size-full{float:none;clear:both}' +
+      'main figure.ewb-image img{display:block;width:100%;max-width:100%;height:auto;object-fit:contain;border-radius:18px}' +
+      'main figure.ewb-image figcaption{margin-top:9px;font-size:13px;line-height:1.5;opacity:.72}' +
+      'main::after{content:"";display:block;clear:both}' +
+      '@media(max-width:680px){main figure.ewb-image.is-align-left,main figure.ewb-image.is-align-right{float:none;clear:both;margin-left:auto;margin-right:auto}}' +
       'main figure.ewb-video video{display:block;width:100%;max-width:100%;height:auto;max-height:min(78vh,760px);object-fit:contain;border-radius:18px;background:#000;outline:none}' +
       'main .ewb-video-frame{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;border-radius:18px;background:#000}' +
       'main .ewb-video-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}' +
       'main figure.ewb-video figcaption{margin-top:9px;font-size:13px;line-height:1.5;opacity:.72}';
+  }
+
+  function wideTemplateProductCssV094A(templateId) {
+    var id = normalizeOfficialTemplateIdV068C(templateId);
+    if (id !== 'studio-portfolio' && id !== 'agency-studio') return '';
+
+    var shared = [
+      '/* IRGEZTNE_WEBSTUDIO_WIDE_TEMPLATE_SYSTEM_V094A */',
+      'body.page-home .page{width:min(100% - 56px,1720px);padding-top:0}',
+      'body.page-home .site-header{min-height:80px}',
+      'body.page-home .hero{display:none}',
+      'body.page-home .content{width:100%;max-width:none;margin:30px 0 54px;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none}',
+      '.ir-wide-eyebrow-v094a{display:block;color:var(--button-accent);font-size:12px;font-weight:950;letter-spacing:.15em;text-transform:uppercase}',
+      '.ir-wide-actions-v094a{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px}',
+      '.ir-wide-actions-v094a a,.ir-wide-contact-v094a>a{min-height:48px;display:inline-flex;align-items:center;justify-content:center;padding:0 18px;border:1px solid var(--button-accent);border-radius:999px;background:var(--button-accent);color:#fff;font-weight:950;text-decoration:none}',
+      '.ir-wide-actions-v094a a.is-secondary{border-color:var(--line);background:transparent;color:var(--ink)}',
+      '.ir-wide-strip-v094a{display:flex;align-items:center;flex-wrap:wrap;gap:22px;margin-top:22px;padding:18px 22px;border:1px solid var(--line);border-radius:24px;background:var(--panel-strong);box-shadow:var(--shadow)}',
+      '.ir-wide-strip-v094a strong{font-size:18px}.ir-wide-strip-v094a span{color:var(--muted);font-weight:850}',
+      '.ir-wide-heading-v094a{display:grid;grid-template-columns:minmax(0,1fr) minmax(360px,.62fr);gap:30px;align-items:end;margin:62px 0 22px}',
+      '.ir-wide-heading-v094a h2,.ir-wide-split-v094a h2,.ir-wide-contact-v094a h2{margin:12px 0 0;font-size:clamp(38px,5vw,76px);line-height:.94;letter-spacing:-.075em;text-wrap:balance}',
+      '.ir-wide-heading-v094a p,.ir-wide-split-v094a p,.ir-wide-contact-v094a p{margin:0;color:var(--muted);font-size:18px;line-height:1.68}',
+      '.ir-wide-split-v094a{display:grid;grid-template-columns:minmax(0,1fr) minmax(360px,.68fr);gap:30px;align-items:center;margin-top:22px;padding:36px;border:1px solid var(--line);border-radius:36px;background:var(--panel-strong);box-shadow:var(--shadow)}',
+      '.ir-wide-split-v094a.is-inverse{background:var(--ink);color:var(--site-bg)}',
+      '.ir-wide-split-v094a.is-inverse p{color:color-mix(in srgb,var(--site-bg) 74%,transparent)}',
+      '.ir-wide-process-v094a{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:22px;padding:36px;border:1px solid var(--line);border-radius:36px;background:var(--panel-strong);box-shadow:var(--shadow)}',
+      '.ir-wide-process-v094a>div{padding-top:18px;border-top:1px solid var(--line)}.ir-wide-process-v094a span{color:var(--button-accent);font-weight:950}.ir-wide-process-v094a h3{margin:12px 0 8px;font-size:28px}.ir-wide-process-v094a p{margin:0;color:var(--muted);line-height:1.65}',
+      '.ir-wide-contact-v094a{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:28px;align-items:center;margin-top:22px;padding:36px;border:1px solid var(--line);border-radius:36px;background:var(--panel-strong);box-shadow:var(--shadow)}',
+      '.ir-wide-contact-v094a>a{min-width:180px}',
+      'html[lang=ru] .ir-wide-heading-v094a h2,html[lang=ru] .ir-wide-split-v094a h2,html[lang=ru] .ir-wide-contact-v094a h2{font-size:clamp(32px,4.2vw,62px);line-height:.97}',
+      '@media(max-width:1100px){.ir-wide-heading-v094a,.ir-wide-split-v094a,.ir-wide-contact-v094a{grid-template-columns:1fr}.ir-wide-contact-v094a>a{justify-self:start}.ir-wide-process-v094a{grid-template-columns:1fr}}',
+      '@media(max-width:760px){body.page-home .page{width:min(100% - 30px,1720px)}.ir-wide-split-v094a,.ir-wide-process-v094a,.ir-wide-contact-v094a{padding:24px}.ir-wide-heading-v094a{margin-top:44px}}'
+    ].join('\n');
+
+    if (id === 'studio-portfolio') {
+      return shared + '\n' + [
+        'body.template-portfolio{background:radial-gradient(circle at 12% 0,color-mix(in srgb,var(--button-accent) 17%,transparent),transparent 34%),radial-gradient(circle at 88% 3%,rgba(29,111,96,.12),transparent 34%),var(--site-bg)}',
+        '.ir-portfolio-hero-v094a{display:grid;grid-template-columns:minmax(0,.86fr) minmax(540px,1.14fr);gap:28px;min-height:690px}',
+        '.ir-portfolio-hero-copy-v094a,.ir-portfolio-hero-visual-v094a,.ir-portfolio-work-grid-v094a>article{border:1px solid var(--line);border-radius:36px;background:var(--panel-strong);box-shadow:var(--shadow)}',
+        '.ir-portfolio-hero-copy-v094a{display:flex;flex-direction:column;justify-content:center;padding:44px}',
+        '.ir-portfolio-hero-copy-v094a h1{margin:16px 0 18px;font-size:clamp(48px,6vw,92px);line-height:.9;letter-spacing:-.08em;text-wrap:balance}',
+        '.ir-portfolio-hero-copy-v094a p{max-width:760px;margin:0;color:var(--muted);font-size:19px;line-height:1.68}',
+        '.ir-portfolio-hero-visual-v094a{position:relative;overflow:hidden;display:flex;align-items:flex-end;min-height:690px;padding:34px;color:#fff;background:linear-gradient(160deg,rgba(8,12,20,.02),rgba(8,12,20,.70)),radial-gradient(circle at 24% 18%,rgba(255,224,188,.72),transparent 20%),linear-gradient(135deg,#c77b52,#315f66 54%,#171a21)}',
+        '.ir-portfolio-hero-visual-v094a:before{content:"";position:absolute;inset:28px;border:1px solid rgba(255,255,255,.32);border-radius:28px}.ir-portfolio-hero-visual-v094a>span{position:absolute;left:34px;top:34px;padding:9px 12px;border:1px solid rgba(255,255,255,.30);border-radius:999px;background:rgba(10,10,10,.32);font-size:12px;font-weight:950;text-transform:uppercase}.ir-portfolio-hero-visual-v094a>div{position:relative;z-index:2}.ir-portfolio-hero-visual-v094a strong{display:block;font-size:96px;line-height:.82}.ir-portfolio-hero-visual-v094a small{display:block;margin-top:14px;font-size:18px;font-weight:900}',
+        '.ir-portfolio-work-grid-v094a{display:grid;grid-template-columns:1.2fr .8fr;gap:22px}',
+        '.ir-portfolio-work-grid-v094a>article{position:relative;overflow:hidden;display:flex;align-items:flex-end;min-height:310px;padding:28px;color:#fff;background-size:cover}',
+        '.ir-portfolio-work-grid-v094a>article:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.03),rgba(0,0,0,.74))}.ir-portfolio-work-grid-v094a>article>div,.ir-portfolio-work-grid-v094a>article>.ir-wide-eyebrow-v094a,.ir-portfolio-work-grid-v094a>article>h3,.ir-portfolio-work-grid-v094a>article>p{position:relative;z-index:2}',
+        '.ir-portfolio-work-grid-v094a .is-featured{grid-row:span 2;min-height:660px;background:radial-gradient(circle at 72% 20%,rgba(255,255,255,.34),transparent 18%),linear-gradient(135deg,#315f66,#16202a 52%,#c77b52)}',
+        '.ir-portfolio-work-grid-v094a .is-small.is-coral{background:linear-gradient(135deg,#d59a72,#6f3947)}.ir-portfolio-work-grid-v094a .is-small.is-teal{background:linear-gradient(135deg,#276d68,#172631)}',
+        '.ir-portfolio-work-grid-v094a h3{margin:10px 0;font-size:clamp(30px,3.6vw,58px);line-height:.96;letter-spacing:-.07em}.ir-portfolio-work-grid-v094a p{color:rgba(255,255,255,.82);line-height:1.65}',
+        '.ir-portfolio-work-grid-v094a .is-note{display:block;min-height:270px;background:var(--ink);color:var(--site-bg)}.ir-portfolio-work-grid-v094a .is-note:before{display:none}.ir-portfolio-work-grid-v094a .is-note p{color:color-mix(in srgb,var(--site-bg) 72%,transparent)}',
+        '@media(max-width:1260px){.ir-portfolio-hero-v094a,.ir-portfolio-work-grid-v094a{grid-template-columns:1fr}.ir-portfolio-hero-v094a{min-height:0}.ir-portfolio-hero-visual-v094a{min-height:540px}.ir-portfolio-work-grid-v094a .is-featured{grid-row:auto}}',
+        '@media(max-width:760px){.ir-portfolio-hero-copy-v094a{padding:24px}.ir-portfolio-hero-copy-v094a h1{font-size:42px}.ir-portfolio-hero-visual-v094a{min-height:440px}}'
+      ].join('\n');
+    }
+
+    return shared + '\n' + [
+      'body.template-agency{background:radial-gradient(circle at 82% 0,color-mix(in srgb,var(--button-accent) 18%,transparent),transparent 34%),var(--site-bg)}',
+      '.ir-agency-hero-v094a{display:grid;grid-template-columns:minmax(0,.9fr) minmax(540px,1.1fr);gap:28px;min-height:690px}',
+      '.ir-agency-hero-copy-v094a,.ir-agency-hero-visual-v094a,.ir-agency-case-grid-v094a article,.ir-agency-services-v094a{border:1px solid var(--line);border-radius:36px;background:var(--panel-strong);box-shadow:var(--shadow)}',
+      '.ir-agency-hero-copy-v094a{display:flex;flex-direction:column;padding:44px}.ir-agency-hero-copy-v094a h1{margin:16px 0 18px;font-size:clamp(48px,5.7vw,88px);line-height:.9;letter-spacing:-.08em;text-wrap:balance}.ir-agency-hero-copy-v094a>p{max-width:820px;margin:0;color:var(--muted);font-size:19px;line-height:1.68}',
+      '.ir-agency-metrics-v094a{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:auto;padding-top:38px}.ir-agency-metrics-v094a>div{padding:16px;border:1px solid var(--line);border-radius:18px;background:var(--soft-bg)}.ir-agency-metrics-v094a strong{display:block;font-size:30px}.ir-agency-metrics-v094a span{display:block;margin-top:4px;color:var(--muted);font-size:12px;font-weight:850}',
+      '.ir-agency-hero-visual-v094a{position:relative;overflow:hidden;display:flex;align-items:flex-end;min-height:690px;padding:38px;color:#fff;background:radial-gradient(circle at 26% 18%,rgba(255,255,255,.40),transparent 18%),linear-gradient(135deg,#502b75,#17202d 55%,#ed794f)}.ir-agency-hero-visual-v094a:before{content:"";position:absolute;inset:28px;border:1px solid rgba(255,255,255,.30);border-radius:28px}.ir-agency-hero-visual-v094a>div{position:relative;z-index:2;padding:24px;border:1px solid rgba(255,255,255,.26);border-radius:26px;background:rgba(10,12,18,.48);backdrop-filter:blur(14px)}.ir-agency-hero-visual-v094a span{display:block;font-size:12px;font-weight:950;letter-spacing:.13em;text-transform:uppercase}.ir-agency-hero-visual-v094a strong{display:block;margin-top:12px;font-size:clamp(32px,3.6vw,58px);line-height:.96}',
+      '.ir-agency-case-grid-v094a{display:grid;grid-template-columns:1.1fr .9fr;gap:22px}.ir-agency-case-grid-v094a article{position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;min-height:310px;padding:28px;color:#fff}.ir-agency-case-grid-v094a article:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.03),rgba(0,0,0,.74))}.ir-agency-case-grid-v094a article>*{position:relative;z-index:2}.ir-agency-case-grid-v094a .is-featured{min-height:640px;background:radial-gradient(circle at 70% 20%,rgba(255,255,255,.28),transparent 18%),linear-gradient(135deg,#234b5f,#17202a 54%,#8253a7)}.ir-agency-case-grid-v094a .is-violet{background:linear-gradient(135deg,#6d438d,#252033)}.ir-agency-case-grid-v094a .is-orange{background:linear-gradient(135deg,#e2764e,#5f2d46)}.ir-agency-case-grid-v094a h3{margin:10px 0;font-size:clamp(28px,3.5vw,58px);line-height:.96;letter-spacing:-.07em}.ir-agency-case-grid-v094a p{color:rgba(255,255,255,.82)}.ir-agency-case-side-v094a{display:grid;gap:22px}',
+      '.ir-agency-services-v094a{margin-top:22px;padding:36px}.ir-agency-services-v094a .ir-wide-heading-v094a{margin:0}.ir-agency-services-grid-v094a{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:28px}.ir-agency-services-grid-v094a article{padding:22px;border:1px solid var(--line);border-radius:24px;background:var(--soft-bg)}.ir-agency-services-grid-v094a span{color:var(--button-accent);font-weight:950}.ir-agency-services-grid-v094a h3{margin:12px 0 8px;font-size:27px}.ir-agency-services-grid-v094a p{margin:0;color:var(--muted);line-height:1.65}',
+      'html[lang=ru] .ir-agency-hero-copy-v094a h1{font-size:clamp(40px,4.9vw,74px);line-height:.94}',
+      '@media(max-width:1260px){.ir-agency-hero-v094a,.ir-agency-case-grid-v094a{grid-template-columns:1fr}.ir-agency-hero-v094a{min-height:0}.ir-agency-hero-visual-v094a{min-height:540px}.ir-agency-services-grid-v094a{grid-template-columns:repeat(2,1fr)}}',
+      '@media(max-width:760px){.ir-agency-hero-copy-v094a,.ir-agency-services-v094a{padding:24px}.ir-agency-hero-copy-v094a h1{font-size:42px}.ir-agency-hero-visual-v094a{min-height:440px}.ir-agency-metrics-v094a,.ir-agency-services-grid-v094a{grid-template-columns:1fr}}'
+    ].join('\n');
   }
 
   function renderOfficialLandingProductV072A(state, page, options) {
@@ -3040,7 +4077,10 @@
     var accent = escapeHtml(site.buttonColor || site.accentColor || site.siteColor || '#e7743f');
     var siteName = site.name || 'LaunchOS';
     var tagline = site.tagline || t('Product landing', 'Продуктовый лендинг');
-    var logoLetters = normalizeLooseLogoLettersV069E(site.logoLetters || initialsFromName(siteName)).slice(0,3) || normalizeLogoLetters(siteName, siteName).slice(0,2);
+    var logoLetters = normalizeLooseLogoLettersV069E(site.logoLetters || '').slice(0,3);
+    var logoMarkV092D = logoLetters
+      ? '<div class="logo" style="background:' + escapeHtml(site.logoBackgroundColor || site.accentColor || site.siteColor || '#2f7be6') + ';color:' + escapeHtml(site.logoTextColor || '#ffffff') + ';border-radius:' + escapeHtml(logoCssRadius(site.logoShape || site.faviconShape || 'rounded')) + ';width:' + logoHeaderSizePx(site.logoHeaderSize) + 'px;height:' + logoHeaderSizePx(site.logoHeaderSize) + 'px;font-size:' + logoHeaderFontSizePx(logoLetters, site.logoHeaderSize) + 'px">' + escapeHtml(logoLetters) + '</div>'
+      : '';
     var logoBgV074A = escapeHtml(site.logoBackgroundColor || site.accentColor || site.siteColor || '#2f7be6');
     var logoTextV074A = escapeHtml(site.logoTextColor || '#ffffff');
     var logoRadiusV074A = escapeHtml(logoCssRadius(site.logoShape || site.faviconShape || 'rounded'));
@@ -3051,7 +4091,7 @@
     function anchorOrFile(p, anchor){ return (isHome || linkMode === 'hash') ? ('#' + anchor) : (fileFor(home) + '#' + anchor); }
 
     var heroTitle = textPairV072A(home.headline, 'Turn first impression into action.', 'Превратите первое впечатление в действие.');
-    var heroSummary = textPairV072A(home.summary, 'A product landing starter with hero, features, scenarios, FAQ and a clear access CTA.', 'Стартовый лендинг продукта: первый экран, возможности, сценарии, FAQ и понятный CTA доступа.');
+    var heroSummary = textPairV072A(home.summary, 'A product landing starter with hero, features, scenarios, FAQ and a clear access CTA.', 'Стартовый лендинг продукта: первый экран, возможности, сценарии, частые вопросы и понятное целевое действие.');
     var featuresTitle = textPairV072A(features && features.headline, 'Show what the product helps with.', 'Покажите, чем помогает продукт.');
     var featuresSummary = textPairV072A(features && features.summary, 'Features, use cases and benefits should be clear before the visitor decides.', 'Возможности, сценарии и преимущества должны быть понятны до решения пользователя.');
     var faqTitle = textPairV072A(faq && faq.headline, 'Answer doubts before the user leaves.', 'Ответьте на сомнения до того, как пользователь уйдёт.');
@@ -3133,12 +4173,14 @@
       '</a>' +
       '<a class="nav-link" href="' +
         escapeHtml(anchorOrFile(home, 'faq')) +
-      '">FAQ</a>' +
+      '">' + i18nSpanV072A({en:'FAQ',ru:'Вопросы'}) + '</a>' +
       landingPageNavV087A +
       '<button class="theme-toggle" data-theme-toggle="1" type="button">☾</button>';
 
-    var css = landingCssV072A(accent) + '.logo{background:' + logoBgV074A + '!important;color:' + logoTextV074A + '!important;border-radius:' + logoRadiusV074A + '!important;width:' + logoSizeV074A + 'px!important;height:' + logoSizeV074A + 'px!important;font-size:' + logoFontSizeV074A + 'px!important}';
-    css += siteGeneratedEditorContentCssV076C();
+    /* IRGEZTNE_MEDIA_RENDER_PARITY_V098G
+       Landing uses its own stylesheet, so it must explicitly include the same
+       generated editor-media contract as the generic and documentation paths. */
+    var css = landingCssV072A(accent) + '.logo{background:' + logoBgV074A + '!important;color:' + logoTextV074A + '!important;border-radius:' + logoRadiusV074A + '!important;width:' + logoSizeV074A + 'px!important;height:' + logoSizeV074A + 'px!important;font-size:' + logoFontSizeV074A + 'px!important}' + siteGeneratedEditorContentCssV076C();
     css +=
       '/* IRGEZTNE_LANDING_PAGES_BRIDGE_V087A */' +
       '.nav-parent{position:relative;display:inline-flex;align-items:center}' +
@@ -3243,37 +4285,72 @@
         pageContent = editableLandingBodyV086A;
       } else {
         pageContent = '' +
-          '<section class="hero" id="product"><div class="hero-copy"><p class="kicker">Landing / Product</p>' +
+          '<section class="hero" id="product"><div class="hero-copy">' + i18nSpanV072A({en:'Landing / Product',ru:'Лендинг / продукт'}, 'kicker', 'p') +
             i18nSpanV072A(heroTitle, '', 'h1') +
             i18nSpanV072A(heroSummary, '', 'p') +
             '<div class="hero-actions"><a class="btn" href="#cta">' + i18nSpanV072A({en:'Get access',ru:'Получить доступ'}) + '</a><a class="btn secondary" href="#features">' + i18nSpanV072A({en:'View features',ru:'Смотреть возможности'}) + '</a></div>' +
-          '</div><div class="hero-visual" aria-label="Product visual"><div class="product-panel"><h3>Launch panel</h3><div class="metric-row"><div class="metric"><strong>01</strong><span>Start</span></div><div class="metric"><strong>02</strong><span>Build</span></div><div class="metric"><strong>03</strong><span>Launch</span></div></div></div><div class="visual-footer"><div class="visual-pill">Signup</div><div class="visual-pill">Download</div><div class="visual-pill">Demo</div></div></div></section>' +
+          '</div><div class="hero-visual" aria-label="' + escapeHtml(t('Product visual', 'Визуал продукта')) + '"><div class="product-panel"><h3>' + i18nSpanV072A({en:'Launch panel',ru:'Панель запуска'}) + '</h3><div class="metric-row"><div class="metric"><strong>01</strong>' + i18nSpanV072A({en:'Start',ru:'Старт'}) + '</div><div class="metric"><strong>02</strong>' + i18nSpanV072A({en:'Build',ru:'Сборка'}) + '</div><div class="metric"><strong>03</strong>' + i18nSpanV072A({en:'Launch',ru:'Запуск'}) + '</div></div></div><div class="visual-footer"><div class="visual-pill">' + i18nSpanV072A({en:'Signup',ru:'Регистрация'}) + '</div><div class="visual-pill">' + i18nSpanV072A({en:'Download',ru:'Скачивание'}) + '</div><div class="visual-pill">' + i18nSpanV072A({en:'Demo',ru:'Демо'}) + '</div></div></div></section>' +
           '<div class="strip"><b>' + i18nSpanV072A({en:'Demo content can be replaced before publishing.',ru:'Демо-контент можно заменить перед публикацией.'}) + '</b><span>' + i18nSpanV072A({en:'Product, SaaS, app or service landing.',ru:'Лендинг продукта, SaaS, приложения или услуги.'}) + '</span></div>' +
-          '<section id="features"><div class="section-head"><div><p class="kicker">Features</p>' + i18nSpanV072A(featuresTitle, '', 'h2') + '</div>' + i18nSpanV072A(featuresSummary, '', 'p') + '</div>' +
+          '<section id="features"><div class="section-head"><div>' + i18nSpanV072A({en:'Features',ru:'Возможности'}, 'kicker', 'p') + i18nSpanV072A(featuresTitle, '', 'h2') + '</div>' + i18nSpanV072A(featuresSummary, '', 'p') + '</div>' +
             '<div class="feature-grid"><article class="section-card"><div class="num">01</div><h3>' + i18nSpanV072A({en:'Explain fast',ru:'Объяснить быстро'}) + '</h3><p>' + i18nSpanV072A({en:'Make the product clear in the first screen.',ru:'Сделайте продукт понятным уже на первом экране.'}) + '</p></article><article class="section-card"><div class="num">02</div><h3>' + i18nSpanV072A({en:'Show value',ru:'Показать пользу'}) + '</h3><p>' + i18nSpanV072A({en:'Use feature blocks, scenarios and proof.',ru:'Используйте блоки возможностей, сценарии и доказательства.'}) + '</p></article><article class="section-card"><div class="num">03</div><h3>' + i18nSpanV072A({en:'Give next step',ru:'Дать следующий шаг'}) + '</h3><p>' + i18nSpanV072A({en:'Access, download, preorder, request demo or signup.',ru:'Доступ, скачивание, предзаказ, демо или регистрация.'}) + '</p></article></div></section>' +
-          '<section class="scenario"><article class="section-card"><p class="kicker">Scenario</p><h2>' + i18nSpanV072A({en:'Use it as a product story.',ru:'Используйте как историю продукта.'}) + '</h2><p>' + i18nSpanV072A({en:'Lead the visitor from problem to decision.',ru:'Проведите посетителя от проблемы к решению.'}) + '</p></article><article class="section-card"><p class="kicker">Content</p>' + sanitizeHtml(home.bodyHtml || '') + '</article></section>' +
-          '<section id="faq"><div class="section-head"><div><p class="kicker">FAQ</p>' + i18nSpanV072A(faqTitle, '', 'h2') + '</div>' + i18nSpanV072A(faqSummary, '', 'p') + '</div><div class="faq-list"><article class="faq-item"><strong>' + i18nSpanV072A({en:'Can I replace visuals?',ru:'Можно ли заменить визуалы?'}) + '</strong><p>' + i18nSpanV072A({en:'Yes. Demo visuals are placeholders for screenshots, product images or interface previews.',ru:'Да. Демо-визуалы — заглушки для скриншотов, изображений продукта или интерфейса.'}) + '</p></article><article class="faq-item"><strong>' + i18nSpanV072A({en:'What can the CTA be?',ru:'Каким может быть CTA?'}) + '</strong><p>' + i18nSpanV072A({en:'Signup, download, preorder, request access or contact form.',ru:'Регистрация, скачивание, предзаказ, запрос доступа или форма связи.'}) + '</p></article></div></section>' +
-          '<section class="final-cta" id="cta"><div><p class="kicker">CTA</p><h2>' + i18nSpanV072A({en:'Turn interest into action.',ru:'Превратите интерес в действие.'}) + '</h2><p>' + i18nSpanV072A({en:'Replace this block with signup, download, preorder, contact or request access.',ru:'Замените этот блок на регистрацию, скачивание, предзаказ, контакт или запрос доступа.'}) + '</p></div><a class="btn" href="mailto:hello@example.com">' + i18nSpanV072A({en:'Get access',ru:'Получить доступ'}) + '</a></section>';
+          '<section class="scenario"><article class="section-card">' + i18nSpanV072A({en:'Scenario',ru:'Сценарий'}, 'kicker', 'p') + '<h2>' + i18nSpanV072A({en:'Use it as a product story.',ru:'Используйте как историю продукта.'}) + '</h2><p>' + i18nSpanV072A({en:'Lead the visitor from problem to decision.',ru:'Проведите посетителя от проблемы к решению.'}) + '</p></article><article class="section-card">' + i18nSpanV072A({en:'Content',ru:'Содержание'}, 'kicker', 'p') + sanitizeHtml(home.bodyHtml || '') + '</article></section>' +
+          '<section id="faq"><div class="section-head"><div>' + i18nSpanV072A({en:'FAQ',ru:'Частые вопросы'}, 'kicker', 'p') + i18nSpanV072A(faqTitle, '', 'h2') + '</div>' + i18nSpanV072A(faqSummary, '', 'p') + '</div><div class="faq-list"><article class="faq-item"><strong>' + i18nSpanV072A({en:'Can I replace visuals?',ru:'Можно ли заменить визуалы?'}) + '</strong><p>' + i18nSpanV072A({en:'Yes. Demo visuals are placeholders for screenshots, product images or interface previews.',ru:'Да. Демо-визуалы — заглушки для скриншотов, изображений продукта или интерфейса.'}) + '</p></article><article class="faq-item"><strong>' + i18nSpanV072A({en:'What can the primary action be?',ru:'Каким может быть главное действие?'}) + '</strong><p>' + i18nSpanV072A({en:'Signup, download, preorder, request access or contact form.',ru:'Регистрация, скачивание, предзаказ, запрос доступа или форма связи.'}) + '</p></article></div></section>' +
+          '<section class="final-cta" id="cta"><div>' + i18nSpanV072A({en:'Next step',ru:'Следующий шаг'}, 'kicker', 'p') + '<h2>' + i18nSpanV072A({en:'Turn interest into action.',ru:'Превратите интерес в действие.'}) + '</h2><p>' + i18nSpanV072A({en:'Replace this block with signup, download, preorder, contact or request access.',ru:'Замените этот блок на регистрацию, скачивание, предзаказ, контакт или запрос доступа.'}) + '</p></div><a class="btn" href="mailto:hello@example.com">' + i18nSpanV072A({en:'Get access',ru:'Получить доступ'}) + '</a></section>';
       }
     }
 
-    var siteLangV084X = siteThemeLangCode();
+    // IRGEZTNE_WIDGET_HOST_SURFACE_RENDER_R1W9H
+    css += workshopWidgetHostCssR1W9H();
+    js += workshopWidgetHostBridgeScriptR1W9H();
+    var widgetPageTopR1W9H = renderWorkshopWidgetSlotR1W9H(state, current, 'page-top');
+    var widgetAfterHeaderR1W9H = renderWorkshopWidgetSlotR1W9H(state, current, 'after-header');
+    var widgetMainStartR1W9H = renderWorkshopWidgetSlotR1W9H(state, current, 'main-start');
+    var widgetMainEndR1W9H = renderWorkshopWidgetSlotR1W9H(state, current, 'main-end');
+    var widgetBeforeFooterR1W9H = renderWorkshopWidgetSlotR1W9H(state, current, 'before-footer');
+    var widgetPageBottomR1W9H = renderWorkshopWidgetSlotR1W9H(state, current, 'page-bottom');
+    var widgetFloatingR1W9H = renderWorkshopWidgetSlotR1W9H(state, current, 'floating');
+
+    var siteLangV084X = siteThemeLangCode(site);
 
     return '<!doctype html><html lang="' +
       escapeHtml(siteLangV084X) +
-      '" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">' + faviconHeadTags() + '<title>' + escapeHtml(seoTitle) + '</title><meta name="description" content="' + escapeHtml(seoDescription) + '"><link rel="canonical" href="' + escapeHtml(canonicalUrl) + '"><meta property="og:type" content="website"><meta property="og:title" content="' + escapeHtml(seoTitle) + '"><meta property="og:description" content="' + escapeHtml(seoDescription) + '"><meta property="og:url" content="' + escapeHtml(canonicalUrl) + '"><meta property="og:image" content="' + escapeHtml(ogImage) + '"><meta name="twitter:card" content="summary"><meta name="theme-color" content="' + accent + '"><style>' + css + '</style><script>' + js + '</script></head><body><header class="site-header"><a class="brand" href="' + escapeHtml(fileFor(home)) + '"><div class="logo" style="background:' + logoBgV074A + ';color:' + logoTextV074A + ';border-radius:' + logoRadiusV074A + ';width:' + logoSizeV074A + 'px;height:' + logoSizeV074A + 'px;font-size:' + logoFontSizeV074A + 'px">' + escapeHtml(logoLetters) + '</div><div><strong>' + escapeHtml(siteName) + '</strong><span>' + escapeHtml(tagline) + '</span></div></a><nav class="site-nav" aria-label="Main navigation">' + nav + '</nav></header><main class="page">' + pageContent + '<footer class="site-footer"><div class="footer-brand"><strong>' + escapeHtml(siteName) + '</strong><span>' + escapeHtml(tagline) + '</span><span class="footer-copy">© ' + new Date().getFullYear() + ' ' + escapeHtml(siteName) + '</span></div><nav><a href="' + escapeHtml(fileFor(home)) + '">' + i18nSpanV072A({en:'Product',ru:'Продукт'}) + '</a> · <a href="' + escapeHtml(anchorOrFile(features || home, 'features')) + '">' + i18nSpanV072A({en:'Features',ru:'Возможности'}) + '</a> · <a href="' + escapeHtml(anchorOrFile(home, 'faq')) + '">FAQ</a></nav>' + landingFooterNavV087A + '</footer></main></body></html>';
+      '" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><script>' + generatedThemeBootV097A('#f4efe8', '#0b1013').replace(/<\/script/gi, '<\\/script') + '</script>' + faviconHeadTags() + '<title>' + escapeHtml(seoTitle) + '</title><meta name="description" content="' + escapeHtml(seoDescription) + '"><link rel="canonical" href="' + escapeHtml(canonicalUrl) + '"><meta property="og:type" content="website"><meta property="og:title" content="' + escapeHtml(seoTitle) + '"><meta property="og:description" content="' + escapeHtml(seoDescription) + '"><meta property="og:url" content="' + escapeHtml(canonicalUrl) + '"><meta property="og:image" content="' + escapeHtml(ogImage) + '"><meta name="twitter:card" content="summary"><meta name="theme-color" content="' + accent + '"><style>' + css + '</style><script>' + js + '</script></head><body><script>' + generatedThemeBodySyncV096C().replace(/<\/script/gi, '<\\/script') + '</script>' + widgetPageTopR1W9H + '<header class="site-header"><a class="brand" href="' + escapeHtml(fileFor(home)) + '">' + logoMarkV092D + '<div><strong>' + escapeHtml(siteName) + '</strong><span>' + escapeHtml(tagline) + '</span></div></a><nav class="site-nav" aria-label="' + escapeHtml(t('Main navigation', 'Главное меню')) + '">' + nav + '</nav></header>' + widgetAfterHeaderR1W9H + '<main class="page">' + widgetMainStartR1W9H + pageContent + widgetMainEndR1W9H + widgetBeforeFooterR1W9H + '<footer class="site-footer"><div class="footer-brand"><strong>' + escapeHtml(siteName) + '</strong><span>' + escapeHtml(tagline) + '</span><span class="footer-copy">© ' + new Date().getFullYear() + ' ' + escapeHtml(siteName) + '</span></div><nav><a href="' + escapeHtml(fileFor(home)) + '">' + i18nSpanV072A({en:'Product',ru:'Продукт'}) + '</a> · <a href="' + escapeHtml(anchorOrFile(features || home, 'features')) + '">' + i18nSpanV072A({en:'Features',ru:'Возможности'}) + '</a> · <a href="' + escapeHtml(anchorOrFile(home, 'faq')) + '">' + i18nSpanV072A({en:'FAQ',ru:'Вопросы'}) + '</a></nav>' + landingFooterNavV087A + '</footer></main>' + widgetPageBottomR1W9H + widgetFloatingR1W9H + '</body></html>';
   }
 
   function renderSiteHtml(state, page, options) {
+    // R1W9H migration is applied before every generated render, so legacy
+    // bodyHtml placeholders become proper site-local Widget Instances even
+    // if Preview/Export is invoked before the Editor is opened.
+    if (state && page) migrateLegacyWorkshopWidgetPlaceholdersR1W9H(state, page);
+    var previousLangV094C = generatedSiteLangOverrideV094C;
+    generatedSiteLangOverrideV094C = siteThemeLangCode(
+      state && state.site ? state.site : {}
+    );
+
+    try {
+      return renderSiteHtmlV094C(state, page, options);
+    } finally {
+      generatedSiteLangOverrideV094C = previousLangV094C;
+    }
+  }
+
+  function renderSiteHtmlV094C(state, page, options) {
     options = options || {};
     var officialTemplateIdV072A = officialTemplateIdFromStateV072A(state);
+    var officialFourHtmlV098A = renderOfficialFourV098A(state, page, options);
+    if (officialFourHtmlV098A) return officialFourHtmlV098A;
     if (officialTemplateIdV072A === 'landing-product') {
       return renderOfficialLandingProductV072A(state, page, options);
     }
     var linkMode = options.linkMode || 'file';
     var inlineAssets = !!options.inlineAssets;
     var site = state.site || {};
-    var selectedTemplateIdV068D = site.activeTemplate || ((readSelectedOfficialTemplateV5() || {}).id) || 'project-landing';
+    var selectedTemplateIdV068D = normalizeOfficialTemplateIdV068C(
+      site.activeTemplate ||
+      site.templateId ||
+      site.template ||
+      'project-landing'
+    );
     var template = typeof officialTemplateMetaV068C === 'function' ? officialTemplateMetaV068C(selectedTemplateIdV068D) : (readSelectedOfficialTemplateV5() || {
       id: selectedTemplateIdV068D,
       title: 'Landing',
@@ -3300,7 +4377,7 @@
     var backgroundColor = site.backgroundColor || '#ffffff';
     var bodyFont = fontStack(site.fontFamily);
     var headingFont = fontStack(site.headingFont || site.fontFamily);
-    var lang = siteThemeLangCode();
+    var lang = siteThemeLangCode(site);
 
     var pages = Array.isArray(state.pages) ? state.pages : [];
     var menuItems = getPreviewNavItems(state);
@@ -3312,7 +4389,13 @@
       else if (/privacy|terms|legal|policy|конфиденц|услов|политик|юрид/.test(pageKey)) pagePreset = 'legal';
       else pagePreset = 'blank';
     }
-    var title = String(page.headline || '').trim() || t('Write page H1', 'Напишите H1 страницы');
+    /*
+       IRGEZTNE_PUBLIC_H1_OWNER_V092D
+       Never publish an editor instruction. If the separate H1 field is empty,
+       use the page name for metadata/template H1. A body-authored H1 remains
+       the only H1 and suppresses the template heading below.
+    */
+    var title = String(page.headline || '').trim() || pageLabel(page) || siteName;
     var description = String(page.summary || '').trim();
     if (!description && isHomePage) {
       description = t(template.description || 'Page description will appear here.', template.descriptionRu || 'Описание страницы появится здесь.');
@@ -3340,6 +4423,7 @@
     var customCss = safeGeneratedRawHtmlV067F(generatedSiteSettingV067F(site, 'css.custom', ''));
 
     var body = sanitizeHtml(page.bodyHtml || '');
+    var bodyHasAuthoredH1V092D = /<h1\b/i.test(String(body || ''));
 
     /* IRGEZTNE_WEBSTUDIO_PAGE_EDITOR_PRINCIPLE_V061G
        Empty page body should stay empty.
@@ -3371,18 +4455,8 @@
     /* IRGEZTNE_LANDING_RENDERER_POLISH_V072B
        Polish the old Web Studio preview path for Landing/Product:
        sticky full-width header, visible product visual, EN/RU button and cleaner starter list. */
-    var rawTemplateV072B = [
-      site.template,
-      site.activeTemplate,
-      site.officialTemplate,
-      site.selectedTemplate,
-      site.templateId,
-      site.templateVariant,
-      template && template.id,
-      template && template.title,
-      variant
-    ].join(' ').toLowerCase();
-    var isLandingTemplateV072B = /project-landing|landing-product|modern-landing|landing\s*\/\s*product|product landing/.test(rawTemplateV072B);
+    var isLandingTemplateV072B =
+      selectedTemplateIdV068D === 'project-landing';
 
     var footerLinks = footerNavHtml(state, linkMode);
     var footerSocialLinks = footerSocialHtml(state, linkMode);
@@ -3398,12 +4472,13 @@
     if (selectedTemplateIdV068D === 'blog-news') {
       pagePresetCss += [
         '.page{width:min(100% - 64px,1760px)!important}',
-        '.hero{display:none!important}',
+        'body.page-home .hero{display:none!important}',
         '.content{width:min(100%,1480px)!important;max-width:1480px!important;margin:clamp(54px,7vw,96px) auto 70px!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}',
         '.site-footer{max-width:1480px!important;margin-left:auto!important;margin-right:auto!important}',
         '.ir-news-masthead-v069h{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:24px}.ir-news-masthead-v069h p{margin:0 0 10px!important;color:var(--button-accent)!important;font-size:13px!important;font-weight:950!important;letter-spacing:.12em!important;text-transform:uppercase!important}.ir-news-masthead-v069h h2{margin:0!important;font-size:clamp(42px,6vw,86px)!important;line-height:.98!important;letter-spacing:-.075em!important}.ir-news-masthead-v069h a{display:inline-flex;padding:12px 16px;border-radius:999px;background:var(--button-accent);color:#fff;text-decoration:none;font-weight:900;white-space:nowrap}',
         '.ir-news-grid-v069h{display:grid;grid-template-columns:1.28fr 1fr 1fr;gap:18px;align-items:stretch}.ir-news-grid-v069h--simple{grid-template-columns:repeat(3,minmax(0,1fr));margin-top:24px}.ir-news-card-v069h{border:1px solid var(--line);border-radius:22px;padding:22px;background:var(--panel-bg);min-height:210px;display:flex;flex-direction:column;justify-content:flex-start;box-shadow:none!important}.ir-news-card--lead-v069h{grid-row:span 2;min-height:438px}.ir-news-card-v069h span{color:var(--button-accent);font-size:12px;font-weight:950;letter-spacing:.08em;text-transform:uppercase}.ir-news-card-v069h h3{margin:12px 0 10px!important;font-size:clamp(24px,3vw,46px)!important;line-height:1.02!important;letter-spacing:-.055em!important}.ir-news-card-v069h:not(.ir-news-card--lead-v069h) h3{font-size:clamp(20px,2vw,30px)!important}.ir-news-card-v069h p{margin:0!important;color:var(--muted)!important;line-height:1.62!important;font-size:16px!important}.ir-news-card-v069h small{display:block;margin-top:auto;padding-top:18px;color:var(--muted);font-weight:800}',
-        '.ir-news-thumb-v069h{height:180px;border-radius:18px;margin-bottom:20px;background:linear-gradient(135deg,var(--button-accent),#f97316);position:relative;overflow:hidden}.ir-news-thumb-v069h:after{content:"";position:absolute;right:22px;top:22px;width:70px;height:70px;border-radius:50%;background:rgba(255,255,255,.45)}.ir-news-card--lead-v069h .ir-news-thumb-v069h{height:220px}.ir-news-thumb-v069h--blue{background:linear-gradient(135deg,#2563eb,#93c5fd)}.ir-news-thumb-v069h--violet{background:linear-gradient(135deg,#7c3aed,#c4b5fd)}',
+        '.ir-news-thumb-v069h{height:180px;border-radius:18px;margin-bottom:20px;background:linear-gradient(135deg,var(--button-accent),#f97316);position:relative;overflow:hidden;background-size:cover!important;background-position:center!important}.ir-news-thumb-v069h:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.02),rgba(0,0,0,.28))}.ir-news-card--lead-v069h .ir-news-thumb-v069h{height:260px}.ir-news-thumb-v069h--blue{background:linear-gradient(135deg,#2563eb,#93c5fd)}.ir-news-thumb-v069h--violet{background:linear-gradient(135deg,#7c3aed,#c4b5fd)}',
+        '.ir-news-thumb-v095a--main{background-image:url("assets/template/blog/main.jpg")!important}.ir-news-thumb-v095a--tech{background-image:url("assets/template/blog/tech.jpg")!important}.ir-news-thumb-v095a--business{background-image:url("assets/template/blog/business.jpg")!important}.ir-news-thumb-v095a--guide{background-image:url("assets/template/blog/guide.jpg")!important}.ir-news-thumb-v095a--workspace{background-image:url("assets/template/blog/workspace.jpg")!important}.ir-news-thumb-v095a--city{background-image:url("assets/template/blog/city.jpg")!important}',
         '.ir-news-strip-v069h{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:24px 0 0;padding:18px 20px;border:1px solid var(--line);border-radius:22px;background:var(--soft-bg)}.ir-news-strip-v069h strong{margin-right:8px}.ir-news-strip-v069h a{display:inline-flex;padding:9px 12px;border-radius:999px;border:1px solid var(--line);background:var(--panel-bg);color:var(--ink);text-decoration:none;font-weight:900}.ir-news-strip-v069h--large{margin-top:26px}',
         'body[data-theme=light]{--panel-bg:#ffffff;--soft-bg:#fff7ed}',
         'body[data-theme=dark]{--panel-bg:rgba(255,255,255,.035);--soft-bg:rgba(255,255,255,.055)}',
@@ -3413,46 +4488,88 @@
     }
 
     if (selectedTemplateIdV068D === 'business-product') {
-      pagePresetCss += '.page{width:min(100% - 64px,1760px)!important}.hero{display:none!important}.content{width:min(100%,1440px)!important;max-width:1440px!important;margin:clamp(54px,7vw,96px) auto 70px!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}.content>section:first-child{width:100%!important;margin-top:0!important}.content h2{letter-spacing:-.055em}.content article{background:color-mix(in srgb,var(--panel-bg) 72%,transparent)!important}.site-footer{max-width:1440px!important;margin-left:auto!important;margin-right:auto!important}body[data-theme=light]{--panel-bg:#ffffff;--soft-bg:#f6faf8}body[data-theme=dark]{--panel-bg:rgba(255,255,255,.035);--soft-bg:rgba(255,255,255,.055)}@media(max-width:860px){.page{width:min(100% - 28px,1760px)!important}.content{margin-top:34px!important}.content>section:first-child{grid-template-columns:1fr!important}}';
+      pagePresetCss += [
+        '.page{width:min(100% - 64px,1760px)!important}',
+        'body.page-home .hero{display:none!important}',
+        '.content{width:min(100%,1440px)!important;max-width:1440px!important;margin:clamp(54px,7vw,96px) auto 70px!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}',
+        '.content>section:first-child{width:100%!important;margin-top:0!important}',
+        '.content h2{letter-spacing:-.055em}',
+        '.content article{background:color-mix(in srgb,var(--panel-bg) 72%,transparent)!important}',
+        '.ir-business-hero-visual-v095a{background-image:linear-gradient(180deg,rgba(5,25,21,.04),rgba(5,25,21,.46)),url("assets/template/business/hero.webp")!important;background-size:cover!important;background-position:center!important}',
+        '.ir-business-showcase-v095a,.ir-business-case-v095a{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(360px,.88fr);gap:22px;margin:34px 0}',
+        '.ir-business-feature-visual-v095a,.ir-business-case-visual-v095a,.ir-business-showcase-v095a>article,.ir-business-case-v095a>article{min-height:460px;border:1px solid var(--line);border-radius:32px;background:var(--panel-bg);box-shadow:var(--shadow)}',
+        '.ir-business-feature-visual-v095a{background-image:linear-gradient(180deg,rgba(7,32,26,.04),rgba(7,32,26,.34)),url("assets/template/business/feature.webp");background-size:cover;background-position:center}',
+        '.ir-business-case-visual-v095a{background-image:linear-gradient(180deg,rgba(7,32,26,.04),rgba(7,32,26,.34)),url("assets/template/business/case.webp");background-size:cover;background-position:center}',
+        '.ir-business-showcase-v095a>article,.ir-business-case-v095a>article{display:flex;flex-direction:column;justify-content:center;padding:36px}',
+        '.ir-business-showcase-v095a article>span,.ir-business-case-v095a article>span{color:var(--button-accent);font-size:12px;font-weight:950;letter-spacing:.13em;text-transform:uppercase}',
+        '.ir-business-showcase-v095a h2,.ir-business-case-v095a h2{margin:14px 0;font-size:clamp(34px,4.2vw,62px);line-height:.95}',
+        '.ir-business-showcase-v095a p,.ir-business-case-v095a p{color:var(--muted);font-size:18px;line-height:1.68}',
+        '.ir-business-showcase-v095a article>div{display:flex;gap:10px;margin-top:24px}.ir-business-showcase-v095a article>div strong{display:grid;place-items:center;width:52px;height:52px;border:1px solid var(--line);border-radius:16px;background:var(--soft-bg)}',
+        '.ir-business-case-metrics-v095a{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:22px}.ir-business-case-metrics-v095a>div{padding:18px;border:1px solid var(--line);border-radius:20px;background:var(--soft-bg)}.ir-business-case-metrics-v095a strong,.ir-business-case-metrics-v095a small{display:block}.ir-business-case-metrics-v095a strong{font-size:32px}.ir-business-case-metrics-v095a small{margin-top:5px;color:var(--muted)}',
+        '.site-footer{max-width:1440px!important;margin-left:auto!important;margin-right:auto!important}',
+        'body[data-theme=light]{--panel-bg:#ffffff;--soft-bg:#f6faf8}',
+        'body[data-theme=dark]{--panel-bg:rgba(255,255,255,.035);--soft-bg:rgba(255,255,255,.055)}',
+        '@media(max-width:860px){.page{width:min(100% - 28px,1760px)!important}.content{margin-top:34px!important}.content>section:first-child,.ir-business-showcase-v095a,.ir-business-case-v095a{grid-template-columns:1fr!important}.ir-business-feature-visual-v095a,.ir-business-case-visual-v095a{min-height:360px}}'
+      ].join('');
     }
 
     var docsTemplateCssV068D = variant === 'documentation' ? [
       '/* IRGEZTNE_DOCUMENTATION_TEMPLATE_PARITY_V085A */',
       '/* IRGEZTNE_DOCUMENTATION_WIDE_LAYOUT_V090B */',
-      'body.template-documentation .page{width:min(1920px,calc(100vw - 28px));padding-top:12px}',
-      'body.template-documentation .site-header{position:sticky;top:0;z-index:30;padding:12px 0;background:color-mix(in srgb,var(--site-bg) 92%,transparent);backdrop-filter:blur(16px)}',
-      'body.template-documentation .brand{min-width:250px}',
-      'body.template-documentation .site-nav{gap:7px}',
+      '/* IRGEZTNE_LANDING_DOCUMENTATION_CANON_V096A */',
+      '/* IRGEZTNE_DOCUMENTATION_DARK_INTERACTION_V096B */',
+      'body.template-documentation{overflow-x:clip;--docs-readable-accent:var(--button-accent);--docs-readable-on-accent:#fff}',
+      'body.template-documentation[data-theme="dark"]{--docs-readable-accent:color-mix(in srgb,var(--button-accent) 38%,#f8fafc);--docs-readable-on-accent:#07111f}',
+      'body.template-documentation main.page{width:min(1920px,calc(100vw - 32px));max-width:1920px;padding:0 0 32px;overflow:visible!important}',
+      'body.template-documentation .site-header{position:sticky;top:0;z-index:90;display:grid;grid-template-columns:minmax(230px,.7fr) minmax(320px,720px) auto;align-items:center;gap:clamp(18px,2.4vw,44px);min-height:76px;margin:0;padding:12px 0;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--site-bg) 94%,transparent);backdrop-filter:blur(18px);box-shadow:0 12px 34px color-mix(in srgb,var(--ink) 7%,transparent)}',
+      'body.template-documentation .brand{min-width:230px}',
+      'body.template-documentation .site-nav{gap:7px;margin-left:0}',
       'body.template-documentation .nav-link{min-height:32px;padding:7px 11px;border-radius:12px;font-size:12px;background:transparent}',
-      'body.template-documentation .nav-link:hover,body.template-documentation .nav-link.is-active{background:var(--soft-bg);color:var(--button-accent)}',
+      'body.template-documentation .nav-link:hover,body.template-documentation .nav-link.is-active{background:color-mix(in srgb,var(--docs-readable-accent) 14%,var(--soft-bg));color:var(--docs-readable-accent)}',
+      'body.template-documentation .kicker{color:var(--docs-readable-accent)}',
 
-      '.docs-layout-v068d{display:grid;grid-template-columns:220px minmax(0,1fr) 180px;gap:26px;align-items:start;padding:28px 0 34px}',
-      '.docs-sidebar-v068d{position:sticky;top:76px;min-height:calc(100vh - 118px);padding:4px 16px 24px 0;border-right:1px solid var(--line)}',
-      '.docs-search-v068d{margin:0 0 18px;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:var(--soft-bg);color:var(--muted);font-size:12px;font-weight:850}',
+      '.docs-header-search-v096a{position:relative;min-width:0;width:100%}',
+      '.docs-header-search-v096a input{width:100%;height:46px;padding:0 48px 0 16px;border:1px solid var(--line);border-radius:15px;outline:0;background:var(--panel-bg);color:var(--ink);font:inherit;font-size:14px;font-weight:780;box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}',
+      '.docs-header-search-v096a input::placeholder{color:var(--muted)}',
+      '.docs-header-search-v096a input:hover{border-color:color-mix(in srgb,var(--docs-readable-accent) 38%,var(--line))}',
+      '.docs-header-search-v096a input:focus{border-color:color-mix(in srgb,var(--docs-readable-accent) 66%,var(--line));box-shadow:0 0 0 3px color-mix(in srgb,var(--docs-readable-accent) 16%,transparent)}',
+      '.docs-search-icon-v096a{position:absolute;right:14px;top:50%;display:grid;width:22px;height:22px;place-items:center;transform:translateY(-50%);color:var(--docs-readable-accent);pointer-events:none}',
+      '.docs-search-icon-v096a svg{display:block;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}',
+      '.docs-search-results-v096a{position:absolute;left:0;right:0;top:calc(100% + 9px);z-index:130;display:grid;gap:4px;max-height:min(480px,68vh);overflow:auto;padding:8px;border:1px solid var(--line);border-radius:17px;background:color-mix(in srgb,var(--site-bg) 96%,transparent);box-shadow:0 28px 80px rgba(15,23,42,.22);backdrop-filter:blur(18px)}',
+      '.docs-search-results-v096a[hidden]{display:none}',
+      '.docs-search-results-v096a a{display:grid;gap:4px;padding:11px 12px;border-radius:12px;color:var(--ink);text-decoration:none}',
+      '.docs-search-results-v096a a:hover,.docs-search-results-v096a a[aria-selected=true]{background:color-mix(in srgb,var(--docs-readable-accent) 14%,var(--soft-bg));color:var(--docs-readable-accent)}',
+      '.docs-search-results-v096a strong{font-size:14px}.docs-search-results-v096a small{overflow:hidden;color:var(--muted);font-size:12px;font-weight:700;text-overflow:ellipsis;white-space:nowrap}',
+      '.docs-search-empty-v096a{padding:13px;color:var(--muted);font-size:13px;font-weight:800}',
+
+      '.docs-layout-v068d{display:grid;grid-template-columns:clamp(230px,16vw,278px) minmax(0,1fr) clamp(190px,13vw,240px);gap:clamp(24px,3vw,54px);align-items:start;padding:32px 0 36px}',
+      '.docs-sidebar-v068d{position:sticky;top:94px;min-height:calc(100vh - 118px);padding:4px 20px 24px 0;border-right:1px solid var(--line)}',
       '.docs-sidebar-title-v068d{display:block;margin:0 0 10px;color:var(--ink);font-size:12px;font-weight:950;letter-spacing:.13em;text-transform:uppercase}',
       '.docs-sidebar-v068d a{display:flex;align-items:center;min-height:34px;margin:2px 0;padding:8px 10px;border-radius:12px;color:var(--muted);font-weight:850;text-decoration:none}',
-      '.docs-sidebar-v068d a:hover,.docs-sidebar-v068d a.is-active{background:var(--soft-bg);color:var(--button-accent)}',
+      '.docs-sidebar-v068d a:hover,.docs-sidebar-v068d a.is-active{background:color-mix(in srgb,var(--docs-readable-accent) 14%,var(--soft-bg));color:var(--docs-readable-accent)}',
+      '.docs-sidebar-v068d a.docs-nav-child-v096a{min-height:31px;margin-left:15px;padding-left:15px;border-left:1px solid var(--line);border-radius:0 10px 10px 0;font-size:13px}',
 
       '.docs-content-v068d{min-width:0;max-width:none;min-height:calc(100vh - 190px);padding:8px 0 62px;display:flex;flex-direction:column}',
       '.docs-content-v068d>h1{margin:10px 0 14px;font-size:clamp(34px,4.2vw,60px);line-height:1.03;letter-spacing:-.05em}',
       '.docs-content-v068d>.docs-lead-v068d{max-width:840px;margin:0 0 25px;color:var(--muted);font-size:17px;line-height:1.68}',
       '.docs-content-v068d>.content{max-width:none;margin:0;padding:0;border:0;background:transparent;box-shadow:none}',
+      '.docs-content-v068d>.content>:where(p,ul,ol,blockquote){max-width:920px}',
 
-      '.docs-right-toc-v085a{position:sticky;top:86px;padding:4px 0 22px 16px;border-left:1px solid var(--line)}',
+      '.docs-right-toc-v085a{position:sticky;top:94px;padding:4px 0 22px 18px;border-left:1px solid var(--line)}',
       '.docs-right-toc-v085a>strong{display:block;margin:0 0 12px;color:var(--ink);font-size:12px;font-weight:950;letter-spacing:.12em;text-transform:uppercase}',
       '.docs-right-toc-v085a>a{display:block;padding:7px 0;color:var(--muted);font-size:13px;font-weight:800;text-decoration:none}',
-      '.docs-right-toc-v085a>a:hover{color:var(--button-accent)}',
+      '.docs-right-toc-v085a>a:hover{color:var(--docs-readable-accent)}',
       '.docs-version-v085a{margin-top:22px;padding:15px;border:1px solid var(--line);border-radius:16px;background:var(--soft-bg)}',
       '.docs-version-v085a span,.docs-version-v085a small{display:block;color:var(--muted);font-size:11px}',
       '.docs-version-v085a strong{display:block;margin:4px 0;color:var(--ink);font-size:20px}',
 
       '.docs-hero-v085a{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,.72fr);gap:24px;align-items:stretch;margin:0 0 42px}',
       '.docs-hero-copy-v085a{padding:30px 0}',
-      '.docs-eyebrow-v085a{display:block;margin:0 0 12px;color:var(--button-accent);font-size:12px;font-weight:950;letter-spacing:.13em;text-transform:uppercase}',
+      '.docs-eyebrow-v085a{display:block;margin:0 0 12px;color:var(--docs-readable-accent);font-size:12px;font-weight:950;letter-spacing:.13em;text-transform:uppercase}',
       '.docs-hero-copy-v085a h2{margin:0 0 18px;font-size:clamp(38px,5vw,68px);line-height:.98;letter-spacing:-.065em}',
       '.docs-hero-copy-v085a p{max-width:720px;margin:0;color:var(--muted);font-size:17px;line-height:1.7}',
       '.docs-hero-actions-v085a{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}',
-      '.docs-hero-actions-v085a a{display:inline-flex;padding:12px 16px;border:1px solid var(--button-accent);border-radius:999px;background:var(--button-accent);color:#fff;font-weight:900;text-decoration:none}',
+      '.docs-hero-actions-v085a a{display:inline-flex;padding:12px 16px;border:1px solid var(--docs-readable-accent);border-radius:999px;background:var(--docs-readable-accent);color:var(--docs-readable-on-accent);font-weight:900;text-decoration:none}',
       '.docs-hero-actions-v085a a.is-secondary{background:transparent;color:var(--ink);border-color:var(--line)}',
 
       '.docs-code-visual-v085a{min-width:0;padding:18px;border:1px solid rgba(148,163,184,.26);border-radius:24px;background:#111827;color:#dbeafe;box-shadow:0 28px 70px rgba(15,23,42,.20)}',
@@ -3466,11 +4583,11 @@
 
       '.docs-steps-v085a,.docs-api-grid-v085a{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:22px 0}',
       '.docs-steps-v085a article,.docs-api-grid-v085a article{padding:18px;border:1px solid var(--line);border-radius:18px;background:var(--panel)}',
-      '.docs-steps-v085a article>span,.docs-api-grid-v085a small{display:block;margin-bottom:10px;color:var(--button-accent);font-weight:950}',
+      '.docs-steps-v085a article>span,.docs-api-grid-v085a small{display:block;margin-bottom:10px;color:var(--docs-readable-accent);font-weight:950}',
       '.docs-steps-v085a h3,.docs-api-grid-v085a h3{margin:0 0 8px;color:var(--ink);font-size:19px}',
       '.docs-steps-v085a p,.docs-api-grid-v085a p{margin:0;color:var(--muted);font-size:14px;line-height:1.6}',
 
-      '.docs-callout-v085a{margin:26px 0;padding:20px 22px;border:1px solid color-mix(in srgb,var(--button-accent) 34%,var(--line));border-radius:18px;background:color-mix(in srgb,var(--button-accent) 9%,var(--panel))}',
+      '.docs-callout-v085a{margin:26px 0;padding:20px 22px;border:1px solid color-mix(in srgb,var(--docs-readable-accent) 34%,var(--line));border-radius:18px;background:color-mix(in srgb,var(--docs-readable-accent) 9%,var(--panel))}',
       '.docs-callout-v085a strong{display:block;margin-bottom:7px;color:var(--ink)}',
       '.docs-callout-v085a p{margin:0;color:var(--muted);line-height:1.65}',
 
@@ -3494,14 +4611,17 @@
       '.docs-page-nav-v068g a{display:flex;flex-direction:column;gap:4px;padding:14px 16px;border:1px solid var(--line);border-radius:16px;background:var(--soft-bg);color:var(--ink);font-weight:900;text-decoration:none}',
       '.docs-page-nav-v068g a:last-child{text-align:right}',
       '.docs-page-nav-v068g span{color:var(--muted);font-size:11px;font-weight:850;letter-spacing:.08em;text-transform:uppercase}',
-      '.docs-page-nav-v068g a:hover{border-color:color-mix(in srgb,var(--button-accent) 45%,var(--line));color:var(--button-accent)}',
+      '.docs-page-nav-v068g a:hover{border-color:color-mix(in srgb,var(--docs-readable-accent) 45%,var(--line));color:var(--docs-readable-accent)}',
 
       'body.template-documentation .site-footer{margin-top:10px;padding-top:22px;border-top:1px solid var(--line)}',
 
-      '@media(max-width:1300px){.docs-layout-v068d{grid-template-columns:230px minmax(0,1fr)}.docs-right-toc-v085a{display:none}}',
-      '@media(max-width:900px){body.template-documentation .page{width:min(100% - 28px,1880px)}.docs-layout-v068d{grid-template-columns:1fr}.docs-sidebar-v068d{position:relative;top:auto;min-height:0;padding:0 0 18px;border-right:0;border-bottom:1px solid var(--line)}.docs-content-v068d{max-width:none}.docs-hero-v085a{grid-template-columns:1fr}}',
+      '@media(max-width:1320px){.docs-layout-v068d{grid-template-columns:clamp(220px,20vw,260px) minmax(0,1fr)}.docs-right-toc-v085a{display:none}}',
+      '@media(max-width:960px){body.template-documentation .site-header{grid-template-columns:minmax(0,1fr) auto}.docs-header-search-v096a{grid-column:1/-1;grid-row:2}.docs-layout-v068d{grid-template-columns:220px minmax(0,1fr);gap:24px}}',
+      '@media(max-width:760px){body.template-documentation main.page{width:min(100% - 24px,1920px)}body.template-documentation .site-header{grid-template-columns:minmax(0,1fr) auto;gap:12px}.docs-layout-v068d{grid-template-columns:1fr;padding-top:22px}.docs-sidebar-v068d{position:relative;top:auto;min-height:0;padding:0 0 18px;border-right:0;border-bottom:1px solid var(--line)}.docs-content-v068d{max-width:none}.docs-hero-v085a{grid-template-columns:1fr}}',
       '@media(max-width:680px){.docs-steps-v085a,.docs-api-grid-v085a{grid-template-columns:1fr}.docs-page-nav-v068g{grid-template-columns:1fr}.docs-page-nav-v068g a:last-child{text-align:left}.docs-hero-copy-v085a h2{font-size:38px}}'
     ].join('\n') : '';
+
+    pagePresetCss += '\n' + wideTemplateProductCssV094A(selectedTemplateIdV068D);
 
     var customCssBlock = customCss ? '\n/* IRGEZTNE custom site CSS */\n' + customCss : '';
     if (isLandingTemplateV072B) {
@@ -3529,6 +4649,16 @@
 
     var cssBlock = inlineAssets ? '<style>' + cssVars + '\n' + generatedSiteCssV5() + '\n' + pagePresetCss + '\n' + docsTemplateCssV068D + customCssBlock + '</style>' : '<style>' + cssVars + '\n' + pagePresetCss + '\n' + docsTemplateCssV068D + customCssBlock + '</style><link rel="stylesheet" href="assets/css/style.css">';
     var jsBlock = inlineAssets ? '<script>' + generatedSiteJsV5().replace(/<\/script/gi, '<\\/script') + '</script>' : '<script src="assets/js/site.js" defer></script>';
+    // IRGEZTNE_WIDGET_HOST_SURFACE_RENDER_R1W9H
+    cssBlock += '<style data-irgeztne-widget-host-r1w9h="1">' + workshopWidgetHostCssR1W9H() + '</style>';
+    jsBlock += '<script data-irgeztne-widget-host-r1w9h="1">' + workshopWidgetHostBridgeScriptR1W9H().replace(/<\/script/gi, '<\\/script') + '</script>';
+    var widgetPageTopR1W9H = renderWorkshopWidgetSlotR1W9H(state, page, 'page-top');
+    var widgetAfterHeaderR1W9H = renderWorkshopWidgetSlotR1W9H(state, page, 'after-header');
+    var widgetMainStartR1W9H = renderWorkshopWidgetSlotR1W9H(state, page, 'main-start');
+    var widgetMainEndR1W9H = renderWorkshopWidgetSlotR1W9H(state, page, 'main-end');
+    var widgetBeforeFooterR1W9H = renderWorkshopWidgetSlotR1W9H(state, page, 'before-footer');
+    var widgetPageBottomR1W9H = renderWorkshopWidgetSlotR1W9H(state, page, 'page-bottom');
+    var widgetFloatingR1W9H = renderWorkshopWidgetSlotR1W9H(state, page, 'floating');
     if (isLandingTemplateV072B) {
       var langJsV072B = '<script>(function(){function setLang(lang){document.documentElement.lang=lang;document.querySelectorAll("[data-i18n-text]").forEach(function(el){var v=el.getAttribute("data-"+lang);if(v!==null)el.textContent=v})}setLang(document.documentElement.lang==="en"?"en":"ru")})();<\/script>';
       jsBlock += langJsV072B;
@@ -3536,11 +4666,15 @@
 
     var heroDescriptionHtml = description ? '<p>' + escapeHtml(description) + '</p>' : '';
     var pageKicker = pagePreset === 'contact' ? t('Contact', 'Контакты') : (pagePreset === 'legal' ? t('Legal page', 'Юридическая страница') : t('Page', 'Страница'));
+    var templateH1V092D = bodyHasAuthoredH1V092D
+      ? ''
+      : '<h1>' + escapeHtml(title) + '</h1>';
     var pageHeroHtml = isHomePage
-      ? '<section class="hero" id="' + escapeHtml(page.slug || 'page') + '"><div><div class="kicker">' + escapeHtml(templateTitle) + '</div><h1>' + escapeHtml(title) + '</h1>' + heroDescriptionHtml + '</div></section>'
-      : '<section class="hero hero--content-page" id="' + escapeHtml(page.slug || 'page') + '"><div><div class="kicker">' + escapeHtml(pageKicker) + '</div><h1>' + escapeHtml(title) + '</h1>' + heroDescriptionHtml + '</div></section>';
+      ? '<section class="hero" id="' + escapeHtml(page.slug || 'page') + '"><div><div class="kicker">' + escapeHtml(templateTitle) + '</div>' + templateH1V092D + heroDescriptionHtml + '</div></section>'
+      : '<section class="hero hero--content-page" id="' + escapeHtml(page.slug || 'page') + '"><div><div class="kicker">' + escapeHtml(pageKicker) + '</div>' + templateH1V092D + heroDescriptionHtml + '</div></section>';
     var hasBody = String(body || '').trim().length > 0;
     var contentSectionHtml = hasBody ? '<section class="content">' + body + '</section>' : '';
+    var docsHeaderSearchV096A = '';
 
     if (isLandingTemplateV072B && isHomePage) {
       var titleRuV072B = title || 'Превратите первое впечатление в действие.';
@@ -3561,25 +4695,99 @@
 
 
     if (variant === 'documentation') {
-      var docsPagesV068D = orderedPageList(state).filter(function (candidate) {
+      var docsSearchPagesV096A = orderedPageList(state).filter(function (candidate) {
         return candidate && candidate.status !== 'draft';
+      });
+
+      var docsPagesV068D = docsSearchPagesV096A.filter(function (candidate) {
+        return candidate && candidate.inMenu === true;
       });
 
       if (!docsPagesV068D.length && page) docsPagesV068D = [page];
 
       var docsSidebarLinksV068D = docsPagesV068D.map(function (candidate) {
-        var activeClass = candidate && page && candidate.id === page.id
-          ? ' class="is-active"'
+        var classNamesV096A = [];
+        if (candidate && candidate.parentId) {
+          classNamesV096A.push('docs-nav-child-v096a');
+        }
+        if (candidate && page && candidate.id === page.id) {
+          classNamesV096A.push('is-active');
+        }
+
+        var activeClass = classNamesV096A.length
+          ? ' class="' + classNamesV096A.join(' ') + '"'
+          : '';
+
+        var currentAttrV096A = candidate && page && candidate.id === page.id
+          ? ' aria-current="page"'
           : '';
 
         var href = linkMode === 'hash'
           ? ('#' + (candidate.slug || 'page'))
           : pageFileName(candidate);
 
-        return '<a' + activeClass + ' href="' + escapeHtml(href) + '">' +
+        return '<a' + activeClass + currentAttrV096A + ' href="' + escapeHtml(href) + '">' +
           escapeHtml(pageLabel(candidate)) +
         '</a>';
       }).join('');
+
+      function docsSearchPlainTextV096A(value) {
+        return String(value || '')
+          .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, ' ')
+          .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, ' ')
+          .replace(/<[^>]+>/g, ' ')
+          .replace(/&nbsp;|&#160;/gi, ' ')
+          .replace(/&amp;/gi, '&')
+          .replace(/&quot;/gi, '"')
+          .replace(/&#39;|&apos;/gi, "'")
+          .replace(/&lt;/gi, '<')
+          .replace(/&gt;/gi, '>')
+          .replace(/\s+/g, ' ')
+          .trim();
+      }
+
+      var docsSearchIndexV096A = docsSearchPagesV096A.map(function (candidate) {
+        return {
+          title: pageLabel(candidate),
+          summary: String(candidate.summary || ''),
+          text: docsSearchPlainTextV096A(candidate.bodyHtml || ''),
+          href: linkMode === 'hash'
+            ? ('#' + (candidate.slug || 'page'))
+            : pageFileName(candidate)
+        };
+      });
+
+      var docsSearchJsonV096A = JSON.stringify(docsSearchIndexV096A)
+        .replace(/</g, '\\u003c')
+        .replace(/>/g, '\\u003e')
+        .replace(/&/g, '\\u0026');
+
+      var docsSearchResultsIdV096A = 'docs-search-results-v096a';
+      docsHeaderSearchV096A =
+        '<div class="docs-header-search-v096a">' +
+          '<input type="search" data-docs-search-v096a="1"' +
+            ' role="combobox" aria-autocomplete="list" aria-expanded="false"' +
+            ' aria-controls="' + docsSearchResultsIdV096A + '"' +
+            ' aria-label="' + escapeHtml(t(
+              'Search documentation',
+              'Поиск по документации'
+            )) + '"' +
+            ' data-empty-label="' + escapeHtml(t(
+              'Nothing found',
+              'Ничего не найдено'
+            )) + '"' +
+            ' placeholder="' + escapeHtml(t(
+              'Search pages and topics…',
+              'Поиск страниц и тем…'
+            )) + '">' +
+          '<span class="docs-search-icon-v096a" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="10.8" cy="10.8" r="6.3"></circle><path d="m15.5 15.5 4.2 4.2"></path></svg></span>' +
+          '<div class="docs-search-results-v096a" id="' +
+            docsSearchResultsIdV096A +
+            '" data-docs-search-results-v096a="1" role="listbox" hidden></div>' +
+          '<script type="application/json" data-docs-search-index-v096a="1">' +
+            docsSearchJsonV096A +
+          '</script>' +
+        '</div>';
 
       /* IRGEZTNE_DOCUMENTATION_SINGLE_NAV_V090C
          Documentation uses the complete left sidebar as its only page menu.
@@ -3620,6 +4828,10 @@
       var docsPageIntroV090A = '';
 
       if (docsIsStarterPageV090A) {
+        var docsKickerV096A = docsSlugV090A === 'index'
+          ? t('Overview', 'Обзор')
+          : t('Documentation', 'Документация');
+
         var docsTitleV068D =
           String(page.headline || '').trim() ||
           pageLabel(page);
@@ -3632,9 +4844,7 @@
 
         docsPageIntroV090A =
           '<div class="kicker">' +
-            escapeHtml(
-              t('Documentation', 'Документация')
-            ) +
+            escapeHtml(docsKickerV096A) +
           '</div>' +
           '<h1>' +
             escapeHtml(docsTitleV068D) +
@@ -3686,7 +4896,7 @@
         index: [
           ['quick-start', t('Quick start', 'Быстрый старт')],
           ['api', t('API reference', 'API справочник')],
-          ['faq', 'FAQ']
+          ['faq', t('FAQ', 'Частые вопросы')]
         ],
         'getting-started': [
           ['overview', t('Overview', 'Обзор')],
@@ -3700,7 +4910,7 @@
         ],
         reference: [
           ['settings', t('Settings', 'Настройки')],
-          ['endpoints', 'Endpoints'],
+          ['endpoints', t('Endpoints', 'Методы API')],
           ['schema', t('Schema', 'Схема')]
         ]
       };
@@ -3735,12 +4945,6 @@
       contentSectionHtml =
         '<section class="docs-layout-v068d">' +
           '<aside class="docs-sidebar-v068d">' +
-            '<div class="docs-search-v068d">' +
-              escapeHtml(t(
-                'Search documentation…',
-                'Поиск по документации…'
-              )) +
-            '</div>' +
             '<strong class="docs-sidebar-title-v068d">' +
               escapeHtml(t('Sections', 'Разделы')) +
             '</strong>' +
@@ -3769,8 +4973,8 @@
     }
 
     return '<!doctype html>' +
-      '<html lang="' + escapeHtml(lang) + '">' +
-      '<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">' +
+      '<html lang="' + escapeHtml(lang) + '" data-theme="light">' +
+      '<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><script>' + generatedThemeBootV097A(normalizeHexColor(backgroundColor, '#ffffff'), '#07111f').replace(/<\/script/gi, '<\\/script') + '</script>' +
       faviconHeadTags() +
       '<title>' + escapeHtml(seoTitle) + '</title>' +
       '<meta name="description" content="' + escapeHtml(seoDescription) + '">' +
@@ -3781,12 +4985,13 @@
       '<meta name="theme-color" content="' + escapeHtml(accent) + '">' +
       customHeadEnd +
       cssBlock + jsBlock + '</head>' +
-      '<body class="template-' + escapeHtml(variant) + '" data-template="' + escapeHtml(variant) + '" data-theme="light">' + customBodyStart + '<main class="page">' +
-      '<header class="site-header"><a class="brand" href="' + (linkMode === 'hash' ? '#index' : 'index.html') + '"><div class="logo">' + escapeHtml(logoLetters) + '</div><div><strong>' + escapeHtml(siteName) + '</strong><span>' + escapeHtml(tagline) + '</span></div></a><nav class="site-nav" aria-label="' + escapeHtml(t('Main navigation', 'Главное меню')) + '">' + nav + themeButton + '</nav></header>' +
+      '<body class="template-' + escapeHtml(variant) + ' template-id-' + escapeHtml(normalizeOfficialTemplateIdV068C(selectedTemplateIdV068D)) + (isHomePage ? ' page-home' : ' page-content') + '" data-template="' + escapeHtml(variant) + '" data-theme="light"><script>' + generatedThemeBodySyncV096C().replace(/<\/script/gi, '<\\/script') + '</script>' + customBodyStart + widgetPageTopR1W9H + '<main class="page">' +
+      '<header class="site-header"><a class="brand" href="' + (linkMode === 'hash' ? '#index' : 'index.html') + '">' + (logoLetters ? '<div class="logo">' + escapeHtml(logoLetters) + '</div>' : '') + '<div><strong>' + escapeHtml(siteName) + '</strong><span>' + escapeHtml(tagline) + '</span></div></a>' + docsHeaderSearchV096A + '<nav class="site-nav" aria-label="' + escapeHtml(t('Main navigation', 'Главное меню')) + '">' + nav + themeButton + '</nav></header>' +
+      widgetAfterHeaderR1W9H + widgetMainStartR1W9H +
       pageHeroHtml +
-      contentSectionHtml +
+      contentSectionHtml + widgetMainEndR1W9H + widgetBeforeFooterR1W9H +
       '<footer class="' + footerClass + '"><div class="footer-brand"><strong>' + escapeHtml(siteName) + '</strong><span>' + escapeHtml(tagline) + '</span><span class="footer-copy">© ' + new Date().getFullYear() + ' ' + escapeHtml(siteName) + '</span></div>' + footerNav + footerSocialNav + '</footer>' +
-      '</main>' + customBodyEnd + '</body></html>';
+      '</main>' + widgetPageBottomR1W9H + widgetFloatingR1W9H + customBodyEnd + '</body></html>';
   }
 
 
@@ -3795,12 +5000,12 @@
       manual: {
         id: 'manual',
         icon: 'ZIP',
-        name: 'Export / HTML',
-        nameRu: 'Экспорт / HTML',
+        name: 'Local Export',
+        nameRu: 'Local Export',
         short: 'Local export',
         shortRu: 'Локальный экспорт',
-        note: 'Export the full site ZIP, current page HTML, or starter ZIP. No server connection is required.',
-        noteRu: 'Скачайте ZIP сайта, текущий HTML или стартовый ZIP. Подключение к серверу не требуется.',
+        note: 'Export the full site ZIP or current page HTML. No server connection is required.',
+        noteRu: 'Скачайте ZIP сайта или текущий HTML. Подключение к серверу не требуется.',
         required: []
       },
       netlify: {
@@ -3810,10 +5015,10 @@
         required: ['token', 'siteId']
       },
       github: {
-        id: 'github', icon: 'GH', name: 'GitHub Pages', nameRu: 'GitHub Pages', short: 'Repository pages', shortRu: 'Страницы репозитория',
-        note: 'Token, owner, repository and branch. Later it will push the built site files.',
-        noteRu: 'Token, owner, repository и branch. Позже сюда будет отправляться собранный сайт.',
-        required: ['token', 'owner', 'repository', 'branch']
+        id: 'github', icon: 'GH', name: 'GitHub Pages', nameRu: 'GitHub Pages', short: 'After 1.0', shortRu: 'После 1.0',
+        note: 'Repository publishing is not connected in 1.0. Use local ZIP export or a real connected provider for now.',
+        noteRu: 'Публикация в репозиторий не подключена в 1.0. Пока используйте локальный ZIP или реально подключённый провайдер.',
+        required: []
       },
       vercel: {
         id: 'vercel', icon: 'VC', name: 'Vercel', nameRu: 'Vercel', short: 'Project deploy', shortRu: 'Публикация проекта',
@@ -3823,18 +5028,18 @@
       },
       cloudflare: {
         id: 'cloudflare', icon: 'CF', name: 'Cloudflare Pages', nameRu: 'Cloudflare Pages', short: 'Direct upload', shortRu: 'Прямая загрузка',
-        note: 'Token, Account ID and Project name for future Pages direct upload.',
-        noteRu: 'Token, Account ID и Project name для будущего direct upload в Pages.',
+        note: 'Token, Account ID and Project name for Pages direct upload.',
+        noteRu: 'Token, Account ID и Project name для direct upload в Pages.',
         required: ['token', 'accountId', 'projectName']
       },
       gitlab: {
-        id: 'gitlab', icon: 'GL', name: 'GitLab Pages', nameRu: 'GitLab Pages', short: 'CI pages', shortRu: 'CI страницы',
-        note: 'Token, namespace/project and branch foundation for GitLab Pages.',
-        noteRu: 'Token, namespace/project и branch как основа GitLab Pages.',
-        required: ['token', 'owner', 'repository', 'branch']
+        id: 'gitlab', icon: 'GL', name: 'GitLab Pages', nameRu: 'GitLab Pages', short: 'After 1.0', shortRu: 'После 1.0',
+        note: 'GitLab Pages/CI publishing is not connected in 1.0. Use local ZIP export or a real connected provider for now.',
+        noteRu: 'Публикация GitLab Pages/CI не подключена в 1.0. Пока используйте локальный ZIP или реально подключённый провайдер.',
+        required: []
       },
       ipfs: {
-        id: 'ipfs', icon: 'IP', name: 'IPFS / Web3', nameRu: 'IPFS / Web3', short: 'CID later', shortRu: 'CID позже',
+        id: 'ipfs', icon: 'IP', name: 'IPFS / Web3', nameRu: 'IPFS / Web3', short: 'Export only', shortRu: 'Только экспорт',
         note: 'Export an IPFS-ready build. CID/IPNS/pinning provider integration comes later.',
         noteRu: 'Экспорт IPFS-ready сборки. CID/IPNS/pinning provider подключим позже.',
         required: []
@@ -3846,23 +5051,29 @@
         required: ['endpoint', 'bucket', 'accessKey', 'secretKey']
       },
       ftp: {
-        id: 'ftp', icon: 'FTP', name: 'FTP', nameRu: 'FTP', short: 'Classic hosting', shortRu: 'Обычный хостинг',
-        note: 'Host, username and path foundation for classic hosting upload.',
-        noteRu: 'Host, username и path как основа загрузки на обычный хостинг.',
-        required: ['host', 'username', 'token']
+        id: 'ftp', icon: 'FTP', name: 'FTP', nameRu: 'FTP', short: 'Unencrypted sync', shortRu: 'Без шифрования',
+        note: 'Unencrypted FTP connection for legacy hosting only. First publish sends the site; later publishes send only changed files.',
+        noteRu: 'Незашифрованное FTP-соединение только для старых хостингов. Первая публикация отправляет сайт, следующие — только изменённые файлы.',
+        required: ['host', 'username', 'password']
+      },
+      ftps: {
+        id: 'ftps', icon: 'FTPS', name: 'FTPS', nameRu: 'FTPS', short: 'TLS sync', shortRu: 'TLS-синхронизация',
+        note: 'Encrypted FTP over TLS. Recommended when the hosting provides FTP-compatible secure access. Incremental SHA-256 sync is enabled.',
+        noteRu: 'Зашифрованный FTP через TLS. Рекомендуется, если хостинг даёт безопасный FTP-совместимый доступ. Работает инкрементальная SHA-256 синхронизация.',
+        required: ['host', 'username', 'password']
       },
       sftp: {
-        id: 'sftp', icon: 'SFTP', name: 'SFTP', nameRu: 'SFTP', short: 'Secure hosting', shortRu: 'Безопасный хостинг',
-        note: 'Host, username and path foundation for secure server upload.',
-        noteRu: 'Host, username и path как основа безопасной загрузки на сервер.',
-        required: ['host', 'username', 'token']
+        id: 'sftp', icon: 'SFTP', name: 'SFTP', nameRu: 'SFTP', short: 'Secure sync', shortRu: 'Безопасная синхронизация',
+        note: 'Real SFTP upload over SSH. First publish sends the site; later publishes send only changed files.',
+        noteRu: 'Реальная SFTP-загрузка через SSH. Первая публикация отправляет сайт, следующие — только изменённые файлы.',
+        required: ['host', 'username', 'password']
       }
     };
     return providers[id] || providers.manual;
   }
 
   function publishProviderOrder() {
-    return ['manual', 'netlify', 'github', 'vercel', 'cloudflare', 'gitlab', 'ipfs', 'ftp', 'sftp'];
+    return ['netlify', 'cloudflare', 'ftp', 'ftps', 'sftp', 'manual', 'github', 'gitlab', 'ipfs'];
   }
 
   function defaultPublishProviderConfig(id) {
@@ -3885,7 +5096,10 @@
       accessKey: '',
       secretKey: '',
       host: '',
+      port: id === 'sftp' ? '22' : ((id === 'ftp' || id === 'ftps') ? '21' : ''),
+      protocol: id === 'ftp' ? 'ftp' : (id === 'ftps' ? 'ftps' : ''),
       username: '',
+      password: '',
       remotePath: '/',
       lastStatus: '',
       lastResult: '',
@@ -3907,7 +5121,7 @@
 
   function preferredConfiguredProvider(settings) {
     if (!settings || !settings.providers) return '';
-    var priority = ['netlify', 'github', 'vercel', 'cloudflare', 'gitlab', 'ftp', 'sftp', 'ipfs'];
+    var priority = ['netlify', 'cloudflare', 'ftp', 'ftps', 'sftp'];
     for (var i = 0; i < priority.length; i += 1) {
       var id = priority[i];
       var config = settings.providers[id];
@@ -3927,6 +5141,19 @@
       normalizedProviders[id] = Object.assign(defaultPublishProviderConfig(id), providers[id] || {});
       normalizedProviders[id].id = id;
     });
+    // R1S: FTP and FTPS are separate cards. Preserve useful non-secret fields from
+    // the older combined FTP/FTPS card without allowing the FTP card to keep TLS.
+    var legacyFtp = providers.ftp && typeof providers.ftp === 'object' ? providers.ftp : null;
+    if (!providers.ftps && legacyFtp && /^ftps/i.test(String(legacyFtp.protocol || ''))) {
+      ['host', 'port', 'username', 'remotePath', 'websiteUrl'].forEach(function (key) {
+        if (legacyFtp[key] != null && legacyFtp[key] !== '') normalizedProviders.ftps[key] = legacyFtp[key];
+      });
+      normalizedProviders.ftps.protocol = String(legacyFtp.protocol || 'ftps') === 'ftps-implicit' ? 'ftps-implicit' : 'ftps';
+    }
+    normalizedProviders.ftp.protocol = 'ftp';
+    if (!normalizedProviders.ftp.port) normalizedProviders.ftp.port = '21';
+    if (normalizedProviders.ftps.protocol !== 'ftps-implicit') normalizedProviders.ftps.protocol = 'ftps';
+    if (!normalizedProviders.ftps.port) normalizedProviders.ftps.port = normalizedProviders.ftps.protocol === 'ftps-implicit' ? '990' : '21';
     var normalized = {
       selectedProvider: selected,
       providers: normalizedProviders,
@@ -3940,6 +5167,8 @@
       var preferred = preferredConfiguredProvider(normalized);
       if (preferred) normalized.selectedProvider = preferred;
     }
+    if (['manual', 'netlify', 'cloudflare', 'sftp', 'ftps'].indexOf(normalized.selectedProvider) === -1) normalized.selectedProvider = 'manual';
+    normalized.includeSecretsInBackup = false;
     return normalized;
   }
 
@@ -4161,15 +5390,25 @@
     return missing;
   }
 
+  function isDeferredPublishProvider(providerId) {
+    return providerId === 'github' || providerId === 'gitlab' || providerId === 'vercel';
+  }
+
+  function isRemotePublishProvider(providerId) {
+    return providerId === 'netlify' || providerId === 'cloudflare' || providerId === 'ftp' || providerId === 'ftps' || providerId === 'sftp';
+  }
+
   function isPublishConfigured(providerId, config, meta) {
     if (providerId === 'manual' || providerId === 'ipfs') return true;
+    if (isDeferredPublishProvider(providerId)) return false;
     return publishMissingFields(config, meta).length === 0 && config && config.enabled === true;
   }
 
   function publishReadyMessage(providerId, config, meta) {
     var missing = publishMissingFields(config, meta);
     if (providerId === 'manual') return t('Local export is ready. ZIP/HTML export works without server setup.', 'Локальный экспорт готов. ZIP/HTML работает без настройки сервера.');
-    if (providerId === 'ipfs') return t('IPFS-ready export is prepared as a foundation. CID/pinning integration comes later.', 'IPFS-ready экспорт подготовлен как основа. CID/pinning подключим позже.');
+    if (providerId === 'ipfs') return t('IPFS-ready export only. No CID, pinning or network upload is performed in 1.0.', 'Только IPFS-ready экспорт. В 1.0 CID, pinning и сетевая загрузка не выполняются.');
+    if (isDeferredPublishProvider(providerId)) return t('Remote publishing for this provider is planned after 1.0. Use ZIP export, Netlify, Cloudflare Pages, FTP, FTPS or SFTP now.', 'Удалённая публикация этого провайдера запланирована после 1.0. Сейчас используйте ZIP, Netlify, Cloudflare Pages, FTP, FTPS или SFTP.');
     if (isPublishConfigured(providerId, config, meta)) return t('Connection is saved for this website. Continue editing pages, then use the top Publish button to send changes.', 'Подключение сохранено для этого сайта. Продолжайте редактировать страницы, затем используйте верхнюю кнопку «Опубликовать», чтобы отправить изменения.');
     if (missing.length) return t('Fill and save the required fields once. After that this provider becomes ready for repeated publishing.', 'Заполните и сохраните обязательные поля один раз. После этого провайдер будет готов для повторной публикации.');
     return t('Settings are filled but not confirmed yet. Press Save settings or Test settings once.', 'Поля заполнены, но ещё не подтверждены. Нажмите «Сохранить настройки» или «Проверить настройки» один раз.');
@@ -4193,8 +5432,11 @@
       accessKey: 'Access Key',
       secretKey: 'Secret Key',
       host: 'Host',
-      username: t('Username', 'Username'),
-      remotePath: t('Remote path', 'Remote path')
+      port: 'Port',
+      protocol: t('Protocol', 'Протокол'),
+      username: t('Username', 'Имя пользователя'),
+      password: t('Password', 'Пароль'),
+      remotePath: t('Remote path', 'Удалённая папка')
     };
     return labels[key] || key;
   }
@@ -4217,7 +5459,9 @@
       accessKey: 'access_key',
       secretKey: 'secret_key',
       host: 'example.com',
+      port: '21 / 22',
       username: t('username', 'имя пользователя'),
+      password: t('hosting password', 'пароль хостинга'),
       remotePath: '/public_html/'
     };
     return placeholders[key] || '';
@@ -4231,6 +5475,13 @@
     return '<label class="ir-site-studio-v5-publish-field"><span>' + escapeHtml(publishFieldLabel(key)) + '</span><input class="ir-site-studio-v5-input" type="' + escapeHtml(type) + '" placeholder="' + escapeHtml(placeholder) + '" autocomplete="off" data-v5-publish-provider="' + escapeHtml(providerId) + '" data-v5-publish-field="' + escapeHtml(key) + '" value="' + value + '">' + saved + '</label>';
   }
 
+  function publishFieldSelect(providerId, config, key, options) {
+    var value = String(config && config[key] != null ? config[key] : '');
+    return '<label class="ir-site-studio-v5-publish-field"><span>' + escapeHtml(publishFieldLabel(key)) + '</span><select class="ir-site-studio-v5-input" data-v5-publish-provider="' + escapeHtml(providerId) + '" data-v5-publish-field="' + escapeHtml(key) + '">' + (options || []).map(function (item) {
+      return '<option value="' + escapeHtml(item.value) + '"' + (item.value === value ? ' selected' : '') + '>' + escapeHtml(t(item.en, item.ru)) + '</option>';
+    }).join('') + '</select></label>';
+  }
+
   function publishFieldsForProvider(providerId, config) {
     if (providerId === 'manual') {
       return '';
@@ -4242,7 +5493,7 @@
       return publishFieldInput(providerId, config, 'websiteUrl', 'url') + publishFieldInput(providerId, config, 'siteId') + publishFieldInput(providerId, config, 'token');
     }
     if (providerId === 'github' || providerId === 'gitlab') {
-      return publishFieldInput(providerId, config, 'token') + publishFieldInput(providerId, config, 'owner') + publishFieldInput(providerId, config, 'repository') + publishFieldInput(providerId, config, 'branch') + publishFieldInput(providerId, config, 'folder') + publishFieldInput(providerId, config, 'websiteUrl', 'url');
+      return '';
     }
     if (providerId === 'vercel') {
       return publishFieldInput(providerId, config, 'token') + publishFieldInput(providerId, config, 'projectName') + publishFieldInput(providerId, config, 'team') + publishFieldInput(providerId, config, 'websiteUrl', 'url');
@@ -4253,21 +5504,36 @@
     if (providerId === 's3') {
       return publishFieldInput(providerId, config, 'endpoint', 'url') + publishFieldInput(providerId, config, 'bucket') + publishFieldInput(providerId, config, 'region') + publishFieldInput(providerId, config, 'accessKey') + publishFieldInput(providerId, config, 'secretKey') + publishFieldInput(providerId, config, 'websiteUrl', 'url');
     }
-    if (providerId === 'ftp' || providerId === 'sftp') {
-      return publishFieldInput(providerId, config, 'host') + publishFieldInput(providerId, config, 'username') + publishFieldInput(providerId, config, 'token') + publishFieldInput(providerId, config, 'remotePath') + publishFieldInput(providerId, config, 'websiteUrl', 'url');
+    if (providerId === 'ftp') {
+      return publishFieldInput(providerId, config, 'host') + publishFieldInput(providerId, config, 'port') + publishFieldInput(providerId, config, 'username') + publishFieldInput(providerId, config, 'password') + publishFieldInput(providerId, config, 'remotePath') + publishFieldInput(providerId, config, 'websiteUrl', 'url');
+    }
+    if (providerId === 'ftps') {
+      return publishFieldSelect(providerId, config, 'protocol', [
+        { value: 'ftps', en: 'Explicit FTPS (TLS, recommended)', ru: 'Явный FTPS (TLS, рекомендуется)' },
+        { value: 'ftps-implicit', en: 'Implicit FTPS (legacy, usually port 990)', ru: 'Неявный FTPS (старый вариант, обычно порт 990)' }
+      ]) + publishFieldInput(providerId, config, 'host') + publishFieldInput(providerId, config, 'port') + publishFieldInput(providerId, config, 'username') + publishFieldInput(providerId, config, 'password') + publishFieldInput(providerId, config, 'remotePath') + publishFieldInput(providerId, config, 'websiteUrl', 'url');
+    }
+    if (providerId === 'sftp') {
+      return publishFieldInput(providerId, config, 'host') + publishFieldInput(providerId, config, 'port') + publishFieldInput(providerId, config, 'username') + publishFieldInput(providerId, config, 'password') + publishFieldInput(providerId, config, 'remotePath') + publishFieldInput(providerId, config, 'websiteUrl', 'url');
     }
     return publishFieldInput(providerId, config, 'websiteUrl', 'url');
   }
 
   function publishProviderCard(state, providerId) {
     var settings = state.site.publishSettings = normalizePublishSettings(state.site.publishSettings);
+    var ownHosting = providerId === 'own';
+    if (ownHosting) providerId = settings.selectedProvider === 'ftps' ? 'ftps' : 'sftp';
     var config = settings.providers[providerId] || defaultPublishProviderConfig(providerId);
     var meta = publishProviderMeta(providerId);
+    if (ownHosting) meta = Object.assign({}, meta, { icon: 'SSH', name: 'Own Hosting', nameRu: 'Own Hosting', short: 'SFTP / FTPS', shortRu: 'SFTP / FTPS' });
     var active = settings.selectedProvider === providerId ? ' is-active' : '';
     var missing = publishMissingFields(config, meta).length;
     var ready = isPublishConfigured(providerId, config, meta);
-    var status = providerId === 'manual' ? t('Ready', 'Готово') : (ready ? t('Ready to publish', 'Готово к публикации') : (missing ? t('Setup once', 'Настроить один раз') : t('Save to finish', 'Сохранить')));
-    var readyClass = ready ? ' is-ready' : '';
+    var status = providerId === 'manual' ? t('Ready', 'Готово')
+      : (providerId === 'ipfs' ? t('Export only', 'Только экспорт')
+      : (isDeferredPublishProvider(providerId) ? t('After 1.0', 'После 1.0')
+      : (ready ? t('Ready to publish', 'Готово к публикации') : (missing ? t('Setup once', 'Настроить один раз') : t('Save to finish', 'Сохранить')))));
+    var readyClass = ready && providerId !== 'ipfs' && !isDeferredPublishProvider(providerId) ? ' is-ready' : '';
     return '<button class="ir-site-studio-v5-publish-provider' + active + readyClass + '" data-v5-action="publish-select-provider" data-v5-provider="' + escapeHtml(providerId) + '" type="button"><span class="ir-site-studio-v5-publish-provider-icon">' + escapeHtml(meta.icon) + '</span><strong>' + escapeHtml(t(meta.name, meta.nameRu)) + '</strong><small data-v5-publish-short="1">' + escapeHtml(t(meta.short, meta.shortRu)) + '</small><em data-v5-publish-status="1">' + escapeHtml(status) + '</em></button>';
   }
 
@@ -4282,7 +5548,7 @@
       accentColor: site.accentColor || site.siteColor || '',
       logoLetters: site.logoLetters || '',
       generatedBy: 'IRGEZTNE Web Studio',
-      tokenPolicy: 'provider tokens are local only and are not exported'
+      tokenPolicy: 'provider credentials are local only and are not exported'
     };
   }
 
@@ -4347,7 +5613,7 @@
       '<title>' + escapeHtml(title) + '</title>' +
       '<style>' +
       'html,body{margin:0;width:100%;height:100%;background:#07101d;overflow:hidden;}' +
-      'iframe{display:block;width:100%;height:100vh;border:0;background:#fff;}' +
+      'iframe{display:block;width:100%;height:100vh;border:0;background:transparent;}' +
       '.fallback{position:fixed;left:16px;bottom:16px;z-index:2;padding:10px 12px;border-radius:14px;background:rgba(7,16,29,.88);color:#dbeafe;font:13px system-ui,sans-serif;}' +
       '.fallback a{color:#93c5fd;}' +
       '</style>' +
@@ -4356,6 +5622,47 @@
       '<iframe src="' + escapeHtml(src) + '" title="' + escapeHtml(title) + '"></iframe>' +
       '<noscript><div class="fallback">Template preview: <a href="' + escapeHtml(src) + '">' + escapeHtml(templateLabPath) + '</a></div></noscript>' +
       '</body></html>';
+  }
+
+  function officialTemplateAssetEntriesV095A(state) {
+    var site = state && state.site || {};
+    var templateId = normalizeOfficialTemplateIdV068C(
+      site.activeTemplate || site.templateId || site.template || 'project-landing'
+    );
+    var entries = {};
+    function add(publicPath, templateAsset, mimeType) {
+      entries[publicPath] = { templateAsset: templateAsset, mimeType: mimeType };
+    }
+    var maps = {
+      'business-product': [
+        ['assets/template/business/hero-office.webp','template-lab/business-product/assets/hero-office.webp','image/webp'],
+        ['assets/template/business/process-team.webp','template-lab/business-product/assets/process-team.webp','image/webp'],
+        ['assets/template/business/case-city.webp','template-lab/business-product/assets/case-city.webp','image/webp']
+      ],
+      'blog-news': [
+        ['assets/template/blog/main.jpg','template-lab/blog-news/assets/main.jpg','image/jpeg'],
+        ['assets/template/blog/tech.jpg','template-lab/blog-news/assets/tech.jpg','image/jpeg'],
+        ['assets/template/blog/business.jpg','template-lab/blog-news/assets/business.jpg','image/jpeg'],
+        ['assets/template/blog/guide.jpg','template-lab/blog-news/assets/guide.jpg','image/jpeg'],
+        ['assets/template/blog/workspace.jpg','template-lab/blog-news/assets/workspace.jpg','image/jpeg'],
+        ['assets/template/blog/city.jpg','template-lab/blog-news/assets/city.jpg','image/jpeg']
+      ],
+      'studio-portfolio': [
+        ['assets/template/portfolio/portfolio-author-process.webp','template-lab/portfolio-personal/assets/portfolio-author-process.webp','image/webp'],
+        ['assets/template/portfolio/portfolio-editorial-city.webp','template-lab/portfolio-personal/assets/portfolio-editorial-city.webp','image/webp'],
+        ['assets/template/portfolio/portfolio-hero-studio.webp','template-lab/portfolio-personal/assets/portfolio-hero-studio.webp','image/webp'],
+        ['assets/template/portfolio/portfolio-identity-system.webp','template-lab/portfolio-personal/assets/portfolio-identity-system.webp','image/webp'],
+        ['assets/template/portfolio/portfolio-product-interface.webp','template-lab/portfolio-personal/assets/portfolio-product-interface.webp','image/webp']
+      ],
+      'agency-studio': [
+        ['assets/template/agency/agency-architecture.webp','template-lab/agency-studio/assets/agency-architecture.webp','image/webp'],
+        ['assets/template/agency/agency-digital.webp','template-lab/agency-studio/assets/agency-digital.webp','image/webp'],
+        ['assets/template/agency/agency-identity.webp','template-lab/agency-studio/assets/agency-identity.webp','image/webp'],
+        ['assets/template/agency/agency-process.webp','template-lab/agency-studio/assets/agency-process.webp','image/webp']
+      ]
+    };
+    (maps[templateId] || []).forEach(function (item) { add(item[0], item[1], item[2]); });
+    return entries;
   }
 
   function createPreviewPayload(state, page, options) {
@@ -4388,6 +5695,8 @@
     };
 
     Object.assign(files, createFaviconPackage(state.site || {}));
+    Object.assign(files, officialTemplateAssetEntriesV095A(state));
+    Object.assign(files, officialFourExtraEntriesV098A(state));
 
     // IRGEZTNE_GENERATED_MEDIA_PACKAGE_V084H
     var generatedMediaAssetsV084H =
@@ -4398,7 +5707,15 @@
         : [];
 
     generatedMediaAssetsV084H.forEach(function (asset) {
-      if (!asset || asset.kind !== 'video') return;
+      if (
+        !asset ||
+        (
+          asset.kind !== 'video' &&
+          asset.kind !== 'image'
+        )
+      ) {
+        return;
+      }
 
       var publicPath = String(
         asset.publicPath || ''
@@ -4406,11 +5723,12 @@
         .replace(/\\/g, '/')
         .replace(/^\/+/, '');
 
-      if (
-        !/^assets\/media\/video\/[a-z0-9._-]+$/i.test(
-          publicPath
-        )
-      ) {
+      var expectedPathV092C =
+        asset.kind === 'image'
+          ? /^assets\/media\/image\/[a-z0-9._-]+$/i
+          : /^assets\/media\/video\/[a-z0-9._-]+$/i;
+
+      if (!expectedPathV092C.test(publicPath)) {
         return;
       }
 
@@ -4419,7 +5737,12 @@
       files[publicPath] = {
         sourcePath: String(asset.sourcePath),
         mimeType: String(
-          asset.mimeType || 'video/mp4'
+          asset.mimeType ||
+          (
+            asset.kind === 'image'
+              ? 'image/png'
+              : 'video/mp4'
+          )
         )
       };
     });
@@ -4569,6 +5892,34 @@
       }
     }
 
+    var workshopSnapshotMetaR1W9D = workshopTemplateSnapshotMetaR1W9D(state);
+    if (workshopSnapshotMetaR1W9D && !forcePublic) {
+      try {
+        var workshopSnapshotRecordR1W9D = await readWorkshopTemplateSnapshotR1W9D(workshopSnapshotMetaR1W9D.snapshotId);
+        if (!workshopSnapshotRecordR1W9D || !workshopSnapshotRecordR1W9D.previewSrcdoc) throw new Error('Site-local Workshop snapshot is missing');
+        /* R1W9D security boundary: never document.write arbitrary package HTML into
+           an Electron-owned popup. Materialize the already-CSP-rewritten snapshot
+           as a temporary standalone file and hand that URL to the existing external
+           preview opener. This preserves the same isolation used by the iframe. */
+        if (api && typeof api.materializeSitePreview === 'function' && typeof api.openSitePreviewExternal === 'function') {
+          var snapshotExternalPreviewR1W9D = await api.materializeSitePreview({
+            title: state.site && state.site.name || workshopSnapshotRecordR1W9D.title || 'IRGEZTNE Site',
+            slug: 'workshop-site-snapshot',
+            activeFileName: 'index.html',
+            package: { 'index.html': String(workshopSnapshotRecordR1W9D.previewSrcdoc) }
+          });
+          if (snapshotExternalPreviewR1W9D && snapshotExternalPreviewR1W9D.ok) {
+            await openPreviewUrlInExternal(snapshotExternalPreviewR1W9D, snapshotExternalPreviewR1W9D.indexUrl);
+            return;
+          }
+        }
+        downloadText('site-preview.html', String(workshopSnapshotRecordR1W9D.previewSrcdoc), 'text/html;charset=utf-8');
+        return;
+      } catch (snapshotBrowserErrorR1W9D) {
+        log('Open Workshop snapshot site failed', snapshotBrowserErrorR1W9D);
+      }
+    }
+
     if (api && typeof api.materializeSitePreview === 'function' && typeof api.openSitePreviewExternal === 'function') {
       try {
         var preview = await materializePreviewPackage(state, home);
@@ -4602,6 +5953,14 @@
     var state = readState();
     var page = activePage(state);
     var api = window.nsAPI || null;
+
+    // A Workshop snapshot has no fake structured page equivalent. Route every
+    // local open action to the independent snapshot instead of rendering the
+    // placeholder Editor page as if it were the imported template.
+    if (workshopTemplateSnapshotMetaR1W9D(state)) {
+      await openSiteInBrowser(false);
+      return;
+    }
 
     if (api && typeof api.materializeSitePreview === 'function' && typeof api.openSitePreviewExternal === 'function') {
       try {
@@ -4641,13 +6000,50 @@
     var status = overlay.querySelector('[data-v5-preview-status="1"]');
     var address = overlay.querySelector('[data-v5-preview-address="1"]');
     if (!frame) return;
+    /* IRGEZTNE_PREVIEW_FIRST_FRAME_V097A
+       Keep the empty iframe canvas hidden while the canonical package is
+       materialized. Reveal it only after the selected document has loaded. */
+    frame.onload = null;
+    frame.setAttribute('data-v5-preview-loading', '1');
     if (status) status.textContent = t('Building preview…', 'Сборка предпросмотра…');
     var state = readState();
     var page = activePage(state);
+    var snapshotMetaR1W9D = workshopTemplateSnapshotMetaR1W9D(state);
+    if (snapshotMetaR1W9D) {
+      try {
+        var snapshotRecordR1W9D = await readWorkshopTemplateSnapshotR1W9D(snapshotMetaR1W9D.snapshotId);
+        if (requestId !== previewRequestId || !overlay || activeTab !== 'preview') return;
+        if (!snapshotRecordR1W9D || !snapshotRecordR1W9D.previewSrcdoc) throw new Error('Site-local Workshop snapshot is missing');
+        frame.onload = function () {
+          if (requestId !== previewRequestId) return;
+          frame.removeAttribute('data-v5-preview-loading');
+          frame.onload = null;
+        };
+        frame.removeAttribute('src');
+        frame.setAttribute('sandbox', 'allow-scripts');
+        frame.setAttribute('referrerpolicy', 'no-referrer');
+        frame.srcdoc = String(snapshotRecordR1W9D.previewSrcdoc);
+        if (address) address.textContent = 'workshop-snapshot://' + (snapshotMetaR1W9D.title || 'site') + '/' + (snapshotMetaR1W9D.entryPath || 'index.html');
+        if (status) status.textContent = t('Site-local snapshot loaded. Workshop is no longer consulted for this site.', 'Локальный снимок сайта загружен. Мастерская для этого сайта больше не используется.');
+        return;
+      } catch (snapshotErrorR1W9D) {
+        log('Workshop site-local snapshot preview failed', snapshotErrorR1W9D);
+        if (status) status.textContent = t('Site-local snapshot is unavailable.', 'Локальный снимок сайта недоступен.');
+        frame.removeAttribute('data-v5-preview-loading');
+        return;
+      }
+    }
+    frame.removeAttribute('sandbox');
+    frame.removeAttribute('referrerpolicy');
     try {
       var preview = await materializePreviewPackage(state, page, { includeSelectedDraft: true });
       if (requestId !== previewRequestId || !overlay || activeTab !== 'preview') return;
       if (preview && preview.ok && preview.activePageUrl) {
+        frame.onload = function () {
+          if (requestId !== previewRequestId) return;
+          frame.removeAttribute('data-v5-preview-loading');
+          frame.onload = null;
+        };
         frame.src = preview.activePageUrl;
         if (address) address.textContent = 'local-preview://' + (preview.activeFileName || 'index.html');
         if (status) status.textContent = t('Selected page is shown from the shared build. Top-level pages appear in navigation; nested pages appear in dropdown submenus. “Open site” opens Home / index.html.', 'Показана выбранная страница из общей сборки. Верхние страницы видны в навигации, вложенные страницы — в выпадающем подменю. Кнопка “Открыть сайт” откроет Главную / index.html.');
@@ -4658,15 +6054,30 @@
     }
     if (requestId !== previewRequestId || !overlay || activeTab !== 'preview') return;
     var fallbackHtml = renderSiteHtml(state, page, { linkMode: 'hash', inlineAssets: true });
+    frame.onload = function () {
+      if (requestId !== previewRequestId) return;
+      frame.removeAttribute('data-v5-preview-loading');
+      frame.onload = null;
+    };
     frame.src = 'data:text/html;charset=utf-8,' + encodeURIComponent(fallbackHtml);
     if (address) address.textContent = 'local-preview://fallback/' + (page.slug || 'page');
     if (status) status.textContent = t('Fallback preview is shown without writing to disk.', 'Показан fallback-предпросмотр без записи на диск.');
   }
 
 
-  function downloadCurrentHtml() {
+  async function downloadCurrentHtml() {
     var state = readState();
     var page = activePage(state);
+    var workshopSnapshotMetaR1W9D = workshopTemplateSnapshotMetaR1W9D(state);
+    if (workshopSnapshotMetaR1W9D) {
+      try {
+        var workshopSnapshotRecordR1W9D = await readWorkshopTemplateSnapshotR1W9D(workshopSnapshotMetaR1W9D.snapshotId);
+        if (!workshopSnapshotRecordR1W9D || !workshopSnapshotRecordR1W9D.previewSrcdoc) throw new Error('Site-local Workshop snapshot is missing');
+        downloadText('index.html', String(workshopSnapshotRecordR1W9D.previewSrcdoc), 'text/html;charset=utf-8');
+        try { alert(t('Snapshot HTML saved as index.html', 'HTML снимка сохранён как index.html')); } catch (snapshotAlertR1W9D) {}
+        return;
+      } catch (snapshotDownloadErrorR1W9D) { log('Snapshot HTML download failed', snapshotDownloadErrorR1W9D); return; }
+    }
     var target = publicRenderTargetV091B(state, page);
     var filename = ((target.page && target.page.slug) || 'index') + '.html';
     downloadText(filename, renderPublicSiteHtmlV091B(state, target.page, { linkMode: 'file', inlineAssets: true }), 'text/html;charset=utf-8');
@@ -4676,6 +6087,31 @@
   async function downloadSiteZip() {
     var state = readState();
     var page = activePage(state);
+    var workshopSnapshotMetaR1W9D = workshopTemplateSnapshotMetaR1W9D(state);
+    if (workshopSnapshotMetaR1W9D) {
+      var snapshotApiR1W9D = window.nsAPI || null;
+      try {
+        var snapshotRecordR1W9D = await readWorkshopTemplateSnapshotR1W9D(workshopSnapshotMetaR1W9D.snapshotId);
+        if (!snapshotRecordR1W9D) throw new Error('Site-local Workshop snapshot is missing');
+        var snapshotPackageR1W9D = workshopSnapshotExportPackageR1W9D(snapshotRecordR1W9D);
+        if (!snapshotApiR1W9D || typeof snapshotApiR1W9D.exportSiteZip !== 'function') throw new Error('ZIP export is unavailable');
+        var snapshotPayloadR1W9D = {
+          title: state.site && state.site.name || snapshotRecordR1W9D.title || 'IRGEZTNE Site',
+          slug: slugify(state.site && state.site.name || 'irgeztne-site'),
+          fileName: slugify(state.site && state.site.name || 'irgeztne-site') + '.zip',
+          package: snapshotPackageR1W9D
+        };
+        var snapshotResultR1W9D = await snapshotApiR1W9D.exportSiteZip(snapshotPayloadR1W9D);
+        if (snapshotResultR1W9D && snapshotResultR1W9D.ok) {
+          updatePublishStatus('manual', 'ok: ' + t('Workshop snapshot ZIP exported.', 'ZIP снимка Мастерской экспортирован.'), { lastPublishedAt: new Date().toISOString(), lastBuildFiles: Object.keys(snapshotPackageR1W9D) });
+        }
+        return;
+      } catch (snapshotZipErrorR1W9D) {
+        log('Workshop snapshot ZIP export failed', snapshotZipErrorR1W9D);
+        try { alert(t('Could not export the Workshop snapshot ZIP.', 'Не удалось экспортировать ZIP снимка Мастерской.')); } catch (snapshotZipAlertR1W9D) {}
+        return;
+      }
+    }
     var payload = createZipPayloadV091B(state, page);
     payload.fileName = slugify(state.site && state.site.name || 'irgeztne-site') + '.zip';
     payload.title = state.site && state.site.name || payload.title || 'IRGEZTNE Site';
@@ -4764,7 +6200,15 @@
       updatePublishStatus(providerId, 'warn: ' + t('Saved draft, but required fields are still missing: ', 'Черновик сохранён, но ещё не заполнены обязательные поля: ') + missing.map(publishFieldLabel).join(', '), { lastTestedAt: new Date().toISOString(), enabled: false });
       return;
     }
-    if (providerId === 'netlify' || providerId === 'cloudflare') {
+    if (isDeferredPublishProvider(providerId)) {
+      updatePublishStatus(providerId, 'info: ' + t('Remote publishing is planned after 1.0. No provider credentials are required now; use local ZIP or a connected provider.', 'Удалённая публикация запланирована после 1.0. Данные доступа сейчас не нужны; используйте локальный ZIP или подключённый провайдер.'), { lastTestedAt: new Date().toISOString(), enabled: false });
+      return;
+    }
+    if (providerId === 'ipfs') {
+      updatePublishStatus(providerId, 'info: ' + t('IPFS-ready export is local only in 1.0; no CID or pinning request is sent.', 'IPFS-ready экспорт в 1.0 только локальный; запрос CID или pinning не отправляется.'), { lastTestedAt: new Date().toISOString(), enabled: true });
+      return;
+    }
+    if (providerId === 'netlify' || providerId === 'cloudflare' || providerId === 'ftp' || providerId === 'ftps' || providerId === 'sftp') {
       updatePublishStatus(providerId, 'info: ' + t('Server saved. Press Test connection once to verify it.', 'Сервер сохранён. Один раз нажмите «Проверить подключение», чтобы подтвердить связь.'), { lastTestedAt: new Date().toISOString(), enabled: false });
       return;
     }
@@ -4855,6 +6299,37 @@
   }
 
 
+  async function testRemoteHostingConnection(providerId, config) {
+    var api = window.nsAPI || null;
+    if (!api || typeof api.testRemotePublish !== 'function') {
+      return { ok: false, status: 'warn: ' + t('Remote publishing API is unavailable in this build.', 'API удалённой публикации недоступен в этой сборке.') };
+    }
+    var password = String(readPublishSecretValue(providerId, config, 'password') || '');
+    if (!password) return { ok: false, status: 'warn: ' + t('Password is required.', 'Нужен пароль.') };
+    try {
+      var transportProviderId = providerId === 'ftps' ? 'ftp' : providerId;
+      var result = await api.testRemotePublish({
+        providerId: transportProviderId,
+        config: {
+          protocol: providerId === 'ftp' ? 'ftp' : (providerId === 'ftps' ? (config.protocol || 'ftps') : ''),
+          host: config.host || '',
+          port: config.port || (providerId === 'sftp' ? '22' : (providerId === 'ftps' && config.protocol === 'ftps-implicit' ? '990' : '21')),
+          username: config.username || '',
+          password: password,
+          remotePath: config.remotePath || '/'
+        }
+      });
+      if (!result || result.ok !== true) {
+        return { ok: false, status: 'warn: ' + t('Connection failed: ', 'Ошибка подключения: ') + (result && result.message ? result.message : t('unknown error', 'неизвестная ошибка')) };
+      }
+      var label = providerId === 'ftp' ? 'FTP' : (providerId === 'ftps' ? 'FTPS' : 'SFTP');
+      return { ok: true, status: 'ok: ' + label + t(' connected: ', ' подключён: ') + (result.remotePath || config.remotePath || '/') };
+    } catch (error) {
+      return { ok: false, status: 'warn: ' + t('Connection failed: ', 'Ошибка подключения: ') + (error && error.message ? error.message : String(error || 'network error')) };
+    }
+  }
+
+
   async function testPublishSettings() {
     var state = readState();
     state.site.publishSettings = normalizePublishSettings(state.site.publishSettings);
@@ -4879,7 +6354,21 @@
       updatePublishStatus(providerId, cfResult.status, { lastTestedAt: new Date().toISOString(), enabled: cfResult.ok === true, patch: cfResult.patch || {}, scrollToStatus: true });
       return;
     }
-    updatePublishStatus(providerId, 'ok: ' + t('Settings saved and ready. Next publishes can use this saved provider setup.', 'Настройки сохранены и готовы. Следующие публикации смогут использовать эту сохранённую настройку провайдера.'), { lastTestedAt: new Date().toISOString(), enabled: true, scrollToStatus: true });
+    if (providerId === 'ftp' || providerId === 'ftps' || providerId === 'sftp') {
+      updatePublishStatus(providerId, 'info: ' + t('Testing hosting connection…', 'Проверяем подключение к хостингу…'), { lastTestedAt: new Date().toISOString(), enabled: false, scrollToStatus: true });
+      var remoteResult = await testRemoteHostingConnection(providerId, config);
+      updatePublishStatus(providerId, remoteResult.status, { lastTestedAt: new Date().toISOString(), enabled: remoteResult.ok === true, scrollToStatus: true });
+      return;
+    }
+    if (isDeferredPublishProvider(providerId)) {
+      updatePublishStatus(providerId, 'info: ' + t('No connection test is available in 1.0 because this provider is not connected yet.', 'В 1.0 проверка подключения недоступна, потому что этот провайдер ещё не подключён.'), { lastTestedAt: new Date().toISOString(), enabled: false, scrollToStatus: true });
+      return;
+    }
+    if (providerId === 'ipfs') {
+      updatePublishStatus(providerId, 'info: ' + t('IPFS-ready export does not use a network connection in 1.0.', 'IPFS-ready экспорт в 1.0 не использует сетевое подключение.'), { lastTestedAt: new Date().toISOString(), enabled: true, scrollToStatus: true });
+      return;
+    }
+    updatePublishStatus(providerId, 'info: ' + t('No connection test is implemented for this provider.', 'Для этого провайдера проверка подключения не реализована.'), { lastTestedAt: new Date().toISOString(), enabled: false, scrollToStatus: true });
   }
 
   function describeNetlifyDeployResult(result, config) {
@@ -5024,9 +6513,78 @@
     }
   }
 
+
+  function remoteHostingConnectionLooksVerified(providerId, config) {
+    if (!config) return false;
+    if (config.enabled === true) return true;
+    var status = String(config.lastStatus || '').toLowerCase();
+    if (status.indexOf('ok:') !== 0) return false;
+    if (providerId === 'ftp') return status.indexOf('ftp connected') !== -1 || status.indexOf('ftp подключ') !== -1;
+    if (providerId === 'ftps') return status.indexOf('ftps connected') !== -1 || status.indexOf('ftps подключ') !== -1;
+    return status.indexOf('sftp connected') !== -1 || status.indexOf('sftp подключ') !== -1;
+  }
+
+  async function publishRemoteHostingDeploy(state, config, payload, providerId) {
+    var api = window.nsAPI || null;
+    if (!api || typeof api.publishRemote !== 'function') {
+      setPublishProgress(0, '', false);
+      updatePublishStatus(providerId, 'warn: ' + t('Remote publishing API is unavailable in this build.', 'API удалённой публикации недоступен в этой сборке.'), { enabled: !!config.enabled, lastBuildFiles: Object.keys(payload.package || {}) });
+      return false;
+    }
+    if (!remoteHostingConnectionLooksVerified(providerId, config)) {
+      setPublishProgress(0, '', false);
+      updatePublishStatus(providerId, 'warn: ' + t('Check the hosting connection before publishing.', 'Сначала проверьте подключение к хостингу.'), { enabled: false, lastBuildFiles: Object.keys(payload.package || {}) });
+      return false;
+    }
+    var password = String(readPublishSecretValue(providerId, config, 'password') || '');
+    updatePublishStatus(providerId, 'info: ' + t('Synchronizing changed website files…', 'Синхронизируем изменённые файлы сайта…'), { enabled: true, lastBuildFiles: Object.keys(payload.package || {}) });
+    try {
+      var transportProviderId = providerId === 'ftps' ? 'ftp' : providerId;
+      var result = await api.publishRemote({
+        providerId: transportProviderId,
+        siteKey: String(state.site && (state.site.localSiteId || state.site.id || state.site.name) || 'default'),
+        config: {
+          protocol: providerId === 'ftp' ? 'ftp' : (providerId === 'ftps' ? (config.protocol || 'ftps') : ''),
+          host: config.host || '',
+          port: config.port || (providerId === 'sftp' ? '22' : (providerId === 'ftps' && config.protocol === 'ftps-implicit' ? '990' : '21')),
+          username: config.username || '',
+          password: password,
+          remotePath: config.remotePath || '/'
+        },
+        package: payload.package || {}
+      });
+      if (!result || result.ok !== true) {
+        setPublishProgress(0, '', false);
+        updatePublishStatus(providerId, 'warn: ' + t('Publish failed: ', 'Ошибка публикации: ') + (result && result.message ? result.message : t('unknown error', 'неизвестная ошибка')), { enabled: !!config.enabled, lastBuildFiles: Object.keys(payload.package || {}) });
+        return false;
+      }
+      var uploaded = Array.isArray(result.uploaded) ? result.uploaded.length : 0;
+      var removed = Array.isArray(result.removed) ? result.removed.length : 0;
+      var unchanged = Array.isArray(result.unchanged) ? result.unchanged.length : 0;
+      var summary = result.incremental
+        ? t('Changes synchronized: ', 'Изменения синхронизированы: ') + uploaded + t(' uploaded, ', ' загружено, ') + removed + t(' removed, ', ' удалено, ') + unchanged + t(' unchanged.', ' без изменений.')
+        : t('First publish complete: ', 'Первая публикация завершена: ') + uploaded + t(' files uploaded.', ' файлов загружено.');
+      updatePublishStatus(providerId, 'ok: ' + summary, {
+        enabled: true,
+        lastPublishedAt: result.publishedAt || new Date().toISOString(),
+        lastBuildFiles: Array.isArray(result.files) ? result.files : Object.keys(payload.package || {})
+      });
+      return true;
+    } catch (error) {
+      setPublishProgress(0, '', false);
+      updatePublishStatus(providerId, 'warn: ' + t('Publish failed: ', 'Ошибка публикации: ') + (error && error.message ? error.message : String(error || 'network error')), { enabled: !!config.enabled, lastBuildFiles: Object.keys(payload.package || {}) });
+      return false;
+    }
+  }
+
   async function publishFoundation() {
     setPublishProgress(12, t('Preparing website build…', 'Подготовка сборки сайта…'), activeTab === 'server' || activeTab === 'publish');
     var state = readState();
+    if (workshopTemplateSnapshotMetaR1W9D(state)) {
+      setPublishProgress(0, '', false);
+      try { alert(t('Publishing a Workshop snapshot through remote providers is a separate adapter gate. Use the correct snapshot ZIP export for now.', 'Публикация снимка Мастерской через удалённые провайдеры — отдельный adapter gate. Пока используйте корректный экспорт ZIP снимка.')); } catch (snapshotPublishAlertR1W9D) {}
+      return;
+    }
     state.site.publishSettings = normalizePublishSettings(state.site.publishSettings);
     var providerId = state.site.publishSettings.selectedProvider || 'manual';
     var config = state.site.publishSettings.providers[providerId] || defaultPublishProviderConfig(providerId);
@@ -5097,8 +6655,41 @@
       setPublishProgress(100, t('Website published', 'Сайт опубликован'), activeTab === 'server' || activeTab === 'publish');
       return;
     }
-    setPublishProgress(100, t('Build ready', 'Сборка готова'), false);
-    updatePublishStatus(providerId, 'ok: ' + t('Build is ready. Saved provider setup will be reused for the next publish.', 'Сборка готова. Сохранённая настройка провайдера будет использоваться для следующей публикации.'), { lastPublishedAt: new Date().toISOString(), enabled: true, lastBuildFiles: Object.keys(payload.package || {}) });
+    if (providerId === 'ftp' || providerId === 'ftps' || providerId === 'sftp') {
+      if (!remoteHostingConnectionLooksVerified(providerId, config)) {
+        setPublishProgress(55, t('Checking hosting connection…', 'Проверяем подключение к хостингу…'), activeTab === 'server' || activeTab === 'publish');
+        var hostingCheck = await testRemoteHostingConnection(providerId, config);
+        if (!hostingCheck || hostingCheck.ok !== true) {
+          updatePublishStatus(providerId, hostingCheck && hostingCheck.status ? hostingCheck.status : ('warn: ' + t('Check the hosting connection before publishing.', 'Сначала проверьте подключение к хостингу.')), { enabled: false, lastTestedAt: new Date().toISOString(), lastBuildFiles: Object.keys(payload.package || {}) });
+          return;
+        }
+        state = readState();
+        state.site.publishSettings = normalizePublishSettings(state.site.publishSettings);
+        config = state.site.publishSettings.providers[providerId] || defaultPublishProviderConfig(providerId);
+        config.enabled = true;
+        config.lastResult = 'ok';
+        config.lastStatus = hostingCheck.status;
+        config.lastTestedAt = new Date().toISOString();
+        state.site.publishSettings.providers[providerId] = config;
+        writeState(state);
+      }
+      setPublishProgress(72, t('Synchronizing changed files…', 'Синхронизируем изменённые файлы…'), activeTab === 'server' || activeTab === 'publish');
+      var hostingPublished = await publishRemoteHostingDeploy(state, config, payload, providerId);
+      if (hostingPublished) setPublishProgress(100, t('Website published', 'Сайт опубликован'), activeTab === 'server' || activeTab === 'publish');
+      return;
+    }
+    if (isDeferredPublishProvider(providerId)) {
+      setPublishProgress(0, '', false);
+      updatePublishStatus(providerId, 'info: ' + t('Remote publishing is not connected in 1.0. No files were uploaded. Use local ZIP, Netlify, Cloudflare Pages, FTP, FTPS or SFTP.', 'Удалённая публикация в 1.0 не подключена. Файлы никуда не отправлялись. Используйте локальный ZIP, Netlify, Cloudflare Pages, FTP, FTPS или SFTP.'), { enabled: false, lastBuildFiles: Object.keys(payload.package || {}) });
+      return;
+    }
+    if (providerId === 'ipfs') {
+      setPublishProgress(100, t('IPFS-ready build prepared', 'IPFS-ready сборка подготовлена'), false);
+      updatePublishStatus(providerId, 'info: ' + t('IPFS-ready build is prepared locally. No CID, pinning or network upload was performed.', 'IPFS-ready сборка подготовлена локально. CID, pinning и сетевая загрузка не выполнялись.'), { enabled: true, lastBuildFiles: Object.keys(payload.package || {}) });
+      return;
+    }
+    setPublishProgress(0, '', false);
+    updatePublishStatus(providerId, 'warn: ' + t('Publishing is not implemented for this provider. No files were uploaded.', 'Публикация для этого провайдера не реализована. Файлы никуда не отправлялись.'), { enabled: false, lastBuildFiles: Object.keys(payload.package || {}) });
   }
 
 
@@ -5353,7 +6944,7 @@
         '<select class="ir-site-studio-v5-select" data-v5-field="footerGroup">' + footerGroupOptionsHtml(page.footerGroup, page) + '</select>' +
         '<p class="ir-site-studio-v5-note">' + escapeHtml(t('Footer section is used only when the footer checkbox is enabled.', 'Раздел подвала используется только когда включена галочка подвала.')) + '</p>' +
       '</div>' +
-      '<button class="ir-site-studio-v5-btn ir-site-studio-v5-btn--primary" data-v5-action="save-page" type="button">' + escapeHtml(t('Save page', 'Сохранить страницу')) + '</button>' +
+      '<button class="ir-site-studio-v5-btn ir-site-studio-v5-btn--primary" data-v5-action="save-page" type="button">' + escapeHtml(t('Save page settings', 'Сохранить настройки страницы')) + '</button>' +
       '<p class="ir-site-studio-v5-note">' + escapeHtml(t('Parent page creates dropdown/submenu. Footer is controlled by the checkbox above.', 'Родительская страница создаёт подменю. Подвал управляется галочкой выше.')) + '</p>' +
       '</div>';
   }
@@ -5435,12 +7026,85 @@
   // IRGEZTNE_V084B_EDITOR_WORKBENCH_PARENT_BRIDGE
   var editorWorkbenchMessageBoundV084B = false;
 
+  // IRGEZTNE_EDITOR_WORKBENCH_ON_DEMAND_R1W9F5
+  // Workbench editing tools are contextual inside the editor; the parent keeps
+  // only the existing auto-height / single-scrollbar bridge.
+
   function editorWorkbenchFrameV084B() {
     return overlay && overlay.querySelector ? overlay.querySelector('[data-v084b-editor-frame="1"]') : null;
   }
 
   function editorWorkbenchHiddenFieldV084B() {
     return overlay && overlay.querySelector ? overlay.querySelector('[data-v5-content="1"]') : null;
+  }
+
+  // IRGEZTNE_WORKBENCH_WIDGET_MANAGER_HOST_ANCHOR_R1W9H3
+  // The Workbench iframe auto-grows and the outer Web Studio surface owns scrolling.
+  // Keep the Widget Manager visually anchored to the visible Workbench viewport by
+  // sending the child the currently visible local Y-range on every host scroll.
+  var editorWorkbenchViewportSyncBoundR1W9H3 = false;
+  var editorWorkbenchViewportSyncFrameR1W9H3 = 0;
+
+  function editorWorkbenchVisibleViewportR1W9H3(frame) {
+    if (!frame || !frame.getBoundingClientRect) return null;
+    var frameRect = frame.getBoundingClientRect();
+    var viewportHeight = Math.max(0, Number(window.innerHeight || document.documentElement.clientHeight || 0));
+    var visibleTop = Math.max(0, frameRect.top);
+    var visibleBottom = Math.min(viewportHeight || frameRect.bottom, frameRect.bottom);
+    var node = frame.parentElement;
+    while (node && node !== document.body && node !== document.documentElement) {
+      try {
+        var style = window.getComputedStyle ? window.getComputedStyle(node) : null;
+        var overflowY = String(style && (style.overflowY || style.overflow) || '');
+        if (/(auto|scroll|hidden|clip)/i.test(overflowY)) {
+          var rect = node.getBoundingClientRect();
+          visibleTop = Math.max(visibleTop, rect.top);
+          visibleBottom = Math.min(visibleBottom, rect.bottom);
+        }
+      } catch (errorStyle) {}
+      node = node.parentElement;
+    }
+    visibleBottom = Math.max(visibleTop, visibleBottom);
+    var localTop = Math.max(0, visibleTop - frameRect.top);
+    var localBottom = Math.max(localTop, Math.min(frameRect.height, visibleBottom - frameRect.top));
+    return {
+      localTop: localTop,
+      localBottom: localBottom,
+      visibleHeight: Math.max(0, localBottom - localTop),
+      frameHeight: Math.max(0, frameRect.height)
+    };
+  }
+
+  function editorWorkbenchPostViewportR1W9H3() {
+    editorWorkbenchViewportSyncFrameR1W9H3 = 0;
+    var frame = editorWorkbenchFrameV084B();
+    if (!frame || !frame.contentWindow) return;
+    var viewport = editorWorkbenchVisibleViewportR1W9H3(frame);
+    if (!viewport) return;
+    try {
+      frame.contentWindow.postMessage({
+        source: 'irgeztne-webstudio-v084b',
+        type: 'host-viewport-r1w9h3',
+        localTop: viewport.localTop,
+        localBottom: viewport.localBottom,
+        visibleHeight: viewport.visibleHeight,
+        frameHeight: viewport.frameHeight
+      }, '*');
+    } catch (errorViewportPost) {
+      log('Editor Workbench viewport post failed', errorViewportPost);
+    }
+  }
+
+  function scheduleEditorWorkbenchViewportR1W9H3() {
+    if (editorWorkbenchViewportSyncFrameR1W9H3) return;
+    editorWorkbenchViewportSyncFrameR1W9H3 = window.requestAnimationFrame(editorWorkbenchPostViewportR1W9H3);
+  }
+
+  function bindEditorWorkbenchViewportSyncR1W9H3() {
+    if (editorWorkbenchViewportSyncBoundR1W9H3) return;
+    editorWorkbenchViewportSyncBoundR1W9H3 = true;
+    document.addEventListener('scroll', scheduleEditorWorkbenchViewportR1W9H3, true);
+    window.addEventListener('resize', scheduleEditorWorkbenchViewportR1W9H3);
   }
 
   // IRGEZTNE_EDITOR_LOCAL_VIDEO_BRIDGE_V084H
@@ -5481,20 +7145,119 @@
     return assets
       .filter(function (asset) {
         return asset &&
-          asset.kind === 'video' &&
+          (
+            asset.kind === 'video' ||
+            asset.kind === 'image'
+          ) &&
           asset.publicPath &&
           asset.sourceUrl;
       })
       .map(function (asset) {
         return {
           id: String(asset.id || ''),
-          kind: 'video',
+          kind: String(asset.kind || ''),
           name: String(asset.name || ''),
           mimeType: String(asset.mimeType || ''),
           publicPath: String(asset.publicPath || ''),
           previewUrl: String(asset.sourceUrl || '')
         };
       });
+  }
+
+  async function editorWorkbenchImportImageV092C(data) {
+    var api = window.nsAPI || null;
+    var requestId = data && data.requestId || '';
+
+    if (!api || typeof api.importSiteImage !== 'function') {
+      editorWorkbenchPostMediaV084H({
+        type: 'media-result',
+        requestId: requestId,
+        ok: false,
+        error: 'media-import-unavailable'
+      });
+
+      return;
+    }
+
+    var state = readState();
+    state.site = state.site || {};
+
+    var siteId = '';
+
+    try {
+      var manager = JSON.parse(
+        localStorage.getItem(SITE_MANAGER_KEY) || 'null'
+      );
+
+      siteId = manager && manager.activeSiteId
+        ? String(manager.activeSiteId)
+        : '';
+    } catch (errorManager) {}
+
+    if (!siteId) {
+      siteId = String(
+        state.site.name || 'active-site'
+      );
+    }
+
+    try {
+      var result = await api.importSiteImage({
+        siteId: siteId
+      });
+
+      if (!result || !result.ok || !result.asset) {
+        editorWorkbenchPostMediaV084H({
+          type: 'media-result',
+          requestId: requestId,
+          ok: false,
+          canceled: !!(result && result.canceled),
+          error: result && result.error || ''
+        });
+
+        return;
+      }
+
+      var assets = Array.isArray(state.site.mediaAssets)
+        ? state.site.mediaAssets.slice()
+        : [];
+
+      var alreadyExists = assets.some(function (asset) {
+        return asset &&
+          asset.id === result.asset.id;
+      });
+
+      if (!alreadyExists) {
+        assets.push(result.asset);
+      }
+
+      state.site.mediaAssets = assets;
+      writeState(state);
+
+      editorWorkbenchPostMediaV084H({
+        type: 'media-result',
+        requestId: requestId,
+        ok: true,
+        asset: {
+          id: String(result.asset.id || ''),
+          kind: 'image',
+          name: String(result.asset.name || ''),
+          mimeType: String(result.asset.mimeType || ''),
+          publicPath: String(result.asset.publicPath || ''),
+          previewUrl: String(result.asset.sourceUrl || '')
+        }
+      });
+    } catch (error) {
+      log('Workbench image import failed', error);
+
+      editorWorkbenchPostMediaV084H({
+        type: 'media-result',
+        requestId: requestId,
+        ok: false,
+        error: String(
+          error && error.message || error || ''
+        )
+      });
+    }
   }
 
   async function editorWorkbenchImportVideoV084H(data) {
@@ -5593,24 +7356,404 @@
     }
   }
 
+  // IRGEZTNE_WORKSHOP_WIDGET_CONTRACT_RECONCILIATION_R1W9H
+  // Widget instances are site/page-local state, never arbitrary children of page.bodyHtml.
+  // Web Studio owns Host Surface geometry; Workshop owns package validation/materialization.
+  function workshopInstalledWidgetsR1W9G() {
+    try {
+      var api = window.NSCodeHubV1 || null;
+      if (!api || typeof api.getInstalledWidgets !== 'function') return [];
+      var list = api.getInstalledWidgets();
+      return Array.isArray(list) ? list : [];
+    } catch (error) {
+      log('Workshop installed-widget catalogue unavailable', error);
+      return [];
+    }
+  }
+
+  function workshopWidgetCategoryLabelR1W9G(value) {
+    var raw = String(value || '').trim();
+    if (!raw) return t('Widget', 'Виджет');
+    return raw.replace(/[-_]+/g, ' ').replace(/\b\w/g, function (ch) { return ch.toUpperCase(); });
+  }
+
+  function workshopNormalizeWidgetDescriptorForStudioR1W9H(input) {
+    var widget = input && typeof input === 'object' && !Array.isArray(input) ? JSON.parse(JSON.stringify(input)) : {};
+    if (widget.runtime && widget.placement && widget.management) return widget;
+    var height = Math.max(120, Math.min(1200, Number(widget.height || 260)));
+    return {
+      contract: '1.0',
+      legacyProfile: true,
+      entry: String(widget.entry || 'widget.html'),
+      category: String(widget.category || 'interactive'),
+      height: height,
+      runtime: { mode: 'local', entry: String(widget.entry || 'widget.html') },
+      management: { mode: 'local', dashboardUrl: '' },
+      placement: {
+        modes: ['flow'], preferredMode: 'flow',
+        sizes: ['medium', 'full'], preferredSize: 'medium',
+        align: ['left', 'center', 'right', 'stretch'], preferredAlign: 'center',
+        regions: ['main-start', 'main-end'], preferredRegion: 'main-end',
+        floatingPositions: ['bottom-right'], preferredFloatingPosition: 'bottom-right'
+      },
+      settings: { fields: [] },
+      theme: { mode: 'self-contained', variants: [] },
+      size: { minWidth: 180, preferredWidth: 420, maxWidth: 960, minHeight: 120, preferredHeight: height, maxHeight: 1200, heightMode: 'fixed' },
+      capabilities: widget.capabilities && typeof widget.capabilities === 'object' ? JSON.parse(JSON.stringify(widget.capabilities)) : { javascript: false, network: false, externalOrigins: [] }
+    };
+  }
+
+  function workshopInstalledWidgetsForWorkbenchR1W9G() {
+    return workshopInstalledWidgetsR1W9G().map(function (item) {
+      item = item && typeof item === 'object' ? item : {};
+      var widget = workshopNormalizeWidgetDescriptorForStudioR1W9H(item.widget);
+      return {
+        packageId: String(item.packageId || ''),
+        title: String(item.title || t('Installed widget', 'Установленный виджет')),
+        version: String(item.version || ''),
+        authorLabel: String(item.authorLabel || ''),
+        category: workshopWidgetCategoryLabelR1W9G(widget.category),
+        description: String(item.description && item.description.short || ''),
+        widget: widget
+      };
+    }).filter(function (item) { return !!item.packageId; });
+  }
+
+  function workshopWidgetSnapshotStoreR1W9G(state, create) {
+    var site = state && state.site ? state.site : null;
+    if (!site) return {};
+    var store = site.workshopWidgetSnapshots;
+    if (!store || typeof store !== 'object' || Array.isArray(store)) {
+      if (!create) return {};
+      store = {};
+      site.workshopWidgetSnapshots = store;
+    }
+    return store;
+  }
+
+  function workshopWidgetSnapshotsForWorkbenchR1W9G(state) {
+    var source = workshopWidgetSnapshotStoreR1W9G(state, false);
+    var result = {};
+    Object.keys(source).forEach(function (key) {
+      var item = source[key];
+      if (!item || typeof item !== 'object') return;
+      result[key] = {
+        snapshotId: String(item.snapshotId || key),
+        packageId: String(item.packageId || ''),
+        title: String(item.title || ''),
+        version: String(item.version || ''),
+        authorLabel: String(item.authorLabel || ''),
+        category: String(item.category || ''),
+        widget: workshopNormalizeWidgetDescriptorForStudioR1W9H(item.widget),
+        html: String(item.html || '')
+      };
+    });
+    return result;
+  }
+
+  function workshopWidgetInstancesR1W9H(page, create) {
+    if (!page) return [];
+    if (!Array.isArray(page.workshopWidgetInstancesV1)) {
+      if (!create) return [];
+      page.workshopWidgetInstancesV1 = [];
+    }
+    return page.workshopWidgetInstancesV1;
+  }
+
+  function migrateLegacyWorkshopWidgetPlaceholdersR1W9H(state, page) {
+    if (!page || !String(page.bodyHtml || '').includes('data-workshop-widget-snapshot')) return false;
+    var holder = document.createElement('div');
+    holder.innerHTML = String(page.bodyHtml || '');
+    var instances = workshopWidgetInstancesR1W9H(page, true);
+    var known = {};
+    instances.forEach(function (item) { if (item && item.instanceId) known[String(item.instanceId)] = true; });
+    var changed = false;
+    Array.prototype.forEach.call(holder.querySelectorAll('[data-workshop-widget-snapshot]'), function (node) {
+      var instanceId = String(node.getAttribute('data-workshop-widget-snapshot') || '');
+      if (!instanceId) { node.remove(); changed = true; return; }
+      if (!known[instanceId]) {
+        instances.push({
+          instanceId: instanceId,
+          sourceSnapshotId: String(node.getAttribute('data-workshop-widget-source-snapshot') || ''),
+          packageId: String(node.getAttribute('data-workshop-widget-package') || ''),
+          title: String(node.getAttribute('data-workshop-widget-title') || t('Installed widget', 'Установленный виджет')),
+          version: String(node.getAttribute('data-workshop-widget-version') || ''),
+          category: String(node.getAttribute('data-workshop-widget-category') || ''),
+          settings: {},
+          placement: { mode: 'flow', slot: 'main-end', size: 'medium', align: 'center', migratedFrom: String(node.getAttribute('data-workshop-widget-placement') || 'legacy-body-html') },
+          insertedAt: String(node.getAttribute('data-workshop-widget-inserted-at') || new Date().toISOString()),
+          migratedAt: new Date().toISOString()
+        });
+        known[instanceId] = true;
+      }
+      node.remove();
+      changed = true;
+    });
+    if (changed) {
+      page.bodyHtml = sanitizeHtml(holder.innerHTML || '<p><br></p>');
+      page.workshopWidgetInsertions = [];
+      page.updatedAt = new Date().toISOString();
+    }
+    return changed;
+  }
+
+  function workshopWidgetInstancesForWorkbenchR1W9H(page) {
+    return workshopWidgetInstancesR1W9H(page, false).map(function (item) {
+      item = item && typeof item === 'object' ? item : {};
+      return {
+        instanceId: String(item.instanceId || ''),
+        sourceSnapshotId: String(item.sourceSnapshotId || ''),
+        packageId: String(item.packageId || ''),
+        title: String(item.title || ''),
+        version: String(item.version || ''),
+        category: String(item.category || ''),
+        settings: item.settings && typeof item.settings === 'object' ? JSON.parse(JSON.stringify(item.settings)) : {},
+        placement: item.placement && typeof item.placement === 'object' ? JSON.parse(JSON.stringify(item.placement)) : {},
+        insertedAt: String(item.insertedAt || '')
+      };
+    }).filter(function (item) { return !!item.instanceId; });
+  }
+
+  function workshopWidgetSafeColorTokenR1W9H(value, fallback) {
+    var raw = String(value || '').trim();
+    if (/^#[0-9a-f]{3,8}$/i.test(raw)) return raw;
+    return fallback;
+  }
+
+  function workshopWidgetSafeFontTokenR1W9H(value) {
+    var raw = String(value || 'Inter').trim().slice(0, 120);
+    if (!raw || /[;{}<>\n\r]/.test(raw)) return 'Inter';
+    return raw;
+  }
+
+  function workshopWidgetThemeContextR1W9H(state, scheme) {
+    var site = state && state.site ? state.site : {};
+    var colorScheme = scheme === 'dark' ? 'dark' : 'light';
+    return {
+      colorScheme: colorScheme,
+      accentColor: workshopWidgetSafeColorTokenR1W9H(site.accentColor, '#2f7be6'),
+      textColor: workshopWidgetSafeColorTokenR1W9H(site.textColor, colorScheme === 'dark' ? '#eef6ff' : '#101827'),
+      mutedTextColor: workshopWidgetSafeColorTokenR1W9H(site.mutedTextColor, colorScheme === 'dark' ? '#9fb0c8' : '#52657c'),
+      surfaceColor: workshopWidgetSafeColorTokenR1W9H(site.backgroundColor, colorScheme === 'dark' ? '#0b1421' : '#ffffff'),
+      borderColor: colorScheme === 'dark' ? '#334155' : '#e2e8f0',
+      radiusToken: '16px',
+      fontFamilyToken: workshopWidgetSafeFontTokenR1W9H(site.fontFamily)
+    };
+  }
+
+  function workshopWidgetCspR1W9H(snapshot, hostNonce) {
+    var widget = workshopNormalizeWidgetDescriptorForStudioR1W9H(snapshot && snapshot.widget);
+    var caps = widget.capabilities && typeof widget.capabilities === 'object' ? widget.capabilities : {};
+    var origins = Array.isArray(caps.externalOrigins) ? caps.externalOrigins.filter(function (value) { return /^https?:\/\//i.test(String(value || '')); }) : [];
+    var sources = origins.join(' ');
+    var scriptSource = caps.javascript === true ? "'unsafe-inline'" : "'nonce-" + String(hostNonce || '') + "'";
+    var connect = caps.network === true && sources ? sources : "'none'";
+    var remote = caps.network === true && sources ? ' ' + sources : '';
+    return [
+      "default-src 'none'", "base-uri 'none'", "object-src 'none'",
+      'script-src ' + scriptSource, "style-src 'unsafe-inline'" + remote,
+      'img-src data: blob:' + remote, 'media-src data: blob:' + remote,
+      'font-src data:' + remote, 'connect-src ' + connect,
+      'frame-src ' + connect, 'form-action ' + connect
+    ].join('; ');
+  }
+
+  function workshopWidgetHostNonceR1W9H() {
+    try {
+      var values = new Uint32Array(2);
+      crypto.getRandomValues(values);
+      return Array.prototype.map.call(values, function (value) { return value.toString(36); }).join('');
+    } catch (error) {
+      return Math.random().toString(36).slice(2) + Date.now().toString(36);
+    }
+  }
+
+  function workshopWidgetScriptJsonR1W9H(value) {
+    return JSON.stringify(value == null ? null : value).replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026').replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029');
+  }
+
+  function workshopWidgetSrcdocR1W9H(snapshot, instance, themeContext) {
+    var html = String(snapshot && snapshot.html || '');
+    var widget = workshopNormalizeWidgetDescriptorForStudioR1W9H(snapshot && snapshot.widget);
+    var hostNonce = workshopWidgetHostNonceR1W9H();
+    var csp = workshopWidgetCspR1W9H({ widget: widget }, hostNonce).replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+    var meta = '<meta http-equiv="Content-Security-Policy" content="' + csp + '">';
+    var context = { settings: instance && instance.settings || {}, theme: themeContext || {}, instance: { id: String(instance && instance.instanceId || ''), placement: instance && instance.placement || {} } };
+    var theme = context.theme || {};
+    var vars = '--irgeztne-host-accent:' + String(theme.accentColor || '#2f7be6') + ';--irgeztne-host-text:' + String(theme.textColor || '#101827') + ';--irgeztne-host-muted:' + String(theme.mutedTextColor || '#52657c') + ';--irgeztne-host-surface:' + String(theme.surfaceColor || '#ffffff') + ';--irgeztne-host-border:' + String(theme.borderColor || '#e2e8f0') + ';--irgeztne-host-radius:' + String(theme.radiusToken || '16px') + ';--irgeztne-host-font:' + String(theme.fontFamilyToken || 'Inter') + ';';
+    var hostReset = '<style data-irgeztne-widget-host-reset="r1w9h">:root{' + vars + 'color-scheme:' + (theme.colorScheme === 'dark' ? 'dark' : 'light') + '}html,body{margin:0!important;width:100%!important;min-height:100%!important;overflow:hidden!important;background:transparent!important}body{font-family:var(--irgeztne-host-font),system-ui,sans-serif}</style>';
+    var bridge = '<script nonce="' + hostNonce + '" data-irgeztne-widget-host-context="r1w9h">window.IRGEZTNE_WIDGET_CONTEXT=' + workshopWidgetScriptJsonR1W9H(context) + ';(function(){function applyTheme(t){t=t||{};var r=document.documentElement,s=r.style;if(t.accentColor)s.setProperty("--irgeztne-host-accent",String(t.accentColor));if(t.textColor)s.setProperty("--irgeztne-host-text",String(t.textColor));if(t.mutedTextColor)s.setProperty("--irgeztne-host-muted",String(t.mutedTextColor));if(t.surfaceColor)s.setProperty("--irgeztne-host-surface",String(t.surfaceColor));if(t.borderColor)s.setProperty("--irgeztne-host-border",String(t.borderColor));if(t.radiusToken)s.setProperty("--irgeztne-host-radius",String(t.radiusToken));if(t.fontFamilyToken)s.setProperty("--irgeztne-host-font",String(t.fontFamilyToken));r.style.colorScheme=t.colorScheme==="dark"?"dark":"light";window.IRGEZTNE_WIDGET_CONTEXT.theme=t;try{window.dispatchEvent(new CustomEvent("irgeztne-widget-theme",{detail:t}))}catch(e){}}function report(){try{var h=Math.ceil(Math.max(document.documentElement.scrollHeight,document.body?document.body.scrollHeight:0));parent.postMessage({source:"irgeztne-site-widget-runtime-v1",type:"height",instanceId:' + workshopWidgetScriptJsonR1W9H(String(instance && instance.instanceId || '')) + ',height:h},"*")}catch(e){}}addEventListener("message",function(event){var d=event.data||{};if(event.source!==parent||d.source!=="irgeztne-widget-host-v1"||d.type!=="theme")return;applyTheme(d.theme||{})});applyTheme(window.IRGEZTNE_WIDGET_CONTEXT.theme||{});if(typeof ResizeObserver==="function"){new ResizeObserver(report).observe(document.documentElement)}addEventListener("load",report);setTimeout(report,60)})();<\/script>';
+    if (/<head\b[^>]*>/i.test(html)) return html.replace(/<head\b([^>]*)>/i, '<head$1>' + meta + hostReset + bridge);
+    return '<!doctype html><html><head><meta charset="utf-8">' + meta + hostReset + bridge + '<meta name="viewport" content="width=device-width,initial-scale=1"></head><body>' + html + '</body></html>';
+  }
+
+  function workshopHostedWidgetUrlR1W9H(snapshot, instance) {
+    var widget = workshopNormalizeWidgetDescriptorForStudioR1W9H(snapshot && snapshot.widget);
+    var runtime = widget.runtime || {};
+    if (runtime.mode !== 'hosted' || !runtime.url) return '';
+    try {
+      var url = new URL(String(runtime.url));
+      var query = runtime.query && typeof runtime.query === 'object' ? runtime.query : {};
+      Object.keys(query).forEach(function (param) {
+        var key = String(query[param] || '');
+        var value = instance && instance.settings ? instance.settings[key] : '';
+        if (Array.isArray(value)) value = value.join(',');
+        if (value != null && String(value) !== '') url.searchParams.set(param, String(value));
+      });
+      return url.toString();
+    } catch (error) { return ''; }
+  }
+
+  function workshopWidgetHostCssR1W9H() {
+    return '/* IRGEZTNE_WIDGET_HOST_SURFACE_R1W9H */' +
+      '.irgeztne-widget-slot-r1w9h{width:100%;min-width:0}.irgeztne-widget-host-r1w9h{box-sizing:border-box;position:relative;min-width:0;margin:20px 0;background:transparent;isolation:isolate}' +
+      '.irgeztne-widget-host-r1w9h iframe{display:block;width:100%;max-width:100%;border:0;background:transparent;overflow:hidden}' +
+      '.irgeztne-widget-host-r1w9h.size-compact{width:min(100%,380px)}.irgeztne-widget-host-r1w9h.size-medium{width:min(100%,680px)}.irgeztne-widget-host-r1w9h.size-wide{width:min(100%,1080px)}.irgeztne-widget-host-r1w9h.size-full{width:100%}' +
+      '.irgeztne-widget-host-r1w9h.align-left{margin-left:0;margin-right:auto}.irgeztne-widget-host-r1w9h.align-center{margin-left:auto;margin-right:auto}.irgeztne-widget-host-r1w9h.align-right{margin-left:auto;margin-right:0}.irgeztne-widget-host-r1w9h.align-stretch{width:100%}' +
+      '.irgeztne-widget-host-r1w9h.mode-bar{width:100%!important;max-width:none!important;margin:0}' +
+      '.irgeztne-widget-host-r1w9h.mode-floating{position:fixed;z-index:2147482000;max-width:calc(100vw - 32px);margin:0}' +
+      '.irgeztne-widget-host-r1w9h.mode-floating.size-compact{width:min(380px,calc(100vw - 32px))}.irgeztne-widget-host-r1w9h.mode-floating.size-medium{width:min(680px,calc(100vw - 32px))}.irgeztne-widget-host-r1w9h.mode-floating.size-wide{width:min(1080px,calc(100vw - 32px))}.irgeztne-widget-host-r1w9h.mode-floating.size-full{width:calc(100vw - 32px)}' +
+      '.irgeztne-widget-host-r1w9h.floating-top-left{top:16px;left:16px}.irgeztne-widget-host-r1w9h.floating-top-right{top:16px;right:16px}.irgeztne-widget-host-r1w9h.floating-bottom-left{bottom:16px;left:16px}.irgeztne-widget-host-r1w9h.floating-bottom-right{bottom:16px;right:16px}' +
+      '@media(max-width:640px){.irgeztne-widget-host-r1w9h.mode-floating{left:12px!important;right:12px!important;width:auto!important;max-width:none!important}}';
+  }
+
+  function workshopWidgetHostBridgeScriptR1W9H() {
+    return [
+      '(function(){if(window.__irgeztneWidgetHostR1W9H)return;window.__irgeztneWidgetHostR1W9H=1;',
+      'function token(style,names,fallback){for(var i=0;i<names.length;i++){var v=String(style.getPropertyValue(names[i])||"").trim();if(v)return v}return fallback}',
+      'function theme(){var root=document.documentElement,body=document.body||root,rs=getComputedStyle(root),bs=getComputedStyle(body),dark=(root.getAttribute("data-theme")==="dark"||(body&&body.getAttribute&&body.getAttribute("data-theme")==="dark"));return {colorScheme:dark?"dark":"light",accentColor:token(bs,["--button-accent","--accent"],"#2f7be6"),textColor:token(bs,["--ink","--text-color"],dark?"#eef6ff":"#101827"),mutedTextColor:token(bs,["--muted","--muted-text"],dark?"#9fb0c8":"#52657c"),surfaceColor:token(bs,["--panel","--surface","--site-bg","--bg"],dark?"#0b1421":"#ffffff"),borderColor:token(bs,["--line","--border-color"],dark?"#334155":"#e2e8f0"),radiusToken:token(rs,["--radius-md","--radius"],"16px"),fontFamilyToken:String(bs.fontFamily||"Inter").slice(0,160)}}',
+      'function frames(){return document.querySelectorAll("iframe[data-irgeztne-widget-instance]")}',
+      'function sync(f){if(!f||!f.contentWindow)return;var origin=String(f.getAttribute("data-widget-hosted-origin")||"*");try{f.contentWindow.postMessage({source:"irgeztne-widget-host-v1",type:"theme",theme:theme()},origin||"*")}catch(e){}}',
+      'function syncAll(){var list=frames();for(var i=0;i<list.length;i++)sync(list[i])}',
+      'addEventListener("message",function(event){var d=event.data||{};if(d.source!=="irgeztne-site-widget-runtime-v1"||d.type!=="height")return;var list=frames();for(var i=0;i<list.length;i++){var f=list[i];if(f.contentWindow!==event.source)continue;if(String(f.getAttribute("data-irgeztne-widget-instance")||"")!==String(d.instanceId||""))return;var mode=String(f.getAttribute("data-height-mode")||"fixed");if(mode!=="content")return;var min=Number(f.getAttribute("data-min-height")||80),max=Number(f.getAttribute("data-max-height")||1600),h=Math.max(min,Math.min(max,Number(d.height||0)));if(h>0)f.style.height=Math.ceil(h)+"px";return}});',
+      'document.addEventListener("load",function(event){var f=event.target;if(f&&f.matches&&f.matches("iframe[data-irgeztne-widget-instance]"))sync(f)},true);',
+      'if(typeof MutationObserver==="function"){var observer=new MutationObserver(syncAll);observer.observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});if(document.body)observer.observe(document.body,{attributes:true,attributeFilter:["data-theme"]})}',
+      'if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",syncAll,{once:true});else setTimeout(syncAll,0);',
+      '})();'
+    ].join('');
+  }
+
+  function workshopWidgetHostHtmlR1W9H(state, instance) {
+    var snapshots = workshopWidgetSnapshotStoreR1W9G(state, false);
+    var snapshot = snapshots[String(instance && instance.sourceSnapshotId || '')];
+    if (!snapshot) return '<div class="irgeztne-widget-host-r1w9h size-medium align-center"><div>Widget snapshot unavailable.</div></div>';
+    var widget = workshopNormalizeWidgetDescriptorForStudioR1W9H(snapshot.widget);
+    var placement = instance && instance.placement && typeof instance.placement === 'object' ? instance.placement : {};
+    var mode = String(placement.mode || widget.placement.preferredMode || 'flow');
+    var size = String(placement.size || widget.placement.preferredSize || 'compact');
+    var align = String(placement.align || widget.placement.preferredAlign || 'center');
+    var floating = String(placement.floatingPosition || widget.placement.preferredFloatingPosition || 'bottom-right');
+    var sizeHints = widget.size || {};
+    var height = Math.max(Number(sizeHints.minHeight || 80), Math.min(Number(sizeHints.maxHeight || 1600), Number(sizeHints.preferredHeight || widget.height || 260)));
+    var heightMode = String(sizeHints.heightMode || 'fixed');
+    var themeContext = workshopWidgetThemeContextR1W9H(state, 'light');
+    var attrs = ' class="irgeztne-widget-host-r1w9h mode-' + escapeHtml(mode) + ' size-' + escapeHtml(size) + ' align-' + escapeHtml(align) + (mode === 'floating' ? ' floating-' + escapeHtml(floating) : '') + '" data-irgeztne-widget-host="1" data-widget-instance="' + escapeHtml(instance.instanceId || '') + '"';
+    var iframeAttrs = ' data-irgeztne-widget-instance="' + escapeHtml(instance.instanceId || '') + '" data-height-mode="' + escapeHtml(heightMode) + '" data-min-height="' + escapeHtml(sizeHints.minHeight || 80) + '" data-max-height="' + escapeHtml(sizeHints.maxHeight || 1600) + '" title="' + escapeHtml(snapshot.title || t('Site Widget', 'Виджет сайта')) + '" referrerpolicy="no-referrer" scrolling="no" style="height:' + escapeHtml(height) + 'px"';
+    var runtime = widget.runtime || { mode: 'local' };
+    var frame = '';
+    if (runtime.mode === 'hosted') {
+      var src = workshopHostedWidgetUrlR1W9H(snapshot, instance);
+      if (!src) return '<section' + attrs + '><div>Hosted Widget URL unavailable.</div></section>';
+      var hostedOrigin = '';
+      try { hostedOrigin = new URL(src).origin; } catch (errorHostedOrigin) {}
+      frame = '<iframe' + iframeAttrs + ' data-widget-hosted-origin="' + escapeHtml(hostedOrigin) + '" sandbox="allow-scripts allow-forms allow-same-origin" src="' + escapeHtml(src) + '"></iframe>';
+    } else {
+      var caps = widget.capabilities || {};
+      frame = '<iframe' + iframeAttrs + ' sandbox="allow-scripts allow-forms" srcdoc="' + escapeHtml(workshopWidgetSrcdocR1W9H(snapshot, instance, themeContext)) + '"></iframe>';
+    }
+    return '<section' + attrs + '>' + frame + '</section>';
+  }
+
+  function workshopWidgetSlotForInstanceR1W9H(instance) {
+    var placement = instance && instance.placement && typeof instance.placement === 'object' ? instance.placement : {};
+    var mode = String(placement.mode || 'flow');
+    if (mode === 'floating') return 'floating';
+    if (mode === 'flow') return String(placement.slot || placement.region || 'main-end');
+    return String(placement.region || 'main-end');
+  }
+
+  function renderWorkshopWidgetSlotR1W9H(state, page, slot) {
+    var items = workshopWidgetInstancesR1W9H(page, false).filter(function (instance) { return workshopWidgetSlotForInstanceR1W9H(instance) === slot; });
+    if (!items.length) return '';
+    return '<div class="irgeztne-widget-slot-r1w9h" data-widget-slot="' + escapeHtml(slot) + '">' + items.map(function (instance) { return workshopWidgetHostHtmlR1W9H(state, instance); }).join('') + '</div>';
+  }
+
+  function migrateLegacyWorkshopWidgetsInStateR1W9H(state) {
+    if (!state || !Array.isArray(state.pages)) return false;
+    var changed = false;
+    state.pages.forEach(function (page) {
+      if (migrateLegacyWorkshopWidgetPlaceholdersR1W9H(state, page)) changed = true;
+    });
+    return changed;
+  }
+
   function editorWorkbenchPostInitV084B(page) {
     var frame = editorWorkbenchFrameV084B();
     if (!frame || !frame.contentWindow || !page) return;
     var stateV084H = readState();
+    var livePageR1W9H = stateV084H.pages && stateV084H.pages.find(function (item) { return item && item.id === page.id; }) || page;
+    if (migrateLegacyWorkshopWidgetPlaceholdersR1W9H(stateV084H, livePageR1W9H)) writeState(stateV084H);
     var payload = {
       source: 'irgeztne-webstudio-v084b',
       type: 'init',
-      pageId: page.id || '',
-      pageLabel: pageLabel(page),
-      bodyHtml: sanitizeHtml(page.bodyHtml || '<p><br></p>'),
+      pageId: livePageR1W9H.id || '',
+      pageLabel: pageLabel(livePageR1W9H),
+      bodyHtml: sanitizeHtml(livePageR1W9H.bodyHtml || '<p><br></p>'),
       theme: currentTheme() === 'light' ? 'light' : 'dark',
       lang: currentLang(),
-      mediaAssets: editorWorkbenchMediaAssetsV084H(
-        stateV084H
-      )
+      installedComponents: workshopInstalledComponentsForWorkbenchR1W9F1(),
+      installedWidgets: workshopInstalledWidgetsForWorkbenchR1W9G(),
+      widgetSnapshots: workshopWidgetSnapshotsForWorkbenchR1W9G(stateV084H),
+      widgetInstances: workshopWidgetInstancesForWorkbenchR1W9H(livePageR1W9H),
+      widgetThemeContext: workshopWidgetThemeContextR1W9H(stateV084H, currentTheme() === 'light' ? 'light' : 'dark'),
+      mediaAssets: editorWorkbenchMediaAssetsV084H(stateV084H)
     };
     try { frame.contentWindow.postMessage(payload, '*'); } catch (error) { log('Editor Workbench init post failed', error); }
   }
+
+  // IRGEZTNE_WORKSHOP_COMPONENT_INSTANCE_SYNC_R1W9F6
+  // Inserted components are page-local snapshots. When a user deletes one in
+  // the editor, stale metadata must not survive after the HTML instance is gone.
+  function syncWorkshopComponentInsertionsR1W9F6(page, html) {
+    if (!page) return;
+    var existingList = Array.isArray(page.workshopComponentInsertions) ? page.workshopComponentInsertions : [];
+    var existingById = {};
+    existingList.forEach(function (item) {
+      var id = String(item && item.instanceId || '');
+      if (id) existingById[id] = item;
+    });
+    var holder = document.createElement('div');
+    holder.innerHTML = String(html || '');
+    var liveList = [];
+    Array.prototype.forEach.call(
+      holder.querySelectorAll('[data-workshop-component-snapshot]'),
+      function (node) {
+        var id = String(node.getAttribute('data-workshop-component-snapshot') || '');
+        if (!id) return;
+        var existing = existingById[id];
+        if (existing) {
+          liveList.push(existing);
+          return;
+        }
+        // R1W9F6C: Undo can restore HTML after metadata was removed by Delete. Rebuild
+        // the page-local metadata from snapshot attributes so HTML and metadata agree.
+        liveList.push({
+          instanceId: id,
+          packageId: String(node.getAttribute('data-workshop-component-package') || ''),
+          title: String(node.getAttribute('data-workshop-component-title') || t('Installed component', 'Установленный компонент')),
+          version: String(node.getAttribute('data-workshop-component-version') || ''),
+          authorLabel: String(node.getAttribute('data-workshop-component-author') || ''),
+          category: String(node.getAttribute('data-workshop-component-category') || ''),
+          placement: String(node.getAttribute('data-workshop-component-placement') || 'history-restored'),
+          insertedAt: String(node.getAttribute('data-workshop-component-inserted-at') || new Date().toISOString())
+        });
+      }
+    );
+    page.workshopComponentInsertions = liveList;
+  }
+
+  // R1W9H: Widget instances are deliberately not reconciled from bodyHtml.
+  // Legacy placeholders are migrated once by migrateLegacyWorkshopWidgetPlaceholdersR1W9H().
 
   function saveEditorWorkbenchPayloadV084B(data) {
     if (!data || !data.pageId) return;
@@ -5620,6 +7763,7 @@
 
     var html = sanitizeHtml(data.bodyHtml || '<p><br></p>');
     page.bodyHtml = html;
+    syncWorkshopComponentInsertionsR1W9F6(page, html);
     page.updatedAt = new Date().toISOString();
 
     var hidden = editorWorkbenchHiddenFieldV084B();
@@ -5639,13 +7783,64 @@
     var data = event.data || {};
     if (!data || data.source !== 'irgeztne-editor-workbench-v084b') return;
 
+    if (data.type === 'height') {
+      var nextHeightV094B = Math.max(
+        720,
+        Math.min(60000, Number(data.height || 0))
+      );
+      frame.style.height = nextHeightV094B + 'px';
+      frame.setAttribute('scrolling', 'no');
+      scheduleEditorWorkbenchViewportR1W9H3();
+      return;
+    }
+
     if (data.type === 'ready') {
       editorWorkbenchPostInitV084B(activePage(readState()));
+      bindEditorWorkbenchViewportSyncR1W9H3();
+      scheduleEditorWorkbenchViewportR1W9H3();
       return;
     }
 
     if (data.type === 'media-pick-video') {
       editorWorkbenchImportVideoV084H(data);
+      return;
+    }
+
+    if (data.type === 'media-pick-image') {
+      editorWorkbenchImportImageV092C(data);
+      return;
+    }
+
+    if (data.type === 'component-insert-r1w9f1') {
+      saveEditorWorkbenchPayloadV084B(data);
+      if (data.insertionMarkerToken && data.componentPlacementHtml) {
+        void insertWorkshopInstalledComponentR1W9F(data.packageId || '', {
+          placementHtml: String(data.componentPlacementHtml || ''),
+          markerToken: String(data.insertionMarkerToken || ''),
+          placement: String(data.insertionPlacement || ''),
+          notifyWorkbench: data.historyHandshake === 'r1w9f6c'
+        });
+      } else {
+        void insertWorkshopInstalledComponentR1W9F(data.packageId || '');
+      }
+      return;
+    }
+
+    if (data.type === 'widget-add-r1w9h') {
+      saveEditorWorkbenchPayloadV084B(data);
+      void addWorkshopInstalledWidgetR1W9H(data.packageId || '', data.widgetSettings || {}, data.widgetPlacement || {});
+      return;
+    }
+
+    if (data.type === 'widget-update-r1w9h') {
+      saveEditorWorkbenchPayloadV084B(data);
+      updateWorkshopWidgetInstanceR1W9H(data.instanceId || '', data.widgetSettings || {}, data.widgetPlacement || {});
+      return;
+    }
+
+    if (data.type === 'widget-remove-r1w9h') {
+      saveEditorWorkbenchPayloadV084B(data);
+      removeWorkshopWidgetInstanceR1W9H(data.instanceId || '');
       return;
     }
 
@@ -5691,26 +7886,425 @@
     return true;
   }
 
+
+  // IRGEZTNE_WORKSHOP_WEBSTUDIO_COMPONENT_INSERT_R1W9F
+  // One installed Component/Block package represents one reusable page block.
+  // Insert copies a sanitized HTML fragment into the current page bodyHtml.
+  // The page then owns that copy; Workshop is no longer a live dependency.
+  function workshopInstalledComponentsR1W9F() {
+    try {
+      var api = window.NSCodeHubV1 || null;
+      if (!api || typeof api.getInstalledComponents !== 'function') return [];
+      var list = api.getInstalledComponents();
+      return Array.isArray(list) ? list : [];
+    } catch (error) {
+      log('Workshop installed-component catalogue unavailable', error);
+      return [];
+    }
+  }
+
+  function workshopComponentCategoryLabelR1W9F(value) {
+    var raw = String(value || '').trim();
+    if (!raw) return t('Block', 'Блок');
+    return raw.replace(/[-_]+/g, ' ').replace(/\b\w/g, function (ch) { return ch.toUpperCase(); });
+  }
+
+  // IRGEZTNE_WORKSHOP_COMPONENT_LIBRARY_PLACEMENT_R1W9F1
+  // Keep discovery in the parent/public adapter boundary, but present the
+  // library inside Editor Workbench instead of above the editing surface.
+  function workshopInstalledComponentsForWorkbenchR1W9F1() {
+    return workshopInstalledComponentsR1W9F().map(function (item) {
+      item = item && typeof item === 'object' ? item : {};
+      return {
+        packageId: String(item.packageId || ''),
+        title: String(item.title || t('Installed component', 'Установленный компонент')),
+        version: String(item.version || ''),
+        authorLabel: String(item.authorLabel || ''),
+        category: workshopComponentCategoryLabelR1W9F(item.component && item.component.category),
+        description: String(item.description && item.description.short || '')
+      };
+    }).filter(function (item) { return !!item.packageId; });
+  }
+
+  function renderWorkshopInstalledComponentsR1W9F(state) {
+    var components = workshopInstalledComponentsR1W9F();
+    if (!components.length) return '';
+    var blocked = !!workshopTemplateSnapshotMetaR1W9D(state);
+    var cards = components.map(function (item) {
+      item = item && typeof item === 'object' ? item : {};
+      var packageId = String(item.packageId || '');
+      var title = String(item.title || t('Installed component', 'Установленный компонент'));
+      var author = String(item.authorLabel || '');
+      var category = item.component && item.component.category ? String(item.component.category) : '';
+      var meta = [String(item.version || ''), author && author !== '—' ? author : '', workshopComponentCategoryLabelR1W9F(category)].filter(Boolean).join(' · ');
+      return '<article class="ir-site-studio-v5-template-lab-card-v083h" data-v5-workshop-component-package-id="' + escapeHtml(packageId) + '">' +
+        '<div class="ir-site-studio-v5-template-lab-card-head-v083h"><div><div class="ir-site-studio-v5-template-lab-kicker-v083h">' + escapeHtml(t('Installed from Workshop', 'Установлен из Мастерской')) + '</div><h4>' + escapeHtml(title) + '</h4></div><span>' + escapeHtml(t('Local block', 'Локальный блок')) + '</span></div>' +
+        '<p>' + escapeHtml((item.description && item.description.short) || meta || t('Verified reusable page block', 'Проверенный переиспользуемый блок страницы')) + '</p>' +
+        '<p class="ir-site-studio-v5-note">' + escapeHtml(meta) + '</p>' +
+        '<div class="ir-site-studio-v5-template-lab-actions-v083h"><button class="ir-site-studio-v5-btn ir-site-studio-v5-btn--primary" data-v5-action="workshop-installed-component-insert-r1w9f" data-v5-workshop-package-id="' + escapeHtml(packageId) + '" type="button"' + (blocked ? ' disabled' : '') + '>' + escapeHtml(t('Insert block', 'Вставить блок')) + '</button></div>' +
+      '</article>';
+    }).join('');
+    return '<section class="ir-site-studio-v5-editor-card" data-v5-workshop-installed-components-r1w9f="1" style="margin-bottom:16px">' +
+      '<div class="ir-site-studio-v5-templates-real-head-v083h"><div><div class="ir-site-studio-v5-kicker">' + escapeHtml(t('Workshop', 'Мастерская')) + '</div><h3>' + escapeHtml(t('Installed components / blocks', 'Установленные компоненты / блоки')) + '</h3><p>' + escapeHtml(t('Each package is one reusable page block. Insert copies a safe local fragment into the current page; the source package is not kept as a live dependency.', 'Каждый пакет — один переиспользуемый блок страницы. Вставка копирует безопасный локальный фрагмент в текущую страницу; исходный пакет не остаётся живой зависимостью.')) + '</p></div><span>' + escapeHtml(String(components.length) + ' ' + t('installed', 'установлено')) + '</span></div>' +
+      (blocked ? '<p class="ir-site-studio-v5-note">' + escapeHtml(t('Detached Workshop HTML snapshots are not structured-editable, so blocks cannot be inserted into this site.', 'Отделённые HTML-снимки Мастерской не являются структурно редактируемыми, поэтому блоки в такой сайт не вставляются.')) + '</p>' : '') +
+      '<div class="ir-site-studio-v5-template-lab-grid-v083h">' + cards + '</div></section>';
+  }
+
+  async function insertWorkshopInstalledComponentR1W9F(packageId, insertionContextR1W9F2) {
+    var state = readState();
+    if (workshopTemplateSnapshotMetaR1W9D(state)) {
+      try { alert(t('Components can be inserted only into structured Web Studio pages.', 'Компоненты можно вставлять только в структурированные страницы Web Studio.')); } catch (errorAlert) {}
+      return;
+    }
+    var page = activePage(state);
+    if (!page) return;
+    var api = window.NSCodeHubV1 || null;
+    if (!api || typeof api.materializeInstalledComponentSnapshot !== 'function') {
+      try { alert(t('Installed-component adapter is unavailable.', 'Адаптер установленного компонента недоступен.')); } catch (errorMissing) {}
+      return;
+    }
+    try {
+      var payload = await api.materializeInstalledComponentSnapshot(String(packageId || ''));
+      if (!payload || payload.ok !== true || payload.format !== 'irgeztne-webstudio-component-snapshot' || String(payload.formatVersion || '') !== '1.0') {
+        throw new Error(t('Workshop returned an unsupported component snapshot.', 'Мастерская вернула неподдерживаемый снимок компонента.'));
+      }
+      var fragment = sanitizeHtml(String(payload.html || ''));
+      if (!fragment.trim()) throw new Error(t('Component fragment is empty after sanitization.', 'Фрагмент компонента пуст после очистки.'));
+      var meta = payload.package && typeof payload.package === 'object' ? payload.package : {};
+      var componentMeta = payload.component && typeof payload.component === 'object' ? payload.component : {};
+      var wrapperId = 'workshop-component:' + String(meta.packageId || packageId || '') + ':' + Date.now();
+      var insertedAtR1W9F6C = new Date().toISOString();
+      var componentTitleR1W9F6C = String(meta.title || t('Installed component', 'Установленный компонент'));
+      var componentAuthorR1W9F6C = String(meta.authorLabel || '');
+      var componentCategoryR1W9F6C = String(componentMeta.category || '');
+      var snapshotHtml = '<section data-workshop-component-snapshot="' + escapeHtml(wrapperId) + '" data-workshop-component-package="' + escapeHtml(String(meta.packageId || packageId || '')) + '" data-workshop-component-version="' + escapeHtml(String(meta.version || '')) + '" data-workshop-component-title="' + escapeHtml(componentTitleR1W9F6C) + '" data-workshop-component-author="' + escapeHtml(componentAuthorR1W9F6C) + '" data-workshop-component-category="' + escapeHtml(componentCategoryR1W9F6C) + '" data-workshop-component-inserted-at="' + escapeHtml(insertedAtR1W9F6C) + '">' + fragment + '</section>';
+      // IRGEZTNE_WORKSHOP_COMPONENT_INSERT_POSITION_R1W9F2
+      // Workbench may provide a one-shot marker in a clone of the current page.
+      // The marker is never persisted: parent splits before sanitization, inserts
+      // the materialized snapshot at that boundary, and sanitizes both sides.
+      var insertionContext = insertionContextR1W9F2 && typeof insertionContextR1W9F2 === 'object'
+        ? insertionContextR1W9F2
+        : {};
+      var markerToken = String(insertionContext.markerToken || '');
+      var placementHtml = String(insertionContext.placementHtml || '');
+      var markerSafe = /^__IRGEZTNE_COMPONENT_INSERT_[A-Za-z0-9_-]{8,96}__$/.test(markerToken);
+      var markerIndex = markerSafe && placementHtml ? placementHtml.indexOf(markerToken) : -1;
+      var placementMode = 'append';
+      if (markerIndex >= 0 && placementHtml.indexOf(markerToken, markerIndex + markerToken.length) < 0) {
+        var beforeHtml = sanitizeHtml(placementHtml.slice(0, markerIndex));
+        var afterHtml = sanitizeHtml(placementHtml.slice(markerIndex + markerToken.length));
+        page.bodyHtml = sanitizeHtml(
+          (beforeHtml ? beforeHtml + '\n' : '') +
+          snapshotHtml +
+          (afterHtml ? '\n' + afterHtml : '')
+        );
+        placementMode = String(insertionContext.placement || 'selected-block');
+      } else {
+        var existing = sanitizeHtml(page.bodyHtml || '');
+        page.bodyHtml = sanitizeHtml((existing ? existing + '\n' : '') + snapshotHtml);
+      }
+      // Persist placement on the snapshot itself so Undo/Redo can reconstruct metadata.
+      var placementHolderR1W9F6C = document.createElement('div');
+      placementHolderR1W9F6C.innerHTML = page.bodyHtml;
+      var placementNodeR1W9F6C = Array.prototype.find.call(placementHolderR1W9F6C.querySelectorAll('[data-workshop-component-snapshot]'), function (node) {
+        return String(node.getAttribute('data-workshop-component-snapshot') || '') === wrapperId;
+      });
+      if (placementNodeR1W9F6C) placementNodeR1W9F6C.setAttribute('data-workshop-component-placement', placementMode);
+      page.bodyHtml = sanitizeHtml(placementHolderR1W9F6C.innerHTML);
+      page.updatedAt = new Date().toISOString();
+      page.workshopComponentInsertions = Array.isArray(page.workshopComponentInsertions) ? page.workshopComponentInsertions : [];
+      page.workshopComponentInsertions.push({
+        instanceId: wrapperId,
+        packageId: String(meta.packageId || packageId || ''),
+        title: componentTitleR1W9F6C,
+        version: String(meta.version || ''),
+        authorLabel: componentAuthorR1W9F6C,
+        category: componentCategoryR1W9F6C,
+        placement: placementMode,
+        insertedAt: insertedAtR1W9F6C
+      });
+      writeState(state);
+      activeTab = 'page';
+      collapsedRight = false;
+      if (insertionContext.notifyWorkbench) {
+        var hiddenR1W9F6C = editorWorkbenchHiddenFieldV084B();
+        if (hiddenR1W9F6C) hiddenR1W9F6C.value = sanitizeHtml(page.bodyHtml || '<p><br></p>');
+        var frameR1W9F6C = editorWorkbenchFrameV084B();
+        if (frameR1W9F6C && frameR1W9F6C.contentWindow) {
+          frameR1W9F6C.contentWindow.postMessage({
+            source: 'irgeztne-webstudio-v084b',
+            type: 'component-inserted-r1w9f6c',
+            pageId: String(page.id || ''),
+            bodyHtml: sanitizeHtml(page.bodyHtml || '<p><br></p>'),
+            instanceId: wrapperId
+          }, '*');
+        } else {
+          renderStudio();
+        }
+      } else {
+        renderStudio();
+      }
+    } catch (error) {
+      log('Workshop installed-component insert failed', error);
+      try { alert(t('Could not insert component: ', 'Не удалось вставить компонент: ') + String(error && error.message || error || '')); } catch (errorAlertInsert) {}
+    }
+  }
+
+  function workshopWidgetSettingDefaultsR1W9H(widget) {
+    var result = {};
+    var fields = widget && widget.settings && Array.isArray(widget.settings.fields) ? widget.settings.fields : [];
+    fields.forEach(function (field) {
+      if (!field || !field.key) return;
+      if (Object.prototype.hasOwnProperty.call(field, 'default')) result[String(field.key)] = JSON.parse(JSON.stringify(field.default));
+      else if (field.type === 'boolean') result[String(field.key)] = false;
+      else if (field.type === 'multi-select') result[String(field.key)] = [];
+      else result[String(field.key)] = '';
+    });
+    return result;
+  }
+
+  function normalizeWorkshopWidgetInstanceSettingsR1W9H(widget, input) {
+    input = input && typeof input === 'object' && !Array.isArray(input) ? input : {};
+    var fields = widget && widget.settings && Array.isArray(widget.settings.fields) ? widget.settings.fields : [];
+    var result = workshopWidgetSettingDefaultsR1W9H(widget);
+    fields.forEach(function (field) {
+      if (!field || !field.key) return;
+      var key = String(field.key);
+      var value = Object.prototype.hasOwnProperty.call(input, key) ? input[key] : result[key];
+      if (field.type === 'boolean') value = value === true || value === 'true' || value === 1 || value === '1';
+      else if (field.type === 'number') {
+        var numberValue = Number(value);
+        if (!Number.isFinite(numberValue)) numberValue = Number(field.default || 0);
+        if (Number.isFinite(Number(field.min))) numberValue = Math.max(Number(field.min), numberValue);
+        if (Number.isFinite(Number(field.max))) numberValue = Math.min(Number(field.max), numberValue);
+        value = numberValue;
+      } else if (field.type === 'multi-select') {
+        var selected = Array.isArray(value) ? value.map(String) : (String(value || '') ? String(value).split(',').map(function (v) { return v.trim(); }).filter(Boolean) : []);
+        var allowedMulti = Array.isArray(field.options) ? field.options.map(function (option) { return String(option && option.value != null ? option.value : option); }) : [];
+        value = selected.filter(function (option) { return allowedMulti.indexOf(option) >= 0; });
+      } else if (field.type === 'select') {
+        var allowed = Array.isArray(field.options) ? field.options.map(function (option) { return String(option && option.value != null ? option.value : option); }) : [];
+        value = String(value == null ? '' : value);
+        if (allowed.indexOf(value) < 0) value = allowed[0] || '';
+      } else if (field.type === 'color') {
+        value = String(value || '').trim();
+        if (value && !/^#[0-9a-f]{3,8}$/i.test(value)) throw new Error(t('Некорректный цвет Widget: ', 'Invalid Widget color: ') + key);
+      } else if (field.type === 'url') {
+        value = String(value || '').trim();
+        if (value) {
+          try {
+            var parsedUrl = new URL(value);
+            if (parsedUrl.protocol !== 'https:' && parsedUrl.protocol !== 'http:') throw new Error('scheme');
+            value = parsedUrl.toString();
+          } catch (error) { throw new Error(t('Некорректный URL Widget: ', 'Invalid Widget URL: ') + key); }
+        }
+      } else if (field.type === 'public-id') {
+        value = String(value || '').trim();
+        if (value && !/^[A-Za-z0-9._:@/-]{1,200}$/.test(value)) throw new Error(t('Некорректный public ID Widget: ', 'Invalid Widget public ID: ') + key);
+      } else {
+        value = String(value == null ? '' : value).slice(0, 4000);
+      }
+      if (field.required === true && (value == null || value === '' || (Array.isArray(value) && !value.length))) throw new Error(t('Заполните обязательную настройку Widget: ', 'Fill required Widget setting: ') + String(field.label || key));
+      result[key] = value;
+    });
+    return result;
+  }
+
+  function normalizeWorkshopWidgetPlacementR1W9H(widget, input) {
+    input = input && typeof input === 'object' && !Array.isArray(input) ? input : {};
+    var contract = widget && widget.placement && typeof widget.placement === 'object' ? widget.placement : {};
+    var modes = Array.isArray(contract.modes) && contract.modes.length ? contract.modes.map(String) : ['flow'];
+    var mode = String(input.mode || contract.preferredMode || modes[0] || 'flow');
+    if (modes.indexOf(mode) < 0) throw new Error(t('Этот Widget не поддерживает выбранный режим размещения.', 'This Widget does not support the selected placement mode.'));
+    var sizes = Array.isArray(contract.sizes) && contract.sizes.length ? contract.sizes.map(String) : ['compact'];
+    var size = String(input.size || contract.preferredSize || sizes[0] || 'compact');
+    if (sizes.indexOf(size) < 0) size = sizes[0];
+    var aligns = Array.isArray(contract.align) && contract.align.length ? contract.align.map(String) : ['center'];
+    var align = String(input.align || contract.preferredAlign || aligns[0] || 'center');
+    if (aligns.indexOf(align) < 0) align = aligns[0];
+    var regions = Array.isArray(contract.regions) && contract.regions.length ? contract.regions.map(String) : ['main-end'];
+    var region = String(input.region || input.slot || contract.preferredRegion || regions[0] || 'main-end');
+    if (regions.indexOf(region) < 0) region = regions[0];
+    var floatingPositions = Array.isArray(contract.floatingPositions) && contract.floatingPositions.length ? contract.floatingPositions.map(String) : ['bottom-right'];
+    var floatingPosition = String(input.floatingPosition || contract.preferredFloatingPosition || floatingPositions[0] || 'bottom-right');
+    if (floatingPositions.indexOf(floatingPosition) < 0) floatingPosition = floatingPositions[0];
+    if (mode === 'bar') { size = 'full'; align = 'stretch'; }
+    return {
+      mode: mode,
+      slot: mode === 'flow' ? region : '',
+      region: mode === 'region' || mode === 'bar' ? region : '',
+      size: size,
+      align: align,
+      floatingPosition: mode === 'floating' ? floatingPosition : ''
+    };
+  }
+
+  // IRGEZTNE_WIDGET_FINAL_UX_CLOSEOUT_R1W9H
+  function postWorkshopWidgetInstancesR1W9H(state, page, statusText, actionResult) {
+    var frame = editorWorkbenchFrameV084B();
+    if (!frame || !frame.contentWindow || !page) { renderStudio(); return; }
+    frame.contentWindow.postMessage({
+      source: 'irgeztne-webstudio-v084b',
+      type: 'widget-instances-updated-r1w9h',
+      pageId: String(page.id || ''),
+      installedWidgets: workshopInstalledWidgetsForWorkbenchR1W9G(),
+      widgetSnapshots: workshopWidgetSnapshotsForWorkbenchR1W9G(state),
+      widgetInstances: workshopWidgetInstancesForWorkbenchR1W9H(page),
+      widgetThemeContext: workshopWidgetThemeContextR1W9H(state, currentTheme() === 'light' ? 'light' : 'dark'),
+      statusText: String(statusText || ''),
+      actionResult: actionResult && typeof actionResult === 'object' ? actionResult : null
+    }, '*');
+  }
+
+  function postWorkshopWidgetActionFailureR1W9H(statusText) {
+    var frame = editorWorkbenchFrameV084B();
+    if (!frame || !frame.contentWindow) return;
+    frame.contentWindow.postMessage({
+      source: 'irgeztne-webstudio-v084b',
+      type: 'widget-action-failed-r1w9h',
+      statusText: String(statusText || '')
+    }, '*');
+  }
+
+  async function addWorkshopInstalledWidgetR1W9H(packageId, settingsInput, placementInput) {
+    var state = readState();
+    if (workshopTemplateSnapshotMetaR1W9D(state)) {
+      postWorkshopWidgetActionFailureR1W9H(t('Widgets can be added only to structured Web Studio sites.', 'Виджеты можно добавлять только в структурированные сайты Web Studio.'));
+      try { alert(t('Widgets can be added only to structured Web Studio sites.', 'Виджеты можно добавлять только в структурированные сайты Web Studio.')); } catch (errorAlert) {}
+      return;
+    }
+    var page = activePage(state);
+    if (!page) { postWorkshopWidgetActionFailureR1W9H(t('No active page for Widget.', 'Нет активной страницы для виджета.')); return; }
+    var api = window.NSCodeHubV1 || null;
+    if (!api || typeof api.materializeInstalledWidgetSnapshot !== 'function') {
+      postWorkshopWidgetActionFailureR1W9H(t('Installed-widget adapter is unavailable.', 'Адаптер установленного виджета недоступен.'));
+      try { alert(t('Installed-widget adapter is unavailable.', 'Адаптер установленного виджета недоступен.')); } catch (errorMissing) {}
+      return;
+    }
+    try {
+      var payload = await api.materializeInstalledWidgetSnapshot(String(packageId || ''));
+      if (!payload || payload.ok !== true || payload.format !== 'irgeztne-webstudio-widget-snapshot' || String(payload.formatVersion || '') !== '1.0') throw new Error(t('Workshop returned an unsupported widget snapshot.', 'Мастерская вернула неподдерживаемый снимок виджета.'));
+      var meta = payload.package && typeof payload.package === 'object' ? payload.package : {};
+      var widgetMeta = workshopNormalizeWidgetDescriptorForStudioR1W9H(payload.widget);
+      var packageKey = String(meta.packageId || packageId || '');
+      var version = String(meta.version || '');
+      var sourceSnapshotId = 'workshop-widget-source:' + packageKey + '@' + version;
+      var title = String(meta.title || t('Installed widget', 'Установленный виджет'));
+      var author = String(meta.authorLabel || '');
+      var category = String(widgetMeta.category || 'interactive');
+      var snapshots = workshopWidgetSnapshotStoreR1W9G(state, true);
+      if (!snapshots[sourceSnapshotId]) {
+        snapshots[sourceSnapshotId] = {
+          snapshotId: sourceSnapshotId,
+          packageId: packageKey,
+          title: title,
+          version: version,
+          authorLabel: author,
+          category: category,
+          widget: JSON.parse(JSON.stringify(widgetMeta)),
+          html: String(payload.html || ''),
+          materializedAt: String(payload.materializedAt || new Date().toISOString())
+        };
+      }
+      var settings = normalizeWorkshopWidgetInstanceSettingsR1W9H(widgetMeta, settingsInput);
+      var placement = normalizeWorkshopWidgetPlacementR1W9H(widgetMeta, placementInput);
+      var instanceId = 'site-widget:' + packageKey + ':' + Date.now() + ':' + Math.random().toString(36).slice(2, 8);
+      var instance = {
+        instanceId: instanceId,
+        sourceSnapshotId: sourceSnapshotId,
+        packageId: packageKey,
+        title: title,
+        version: version,
+        authorLabel: author,
+        category: category,
+        settings: settings,
+        placement: placement,
+        insertedAt: new Date().toISOString(),
+        contract: '1.0'
+      };
+      workshopWidgetInstancesR1W9H(page, true).push(instance);
+      page.updatedAt = new Date().toISOString();
+      writeState(state);
+      postWorkshopWidgetInstancesR1W9H(state, page, t('Widget added to site.', 'Виджет добавлен на сайт.'), { action: 'add', instanceId: instanceId });
+    } catch (error) {
+      log('Workshop Widget add failed', error);
+      postWorkshopWidgetActionFailureR1W9H(t('Could not add widget: ', 'Не удалось добавить виджет: ') + String(error && error.message || error || ''));
+      try { alert(t('Could not add widget: ', 'Не удалось добавить виджет: ') + String(error && error.message || error || '')); } catch (errorAlertAdd) {}
+    }
+  }
+
+  function updateWorkshopWidgetInstanceR1W9H(instanceId, settingsInput, placementInput) {
+    var state = readState();
+    var page = activePage(state);
+    if (!page) { postWorkshopWidgetActionFailureR1W9H(t('No active page for Widget.', 'Нет активной страницы для виджета.')); return; }
+    var instances = workshopWidgetInstancesR1W9H(page, false);
+    var instance = instances.find(function (item) { return item && String(item.instanceId || '') === String(instanceId || ''); });
+    if (!instance) { postWorkshopWidgetActionFailureR1W9H(t('Widget instance was not found.', 'Экземпляр виджета не найден.')); return; }
+    var snapshot = workshopWidgetSnapshotStoreR1W9G(state, false)[String(instance.sourceSnapshotId || '')];
+    if (!snapshot) { postWorkshopWidgetActionFailureR1W9H(t('Widget source snapshot was not found.', 'Локальный снимок виджета не найден.')); return; }
+    var widget = workshopNormalizeWidgetDescriptorForStudioR1W9H(snapshot.widget);
+    try {
+      instance.settings = normalizeWorkshopWidgetInstanceSettingsR1W9H(widget, settingsInput);
+      instance.placement = normalizeWorkshopWidgetPlacementR1W9H(widget, placementInput);
+      instance.updatedAt = new Date().toISOString();
+      page.updatedAt = instance.updatedAt;
+      writeState(state);
+      postWorkshopWidgetInstancesR1W9H(state, page, t('Widget changes saved.', 'Изменения виджета сохранены.'), { action: 'update', instanceId: String(instance.instanceId || '') });
+    } catch (error) {
+      postWorkshopWidgetActionFailureR1W9H(t('Could not update widget: ', 'Не удалось обновить виджет: ') + String(error && error.message || error || ''));
+      try { alert(t('Could not update widget: ', 'Не удалось обновить виджет: ') + String(error && error.message || error || '')); } catch (errorAlertUpdate) {}
+    }
+  }
+
+  function removeWorkshopWidgetInstanceR1W9H(instanceId) {
+    var state = readState();
+    var page = activePage(state);
+    if (!page) return;
+    var before = workshopWidgetInstancesR1W9H(page, false);
+    var next = before.filter(function (item) { return item && String(item.instanceId || '') !== String(instanceId || ''); });
+    if (next.length === before.length) return;
+    page.workshopWidgetInstancesV1 = next;
+    page.updatedAt = new Date().toISOString();
+    writeState(state);
+    postWorkshopWidgetInstancesR1W9H(state, page, t('Widget removed from site.', 'Виджет удалён с сайта.'));
+  }
+
   function renderPageTab(state, page) {
+    var workshopSnapshotMetaR1W9D = workshopTemplateSnapshotMetaR1W9D(state);
+    if (workshopSnapshotMetaR1W9D) {
+      return '<div class="ir-site-studio-v5-editor-card" data-v5-workshop-snapshot-editor-r1w9d="1">' +
+        '<div class="ir-site-studio-v5-editor-context"><strong>' + escapeHtml(t('Workshop template snapshot', 'Снимок шаблона Мастерской')) + '</strong><span>' + escapeHtml(workshopSnapshotMetaR1W9D.title || '') + ' · ' + escapeHtml(workshopSnapshotMetaR1W9D.version || '') + '</span></div>' +
+        '<p class="ir-site-studio-v5-note">' + escapeHtml(t('This site is an independent local snapshot of the installed HTML/CSS/JavaScript package. The original package can be removed without deleting this site. Structured conversion into Editor blocks is a separate adapter gate and is not simulated here.', 'Этот сайт — независимый локальный снимок установленного HTML/CSS/JavaScript-пакета. Исходный пакет можно удалить, не удаляя этот сайт. Преобразование в структурные блоки Редактора — отдельный adapter gate и здесь не имитируется.')) + '</p>' +
+        '<button class="ir-site-studio-v5-btn ir-site-studio-v5-btn--primary" data-v5-action="workshop-snapshot-open-preview-r1w9d" type="button">' + escapeHtml(t('Open snapshot preview', 'Открыть превью снимка')) + '</button>' +
+      '</div>';
+    }
     var safeHtml = sanitizeHtml(page.bodyHtml || '<p><br></p>');
     return '<div class="ir-site-studio-v5-editor-card ir-site-studio-v5-editor-card--workbench-v084b" data-v5-page-editor-card="1" data-v084b-editor-card="1" data-v084b-page-id="' + escapeHtml(page.id) + '">' +
       '<div class="ir-site-studio-v5-editor-context"><strong>' + escapeHtml(t('Editing page:', 'Редактируется страница:')) + ' ' + escapeHtml(pageLabel(page)) + '</strong><span>/' + escapeHtml(page.slug || 'page') + ' · ' + escapeHtml(t('Editor Workbench is isolated from old Web Studio editor layers.', 'Editor Workbench изолирован от старых слоёв редактора Web Studio.')) + '</span></div>' +
       '<label class="ir-site-studio-v5-label">' + escapeHtml(t('Template hero H1', 'Hero/H1 заголовок шаблона')) + '<input class="ir-site-studio-v5-input ir-site-studio-v5-page-title" data-v5-field="headline" value="' + escapeHtml(page.headline || '') + '"></label>' +
       '<input type="hidden" data-v5-content="1" data-v5-jodit-textarea="1" value="' + escapeHtml(safeHtml) + '">' +
-      '<iframe class="ir-site-studio-v5-editor-workbench-frame-v084b" data-v084b-editor-frame="1" title="IRGEZTNE Editor Workbench" style="background:' + (currentTheme() === 'light' ? '#f7fbff' : '#0b1421') + '" src="./src/modules/editor-workbench/editor-workbench.html?v=v084r&amp;theme=' + (currentTheme() === 'light' ? 'light' : 'dark') + '"></iframe>' +
+      '<iframe class="ir-site-studio-v5-editor-workbench-frame-v084b" data-v084b-editor-frame="1" title="IRGEZTNE Editor Workbench" scrolling="no" style="background:' + (currentTheme() === 'light' ? '#f7fbff' : '#0b1421') + '" src="./src/modules/editor-workbench/editor-workbench.html?v=1.0.0-closure-20261007&amp;theme=' + (currentTheme() === 'light' ? 'light' : 'dark') + '"></iframe>' +
       '<p class="ir-site-studio-v5-note">' + escapeHtml(t('This editor is a separate cabin: one document, one toolbar, one save bridge.', 'Этот редактор — отдельная кабина: один документ, одна панель, один мост сохранения.')) + '</p>' +
     '</div>';
   }
 
 
   function renderПредпросмотрTab(state, page) {
+    var snapshotMetaR1W9D = workshopTemplateSnapshotMetaR1W9D(state);
+    if (snapshotMetaR1W9D) {
+      return '<div class="ir-site-studio-v5-preview-card' + (previewWide ? ' is-wide' : '') + '">' +
+        '<div class="ir-site-studio-v5-preview-head"><div><h3>' + escapeHtml(t('Workshop snapshot preview', 'Предпросмотр снимка Мастерской')) + '</h3><p class="ir-site-studio-v5-note">' + escapeHtml(t('This preview is loaded from the site-local Web Studio snapshot, not from the installed Workshop package.', 'Этот предпросмотр загружается из локального снимка Web Studio, а не из установленного пакета Мастерской.')) + '</p></div>' +
+        '<div class="ir-site-studio-v5-preview-actions"><button class="ir-site-studio-v5-btn ir-site-studio-v5-btn--primary" data-v5-action="toggle-preview-wide" type="button">' + escapeHtml(previewWide ? t('Preview', 'Превью') : t('Wide preview', 'Широкий вид')) + '</button><button class="ir-site-studio-v5-btn" data-v5-action="open-site-window" type="button">' + escapeHtml(t('Open site', 'Открыть сайт')) + '</button><button class="ir-site-studio-v5-btn" data-v5-action="publish-download-zip" type="button">' + escapeHtml(t('Download snapshot ZIP', 'Скачать ZIP снимка')) + '</button></div></div>' +
+        '<p class="ir-site-studio-v5-preview-status" data-v5-preview-status="1">' + escapeHtml(t('Loading site-local snapshot…', 'Загрузка локального снимка сайта…')) + '</p>' +
+        '<div class="ir-site-studio-v5-browser-preview"><div class="ir-site-studio-v5-browser-bar"><i></i><i></i><i></i><span data-v5-preview-address="1">workshop-snapshot://loading</span></div><iframe class="ir-site-studio-v5-preview-frame" data-v5-preview-frame="1" data-v5-preview-loading="1" sandbox="allow-scripts" referrerpolicy="no-referrer"></iframe></div></div>';
+    }
     var pageButtons = orderedPageEntries(state).map(function (entry) {
       var item = entry.page;
       var active = item.id === page.id ? ' is-active' : '';
       var prefix = entry.depth ? Array(entry.depth + 1).join('↳ ') : '';
       return '<button class="ir-site-studio-v5-preview-page-btn' + active + '" data-v5-action="preview-select-page" data-v5-page-id="' + escapeHtml(item.id) + '" type="button">' + escapeHtml(prefix + pageLabel(item)) + '</button>';
     }).join('');
-    return '<div class="ir-site-studio-v5-preview-card' + (previewWide ? ' is-wide' : '') + '"><div class="ir-site-studio-v5-preview-head"><div><h3>' + escapeHtml(t('Site preview', 'Предпросмотр сайта')) + '</h3><p class="ir-site-studio-v5-note">' + escapeHtml(t('Preview uses one generated build. Use “Edit this page” to switch from preview to editing the selected page.', 'Предпросмотр использует одну сборку. Выберите страницу ниже и нажмите “Править страницу”, чтобы открыть её в редакторе.')) + '</p></div><div class="ir-site-studio-v5-preview-actions"><button class="ir-site-studio-v5-btn ir-site-studio-v5-btn--primary" data-v5-action="toggle-preview-wide" type="button">' + escapeHtml(previewWide ? t('Preview', 'Превью') : t('Wide preview', 'Широкий вид')) + '</button><button class="ir-site-studio-v5-btn" data-v5-action="open-site-window" type="button">' + escapeHtml(t('Open site', 'Открыть сайт')) + '</button><button class="ir-site-studio-v5-btn" data-v5-action="edit-current-page" type="button">' + escapeHtml(t('Edit page', 'Править страницу')) + '</button><button class="ir-site-studio-v5-btn" data-v5-action="download-html" type="button">' + escapeHtml(t('Download HTML', 'Скачать HTML')) + '</button></div></div><div class="ir-site-studio-v5-preview-pages ir-site-studio-v5-preview-pages--switcher"><span>' + escapeHtml(t('Check page:', 'Проверить страницу:')) + '</span>' + pageButtons + '</div><p class="ir-site-studio-v5-preview-status" data-v5-preview-status="1">' + escapeHtml(t('Building preview…', 'Сборка предпросмотра…')) + '</p><div class="ir-site-studio-v5-browser-preview"><div class="ir-site-studio-v5-browser-bar"><i></i><i></i><i></i><span data-v5-preview-address="1">local-preview://building</span></div><iframe class="ir-site-studio-v5-preview-frame" data-v5-preview-frame="1" src="about:blank"></iframe></div></div>';
+    return '<div class="ir-site-studio-v5-preview-card' + (previewWide ? ' is-wide' : '') + '"><div class="ir-site-studio-v5-preview-head"><div><h3>' + escapeHtml(t('Site preview', 'Предпросмотр сайта')) + '</h3><p class="ir-site-studio-v5-note">' + escapeHtml(t('Preview uses one generated build. Use “Edit this page” to switch from preview to editing the selected page.', 'Предпросмотр использует одну сборку. Выберите страницу ниже и нажмите “Править страницу”, чтобы открыть её в редакторе.')) + '</p></div><div class="ir-site-studio-v5-preview-actions"><button class="ir-site-studio-v5-btn ir-site-studio-v5-btn--primary" data-v5-action="toggle-preview-wide" type="button">' + escapeHtml(previewWide ? t('Preview', 'Превью') : t('Wide preview', 'Широкий вид')) + '</button><button class="ir-site-studio-v5-btn" data-v5-action="open-site-window" type="button">' + escapeHtml(t('Open site', 'Открыть сайт')) + '</button><button class="ir-site-studio-v5-btn" data-v5-action="edit-current-page" type="button">' + escapeHtml(t('Edit page', 'Править страницу')) + '</button><button class="ir-site-studio-v5-btn" data-v5-action="download-html" type="button">' + escapeHtml(t('Download current page (.html)', 'Скачать текущую страницу (.html)')) + '</button></div></div><div class="ir-site-studio-v5-preview-pages ir-site-studio-v5-preview-pages--switcher"><span>' + escapeHtml(t('Check page:', 'Проверить страницу:')) + '</span>' + pageButtons + '</div><p class="ir-site-studio-v5-preview-status" data-v5-preview-status="1">' + escapeHtml(t('Building preview…', 'Сборка предпросмотра…')) + '</p><div class="ir-site-studio-v5-browser-preview"><div class="ir-site-studio-v5-browser-bar"><i></i><i></i><i></i><span data-v5-preview-address="1">local-preview://building</span></div><iframe class="ir-site-studio-v5-preview-frame" data-v5-preview-frame="1" data-v5-preview-loading="1"></iframe></div></div>';
   }
 
 
@@ -5764,22 +8358,19 @@
     }).join('') + '</ol>' + (footerHtml || '') + '</div>';
   }
 
-  function publishStarterButton() {
-    return '<button class="ir-site-studio-v5-btn ir-site-studio-v5-btn--sm" data-v5-action="publish-download-starter-zip" type="button">' + escapeHtml(t('Starter ZIP', 'Стартовый ZIP')) + '</button>';
-  }
+  function publishStarterButton() { return ''; }
 
   function publishFirstSetupGuide(providerId) {
     if (providerId === 'manual') {
       return publishGuideBlock('Manual export path', 'Ручной экспорт', [
         { en: 'Download the full site ZIP when you need the whole build.', ru: 'Скачайте ZIP всего сайта, когда нужна полная сборка.' },
         { en: 'Download current HTML when you only need the selected page.', ru: 'Скачайте текущий HTML, когда нужна только выбранная страница.' },
-        { en: 'Download starter ZIP when a hosting provider needs initial files to create a project.', ru: 'Скачайте стартовый ZIP, если хостингу нужны начальные файлы для создания проекта.' },
-        { en: 'No token, website URL, or server connection is required for manual export.', ru: 'Для ручного экспорта не нужны token, URL сайта или подключение сервера.' }
+        { en: 'No provider credentials, website URL, or server connection are required for manual export.', ru: 'Для ручного экспорта не нужны данные доступа, URL сайта или подключение сервера.' }
       ]);
     }
     if (providerId === 'netlify') {
       return publishGuideBlock('Netlify flow', 'Логика Netlify', [
-        { en: 'Create an empty Netlify site first, or upload the starter ZIP if Netlify asks for initial files.', ru: 'Сначала создайте пустой сайт Netlify или загрузите стартовый ZIP, если Netlify просит первые файлы.' },
+        { en: 'Create a Netlify site first.', ru: 'Сначала создайте сайт Netlify.' },
         { en: 'Copy the generated Netlify URL and Site ID from the provider dashboard.', ru: 'Скопируйте сгенерированный Netlify URL и Site ID из панели провайдера.' },
         { en: 'Paste Token + Site ID here, save once, then publish later builds with one button.', ru: 'Вставьте здесь Token + Site ID, сохраните один раз, затем публикуйте следующие сборки одной кнопкой.' }
       ], publishStarterButton());
@@ -5799,17 +8390,17 @@
       ], publishStarterButton());
     }
     if (providerId === 'github') {
-      return publishGuideBlock('GitHub Pages flow', 'Логика GitHub Pages', [
-        { en: 'Create a repository and enable GitHub Pages for the selected branch/folder.', ru: 'Создайте репозиторий и включите GitHub Pages для выбранной ветки/папки.' },
-        { en: 'Use owner, repository, branch and build folder to define where the static files will go.', ru: 'Укажите owner, repository, branch и папку сборки — туда будут отправляться статические файлы.' },
-        { en: 'Paste the token once. Later publishing will update the repository content.', ru: 'Вставьте token один раз. Позже публикация будет обновлять содержимое репозитория.' }
+      return publishGuideBlock('GitHub Pages — after 1.0', 'GitHub Pages — после 1.0', [
+        { en: 'Repository upload is intentionally not presented as working in 1.0.', ru: 'Загрузка в репозиторий намеренно не показывается как рабочая в 1.0.' },
+        { en: 'Use the full-site ZIP now, or publish through Netlify, Cloudflare Pages, FTP, FTPS or SFTP.', ru: 'Сейчас используйте ZIP всего сайта либо Netlify, Cloudflare Pages, FTP, FTPS или SFTP.' },
+        { en: 'GitHub repository sync can be added after 1.0 without changing the site editor or build format.', ru: 'Синхронизацию GitHub-репозитория можно добавить после 1.0 без изменения редактора или формата сборки.' }
       ], publishStarterButton());
     }
     if (providerId === 'gitlab') {
-      return publishGuideBlock('GitLab Pages flow', 'Логика GitLab Pages', [
-        { en: 'Create a GitLab project and prepare Pages/CI publishing for the selected branch.', ru: 'Создайте GitLab project и подготовьте Pages/CI публикацию для выбранной ветки.' },
-        { en: 'Use namespace, project, branch and build folder to define the publish target.', ru: 'Укажите namespace, project, branch и папку сборки — это цель публикации.' },
-        { en: 'Paste the token once. Later publishing will update the project files.', ru: 'Вставьте token один раз. Позже публикация будет обновлять файлы проекта.' }
+      return publishGuideBlock('GitLab Pages — after 1.0', 'GitLab Pages — после 1.0', [
+        { en: 'GitLab repository/CI upload is intentionally not presented as working in 1.0.', ru: 'Загрузка в GitLab repository/CI намеренно не показывается как рабочая в 1.0.' },
+        { en: 'Use the full-site ZIP now, or publish through Netlify, Cloudflare Pages, FTP, FTPS or SFTP.', ru: 'Сейчас используйте ZIP всего сайта либо Netlify, Cloudflare Pages, FTP, FTPS или SFTP.' },
+        { en: 'GitLab Pages integration can be added after 1.0 without changing the site editor or build format.', ru: 'Интеграцию GitLab Pages можно добавить после 1.0 без изменения редактора или формата сборки.' }
       ], publishStarterButton());
     }
     if (providerId === 's3') {
@@ -5821,16 +8412,23 @@
     }
     if (providerId === 'ftp') {
       return publishGuideBlock('FTP hosting flow', 'Логика FTP-хостинга', [
-        { en: 'Use FTP only when your hosting gives classic FTP access to a public folder.', ru: 'Используйте FTP только если ваш хостинг даёт обычный FTP-доступ к публичной папке.' },
-        { en: 'Paste host, username, password and remote path such as /public_html/.', ru: 'Вставьте host, username, пароль и remote path, например /public_html/.' },
-        { en: 'FTP can be unencrypted. Prefer SFTP/FTPS when your hosting supports it.', ru: 'FTP может быть незашифрованным. Лучше использовать SFTP/FTPS, если хостинг это поддерживает.' }
+        { en: 'Warning: plain FTP is unencrypted. Login, password and transferred files are not protected by TLS.', ru: 'Внимание: обычный FTP не шифруется. Логин, пароль и передаваемые файлы не защищены TLS.' },
+        { en: 'Use this only for legacy hosting that does not provide FTPS or SFTP.', ru: 'Используйте этот вариант только для старого хостинга без FTPS или SFTP.' },
+        { en: 'First publish uploads the complete site. Later publishes compare SHA-256 manifests and send only changed/new files; only previously published removed files are deleted.', ru: 'Первая публикация загружает сайт целиком. Следующие сравнивают SHA-256 manifest и отправляют только новые/изменённые файлы; удаляются только ранее опубликованные Workspace файлы.' }
       ], '', 'is-warning');
+    }
+    if (providerId === 'ftps') {
+      return publishGuideBlock('FTPS hosting flow', 'Логика FTPS-хостинга', [
+        { en: 'FTPS protects the FTP connection with TLS and is recommended for FTP-compatible hosting.', ru: 'FTPS защищает FTP-соединение через TLS и рекомендуется для FTP-совместимого хостинга.' },
+        { en: 'Use explicit FTPS on port 21 in most cases; implicit FTPS is a legacy option and often uses port 990.', ru: 'Обычно используйте явный FTPS на порту 21; неявный FTPS — старый вариант и часто использует порт 990.' },
+        { en: 'First publish uploads the complete site. Later publishes send only changed/new files and remove only files tracked by the previous Workspace manifest.', ru: 'Первая публикация загружает сайт целиком. Следующие отправляют только новые/изменённые файлы и удаляют только файлы из предыдущего manifest Workspace.' }
+      ]);
     }
     if (providerId === 'sftp') {
       return publishGuideBlock('SFTP hosting flow', 'Логика SFTP-хостинга', [
-        { en: 'Use SFTP when your hosting gives secure SSH/SFTP access to the public folder.', ru: 'Используйте SFTP, если хостинг даёт безопасный SSH/SFTP-доступ к публичной папке.' },
-        { en: 'Paste host, username, password/key and remote path such as /public_html/.', ru: 'Вставьте host, username, пароль/key и remote path, например /public_html/.' },
-        { en: 'After the connection is saved, publishing will reuse this secure target.', ru: 'После сохранения подключения публикация будет повторно использовать эту безопасную цель.' }
+        { en: 'Use SFTP for secure SSH-based hosting access; port 22 is the normal default.', ru: 'Используйте SFTP для безопасного доступа через SSH; обычный порт — 22.' },
+        { en: 'Paste host, port, username, password and remote path such as /public_html/.', ru: 'Вставьте host, port, username, пароль и удалённую папку, например /public_html/.' },
+        { en: 'First publish uploads the complete site. Later publishes send only changed/new files and remove only files tracked by the previous Workspace manifest.', ru: 'Первая публикация загружает сайт целиком. Следующие отправляют только новые/изменённые файлы и удаляют только файлы из предыдущего manifest Workspace.' }
       ]);
     }
     if (providerId === 'ipfs') {
@@ -5862,7 +8460,7 @@
   }
 
   function renderPublishSuccess(selected, config) {
-    if (!config || selected === 'manual') return '';
+    if (!config || !isRemotePublishProvider(selected)) return '';
     var status = String(config.lastStatus || '');
     var ok = String(config.lastResult || '').indexOf('ok') === 0 && (config.lastPublishedAt || /(published|опублик|deploy)/i.test(status));
     if (!ok) return '';
@@ -5883,11 +8481,14 @@
     var settings = state.site.publishSettings;
     var selected = settings.selectedProvider || 'manual';
     var isManualProvider = selected === 'manual';
+    var isIpfsExportProvider = selected === 'ipfs';
+    var isDeferredProvider = isDeferredPublishProvider(selected);
+    var isRemoteProvider = isRemotePublishProvider(selected);
     var config = settings.providers[selected] || defaultPublishProviderConfig(selected);
     var meta = publishProviderMeta(selected);
     var payload = createPublicationPayloadV091B(state, page || activePage(state));
     var fileCount = Object.keys(payload.package || {}).length;
-    var providerCards = publishProviderOrder().map(function (id) { return publishProviderCard(state, id); }).join('');
+    var providerCards = ['manual', 'netlify', 'cloudflare', 'own'].map(function (id) { return publishProviderCard(state, id); }).join('');
     var fields = publishFieldsForProvider(selected, config);
     var missingFields = publishMissingFields(config, meta);
     var ready = isPublishConfigured(selected, config, meta);
@@ -5897,46 +8498,166 @@
     var lastPublishStatusText = String(config.lastStatus || '');
     var connectionVerified = config.lastResult === 'ok' && config.enabled === true && (/(connected|подключ|published|опублик|deploy)/i.test(lastPublishStatusText) || !!config.websiteUrl);
     var connectedTitle = selected === 'netlify' ? t('Netlify is connected', 'Netlify подключён') : (selected === 'cloudflare' ? t('Cloudflare Pages is connected', 'Cloudflare Pages подключён') : t('Connection verified', 'Подключение проверено'));
-    var readyTitle = isManualProvider ? t('Manual export', 'Ручной экспорт') : (connectionVerified ? connectedTitle : (ready ? t('Connection saved', 'Подключение сохранено') : t('Set up publishing once', 'Настройте публикацию один раз')));
+    var readyTitle = isManualProvider ? t('Manual export', 'Ручной экспорт')
+      : (isIpfsExportProvider ? t('IPFS-ready export', 'IPFS-ready экспорт')
+      : (isDeferredProvider ? t('Planned after 1.0', 'Запланировано после 1.0')
+      : (connectionVerified ? connectedTitle : (ready ? t('Connection saved', 'Подключение сохранено') : t('Set up publishing once', 'Настройте публикацию один раз')))));
     var readyMessage = isManualProvider
-      ? t('Use local export: full site ZIP, current page HTML, or starter ZIP. No token or server connection is required.', 'Экспортируйте полный ZIP сайта, текущий HTML страницы или стартовый ZIP. Token и подключение к серверу не нужны.')
-      : (connectionVerified
-        ? t('Continue editing in Web Studio. Use the top “Publish changes” button when you want to update the live site.', 'Продолжайте редактировать сайт в Web Studio. Когда нужно обновить сайт в интернете, нажимайте верхнюю кнопку «Опубликовать».')
-        : (ready ? t('Connection setup is saved. The top Publish button will reuse it for the next build.', 'Настройка подключения сохранена. Верхняя кнопка «Опубликовать» будет использовать её для следующей сборки.') : publishReadyMessage(selected, config, meta)));
+      ? t('Use local export: full site ZIP or current page HTML. No server credentials or connection are required.', 'Экспортируйте полный ZIP сайта или текущий HTML страницы. Данные доступа и подключение к серверу не нужны.')
+      : (isIpfsExportProvider
+        ? publishReadyMessage(selected, config, meta)
+        : (isDeferredProvider
+          ? publishReadyMessage(selected, config, meta)
+          : (connectionVerified
+            ? t('Continue editing in Web Studio. Use the top “Publish changes” button when you want to update the live site.', 'Продолжайте редактировать сайт в Web Studio. Когда нужно обновить сайт в интернете, нажимайте верхнюю кнопку «Опубликовать».')
+            : (ready ? t('Connection setup is saved. The top Publish button will reuse it for the next build.', 'Настройка подключения сохранена. Верхняя кнопка «Опубликовать» будет использовать её для следующей сборки.') : publishReadyMessage(selected, config, meta)))));
     var missingText = missingFields.length ? '<span class="ir-site-studio-v5-publish-missing">' + escapeHtml(t('Missing:', 'Не заполнено:') + ' ' + missingFields.map(publishFieldLabel).join(', ')) + '</span>' : '';
-    var setupBody = publishFirstSetupGuide(selected) + '<div class="ir-site-studio-v5-publish-form-note">' + escapeHtml(publishReadyMessage(selected, config, meta)) + '</div>' +
-      (isManualProvider ? '' : ('<div class="ir-site-studio-v5-publish-fields">' + fields + '</div>' +
-      '<div class="ir-site-studio-v5-publish-actions"><button class="ir-site-studio-v5-btn ir-site-studio-v5-btn--primary" data-v5-action="publish-save-settings" type="button">' + escapeHtml(t('Save server', 'Сохранить сервер')) + '</button><button class="ir-site-studio-v5-btn" data-v5-action="publish-test-settings" type="button">' + escapeHtml(t('Test connection', 'Проверить подключение')) + '</button><button class="ir-site-studio-v5-btn" data-v5-action="publish-clear-token" type="button">' + escapeHtml(t('Clear token', 'Очистить token')) + '</button></div>'));
-    var setupBlock = ready && selected !== 'manual' && selected !== 'ipfs'
+    var clearSecretLabel = selected === 'ftp' || selected === 'ftps' || selected === 'sftp' ? t('Clear password', 'Очистить пароль') : t('Clear token', 'Очистить token');
+    var ownHostingProfiles = selected === 'sftp' || selected === 'ftps' ? '<div class="ir-site-studio-v5-publish-actions"><button class="ir-site-studio-v5-btn" data-v5-action="publish-select-provider" data-v5-provider="sftp" type="button">' + escapeHtml(t('SFTP — recommended', 'SFTP — рекомендуется')) + '</button><button class="ir-site-studio-v5-btn" data-v5-action="publish-select-provider" data-v5-provider="ftps" type="button">' + escapeHtml(t('FTPS — fallback', 'FTPS — запасной вариант')) + '</button></div>' : '';
+    var setupBody = ownHostingProfiles + publishFirstSetupGuide(selected) + '<div class="ir-site-studio-v5-publish-form-note">' + escapeHtml(publishReadyMessage(selected, config, meta)) + '</div>' +
+      (!isRemoteProvider ? '' : ('<div class="ir-site-studio-v5-publish-fields">' + fields + '</div>' +
+      '<div class="ir-site-studio-v5-publish-actions"><button class="ir-site-studio-v5-btn ir-site-studio-v5-btn--primary" data-v5-action="publish-save-settings" type="button">' + escapeHtml(t('Save server', 'Сохранить сервер')) + '</button><button class="ir-site-studio-v5-btn" data-v5-action="publish-test-settings" type="button">' + escapeHtml(t('Test connection', 'Проверить подключение')) + '</button><button class="ir-site-studio-v5-btn" data-v5-action="publish-clear-token" type="button">' + escapeHtml(clearSecretLabel) + '</button></div>'));
+    var setupBlock = ready && isRemoteProvider
       ? '<details class="ir-site-studio-v5-publish-setup"><summary>' + escapeHtml(t('Edit connection settings', 'Изменить настройки подключения')) + '</summary>' + setupBody + '</details>'
       : '<div class="ir-site-studio-v5-publish-setup is-open">' + setupBody + '</div>';
     var hasFocusedProvider = showSelectedSettings && selected;
     var pickerBlock = hasFocusedProvider
-      ? '<details class="ir-site-studio-v5-publish-picker ir-site-studio-v5-publish-picker--collapsed"><summary>← ' + escapeHtml(t('Change server type', 'Сменить тип сервера')) + '</summary><div class="ir-site-studio-v5-publish-provider-grid">' + providerCards + '</div></details>'
-      : '<section class="ir-site-studio-v5-publish-picker"><div class="ir-site-studio-v5-publish-picker-title"><h4>' + escapeHtml(t('Select server type', 'Выберите тип сервера')) + '</h4><p>' + escapeHtml(t('Choose this once. Tokens stay local and are not included in backup by default.', 'Выберите это один раз. Токены остаются локально и по умолчанию не входят в backup.')) + '</p></div><div class="ir-site-studio-v5-publish-provider-grid">' + providerCards + '</div></section>';
+      ? '<details class="ir-site-studio-v5-publish-picker ir-site-studio-v5-publish-picker--collapsed"><summary>← ' + escapeHtml(t('Change publishing method', 'Сменить способ публикации')) + '</summary><div class="ir-site-studio-v5-publish-provider-grid">' + providerCards + '</div></details>'
+      : '<section class="ir-site-studio-v5-publish-picker"><div class="ir-site-studio-v5-publish-picker-title"><h4>' + escapeHtml(t('Select publishing method', 'Выберите способ публикации')) + '</h4><p>' + escapeHtml(t('Choose this once. Provider credentials stay local and are not included in backup by default.', 'Выберите это один раз. Данные доступа остаются локально и по умолчанию не входят в backup.')) + '</p></div><div class="ir-site-studio-v5-publish-provider-grid">' + providerCards + '</div></section>';
     var selectedPublicUrl = cleanPublicSiteUrl(config.websiteUrl || '');
     var canOpenSelectedProvider = ready && selected !== 'manual' && /^https?:\/\//i.test(selectedPublicUrl);
     var progressBlock = renderPublishProgress();
     var successBlock = renderPublishSuccess(selected, config);
-    var topPublishHint = ready && selected !== 'manual' ? '<span class="ir-site-studio-v5-publish-top-hint">' + escapeHtml(t('Publishing is done from the top Publish button. After a successful publish, “Open site” appears below.', 'Публикация выполняется верхней кнопкой «Опубликовать». После успешной публикации кнопка «Открыть сайт» появится ниже.')) + '</span>' : '';
+    var topPublishHint = ready && isRemoteProvider ? '<span class="ir-site-studio-v5-publish-top-hint">' + escapeHtml(t('Publishing is done from the top Publish button. After a successful publish, “Open site” appears below.', 'Публикация выполняется верхней кнопкой «Опубликовать». После успешной публикации кнопка «Открыть сайт» появится ниже.')) + '</span>' : '';
     var openSelectedProviderButton = '';
     var mainActions = (topPublishHint || openSelectedProviderButton) ? '<div class="ir-site-studio-v5-publish-actions ir-site-studio-v5-publish-actions--main">' + topPublishHint + openSelectedProviderButton + '</div>' : '';
-    var manualToolButtons = '<div class="ir-site-studio-v5-publish-actions ir-site-studio-v5-publish-actions--manual"><button class="ir-site-studio-v5-btn ir-site-studio-v5-btn--primary" data-v5-action="publish-download-zip" type="button">' + escapeHtml(t('Export site ZIP', 'Экспорт ZIP сайта')) + '</button><button class="ir-site-studio-v5-btn" data-v5-action="download-html" type="button">' + escapeHtml(t('Export current HTML', 'Экспорт текущего HTML')) + '</button><button class="ir-site-studio-v5-btn" data-v5-action="publish-download-starter-zip" type="button">' + escapeHtml(t('Starter ZIP', 'Стартовый ZIP')) + '</button></div>';
-    var manualActions = '<section class="ir-site-studio-v5-publish-manual-export"><h5>' + escapeHtml(t('Export actions', 'Действия экспорта')) + '</h5><p class="ir-site-studio-v5-note">' + escapeHtml(isManualProvider ? t('Use these files for manual hosting upload. Tokens are never needed for this export.', 'Используйте эти файлы для ручной загрузки на хостинг. Для этого экспорта token не нужен.') : t('Manual export files are available here too. They do not use provider tokens.', 'Файлы ручного экспорта доступны здесь же. Они не используют token провайдера.')) + '</p>' + manualToolButtons + '</section>';
+    var manualToolButtons = '<div class="ir-site-studio-v5-publish-actions ir-site-studio-v5-publish-actions--manual"><button class="ir-site-studio-v5-btn ir-site-studio-v5-btn--primary" data-v5-action="publish-download-zip" type="button">' + escapeHtml(t('Download whole site (.zip)', 'Скачать весь сайт (.zip)')) + '</button><button class="ir-site-studio-v5-btn" data-v5-action="download-html" type="button">' + escapeHtml(t('Download current page (.html)', 'Скачать текущую страницу (.html)')) + '</button></div>';
+    var manualActions = '<section class="ir-site-studio-v5-publish-manual-export"><h5>' + escapeHtml(t('Export actions', 'Действия экспорта')) + '</h5><p class="ir-site-studio-v5-note">' + escapeHtml(isManualProvider ? t('Use these files for manual hosting upload. Provider credentials are never needed for this export.', 'Используйте эти файлы для ручной загрузки на хостинг. Для этого экспорта данные доступа не нужны.') : t('Manual export files are available here too. They do not use saved provider credentials.', 'Файлы ручного экспорта доступны здесь же. Они не используют сохранённые данные доступа провайдера.')) + '</p>' + manualToolButtons + '</section>';
     var statusText = (isManualProvider && !String(config.lastStatus || '')) ? '' : publishStatusText(config);
     var statusBlock = statusText ? ('<p class="ir-site-studio-v5-publish-status' + statusClass + '" data-v5-publish-status="1">' + escapeHtml(statusText) + '</p>') : '';
     return '<div class="ir-site-studio-v5-publish-card ir-site-studio-v5-publish-center ir-site-studio-v5-publish-center--publii ir-site-studio-v5-publish-center--v7c">' +
-      '<div class="ir-site-studio-v5-publish-hero"><div><span class="ir-site-studio-v5-kicker">' + escapeHtml(t('Publishing setup', 'Настройка публикации')) + '</span><h3>' + escapeHtml(t('Server connection', 'Подключение сервера')) + '</h3><p class="ir-site-studio-v5-note">' + escapeHtml(t('Set up the server once. After that, publish changes from the top Web Studio button without returning to tokens.', 'Настройте сервер один раз. После этого публикуйте изменения верхней кнопкой Web Studio, не возвращаясь к token.')) + '</p></div><div class="ir-site-studio-v5-publish-site"><strong>' + escapeHtml(state.site.icon || '◆') + ' ' + escapeHtml(state.site.name || t('Website', 'Сайт')) + '</strong><span>' + escapeHtml(t('Build files:', 'Файлов сборки:')) + ' ' + fileCount + '</span></div></div>' +
+      '<div class="ir-site-studio-v5-publish-hero"><div><span class="ir-site-studio-v5-kicker">' + escapeHtml(t('Publishing setup', 'Настройка публикации')) + '</span><h3>' + escapeHtml(t('Server connection', 'Подключение сервера')) + '</h3><p class="ir-site-studio-v5-note">' + escapeHtml(t('Set up publishing once. After that, publish changes from the top Web Studio button without returning to connection settings.', 'Настройте публикацию один раз. После этого публикуйте изменения верхней кнопкой Web Studio, не возвращаясь к настройкам подключения.')) + '</p></div><div class="ir-site-studio-v5-publish-site"><strong>' + escapeHtml(state.site.icon || '◆') + ' ' + escapeHtml(state.site.name || t('Website', 'Сайт')) + '</strong><span>' + escapeHtml(t('Build files:', 'Файлов сборки:')) + ' ' + fileCount + '</span></div></div>' +
       pickerBlock +
-      (showSelectedSettings ? '<section class="ir-site-studio-v5-publish-settings" data-v5-publish-settings="1"><div class="ir-site-studio-v5-publish-settings-head"><div><span class="ir-site-studio-v5-publish-provider-icon ir-site-studio-v5-publish-provider-icon--large">' + escapeHtml(meta.icon) + '</span><div><h4>' + escapeHtml(t(meta.name, meta.nameRu)) + '</h4><p>' + escapeHtml(t(meta.note, meta.noteRu)) + '</p></div></div>' + (isManualProvider ? '<span class="ir-site-studio-v5-publish-token-chip">' + escapeHtml(t('No token needed', 'Token не нужен')) + '</span>' : '<span class="ir-site-studio-v5-publish-token-chip">' + escapeHtml(t('Token:', 'Token:')) + ' ' + escapeHtml(publishSecretPreviewFor(selected, config, 'token') || publishSecretPreviewFor(selected, config, 'secretKey') || tokenPreview(config.token || config.secretKey)) + '</span>') + '</div>' +
+      (showSelectedSettings ? '<section class="ir-site-studio-v5-publish-settings" data-v5-publish-settings="1"><div class="ir-site-studio-v5-publish-settings-head"><div><span class="ir-site-studio-v5-publish-provider-icon ir-site-studio-v5-publish-provider-icon--large">' + escapeHtml(meta.icon) + '</span><div><h4>' + escapeHtml(t(meta.name, meta.nameRu)) + '</h4><p>' + escapeHtml(t(meta.note, meta.noteRu)) + '</p></div></div>' + ((isManualProvider || isIpfsExportProvider || isDeferredProvider) ? '<span class="ir-site-studio-v5-publish-token-chip">' + escapeHtml(isIpfsExportProvider ? t('Export only', 'Только экспорт') : (isDeferredProvider ? t('After 1.0', 'После 1.0') : t('No credentials needed', 'Данные доступа не нужны'))) + '</span>' : (selected === 'ftp' || selected === 'ftps' || selected === 'sftp' ? '<span class="ir-site-studio-v5-publish-token-chip">' + escapeHtml(publishSecretHas(selected, config, 'password') ? t('Password: saved', 'Пароль: сохранён') : t('Password: not saved', 'Пароль: не сохранён')) + '</span>' : '<span class="ir-site-studio-v5-publish-token-chip">' + escapeHtml(t('Token:', 'Token:')) + ' ' + escapeHtml(publishSecretPreviewFor(selected, config, 'token') || publishSecretPreviewFor(selected, config, 'secretKey') || tokenPreview(config.token || config.secretKey)) + '</span>')) + '</div>' +
       '<div class="ir-site-studio-v5-publish-ready' + readyClass + '"><strong>' + escapeHtml(readyTitle) + '</strong><span>' + escapeHtml(readyMessage) + '</span>' + missingText + '</div>' +
-      (ready && selected !== 'manual' && selected !== 'ipfs' ? mainActions + setupBlock : setupBlock + mainActions) +
+      (ready && isRemoteProvider ? mainActions + setupBlock : setupBlock + mainActions) +
       progressBlock +
       successBlock +
       statusBlock +
       manualActions +
       '<details class="ir-site-studio-v5-publish-details"><summary>' + escapeHtml(t('Build summary', 'Сводка сборки')) + '</summary><pre class="ir-site-studio-v5-code">' + escapeHtml(JSON.stringify({ site: state.site.name, provider: selected, activePage: { title: pageLabel(page), slug: page.slug, status: page.status }, files: Object.keys(payload.package || {}), tokenPolicy: 'local only; not included in backup by default' }, null, 2)) + '</pre></details>' +
       '</section>' : '') + '</div>';
+  }
+
+  // IRGEZTNE_WORKSHOP_WEBSTUDIO_THEME_APPLY_R1W9E
+  var WORKSHOP_THEME_FIELDS_R1W9E = ['accentColor', 'menuColor', 'buttonColor', 'backgroundColor', 'textColor', 'fontFamily', 'headingFont'];
+  var WORKSHOP_THEME_COLOR_FIELDS_R1W9E = ['accentColor', 'menuColor', 'buttonColor', 'backgroundColor', 'textColor'];
+  var WORKSHOP_THEME_FONT_VALUES_R1W9E = ['Inter', 'system', 'Manrope', 'Montserrat', 'Rubik', 'Nunito', 'Comfortaa', 'Oswald', 'Playfair', 'serif', 'geometric', 'JetBrains', 'mono'];
+
+  function workshopInstalledThemesR1W9E() {
+    try {
+      var api = window.NSCodeHubV1 || null;
+      if (!api || typeof api.getInstalledThemes !== 'function') return [];
+      var list = api.getInstalledThemes();
+      return Array.isArray(list) ? list : [];
+    } catch (error) {
+      log('Workshop installed-theme catalogue unavailable', error);
+      return [];
+    }
+  }
+
+  function normalizeWorkshopThemeForApplyR1W9E(theme) {
+    theme = theme && typeof theme === 'object' && !Array.isArray(theme) ? theme : {};
+    var safe = {};
+    WORKSHOP_THEME_COLOR_FIELDS_R1W9E.forEach(function (key) {
+      if (theme[key] == null || theme[key] === '') return;
+      var raw = String(theme[key]).trim();
+      if (!/^#[0-9a-fA-F]{6}$/.test(raw)) throw new Error(t('Некорректный цвет темы: ', 'Invalid theme color: ') + key);
+      safe[key] = raw.toLowerCase();
+    });
+    ['fontFamily', 'headingFont'].forEach(function (key) {
+      if (theme[key] == null || theme[key] === '') return;
+      var raw = String(theme[key]).trim();
+      if (WORKSHOP_THEME_FONT_VALUES_R1W9E.indexOf(raw) === -1) throw new Error(t('Неподдерживаемый шрифт темы: ', 'Unsupported theme font: ') + raw);
+      safe[key] = raw;
+    });
+    if (!Object.keys(safe).length) throw new Error(t('Тема не содержит поддерживаемых параметров дизайна.', 'Theme contains no supported design fields.'));
+    return safe;
+  }
+
+  function workshopThemeSwatchesR1W9E(theme) {
+    theme = theme && typeof theme === 'object' ? theme : {};
+    var colors = WORKSHOP_THEME_COLOR_FIELDS_R1W9E.map(function (key) { return theme[key]; }).filter(Boolean);
+    if (!colors.length) return '';
+    return '<div aria-label="' + escapeHtml(t('Theme colors', 'Цвета темы')) + '" style="display:flex;gap:7px;align-items:center;margin:10px 0 12px">' + colors.map(function (color) {
+      return '<span title="' + escapeHtml(color) + '" style="display:inline-block;width:28px;height:28px;border-radius:8px;border:1px solid rgba(140,165,200,.45);background:' + escapeHtml(color) + '"></span>';
+    }).join('') + '</div>';
+  }
+
+  function renderWorkshopInstalledThemesR1W9E(state) {
+    var themes = workshopInstalledThemesR1W9E();
+    if (!themes.length) return '';
+    var blocked = !!workshopTemplateSnapshotMetaR1W9D(state);
+    var applied = state && state.site && state.site.workshopThemeSnapshot && typeof state.site.workshopThemeSnapshot === 'object' ? state.site.workshopThemeSnapshot : null;
+    var cards = themes.map(function (item) {
+      item = item && typeof item === 'object' ? item : {};
+      var packageId = String(item.packageId || '');
+      var title = String(item.title || t('Installed theme', 'Установленная тема'));
+      var author = String(item.authorLabel || '');
+      var meta = [String(item.version || ''), author && author !== '—' ? author : ''].filter(Boolean).join(' · ');
+      var isApplied = !!(applied && String(applied.packageId || '') === packageId && String(applied.version || '') === String(item.version || ''));
+      return '<article class="ir-site-studio-v5-template-lab-card-v083h" data-v5-workshop-theme-package-id="' + escapeHtml(packageId) + '">' +
+        '<div class="ir-site-studio-v5-template-lab-card-head-v083h"><div><div class="ir-site-studio-v5-template-lab-kicker-v083h">' + escapeHtml(t('Installed from Workshop', 'Установлена из Мастерской')) + '</div><h4>' + escapeHtml(title) + '</h4></div><span>' + escapeHtml(isApplied ? t('Applied', 'Применена') : t('Local theme', 'Локальная тема')) + '</span></div>' +
+        workshopThemeSwatchesR1W9E(item.theme || {}) +
+        '<p>' + escapeHtml(meta || t('Verified local theme', 'Проверенная локальная тема')) + '</p>' +
+        '<div class="ir-site-studio-v5-template-lab-actions-v083h"><button class="ir-site-studio-v5-btn ir-site-studio-v5-btn--primary" data-v5-action="workshop-installed-theme-apply-r1w9e" data-v5-workshop-package-id="' + escapeHtml(packageId) + '" type="button"' + (blocked ? ' disabled' : '') + '>' + escapeHtml(t('Apply theme', 'Применить тему')) + '</button></div>' +
+      '</article>';
+    }).join('');
+    return '<section class="ir-site-studio-v5-editor-card" data-v5-workshop-installed-themes-r1w9e="1" style="margin-bottom:16px">' +
+      '<div class="ir-site-studio-v5-templates-real-head-v083h"><div><div class="ir-site-studio-v5-kicker">' + escapeHtml(t('Workshop', 'Мастерская')) + '</div><h3>' + escapeHtml(t('Installed themes', 'Установленные темы')) + '</h3><p>' + escapeHtml(t('Applying a theme copies only supported Design values into this site. The installed package is not kept as a live dependency.', 'Применение темы копирует в этот сайт только поддерживаемые значения Дизайна. Установленный пакет не остаётся живой зависимостью.')) + '</p></div><span>' + escapeHtml(String(themes.length) + ' ' + t('installed', 'установлено')) + '</span></div>' +
+      (blocked ? '<p class="ir-site-studio-v5-note">' + escapeHtml(t('Detached HTML/CSS/JavaScript Workshop snapshots are not structured-editable, so Design themes cannot be applied to this site.', 'Отделённые HTML/CSS/JavaScript-снимки Мастерской не являются структурно редактируемыми, поэтому темы Дизайна к этому сайту не применяются.')) + '</p>' : '') +
+      '<div class="ir-site-studio-v5-template-lab-grid-v083h">' + cards + '</div></section>';
+  }
+
+  async function applyWorkshopInstalledThemeR1W9E(packageId) {
+    var state = readState();
+    if (workshopTemplateSnapshotMetaR1W9D(state)) {
+      try { alert(t('Эта тема применяется только к структурированным сайтам Web Studio. Снимок HTML/CSS/JavaScript Мастерской остаётся самостоятельным.', 'This theme can be applied only to structured Web Studio sites. A detached Workshop HTML/CSS/JavaScript snapshot remains independent.')); } catch (errorAlert) {}
+      return;
+    }
+    var api = window.NSCodeHubV1 || null;
+    if (!api || typeof api.materializeInstalledThemeSnapshot !== 'function') {
+      try { alert(t('Адаптер установленной темы недоступен.', 'Installed-theme adapter is unavailable.')); } catch (errorMissing) {}
+      return;
+    }
+    try {
+      var payload = await api.materializeInstalledThemeSnapshot(String(packageId || ''));
+      if (!payload || payload.ok !== true || payload.format !== 'irgeztne-webstudio-theme-snapshot' || String(payload.formatVersion || '') !== '1.0') {
+        throw new Error(t('Мастерская вернула неподдерживаемый снимок темы.', 'Workshop returned an unsupported theme snapshot.'));
+      }
+      var theme = normalizeWorkshopThemeForApplyR1W9E(payload.theme);
+      WORKSHOP_THEME_FIELDS_R1W9E.forEach(function (key) {
+        if (Object.prototype.hasOwnProperty.call(theme, key)) state.site[key] = theme[key];
+      });
+      var packageMeta = payload.package && typeof payload.package === 'object' ? payload.package : {};
+      state.site.workshopThemeSnapshot = {
+        format: 'irgeztne-webstudio-theme-snapshot',
+        formatVersion: '1.0',
+        packageId: String(packageMeta.packageId || packageId || ''),
+        title: String(packageMeta.title || t('Installed theme', 'Установленная тема')),
+        version: String(packageMeta.version || ''),
+        authorLabel: String(packageMeta.authorLabel || ''),
+        values: Object.assign({}, theme),
+        appliedAt: new Date().toISOString()
+      };
+      writeState(state);
+      activeTab = 'identity';
+      collapsedRight = true;
+      renderStudio();
+    } catch (error) {
+      log('Workshop installed-theme apply failed', error);
+      try { alert(t('Не удалось применить тему: ', 'Could not apply theme: ') + String(error && error.message || error || '')); } catch (errorAlertApply) {}
+    }
   }
 
   function renderIdentityTab(state) {
@@ -5956,8 +8677,7 @@
       site.faviconText ||
       site.faviconSymbol ||
       site.faviconIcon ||
-      site.logoLetters ||
-      initialsFromName(site.name || 'Project Studio')
+      ''
     ).slice(0, 2);
     var siteIconValue = faviconInitials;
     var logoBlock = '<article class="ir-site-studio-v5-compact-generator ir-site-studio-v5-compact-generator--logo"><div class="ir-site-studio-v5-compact-generator-head"><strong>' + escapeHtml(t('Logo', 'Логотип')) + '</strong><span>' + escapeHtml(t('Header mark', 'Знак в шапке')) + '</span></div><div class="ir-site-studio-v5-compact-row">' +
@@ -5977,7 +8697,7 @@
       fieldMiniSelect('faviconWeight', t('Weight', 'Толщина'), faviconWeightOptions(site.faviconWeight || '950')) +
       fieldMiniSelect('faviconShape', t('Shape', 'Форма'), logoShapeOptions(faviconShape)) +
       '<button class="ir-site-studio-v5-btn ir-site-studio-v5-compact-generate ir-site-studio-v5-compact-download" data-v5-action="download-favicon-pack" type="button">' + escapeHtml(t('Download', 'Скачать')) + '</button></div></article>';
-    return '<div class="ir-site-studio-v5-identity-card ir-site-studio-v5-identity-card--compact"><div class="ir-site-studio-v5-identity-grid"><section class="ir-site-studio-v5-logo-preview"><div class="ir-site-studio-v5-brand-previews"><div><span>' + escapeHtml(t('Logo preview', 'Превью логотипа')) + '</span><div class="ir-site-studio-v5-logo-tile"><img alt="Logo preview" src="' + dataUrlSvg(logoSvg) + '"></div></div><div><span>' + escapeHtml(t('Favicon preview', 'Превью favicon')) + '</span><div class="ir-site-studio-v5-favicon-tile"><img alt="Favicon preview" src="' + dataUrlSvg(faviconSvg) + '"></div><div class="ir-site-studio-v5-favicon-sizes"><i>32</i><i>16</i></div></div></div><p>' + escapeHtml(t('Logo and favicon are installed automatically in preview, export and publishing. Downloads are only for using them outside Web Studio.', 'Логотип и favicon автоматически добавляются в предпросмотр, экспорт и публикацию. Скачивание нужно только для использования вне Web Studio.')) + '</p><details class="ir-site-studio-v5-publish-details ir-site-studio-v5-publish-details--tools"><summary>' + escapeHtml(t('Advanced / export', 'Дополнительно / экспорт')) + '</summary><div class="ir-site-studio-v5-identity-actions"><button class="ir-site-studio-v5-btn" data-v5-action="download-logo-svg" type="button">' + escapeHtml(t('Download SVG logo', 'Скачать SVG logo')) + '</button><button class="ir-site-studio-v5-btn" data-v5-action="download-favicon-pack" type="button">' + escapeHtml(t('Download favicon pack', 'Скачать favicon pack')) + '</button></div><p class="ir-site-studio-v5-note">' + escapeHtml(t('The pack includes favicon.svg, PNG icons, favicon.ico and site.webmanifest. Web Studio adds them to this site automatically.', 'Комплект включает favicon.svg, PNG-иконки, favicon.ico и site.webmanifest. Web Studio добавляет их в этот сайт автоматически.')) + '</p></details></section><section class="ir-site-studio-v5-identity-controls"><div class="ir-site-studio-v5-identity-site-fields"><div class="ir-site-studio-v5-setting-row"><label>' + escapeHtml(t('Site name', 'Название сайта')) + '</label><input class="ir-site-studio-v5-input" data-v5-site-field="name" value="' + escapeHtml(site.name || '') + '"></div><div class="ir-site-studio-v5-setting-row"><label>' + escapeHtml(t('Author / owner', 'Автор / владелец')) + '</label><input class="ir-site-studio-v5-input" data-v5-site-field="author" value="' + escapeHtml(site.author || '') + '"></div><div class="ir-site-studio-v5-setting-row"><label>' + escapeHtml(t('Tagline', 'Слоган')) + '</label><input class="ir-site-studio-v5-input" data-v5-site-field="tagline" value="' + escapeHtml(site.tagline || '') + '"></div></div><h4 class="ir-site-studio-v5-section-title">' + escapeHtml(t('Compact logo / favicon generators', 'Компактные генераторы logo / favicon')) + '</h4><div class="ir-site-studio-v5-compact-generators">' + logoBlock + faviconBlock + '</div><h4 class="ir-site-studio-v5-section-title">' + escapeHtml(t('Site colors', 'Цвета сайта')) + '</h4>' + colorControl('accentColor', t('Site accent color', 'Акцентный цвет сайта'), site.accentColor || '#2f7be6', '#2f7be6') + colorControl('menuColor', t('Menu active color', 'Цвет активного меню'), site.menuColor || site.accentColor || '#2f7be6', '#2f7be6') + colorControl('buttonColor', t('Button color', 'Цвет кнопок'), site.buttonColor || site.accentColor || '#2f7be6', '#2f7be6') + '<div class="ir-site-studio-v5-paint-blocks"><article><h4>' + escapeHtml(t('Page background quick colors', 'Быстрые фоны страницы')) + '</h4><p class="ir-site-studio-v5-note">' + escapeHtml(t('Optional quick selection. You can also type any HEX color below.', 'Необязательный быстрый выбор. Ниже можно ввести любой HEX-цвет.')) + '</p>' + colorSwatches('backgroundColor', bgColors) + '</article><article><h4>' + escapeHtml(t('Text quick colors', 'Быстрые цвета текста')) + '</h4><p class="ir-site-studio-v5-note">' + escapeHtml(t('Optional quick text color presets.', 'Необязательные быстрые цвета текста.')) + '</p>' + colorSwatches('textColor', textColors) + '</article></div>' + colorControl('backgroundColor', t('Background color', 'Цвет фона'), site.backgroundColor || '#ffffff', '#ffffff') + colorControl('textColor', t('Text color', 'Цвет текста'), site.textColor || '#101827', '#101827') + '<h4 class="ir-site-studio-v5-section-title">' + escapeHtml(t('Fonts', 'Шрифты')) + '</h4><div class="ir-site-studio-v5-setting-row"><label>' + escapeHtml(t('Body font', 'Шрифт текста')) + '</label><select class="ir-site-studio-v5-select" data-v5-site-field="fontFamily">' + fontOptions(site.fontFamily) + '</select></div><div class="ir-site-studio-v5-setting-row"><label>' + escapeHtml(t('Heading font', 'Шрифт заголовков')) + '</label><select class="ir-site-studio-v5-select" data-v5-site-field="headingFont">' + fontOptions(site.headingFont || site.fontFamily) + '</select></div></section></div></div>';
+    return renderWorkshopInstalledThemesR1W9E(state) + '<div class="ir-site-studio-v5-identity-card ir-site-studio-v5-identity-card--compact"><div class="ir-site-studio-v5-identity-grid"><section class="ir-site-studio-v5-logo-preview"><div class="ir-site-studio-v5-brand-previews"><div><span>' + escapeHtml(t('Logo preview', 'Превью логотипа')) + '</span><div class="ir-site-studio-v5-logo-tile"><img alt="Logo preview" src="' + dataUrlSvg(logoSvg) + '"></div></div><div><span>' + escapeHtml(t('Favicon preview', 'Превью favicon')) + '</span><div class="ir-site-studio-v5-favicon-tile"><img alt="Favicon preview" src="' + dataUrlSvg(faviconSvg) + '"></div><div class="ir-site-studio-v5-favicon-sizes"><i>32</i><i>16</i></div></div></div><p>' + escapeHtml(t('Logo and favicon are installed automatically in preview, export and publishing. Downloads are only for using them outside Web Studio.', 'Логотип и favicon автоматически добавляются в предпросмотр, экспорт и публикацию. Скачивание нужно только для использования вне Web Studio.')) + '</p><details class="ir-site-studio-v5-publish-details ir-site-studio-v5-publish-details--tools"><summary>' + escapeHtml(t('Advanced / export', 'Дополнительно / экспорт')) + '</summary><div class="ir-site-studio-v5-identity-actions"><button class="ir-site-studio-v5-btn" data-v5-action="download-logo-svg" type="button">' + escapeHtml(t('Download SVG logo', 'Скачать SVG logo')) + '</button><button class="ir-site-studio-v5-btn" data-v5-action="download-favicon-pack" type="button">' + escapeHtml(t('Download favicon pack', 'Скачать favicon pack')) + '</button></div><p class="ir-site-studio-v5-note">' + escapeHtml(t('The pack includes favicon.svg, PNG icons, favicon.ico and site.webmanifest. Web Studio adds them to this site automatically.', 'Комплект включает favicon.svg, PNG-иконки, favicon.ico и site.webmanifest. Web Studio добавляет их в этот сайт автоматически.')) + '</p></details></section><section class="ir-site-studio-v5-identity-controls"><div class="ir-site-studio-v5-identity-site-fields"><div class="ir-site-studio-v5-setting-row"><label>' + escapeHtml(t('Site name', 'Название сайта')) + '</label><input class="ir-site-studio-v5-input" data-v5-site-field="name" value="' + escapeHtml(site.name || '') + '"></div><div class="ir-site-studio-v5-setting-row"><label>' + escapeHtml(t('Author / owner', 'Автор / владелец')) + '</label><input class="ir-site-studio-v5-input" data-v5-site-field="author" value="' + escapeHtml(site.author || '') + '"></div><div class="ir-site-studio-v5-setting-row"><label>' + escapeHtml(t('Tagline', 'Слоган')) + '</label><input class="ir-site-studio-v5-input" data-v5-site-field="tagline" value="' + escapeHtml(site.tagline || '') + '"></div></div><h4 class="ir-site-studio-v5-section-title">' + escapeHtml(t('Compact logo / favicon generators', 'Компактные генераторы logo / favicon')) + '</h4><div class="ir-site-studio-v5-compact-generators">' + logoBlock + faviconBlock + '</div><h4 class="ir-site-studio-v5-section-title">' + escapeHtml(t('Site colors', 'Цвета сайта')) + '</h4>' + colorControl('accentColor', t('Site accent color', 'Акцентный цвет сайта'), site.accentColor || '#2f7be6', '#2f7be6') + colorControl('menuColor', t('Menu active color', 'Цвет активного меню'), site.menuColor || site.accentColor || '#2f7be6', '#2f7be6') + colorControl('buttonColor', t('Button color', 'Цвет кнопок'), site.buttonColor || site.accentColor || '#2f7be6', '#2f7be6') + '<div class="ir-site-studio-v5-paint-blocks"><article><h4>' + escapeHtml(t('Page background quick colors', 'Быстрые фоны страницы')) + '</h4><p class="ir-site-studio-v5-note">' + escapeHtml(t('Optional quick selection. You can also type any HEX color below.', 'Необязательный быстрый выбор. Ниже можно ввести любой HEX-цвет.')) + '</p>' + colorSwatches('backgroundColor', bgColors) + '</article><article><h4>' + escapeHtml(t('Text quick colors', 'Быстрые цвета текста')) + '</h4><p class="ir-site-studio-v5-note">' + escapeHtml(t('Optional quick text color presets.', 'Необязательные быстрые цвета текста.')) + '</p>' + colorSwatches('textColor', textColors) + '</article></div>' + colorControl('backgroundColor', t('Background color', 'Цвет фона'), site.backgroundColor || '#ffffff', '#ffffff') + colorControl('textColor', t('Text color', 'Цвет текста'), site.textColor || '#101827', '#101827') + '<h4 class="ir-site-studio-v5-section-title">' + escapeHtml(t('Fonts', 'Шрифты')) + '</h4><div class="ir-site-studio-v5-setting-row"><label>' + escapeHtml(t('Body font', 'Шрифт текста')) + '</label><select class="ir-site-studio-v5-select" data-v5-site-field="fontFamily">' + fontOptions(site.fontFamily) + '</select></div><div class="ir-site-studio-v5-setting-row"><label>' + escapeHtml(t('Heading font', 'Шрифт заголовков')) + '</label><select class="ir-site-studio-v5-select" data-v5-site-field="headingFont">' + fontOptions(site.headingFont || site.fontFamily) + '</select></div></section></div></div>';
   }
 
   function renderPagesManagerTab(state, page) {
@@ -6397,10 +9117,152 @@
     }
   }
 
-  function openTemplateLabPreviewV083I(path, title) {
-    if (!path) return;
+  /* IRGEZTNE_WEBSTUDIO_CANONICAL_TEMPLATE_PREVIEW_V094A
+     Gallery cards, the large template preview and newly created sites all
+     use the same product renderer and the same canonical starter state.
+     Template Lab remains an archive/source package, not a second preview
+     owner shown to users. */
+  function templatePreviewStateV094A(templateId) {
+    var id = normalizeOfficialTemplateIdV068C(templateId);
+    var state = initialState();
+    var names = {
+      'project-landing': t('Launch Field', 'Стартовая площадка'),
+      'business-product': 'Meridian',
+      'blog-news': 'Northline Journal',
+      'documentation-wide': t('Product Documentation', 'Документация продукта'),
+      'studio-portfolio': 'Aster Works',
+      'agency-studio': 'Vector Atelier'
+    };
+
+    state.site.name = names[id] || t('Website', 'Сайт');
+    state.site.author = 'IRGEZTNE';
+    state.site.activeTemplate = id;
+    state.site.template = id;
+    state.site.templateSource = 'webstudio-official';
+    state.site.templateLabPath = '';
+    state.site.templatePreviewPath = '';
+    applyOfficialTemplateStarterV068C(state, id, {
+      persistSelection: false
+    });
+    resetNewSiteIdentityV092E(state);
+    return normalizeState(state);
+  }
+
+  function templatePreviewHtmlV094A(templateId) {
+    var state = templatePreviewStateV094A(templateId);
+    var home = findHomePage(state) || state.pages[0];
+    return renderSiteHtml(state, home, {
+      linkMode: 'hash',
+      inlineAssets: true
+    });
+  }
+
+  function templatePreviewPayloadV095A(templateId) {
+    var state = templatePreviewStateV094A(templateId);
+    var home = findHomePage(state) || state.pages[0];
+    return createPublicSitePayloadV091B(state, home);
+  }
+
+  async function loadGeneratedTemplatePreviewFrameV095A(templateId, modal) {
+    var frame = modal && modal.querySelector(
+      '[data-v5-template-preview-frame-v095a="1"]'
+    );
+    var status = modal && modal.querySelector(
+      '[data-v5-template-preview-status-v095a="1"]'
+    );
+    if (!frame) return;
+    frame.onload = null;
+    frame.setAttribute('data-v5-template-preview-loading', '1');
+
+    var payload = templatePreviewPayloadV095A(templateId);
+    var api = window.nsAPI || null;
+
+    if (api && typeof api.materializeSitePreview === 'function') {
+      try {
+        var preview = await api.materializeSitePreview(payload);
+        if (preview && preview.ok && preview.indexUrl) {
+          frame.removeAttribute('srcdoc');
+          frame.onload = function () {
+            frame.removeAttribute('data-v5-template-preview-loading');
+            frame.onload = null;
+          };
+          frame.src = preview.indexUrl;
+          if (status) {
+            status.textContent =
+              t('Canonical site package', 'Канонический пакет сайта') +
+              ' · ' +
+              normalizeOfficialTemplateIdV068C(templateId);
+          }
+          return;
+        }
+      } catch (error) {
+        log('Canonical template frame materialize failed', error);
+      }
+    }
+
+    /*
+       Emergency fallback only. The normal Electron path above is the same
+       materialized package used by Editor Preview, browser and ZIP.
+    */
+    frame.onload = function () {
+      frame.removeAttribute('data-v5-template-preview-loading');
+      frame.onload = null;
+    };
+    frame.srcdoc = templatePreviewHtmlV094A(templateId);
+    if (status) {
+      status.textContent = t(
+        'Fallback preview (package service unavailable)',
+        'Резервное превью (сервис пакета недоступен)'
+      );
+    }
+  }
+
+  async function openGeneratedTemplatePreviewWindowV094A(templateId) {
+    var state = templatePreviewStateV094A(templateId);
+    var home = findHomePage(state) || state.pages[0];
+    var api = window.nsAPI || null;
+
+    if (
+      api &&
+      typeof api.materializeSitePreview === 'function' &&
+      typeof api.openSitePreviewExternal === 'function'
+    ) {
+      try {
+        var preview = await materializePreviewPackage(state, home);
+        if (preview && preview.ok) {
+          await openPreviewUrlInExternal(preview, preview.indexUrl);
+          return;
+        }
+      } catch (error) {
+        log('Canonical template preview materialize failed', error);
+      }
+    }
+
+    var html = templatePreviewHtmlV094A(templateId);
+    var win = null;
+    try {
+      win = window.open('', '_blank', 'width=1540,height=980');
+    } catch (error2) {}
+
+    if (!win) {
+      downloadText(
+        normalizeOfficialTemplateIdV068C(templateId) + '-preview.html',
+        html,
+        'text/html;charset=utf-8'
+      );
+      return;
+    }
+
+    win.document.open();
+    win.document.write(html);
+    win.document.close();
+  }
+
+  function openTemplateLabPreviewV083I(templateId, title) {
+    if (!templateId) return;
     closeTemplateLabPreviewV083I();
 
+    var canonicalId = normalizeOfficialTemplateIdV068C(templateId);
     var modal = document.createElement('div');
     modal.className = 'ir-site-studio-v5-template-preview-modal-v083i';
     modal.setAttribute('role', 'dialog');
@@ -6412,17 +9274,469 @@
       '    <div>' +
       '      <div class="ir-site-studio-v5-kicker">' + escapeHtml(t('Template preview', 'Превью шаблона')) + '</div>' +
       '      <strong>' + escapeHtml(title || t('Template preview', 'Превью шаблона')) + '</strong>' +
-      '      <span>' + escapeHtml(path) + '</span>' +
+      '      <span data-v5-template-preview-status-v095a="1">' + escapeHtml(t('Building canonical site package…', 'Собирается канонический пакет сайта…')) + '</span>' +
       '    </div>' +
       '    <div class="ir-site-studio-v5-template-preview-actions-v083i">' +
-      '      <a class="ir-site-studio-v5-btn ir-site-studio-v5-btn--ghost" href="' + escapeHtml(path) + '" target="_blank" rel="noopener">' + escapeHtml(t('Open in window', 'Открыть в окне')) + '</a>' +
+      '      <button class="ir-site-studio-v5-btn ir-site-studio-v5-btn--ghost" data-v5-action="template-generated-open-window-v094a" data-v5-template-id="' + escapeHtml(canonicalId) + '" type="button">' + escapeHtml(t('Open in window', 'Открыть в окне')) + '</button>' +
       '      <button class="ir-site-studio-v5-btn ir-site-studio-v5-btn--danger" data-v5-action="template-lab-preview-close-v083i" type="button">×</button>' +
       '    </div>' +
       '  </header>' +
-      '  <iframe class="ir-site-studio-v5-template-preview-iframe-v083i" src="' + escapeHtml(path) + '" title="' + escapeHtml(title || 'Template preview') + '"></iframe>' +
+      '  <iframe class="ir-site-studio-v5-template-preview-iframe-v083i" data-v5-template-preview-frame-v095a="1" data-v5-template-preview-loading="1" title="' + escapeHtml(title || 'Template preview') + '"></iframe>' +
       '</div>';
 
     (overlay || document.body).appendChild(modal);
+    loadGeneratedTemplatePreviewFrameV095A(canonicalId, modal);
+  }
+
+
+  /* IRGEZTNE_TEMPLATE_GALLERY_MATERIALIZED_PREVIEWS_V098E
+     Gallery cards use real materialized packages so local template images
+     are visible. The card catalogue uses one fixed dark site theme through
+     the existing ?theme=dark contract; the large preview remains interactive. */
+
+  function templateGalleryDarkHtmlV098E(html) {
+    html = String(html || '');
+    var forceDark =
+      '<script data-irgeztne-template-gallery-dark-v098e="1">' +
+      '(function(){var d=document.documentElement;d.setAttribute("data-theme","dark");d.style.colorScheme="dark";' +
+      'window.__IRGEZTNE_INITIAL_THEME__="dark";})();' +
+      '<\/script>';
+
+    if (/<meta\b[^>]*name=["']viewport["'][^>]*>/i.test(html)) {
+      html = html.replace(
+        /<meta\b[^>]*name=["']viewport["'][^>]*>/i,
+        function (match) { return match + forceDark; }
+      );
+    } else {
+      html = html.replace(/<head>/i, '<head>' + forceDark);
+    }
+
+    return html;
+  }
+
+  function templateGalleryPreviewUrlV098E(indexUrl) {
+    var raw = String(indexUrl || '');
+    if (!raw) return '';
+    try {
+      var url = new URL(raw, window.location.href);
+      url.searchParams.set('theme', 'dark');
+      return url.href;
+    } catch (error) {
+      return raw + (raw.indexOf('?') === -1 ? '?' : '&') + 'theme=dark';
+    }
+  }
+
+  // IRGEZTNE_TEMPLATE_GALLERY_FIT_RELEASE_R1
+  // Every official gallery thumbnail uses the same 1440×900 desktop viewport
+  // and is scaled into the card. The old 400%-of-card viewport changed the
+  // layout from template to template and made several previews look cropped.
+  // IRGEZTNE_TEMPLATE_GALLERY_CLEAN_LANDING_R1U
+  // Card thumbnails are read-only first-frame captures, not miniature browsers.
+  // Hide their internal page scrollbars/chrome while keeping the canonical
+  // 1440x900 viewport and the same materialized template package.
+  function cleanTemplateGalleryFrameLandingR1U(frame) {
+    if (!frame) return;
+
+    frame.setAttribute('scrolling', 'no');
+    frame.setAttribute('tabindex', '-1');
+    frame.style.overflow = 'hidden';
+    frame.style.border = '0';
+    frame.style.pointerEvents = 'none';
+
+    try {
+      if (frame.contentWindow && typeof frame.contentWindow.scrollTo === 'function') {
+        frame.contentWindow.scrollTo(0, 0);
+      }
+      var doc = frame.contentDocument || (frame.contentWindow && frame.contentWindow.document) || null;
+      if (!doc) return;
+
+      if (doc.documentElement) {
+        doc.documentElement.style.overflow = 'hidden';
+        doc.documentElement.style.scrollbarWidth = 'none';
+      }
+      if (doc.body) {
+        doc.body.style.overflow = 'hidden';
+        doc.body.style.scrollbarWidth = 'none';
+      }
+      if (doc.head && !doc.getElementById('irgeztne-template-gallery-clean-landing-r1u')) {
+        var style = doc.createElement('style');
+        style.id = 'irgeztne-template-gallery-clean-landing-r1u';
+        style.textContent =
+          'html,body{overflow:hidden!important;scrollbar-width:none!important;}' +
+          'html::-webkit-scrollbar,body::-webkit-scrollbar{width:0!important;height:0!important;display:none!important;}';
+        doc.head.appendChild(style);
+      }
+    } catch (error) {
+      // Cross-origin/file-origin restrictions are harmless here: the iframe
+      // scrolling=no contract above still suppresses browser scrollbars.
+    }
+  }
+
+  function fitTemplateGalleryFrameReleaseR1(frame) {
+    if (!frame || !frame.closest) return;
+    var wrap = frame.closest('.ir-site-studio-v5-template-lab-frame-v083h');
+    if (!wrap) return;
+
+    cleanTemplateGalleryFrameLandingR1U(frame);
+
+    var baseWidth = 1440;
+    var baseHeight = 900;
+    var width = Math.max(1, wrap.clientWidth || 0);
+    var height = Math.max(1, wrap.clientHeight || 0);
+    var scale = Math.min(width / baseWidth, height / baseHeight);
+
+    frame.style.position = 'absolute';
+    frame.style.width = baseWidth + 'px';
+    frame.style.height = baseHeight + 'px';
+    frame.style.left = Math.max(0, (width - baseWidth * scale) / 2) + 'px';
+    frame.style.top = Math.max(0, (height - baseHeight * scale) / 2) + 'px';
+    frame.style.transformOrigin = '0 0';
+    frame.style.transform = 'scale(' + scale + ')';
+  }
+
+  function finishTemplateGalleryFrameReleaseR1(frame) {
+    if (!frame) return;
+    frame.removeAttribute('data-v5-template-preview-loading');
+    cleanTemplateGalleryFrameLandingR1U(frame);
+    fitTemplateGalleryFrameReleaseR1(frame);
+    window.setTimeout(function () { fitTemplateGalleryFrameReleaseR1(frame); }, 120);
+    window.setTimeout(function () { fitTemplateGalleryFrameReleaseR1(frame); }, 500);
+  }
+
+  if (!window.__IRGEZTNE_TEMPLATE_GALLERY_FIT_RELEASE_R1__) {
+    window.__IRGEZTNE_TEMPLATE_GALLERY_FIT_RELEASE_R1__ = true;
+    window.addEventListener('resize', function () {
+      if (!overlay) return;
+      overlay.querySelectorAll('[data-v5-template-card-preview-v098e="1"]').forEach(function (frame) {
+        fitTemplateGalleryFrameReleaseR1(frame);
+      });
+    });
+  }
+
+  // IRGEZTNE_TEMPLATE_VITRINA_CANONICAL_BRIDGE_R1M
+  // Read-only bridge for the legacy Templates catalogue. It deliberately reuses
+  // the same canonical template state/package owner as Web Studio's own gallery,
+  // Preview, browser view and ZIP/publication path. It does not mutate sites.
+  // IRGEZTNE_TEMPLATE_GALLERY_ZERO_MATERIALIZE_R2
+  // Gallery cards are visual thumbnails only. They render the canonical generated
+  // package inline and never write physical preview packages to disk. Real
+  // materialization is reserved for explicit Preview/Open/Export actions.
+  async function loadOfficialTemplateThumbnailR1M(frame, templateId) {
+    if (!frame) return { ok: false, reason: 'missing-frame' };
+
+    var id = normalizeOfficialTemplateIdV068C(templateId);
+    frame.setAttribute('data-v5-template-preview-loading', '1');
+    frame.onload = function () {
+      finishTemplateGalleryFrameReleaseR1(frame);
+      frame.onload = null;
+    };
+    frame.removeAttribute('src');
+    frame.srcdoc = templateGalleryDarkHtmlV098E(
+      templatePreviewHtmlV094A(id)
+    );
+    try {
+      if (frame.contentDocument && frame.contentDocument.readyState === 'complete') {
+        finishTemplateGalleryFrameReleaseR1(frame);
+      }
+    } catch (error) {}
+    return { ok: true, mode: 'inline-canonical', templateId: id };
+  }
+
+  async function loadTemplateGalleryCardsV098E() {
+    if (!overlay || activeTab !== 'templates') return;
+    var frames = Array.prototype.slice.call(
+      overlay.querySelectorAll('[data-v5-template-card-preview-v098e="1"]')
+    );
+    if (!frames.length) return;
+
+    frames.forEach(function (frame) {
+      var templateId = normalizeOfficialTemplateIdV068C(
+        frame.getAttribute('data-v5-template-id') || ''
+      );
+      if (!templateId) return;
+
+      frame.setAttribute('data-v5-template-preview-loading', '1');
+      frame.onload = function () {
+        finishTemplateGalleryFrameReleaseR1(frame);
+        frame.onload = null;
+      };
+      frame.removeAttribute('src');
+      frame.srcdoc = templateGalleryDarkHtmlV098E(
+        templatePreviewHtmlV094A(templateId)
+      );
+      try {
+        if (frame.contentDocument && frame.contentDocument.readyState === 'complete') {
+          finishTemplateGalleryFrameReleaseR1(frame);
+        }
+      } catch (error) {}
+    });
+
+    await loadWorkshopInstalledTemplateCardsR1W9A();
+  }
+
+  // IRGEZTNE_WORKSHOP_TEMPLATE_LIBRARY_BRIDGE_R1W9A
+  // IRGEZTNE_WORKSHOP_INSTALLED_TEMPLATE_PREVIEW_INTERACTION_R1W9C
+  // IRGEZTNE_WORKSHOP_INSTALLED_TEMPLATE_PREVIEW_SINGLE_ACTION_R1W9C2
+  // IRGEZTNE_WORKSHOP_WEBSTUDIO_THEME_ADAPTER_R1W9E
+  // IRGEZTNE_WORKSHOP_WEBSTUDIO_COMPONENT_ADAPTER_R1W9F
+  // Web Studio consumes only the public NSCodeHubV1 adapter contract.
+  // It never reaches into Workshop localStorage/IndexedDB directly.
+  function workshopInstalledTemplatesR1W9A() {
+    try {
+      var api = window.NSCodeHubV1 || null;
+      if (!api || typeof api.getInstalledTemplates !== 'function') return [];
+      var list = api.getInstalledTemplates();
+      return Array.isArray(list) ? list : [];
+    } catch (error) {
+      log('Workshop installed-template catalogue unavailable', error);
+      return [];
+    }
+  }
+
+  // IRGEZTNE_WORKSHOP_TEMPLATE_SITE_SNAPSHOT_R1W9D
+  // Web Studio owns this IndexedDB. It is intentionally separate from the
+  // Workshop package registry/byte store so uninstalling the library package
+  // cannot remove a site that was already created from it.
+  function openWorkshopSiteSnapshotDbR1W9D() {
+    return new Promise(function (resolve, reject) {
+      if (!window.indexedDB) { reject(new Error('IndexedDB unavailable')); return; }
+      var request = window.indexedDB.open(WORKSHOP_SITE_SNAPSHOT_DB_R1W9D, 1);
+      request.onupgradeneeded = function () {
+        var db = request.result;
+        if (!db.objectStoreNames.contains(WORKSHOP_SITE_SNAPSHOT_STORE_R1W9D)) {
+          db.createObjectStore(WORKSHOP_SITE_SNAPSHOT_STORE_R1W9D, { keyPath: 'snapshotId' });
+        }
+      };
+      request.onsuccess = function () { resolve(request.result); };
+      request.onerror = function () { reject(request.error || new Error('Web Studio snapshot DB open failed')); };
+    });
+  }
+
+  function workshopSnapshotSafePathR1W9D(value) {
+    var path = String(value || '').replace(/\\/g, '/').replace(/^\.\/+/, '');
+    if (!path || path[0] === '/' || /[\u0000-\u001f\u007f]/.test(path)) return '';
+    if (path.split('/').some(function (part) { return !part || part === '.' || part === '..'; })) return '';
+    return path;
+  }
+
+  function workshopSnapshotArrayBufferR1W9D(value) {
+    if (value instanceof ArrayBuffer) return value.slice(0);
+    if (ArrayBuffer.isView(value)) return value.buffer.slice(value.byteOffset, value.byteOffset + value.byteLength);
+    return null;
+  }
+
+  async function storeWorkshopTemplateSnapshotR1W9D(siteId, payload) {
+    payload = payload && typeof payload === 'object' ? payload : {};
+    if (!payload.ok || payload.format !== 'irgeztne-webstudio-template-snapshot' || payload.formatVersion !== '1.0') {
+      throw new Error(t('Мастерская вернула неподдерживаемый снимок шаблона.', 'Workshop returned an unsupported template snapshot.'));
+    }
+    var packageMeta = payload.package && typeof payload.package === 'object' ? payload.package : {};
+    var sourceFiles = Array.isArray(payload.files) ? payload.files : [];
+    if (!sourceFiles.length) throw new Error(t('В снимке шаблона нет файлов.', 'Template snapshot has no files.'));
+    var files = sourceFiles.map(function (file) {
+      var path = workshopSnapshotSafePathR1W9D(file && file.path);
+      var bytes = workshopSnapshotArrayBufferR1W9D(file && file.bytes);
+      if (!path || !bytes) throw new Error(t('Некорректный файл снимка шаблона.', 'Invalid template snapshot file.'));
+      if (Number(file.size || bytes.byteLength) !== bytes.byteLength) throw new Error(t('Размер файла снимка не совпадает.', 'Template snapshot file size does not match.'));
+      return {
+        path: path,
+        role: String(file.role || ''),
+        kind: String(file.kind || ''),
+        mime: String(file.mime || 'application/octet-stream'),
+        size: bytes.byteLength,
+        sha256: String(file.sha256 || ''),
+        bytes: bytes
+      };
+    });
+    var entryPath = workshopSnapshotSafePathR1W9D(payload.entryPath || 'index.html');
+    if (!entryPath || !files.some(function (file) { return file.path === entryPath; })) {
+      throw new Error(t('Основной HTML-файл снимка не найден.', 'Template snapshot entry HTML was not found.'));
+    }
+    var snapshotId = 'workshop-site:' + String(siteId || uid('siteSnapshot'));
+    var record = {
+      snapshotId: snapshotId,
+      packageId: String(packageMeta.packageId || ''),
+      title: String(packageMeta.title || t('Installed template', 'Установленный шаблон')),
+      version: String(packageMeta.version || ''),
+      authorLabel: String(packageMeta.authorLabel || ''),
+      entryPath: entryPath,
+      previewSrcdoc: String(payload.previewSrcdoc || ''),
+      files: files,
+      createdAt: new Date().toISOString()
+    };
+    if (!record.previewSrcdoc) throw new Error(t('Безопасный предпросмотр снимка не был создан.', 'Safe snapshot preview was not created.'));
+    var db = await openWorkshopSiteSnapshotDbR1W9D();
+    try {
+      await new Promise(function (resolve, reject) {
+        var tx = db.transaction(WORKSHOP_SITE_SNAPSHOT_STORE_R1W9D, 'readwrite');
+        tx.objectStore(WORKSHOP_SITE_SNAPSHOT_STORE_R1W9D).put(record);
+        tx.oncomplete = function () { resolve(); };
+        tx.onerror = function () { reject(tx.error || new Error('Web Studio snapshot write failed')); };
+        tx.onabort = function () { reject(tx.error || new Error('Web Studio snapshot write aborted')); };
+      });
+    } finally { db.close(); }
+    return {
+      snapshotId: snapshotId,
+      packageId: record.packageId,
+      title: record.title,
+      version: record.version,
+      authorLabel: record.authorLabel,
+      entryPath: record.entryPath,
+      fileCount: record.files.length,
+      createdAt: record.createdAt
+    };
+  }
+
+  async function readWorkshopTemplateSnapshotR1W9D(snapshotId) {
+    if (!snapshotId) return null;
+    var db = await openWorkshopSiteSnapshotDbR1W9D();
+    try {
+      return await new Promise(function (resolve, reject) {
+        var tx = db.transaction(WORKSHOP_SITE_SNAPSHOT_STORE_R1W9D, 'readonly');
+        var request = tx.objectStore(WORKSHOP_SITE_SNAPSHOT_STORE_R1W9D).get(String(snapshotId));
+        request.onsuccess = function () { resolve(request.result || null); };
+        request.onerror = function () { reject(request.error || new Error('Web Studio snapshot read failed')); };
+      });
+    } finally { db.close(); }
+  }
+
+  function workshopTemplateSnapshotMetaR1W9D(state) {
+    var site = state && state.site && typeof state.site === 'object' ? state.site : {};
+    var meta = site.workshopTemplateSnapshot;
+    return meta && typeof meta === 'object' && meta.snapshotId ? meta : null;
+  }
+
+  function workshopTemplateByPackageIdR1W9D(packageId) {
+    var wanted = String(packageId || '');
+    return workshopInstalledTemplatesR1W9A().find(function (item) { return String(item && item.packageId || '') === wanted; }) || null;
+  }
+
+  function workshopSelectedPackageIdR1W9D(draft) {
+    draft = draft && typeof draft === 'object' ? draft : {};
+    var direct = String(draft.workshopPackageId || '');
+    if (draft.templateSource === 'workshop-installed' && direct) return direct;
+    var raw = String(draft.template || '');
+    return raw.indexOf('workshop:') === 0 ? raw.slice('workshop:'.length) : '';
+  }
+
+  function workshopSnapshotBufferToBase64R1W9D(buffer) {
+    var bytes = new Uint8Array(buffer || new ArrayBuffer(0));
+    var binary = '';
+    var step = 0x8000;
+    for (var i = 0; i < bytes.length; i += step) {
+      binary += String.fromCharCode.apply(null, bytes.subarray(i, Math.min(i + step, bytes.length)));
+    }
+    return btoa(binary);
+  }
+
+  function workshopSnapshotExportPackageR1W9D(record) {
+    var files = record && Array.isArray(record.files) ? record.files : [];
+    var out = {};
+    files.forEach(function (file) {
+      var path = workshopSnapshotSafePathR1W9D(file && file.path);
+      var bytes = workshopSnapshotArrayBufferR1W9D(file && file.bytes);
+      if (!path || !bytes) return;
+      out[path] = { contentBase64: workshopSnapshotBufferToBase64R1W9D(bytes), mimeType: String(file.mime || 'application/octet-stream') };
+    });
+    if (!out['index.html'] && record && record.previewSrcdoc) out['index.html'] = String(record.previewSrcdoc);
+    return out;
+  }
+
+  function workshopInstalledTemplateCardR1W9A(item) {
+    item = item || {};
+    var packageId = String(item.packageId || '');
+    var title = String(item.title || t('Installed template', 'Установленный шаблон'));
+    var author = String(item.authorLabel || '—');
+    var shortDescription = item.description && item.description.short ? String(item.description.short) : '';
+    var meta = [
+      String(item.version || ''),
+      author && author !== '—' ? author : '',
+      Number(item.fileCount || 0) + ' ' + t('files', 'файлов')
+    ].filter(Boolean).join(' · ');
+    return '' +
+      '<article class="ir-site-studio-v5-template-lab-card-v083h" data-workshop-template-package-id="' + escapeHtml(packageId) + '">' +
+      '  <div class="ir-site-studio-v5-template-lab-card-head-v083h">' +
+      '    <div><div class="ir-site-studio-v5-template-lab-kicker-v083h">' + escapeHtml(t('Installed from Workshop', 'Установлен из Мастерской')) + '</div><h4>' + escapeHtml(title) + '</h4></div>' +
+      '    <span>' + escapeHtml(t('Local template', 'Локальный шаблон')) + '</span>' +
+      '  </div>' +
+      '  <div class="ir-site-studio-v5-template-lab-frame-v083h ir-site-studio-v5-workshop-preview-frame-r1w9c">' +
+      '    <iframe loading="lazy" src="about:blank" scrolling="no" tabindex="-1" sandbox="allow-scripts" referrerpolicy="no-referrer" data-v5-workshop-template-preview-r1w9a="1" data-v5-workshop-package-id="' + escapeHtml(packageId) + '" title="' + escapeHtml(title) + '"></iframe>' +
+      '    <button class="ir-site-studio-v5-workshop-preview-hit-r1w9c" data-v5-action="workshop-installed-template-preview-r1w9c" data-v5-workshop-package-id="' + escapeHtml(packageId) + '" data-v5-template-title="' + escapeHtml(title) + '" type="button" aria-label="' + escapeHtml(t('Open preview', 'Открыть превью') + ': ' + title) + '"></button>' +
+      '  </div>' +
+      (shortDescription ? '<p>' + escapeHtml(shortDescription) + '</p>' : '<p>' + escapeHtml(meta) + '</p>') +
+      '  <div class="ir-site-studio-v5-template-lab-actions-v083h">' +
+      '    <button class="ir-site-studio-v5-btn ir-site-studio-v5-btn--primary ir-site-studio-v5-template-lab-link-v083h" data-v5-action="workshop-installed-template-preview-r1w9c" data-v5-workshop-package-id="' + escapeHtml(packageId) + '" data-v5-template-title="' + escapeHtml(title) + '" type="button">' + escapeHtml(t('Open preview', 'Открыть превью')) + '</button>' +
+      '    <button class="ir-site-studio-v5-btn ir-site-studio-v5-template-lab-link-v083h" data-v5-action="workshop-installed-template-use-r1w9d" data-v5-workshop-package-id="' + escapeHtml(packageId) + '" data-v5-template-title="' + escapeHtml(title) + '" type="button">' + escapeHtml(t('Choose template', 'Выбрать шаблон')) + '</button>' +
+      '    <span class="ir-site-studio-v5-note">' + escapeHtml(meta) + '</span>' +
+      '  </div>' +
+      '</article>';
+  }
+
+  function renderWorkshopInstalledTemplatesR1W9A() {
+    var installed = workshopInstalledTemplatesR1W9A();
+    var body = installed.length
+      ? '<div class="ir-site-studio-v5-template-lab-grid-v083h">' + installed.map(workshopInstalledTemplateCardR1W9A).join('') + '</div>'
+      : '<div class="ir-site-studio-v5-template-installed-empty-r1">' +
+        '<strong>' + escapeHtml(t('No installed templates yet', 'Установленных шаблонов пока нет')) + '</strong>' +
+        '<p>' + escapeHtml(t('Templates installed from Workshop will appear here.', 'Шаблоны, установленные из Мастерской, появятся здесь.')) + '</p>' +
+        '</div>';
+    return '' +
+      '<section class="ir-site-studio-v5-templates-real-v083h" data-v5-workshop-installed-templates-r1w9a="1">' +
+      '  <div class="ir-site-studio-v5-templates-real-head-v083h"><div>' +
+      '    <div class="ir-site-studio-v5-kicker">' + escapeHtml(t('Workshop', 'Мастерская')) + '</div>' +
+      '    <h3>' + escapeHtml(t('Installed templates', 'Установленные шаблоны')) + '</h3>' +
+      '    <p>' + escapeHtml(t('These templates passed the local Workshop package contract and are visible to Web Studio through a read-only adapter.', 'Эти шаблоны прошли локальный контракт пакета Мастерской и видны Web Studio через read-only адаптер.')) + '</p>' +
+      '  </div><span>' + escapeHtml(String(installed.length) + ' ' + t('installed', 'установлено')) + '</span></div>' +
+      body +
+      '</section>';
+  }
+
+  async function loadWorkshopInstalledTemplateCardsR1W9A() {
+    if (!overlay || activeTab !== 'templates') return;
+    var api = window.NSCodeHubV1 || null;
+    if (!api || typeof api.getInstalledTemplatePreviewSrcdoc !== 'function') return;
+    var frames = Array.prototype.slice.call(overlay.querySelectorAll('[data-v5-workshop-template-preview-r1w9a="1"]'));
+    await Promise.all(frames.map(async function (frame) {
+      var packageId = frame.getAttribute('data-v5-workshop-package-id') || '';
+      if (!packageId) return;
+      try {
+        var srcdoc = await api.getInstalledTemplatePreviewSrcdoc(packageId);
+        if (document.documentElement.contains(frame)) frame.srcdoc = String(srcdoc || '');
+      } catch (error) {
+        log('Workshop installed-template preview failed', error);
+        if (document.documentElement.contains(frame)) frame.srcdoc = '<!doctype html><html><body style="font:14px system-ui;background:#101824;color:#dce8f7;padding:20px">' + escapeHtml(t('Preview unavailable', 'Превью недоступно')) + '</body></html>';
+      }
+    }));
+  }
+
+  async function openWorkshopInstalledTemplatePreviewR1W9A(packageId, title) {
+    var api = window.NSCodeHubV1 || null;
+    if (!api || typeof api.getInstalledTemplatePreviewSrcdoc !== 'function' || !packageId) return;
+    closeTemplateLabPreviewV083I();
+    var modal = document.createElement('div');
+    modal.className = 'ir-site-studio-v5-template-preview-modal-v083i';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.innerHTML = '' +
+      '<div class="ir-site-studio-v5-template-preview-shell-v083i">' +
+      '  <header class="ir-site-studio-v5-template-preview-head-v083i"><div>' +
+      '    <div class="ir-site-studio-v5-kicker">' + escapeHtml(t('Installed Workshop template', 'Установленный шаблон Мастерской')) + '</div>' +
+      '    <strong>' + escapeHtml(title || t('Template preview', 'Превью шаблона')) + '</strong>' +
+      '    <span>' + escapeHtml(t('Isolated local preview. Network and Workspace APIs remain blocked.', 'Изолированный локальный просмотр. Сеть и API Workspace остаются заблокированы.')) + '</span>' +
+      '  </div><div class="ir-site-studio-v5-template-preview-actions-v083i">' +
+      '    <button class="ir-site-studio-v5-btn ir-site-studio-v5-btn--danger" data-v5-action="template-lab-preview-close-v083i" type="button">×</button>' +
+      '  </div></header>' +
+      '  <iframe class="ir-site-studio-v5-template-preview-iframe-v083i" sandbox="allow-scripts" referrerpolicy="no-referrer" data-v5-workshop-template-preview-full-r1w9a="1" title="' + escapeHtml(title || 'Template preview') + '"></iframe>' +
+      '</div>';
+    (overlay || document.body).appendChild(modal);
+    var frame = modal.querySelector('[data-v5-workshop-template-preview-full-r1w9a="1"]');
+    try {
+      var srcdoc = await api.getInstalledTemplatePreviewSrcdoc(packageId);
+      if (frame) frame.srcdoc = String(srcdoc || '');
+    } catch (error) {
+      log('Workshop installed-template full preview failed', error);
+      if (frame) frame.srcdoc = '<!doctype html><html><body style="font:14px system-ui;background:#101824;color:#dce8f7;padding:20px">' + escapeHtml(t('Preview unavailable', 'Превью недоступно')) + '</body></html>';
+    }
   }
 
   function renderTemplatesTabV082Clean11() {
@@ -6434,8 +9748,7 @@
         kindEn: 'Product landing',
         kindRu: 'Продуктовая страница',
         descEn: 'A wide starter template for a product, app, service, or project presentation.',
-        descRu: 'Широкий стартовый шаблон для продукта, приложения, сервиса или презентации проекта.',
-        path: 'template-lab/landing-product/index.html'
+        descRu: 'Широкий стартовый шаблон для продукта, приложения, сервиса или презентации проекта.'
       },
       {
         id: 'business-product',
@@ -6444,8 +9757,7 @@
         kindEn: 'Company / product',
         kindRu: 'Компания / продукт',
         descEn: 'A serious product and service page for teams, companies, offers, and presentations.',
-        descRu: 'Серьёзная продуктовая страница для команд, компаний, услуг, предложений и презентаций.',
-        path: 'template-lab/business-product/index.html'
+        descRu: 'Серьёзная продуктовая страница для команд, компаний, услуг, предложений и презентаций.'
       },
       {
         id: 'blog-news',
@@ -6454,8 +9766,7 @@
         kindEn: 'Blog / portal',
         kindRu: 'Блог / портал',
         descEn: 'An editorial template for articles, news, notes, publications, and journal-style pages.',
-        descRu: 'Редакционный шаблон для статей, новостей, заметок, публикаций и журнальных страниц.',
-        path: 'template-lab/blog-news/index.html'
+        descRu: 'Редакционный шаблон для статей, новостей, заметок, публикаций и журнальных страниц.'
       },
       {
         id: 'documentation-wide',
@@ -6464,8 +9775,7 @@
         kindEn: 'Docs / help center',
         kindRu: 'Документация / справка',
         descEn: 'A documentation template with navigation, search, guides, API blocks, and reference pages.',
-        descRu: 'Шаблон документации с навигацией, поиском, инструкциями, API-блоками и справочными страницами.',
-        path: 'template-lab/documentation/index.html'
+        descRu: 'Шаблон документации с навигацией, поиском, инструкциями, API-блоками и справочными страницами.'
       },
       {
         id: 'studio-portfolio',
@@ -6474,8 +9784,7 @@
         kindEn: 'Portfolio / showcase',
         kindRu: 'Портфолио / showcase',
         descEn: 'A visual portfolio template for a creator, studio, team, work showcase, and case studies.',
-        descRu: 'Визуальный шаблон для автора, студии, команды, работ, showcase и кейсов.',
-        path: 'template-lab/portfolio-personal/index.html'
+        descRu: 'Визуальный шаблон для автора, студии, команды, работ, showcase и кейсов.'
       },
       {
         id: 'agency-studio',
@@ -6484,8 +9793,7 @@
         kindEn: 'Agency / web studio',
         kindRu: 'Агентство / веб-студия',
         descEn: 'A template for a web studio, designer, agency, project team, services, and cases.',
-        descRu: 'Шаблон для веб-студии, дизайнера, агентства, проектной команды, услуг и кейсов.',
-        path: 'template-lab/agency-studio/index.html'
+        descRu: 'Шаблон для веб-студии, дизайнера, агентства, проектной команды, услуг и кейсов.'
       }
     ];
 
@@ -6493,7 +9801,14 @@
       var title = t(item.titleEn, item.titleRu);
       var kind = t(item.kindEn, item.kindRu);
       var desc = t(item.descEn, item.descRu);
-      var path = item.path;
+
+      // IRGEZTNE_TEMPLATE_GALLERY_FAST_FIRST_FRAME_R1
+      // Show the canonical inline renderer immediately. The materialized package
+      // still replaces this first frame in the background so real local assets
+      // and the publish/ZIP package remain the final gallery owner.
+      var firstFrameHtml = templateGalleryDarkHtmlV098E(
+        templatePreviewHtmlV094A(item.id)
+      );
 
       return '' +
         '<article class="ir-site-studio-v5-template-lab-card-v083h" data-template-id="' + escapeHtml(item.id) + '">' +
@@ -6505,12 +9820,12 @@
         '    <span>' + escapeHtml(kind) + '</span>' +
         '  </div>' +
         '  <div class="ir-site-studio-v5-template-lab-frame-v083h">' +
-        '    <iframe loading="lazy" src="' + escapeHtml(path) + '" title="' + escapeHtml(title) + '"></iframe>' +
+        '    <iframe loading="eager" srcdoc="' + escapeHtml(firstFrameHtml) + '" scrolling="no" tabindex="-1" data-v5-template-card-preview-v098e="1" data-v5-template-preview-loading="1" data-v5-template-id="' + escapeHtml(item.id) + '" title="' + escapeHtml(title) + '"></iframe>' +
         '  </div>' +
         '  <p>' + escapeHtml(desc) + '</p>' +
         '  <div class="ir-site-studio-v5-template-lab-actions-v083h">' +
-        '    <button class="ir-site-studio-v5-btn ir-site-studio-v5-btn--ghost ir-site-studio-v5-template-lab-link-v083h" data-v5-action="template-lab-open-preview-v083i" data-v5-template-id="' + escapeHtml(item.id) + '" data-v5-template-title="' + escapeHtml(title) + '" data-v5-template-path="' + escapeHtml(path) + '" type="button">' + escapeHtml(t('Open preview', 'Открыть превью')) + '</button>' +
-        '    <button class="ir-site-studio-v5-btn ir-site-studio-v5-btn--primary" data-v5-action="template-lab-use-v083h" data-v5-template-id="' + escapeHtml(item.id) + '" data-v5-template-path="' + escapeHtml(path) + '" type="button">' + escapeHtml(t('Choose template', 'Выбрать шаблон')) + '</button>' +
+        '    <button class="ir-site-studio-v5-btn ir-site-studio-v5-btn--ghost ir-site-studio-v5-template-lab-link-v083h" data-v5-action="template-lab-open-preview-v083i" data-v5-template-id="' + escapeHtml(item.id) + '" data-v5-template-title="' + escapeHtml(title) + '" type="button">' + escapeHtml(t('Open preview', 'Открыть превью')) + '</button>' +
+        '    <button class="ir-site-studio-v5-btn ir-site-studio-v5-btn--primary" data-v5-action="template-lab-use-v083h" data-v5-template-id="' + escapeHtml(item.id) + '" type="button">' + escapeHtml(t('Choose template', 'Выбрать шаблон')) + '</button>' +
         '  </div>' +
         '</article>';
     }
@@ -6521,14 +9836,15 @@
       '    <div>' +
       '      <div class="ir-site-studio-v5-kicker">' + escapeHtml(t('Templates', 'Шаблоны')) + '</div>' +
       '      <h3>' + escapeHtml(t('Official templates', 'Официальные шаблоны')) + '</h3>' +
-      '      <p>' + escapeHtml(t('The Web Studio template tab now shows real Template Lab pages, not simplified mockups. Open a preview to inspect the actual HTML template.', 'Вкладка шаблонов Web Studio теперь показывает реальные страницы Template Lab, а не упрощённые муляжи. Откройте превью, чтобы посмотреть настоящий HTML-шаблон.')) + '</p>' +
+      '      <p>' + escapeHtml(t('Each card is built by the same Web Studio renderer used by a created website, Preview, browser view and ZIP export.', 'Каждая карточка собрана тем же renderer Web Studio, который используется созданным сайтом, Preview, браузером и ZIP-экспортом.')) + '</p>' +
       '    </div>' +
       '    <span>' + escapeHtml(t('6 real previews', '6 реальных превью')) + '</span>' +
       '  </div>' +
       '  <div class="ir-site-studio-v5-template-lab-grid-v083h">' +
       templatesV083H.map(templateCardV083H).join('') +
       '  </div>' +
-      '</section>';
+      '</section>' +
+      renderWorkshopInstalledTemplatesR1W9A();
   }
 
   function normalizeStudioTabId(tabId, fallback) {
@@ -6548,6 +9864,10 @@
       template: 'templates',
       'шаблоны': 'templates',
       'шаблон': 'templates',
+
+      workshop: 'workshop',
+      codehub: 'workshop',
+      'мастерская': 'workshop',
 
       page: 'page',
       editor: 'page',
@@ -6607,7 +9927,13 @@
     var colors = siteColorOptions().map(function (color) {
       return '<button class="ir-site-studio-v5-site-color-choice' + (normalizeHexColor(draft.color, '#2f7be6') === color ? ' is-active' : '') + '" data-v5-action="site-draft-color" data-v5-site-color="' + escapeHtml(color) + '" type="button" style="--site-color:' + escapeHtml(color) + '"></button>';
     }).join('');
-    var templateOptions = [
+    var workshopTemplateOptionsR1W9D = workshopInstalledTemplatesR1W9A().map(function (item) {
+      var packageId = String(item && item.packageId || '');
+      var value = 'workshop:' + packageId;
+      var title = String(item && item.title || t('Installed template', 'Установленный шаблон'));
+      return '<option value="' + escapeHtml(value) + '"' + (draft.template === value ? ' selected' : '') + '>' + escapeHtml(t('Workshop · ', 'Мастерская · ') + title) + '</option>';
+    }).join('');
+    var officialTemplateOptionsR1W9D = [
       ['project-landing', 'Landing / Product'],
       ['business-product', 'Business / Product'],
       ['blog-news', 'Blog / News'],
@@ -6617,6 +9943,7 @@
     ].map(function (item) {
       return '<option value="' + escapeHtml(item[0]) + '"' + (draft.template === item[0] ? ' selected' : '') + '>' + escapeHtml(item[1]) + '</option>';
     }).join('');
+    var templateOptions = workshopTemplateOptionsR1W9D + officialTemplateOptionsR1W9D;
     var siteCards = manager.sites.map(function (site) {
       var isActive = activeSite && site.id === activeSite.id;
       var siteState = normalizeState(site.state || initialState());
@@ -6624,11 +9951,11 @@
       var menuCount = getPreviewNavItems(siteState).length;
       return '<article class="ir-site-studio-v5-site-card' + (isActive ? ' is-active' : '') + '">' +
         '<div class="ir-site-studio-v5-site-card-icon" style="--site-color:' + escapeHtml(site.color || '#2f7be6') + '">' + escapeHtml(site.icon || '◆') + '</div>' +
-        '<div class="ir-site-studio-v5-site-card-main"><strong>' + escapeHtml(site.name || 'Website') + '</strong><span>' + escapeHtml((site.author ? site.author + ' · ' : '') + pagesCount + ' ' + t('pages', 'стр.') + ' · ' + menuCount + ' ' + t('nav', 'нав.')) + '</span></div>' +
+        '<div class="ir-site-studio-v5-site-card-main"><strong>' + escapeHtml(site.name || 'Website') + '</strong><span>' + escapeHtml((site.author ? site.author + ' · ' : '') + (workshopTemplateSnapshotMetaR1W9D(siteState) ? t('Workshop snapshot', 'снимок Мастерской') + ' · ' : '') + pagesCount + ' ' + t('pages', 'стр.') + ' · ' + menuCount + ' ' + t('nav', 'нав.')) + '</span></div>' +
         '<div class="ir-site-studio-v5-site-card-actions">' +
           '<button class="ir-site-studio-v5-btn ir-site-studio-v5-btn--sm' + (isActive ? ' ir-site-studio-v5-btn--primary' : '') + '" data-v5-action="site-switch" data-v5-site-id="' + escapeHtml(site.id) + '" type="button">' + escapeHtml(isActive ? t('Open', 'Открыт') : uiLabel('open')) + '</button>' +
           '<button class="ir-site-studio-v5-btn ir-site-studio-v5-btn--sm" data-v5-action="site-duplicate" data-v5-site-id="' + escapeHtml(site.id) + '" type="button">' + escapeHtml(uiLabel('duplicate')) + '</button>' +
-          '<button class="ir-site-studio-v5-btn ir-site-studio-v5-btn--danger ir-site-studio-v5-btn--sm" data-v5-action="site-delete" data-v5-site-id="' + escapeHtml(site.id) + '" type="button"' + (manager.sites.length <= 1 ? ' disabled' : '') + '>' + escapeHtml(uiLabel('delete')) + '</button>' +
+          '<button class="ir-site-studio-v5-btn ir-site-studio-v5-btn--danger ir-site-studio-v5-btn--sm" data-v5-action="site-delete" data-v5-site-id="' + escapeHtml(site.id) + '" type="button"' + '' + '>' + escapeHtml(uiLabel('delete')) + '</button>' +
         '</div>' +
       '</article>';
     }).join('');
@@ -6679,6 +10006,10 @@
       'шаблоны': 'templates',
       'шаблон': 'templates',
 
+      workshop: 'workshop',
+      codehub: 'workshop',
+      'мастерская': 'workshop',
+
       page: 'page',
       editor: 'page',
       edit: 'page',
@@ -6727,11 +10058,19 @@
     return 'page';
   }
 
+  // IRGEZTNE_WEBSTUDIO_WORKSHOP_INTEGRATION_V099A
+  function renderWorkshopTabV099A() {
+    return '<section class="ir-site-studio-v5-workshop-v099a" data-v5-workshop-section="1">' +
+      '<div data-codehub-root data-codehub-surface="cabinet" data-codehub-host="webstudio" data-codehub-lang="' + escapeHtml(currentLang()) + '" data-codehub-theme="' + escapeHtml(currentTheme()) + '"></div>' +
+    '</section>';
+  }
+
   function renderWorkspace(state, page) {
     activeTab = normalizeStudioTabId(activeTab, 'page');
     if (activeTab === 'sites') return renderSiteManagerTab(state);
     if (activeTab === 'site-settings') return renderSiteCockpitLayer(state);
     if (activeTab === 'templates') return renderTemplatesTabV082Clean11(state);
+    if (activeTab === 'workshop') return renderWorkshopTabV099A();
     if (activeTab === 'preview') return renderПредпросмотрTab(state, page);
     if (activeTab === 'pages') return renderPagesManagerTab(state, page);
     if (activeTab === 'menu') return renderMenuManagerTab(state, page);
@@ -6750,7 +10089,7 @@
   function webStudioCurrentTopTabIdsV082Clean3() {
     // IRGEZTNE_V082_CLEAN_11_TEMPLATES_TAB_STABLE
     // IRGEZTNE_V084S_SITE_SETTINGS_TAB_STABLE
-    return ['sites', 'site-settings', 'templates', 'page', 'pages', 'menu', 'identity', 'preview', 'server'];
+    return ['sites', 'site-settings', 'templates', 'workshop', 'page', 'pages', 'menu', 'identity', 'preview', 'server'];
   }
 
   function webStudioCurrentTopTabsV082Clean3() {
@@ -6767,6 +10106,7 @@
       sites: ru ? 'Сайты' : 'Sites',
       'site-settings': ru ? 'Настройки' : 'Settings',
       templates: ru ? 'Шаблоны' : 'Templates',
+      workshop: ru ? 'Мастерская' : 'Workshop',
       page: ru ? 'Редактор' : 'Editor',
       pages: ru ? 'Страницы' : 'Pages',
       menu: ru ? 'Меню' : 'Menu',
@@ -6779,6 +10119,7 @@
   }
 
   function studioQuickPublishButton(state) {
+    if (!activeSiteEntry(readSiteManager())) return '<button class="ir-site-studio-v5-btn ir-site-studio-v5-quick-publish" data-v5-tab="publish" type="button">' + escapeHtml(t('Publish', 'Опубликовать')) + '</button>';
     state.site.publishSettings = normalizePublishSettings(state.site.publishSettings);
     var selected = state.site.publishSettings.selectedProvider || 'manual';
     var config = state.site.publishSettings.providers[selected] || defaultPublishProviderConfig(selected);
@@ -6795,6 +10136,7 @@
   // IRGEZTNE_V082_CLEAN_6_SINGLE_TOPNAV_OWNER
   function isWebStudioServerConfiguredV082Clean6() {
     try {
+      if (!activeSiteEntry(readSiteManager())) return false;
       var state = readState();
       state.site.publishSettings = normalizePublishSettings(state.site.publishSettings);
       var providerId = state.site.publishSettings.selectedProvider || 'manual';
@@ -6869,15 +10211,36 @@
     setTimeout(syncWebStudioTopNavigationV082Clean6, 160);
   }
 
+  // IRGEZTNE_WEBSTUDIO_ACCOUNT_CONTEXT_RELEASE_R1
+  // IRGEZTNE_WEBSTUDIO_ACCOUNT_ICON_RELEASE_R1A
+  // Reuse the compact Workspace account affordance: icon + connection dot, no text pill.
+  function renderWebStudioAccountReleaseR1() {
+    var account = window.IRGEZTNEConnected || null;
+    var connected = Boolean(account && typeof account.isConnected === 'function' && account.isConnected());
+    var title = connected
+      ? t('IRGEZTNE ID connected', 'IRGEZTNE ID подключён')
+      : t('Account and device', 'Аккаунт и устройство');
+    return '<button class="ir-site-studio-v5-account-release-r1' + (connected ? ' is-connected' : '') + '" data-v5-action="open-account-release-r1" type="button" aria-haspopup="menu" aria-label="' + escapeHtml(title) + '" title="' + escapeHtml(title) + '">' +
+      '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 12.25a4.25 4.25 0 1 0 0-8.5 4.25 4.25 0 0 0 0 8.5Zm0 2.1c-3.95 0-7.25 2.12-7.25 4.72 0 .64.52 1.18 1.18 1.18h12.14c.66 0 1.18-.54 1.18-1.18 0-2.6-3.3-4.72-7.25-4.72Z"></path></svg>' +
+      '<span class="ir-site-studio-v5-account-dot" aria-hidden="true"></span>' +
+      '</button>';
+  }
+
   function renderStudio() {
     if (!overlay) return;
     activeTab = normalizeStudioTabId(activeTab, 'page');
+    var hasActiveSite = !!activeSiteEntry(readSiteManager());
+    var needsSite = !hasActiveSite && ['sites', 'templates', 'workshop'].indexOf(activeTab) === -1;
     var state = readState();
+    if (hasActiveSite && migrateLegacyWorkshopWidgetsInStateR1W9H(state)) {
+      writeState(state);
+      state = readState();
+    }
     var page = activePage(state);
     var tabs = webStudioCurrentTopTabsV082Clean3();
     overlay.classList.toggle('is-left-collapsed', collapsedLeft);
     overlay.classList.toggle('is-right-collapsed', collapsedRight);
-    var pageSettingsRelevant = isPageSettingsRelevant(activeTab);
+    var pageSettingsRelevant = hasActiveSite && isPageSettingsRelevant(activeTab);
     overlay.classList.toggle('is-preview-tab', activeTab === 'preview');
     overlay.classList.toggle('is-server-tab', activeTab === 'server' || activeTab === 'publish');
     overlay.classList.toggle('is-site-manager-tab', activeTab === 'sites' || activeTab === 'site-settings');
@@ -6890,22 +10253,26 @@
        The global Web Studio header shows the actual website logo.
     */
     var headerSiteMark = normalizeLooseLogoLettersV069E(
-      state.site.logoLetters ||
-      initialsFromName(state.site.name || 'Website')
-    ).slice(0, 3) || initialsFromName(state.site.name || 'Website').slice(0, 2);
+      hasActiveSite ? (state.site.logoLetters || '') : ''
+    ).slice(0, 3);
     var headerSiteMarkBg = state.site.logoBackgroundColor || state.site.accentColor || state.site.siteColor || '#2f7be6';
     var headerSiteMarkText = state.site.logoTextColor || '#ffffff';
-    var headerSitePill = '<button class="ir-site-studio-v5-header-site" data-v5-action="open-sites" type="button" title="' + escapeHtml(t('Switch website', 'Переключить сайт')) + '"><span class="ir-site-studio-v5-header-site-icon" style="--site-color:' + escapeHtml(headerSiteMarkBg) + ';color:' + escapeHtml(headerSiteMarkText) + '">' + escapeHtml(headerSiteMark) + '</span><span><strong>' + escapeHtml(state.site.name || 'Website') + '</strong><small>' + escapeHtml(state.site.author || t('Local site', 'Локальный сайт')) + '</small></span></button>';
+    var headerSiteMarkHtmlV092D = headerSiteMark
+      ? '<span class="ir-site-studio-v5-header-site-icon" style="--site-color:' + escapeHtml(headerSiteMarkBg) + ';color:' + escapeHtml(headerSiteMarkText) + '">' + escapeHtml(headerSiteMark) + '</span>'
+      : '';
+    var headerSitePill = '<button class="ir-site-studio-v5-header-site" data-v5-action="open-sites" type="button" title="' + escapeHtml(t('Switch website', 'Переключить сайт')) + '">' + headerSiteMarkHtmlV092D + '<span><strong>' + escapeHtml(hasActiveSite ? (state.site.name || 'Website') : t('No site selected', 'Сайт не выбран')) + '</strong><small>' + escapeHtml(hasActiveSite ? (state.site.author || t('Local site', 'Локальный сайт')) : t('Select or create a site', 'Выберите или создайте сайт')) + '</small></span></button>';
     var langLabel = currentLang() === 'ru' ? 'RU' : 'EN';
     var themeLabel = currentTheme() === 'light' ? '☀' : '☾';
     var settingsButton = ''; // v082-clean-2: page settings button does not belong in the global Web Studio header.
+    var accountButtonReleaseR1 = renderWebStudioAccountReleaseR1();
     var publishSettingsForTop = normalizePublishSettings(state.site.publishSettings);
     var topProviderId = publishSettingsForTop.selectedProvider || 'manual';
     var topProviderConfig = publishSettingsForTop.providers[topProviderId] || defaultPublishProviderConfig(topProviderId);
-    var serverConfigured = topProviderId !== 'manual' && isPublishConfigured(topProviderId, topProviderConfig, publishProviderMeta(topProviderId));
+    var serverConfigured = hasActiveSite && topProviderId !== 'manual' && isPublishConfigured(topProviderId, topProviderConfig, publishProviderMeta(topProviderId));
     var quickPublishButton = studioQuickPublishButton(state);
     var topNavigation = renderWebStudioTopNavigationV082Clean6(activeTab, serverConfigured, quickPublishButton);
-    var html = '<div class="ir-site-studio-v5-modal" role="dialog" aria-modal="true"><header class="ir-site-studio-v5-head"><div class="ir-site-studio-v5-title"><div class="ir-site-studio-v5-kicker">IRGEZTNE Workspace</div><strong>' + escapeHtml(t('Web Studio', 'Студия сайта')) + '</strong><span>' + escapeHtml(t('Sites, pages, design, preview and publish are separated.', 'Сайты, страницы, дизайн, предпросмотр и публикация разделены.')) + '</span></div><div class="ir-site-studio-v5-head-center">' + topNavigation + '</div><div class="ir-site-studio-v5-head-actions">' + headerSitePill + settingsButton + '<button class="ir-site-studio-v5-btn ir-site-studio-v5-toggle-btn" data-v5-action="toggle-studio-lang" type="button" title="Language">' + escapeHtml(langLabel) + '</button><button class="ir-site-studio-v5-btn ir-site-studio-v5-toggle-btn" data-v5-action="toggle-studio-theme" type="button" title="Theme">' + escapeHtml(themeLabel) + '</button><button class="ir-site-studio-v5-btn ir-site-studio-v5-btn--danger" data-v5-action="close" type="button" title="Close Web Studio" aria-label="Close Web Studio">×</button></div></header><div class="ir-site-studio-v5-body"><aside class="ir-site-studio-v5-panel">' + renderSidebar(state) + '</aside><main class="ir-site-studio-v5-main"><div class="ir-site-studio-v5-workspace">' + renderWorkspace(state, page) + '</div></main><aside class="ir-site-studio-v5-settings">' + renderSettings(state, page) + '</aside></div></div>';
+    var emptySiteHtml = '<section class="ir-site-studio-v5-card" data-v5-empty-site="1"><h2>' + escapeHtml(studioTopTabLabel(activeTab)) + '</h2><p>' + escapeHtml(t('No site selected', 'Сайт не выбран')) + '</p><p>' + escapeHtml(t('Select or create a site to edit pages, design, preview or publish it.', 'Выберите или создайте сайт, чтобы редактировать страницы и дизайн, открыть предпросмотр или настроить публикацию.')) + '</p><button class="ir-site-studio-v5-btn" data-v5-action="open-sites" type="button">' + escapeHtml(t('Open Sites', 'Открыть сайты')) + '</button> <button class="ir-site-studio-v5-btn" data-v5-tab="templates" type="button">' + escapeHtml(t('Open Templates', 'Открыть шаблоны')) + '</button></section>';
+    var html = '<div class="ir-site-studio-v5-modal" role="dialog" aria-modal="true"><header class="ir-site-studio-v5-head"><div class="ir-site-studio-v5-title"><div class="ir-site-studio-v5-kicker">IRGEZTNE Workspace</div><strong>' + escapeHtml(t('Web Studio', 'Студия сайта')) + '</strong><span>' + escapeHtml(t('Sites, pages, design, preview and publish are separated.', 'Сайты, страницы, дизайн, предпросмотр и публикация разделены.')) + '</span></div><div class="ir-site-studio-v5-head-center">' + topNavigation + '</div><div class="ir-site-studio-v5-head-actions">' + headerSitePill + accountButtonReleaseR1 + settingsButton + '<button class="ir-site-studio-v5-btn ir-site-studio-v5-toggle-btn" data-v5-action="toggle-studio-lang" type="button" title="Language">' + escapeHtml(langLabel) + '</button><button class="ir-site-studio-v5-btn ir-site-studio-v5-toggle-btn" data-v5-action="toggle-studio-theme" type="button" title="Theme">' + escapeHtml(themeLabel) + '</button><button class="ir-site-studio-v5-btn ir-site-studio-v5-btn--danger" data-v5-action="close" type="button" title="Close Web Studio" aria-label="Close Web Studio">×</button></div></header><div class="ir-site-studio-v5-body"><aside class="ir-site-studio-v5-panel">' + (hasActiveSite ? renderSidebar(state) : '') + '</aside><main class="ir-site-studio-v5-main"><div class="ir-site-studio-v5-workspace">' + (needsSite ? emptySiteHtml : renderWorkspace(state, page)) + '</div></main><aside class="ir-site-studio-v5-settings">' + (hasActiveSite ? renderSettings(state, page) : '') + '</aside></div></div>';
     destroySiteJodit();
     overlay.innerHTML = html;
     overlay.classList.toggle('ir-site-studio-v5-theme-light', currentTheme() === 'light');
@@ -6919,8 +10286,26 @@
     if (currentLang() === 'ru') {
       try { normalizeVisibleRuLabels(overlay); } catch (error) { log('RU label normalization failed', error); }
     }
-    if (activeTab === 'preview') refreshPreviewFrame();
-    if (activeTab === 'page') mountEditorWorkbenchV084B(page);
+    if (hasActiveSite && activeTab === 'preview') refreshPreviewFrame();
+    if (hasActiveSite && activeTab === 'page') mountEditorWorkbenchV084B(page);
+    if (activeTab === 'templates') {
+      try {
+        window.requestAnimationFrame(function () {
+          loadTemplateGalleryCardsV098E();
+        });
+      } catch (error) {
+        log('Template gallery preview schedule failed', error);
+      }
+    }
+    if (activeTab === 'workshop') {
+      try {
+        if (window.NSCodeHubV1 && typeof window.NSCodeHubV1.render === 'function') {
+          window.NSCodeHubV1.render();
+        }
+      } catch (error) {
+        log('Workshop render failed', error);
+      }
+    }
   }
 
 
@@ -6957,6 +10342,47 @@
     }
 
     openStudio();
+  }
+
+  // IRGEZTNE_OFFICIAL_TEMPLATE_SELECTION_ROUTE_V092B
+  function prepareOfficialTemplateSelectionV092B(template) {
+    var rawId = template && typeof template === 'object'
+      ? template.id
+      : template;
+
+    var templateId = normalizeOfficialTemplateIdV068C(rawId);
+    var allowed = [
+      'project-landing',
+      'business-product',
+      'blog-news',
+      'documentation-wide',
+      'studio-portfolio',
+      'agency-studio'
+    ];
+
+    if (allowed.indexOf(templateId) === -1) return null;
+
+    var draft = getSiteManagerDraft();
+
+    draft.template = templateId;
+    draft.templateSource = 'webstudio-official';
+    draft.templatePreviewPath = '';
+
+    return {
+      id: templateId,
+      path: ''
+    };
+  }
+
+  function openOfficialTemplateSelectionV092B(template) {
+    var selected = prepareOfficialTemplateSelectionV092B(template);
+    if (!selected) return false;
+
+    activeTab = 'sites';
+    siteManagerMode = 'list';
+    collapsedRight = true;
+    openStudio();
+    return true;
   }
 
   function closeStudio() { destroySiteJodit(); if (overlay) overlay.classList.remove('is-open'); }
@@ -7111,7 +10537,111 @@
       .toLowerCase();
   }
 
-  function createLocalSite() {
+  function resetNewSiteIdentityV092E(state) {
+    state = state && typeof state === 'object' ? state : {};
+    state.site = state.site && typeof state.site === 'object' ? state.site : {};
+    state.site.logoLetters = '';
+    state.site.faviconSymbol = '';
+    state.site.faviconLetters = '';
+    state.site.faviconText = '';
+    state.site.faviconIcon = '';
+    return state;
+  }
+
+  async function createWorkshopTemplateLocalSiteR1W9D(manager, name, author, draft) {
+    var packageId = workshopSelectedPackageIdR1W9D(draft);
+    var api = window.NSCodeHubV1 || null;
+    if (!packageId || !api || typeof api.materializeInstalledTemplateSnapshot !== 'function') {
+      siteManagerError = t('Workshop template materialization is unavailable.', 'Материализация шаблона Мастерской недоступна.');
+      siteManagerErrorField = 'template';
+      activeTab = 'sites';
+      renderStudio();
+      return false;
+    }
+
+    var templateItem = workshopTemplateByPackageIdR1W9D(packageId);
+    if (!templateItem) {
+      siteManagerError = t('The installed template is no longer available.', 'Установленный шаблон больше недоступен.');
+      siteManagerErrorField = 'template';
+      activeTab = 'sites';
+      renderStudio();
+      return false;
+    }
+
+    var profile = normalizeSiteProfile({
+      id: uid('site'),
+      name: name,
+      author: author,
+      icon: draft.icon || '☕',
+      color: draft.color || '#2f7be6'
+    }, null);
+
+    try {
+      siteManagerError = '';
+      siteManagerErrorField = '';
+      var payload = await api.materializeInstalledTemplateSnapshot(packageId);
+      var snapshotMeta = await storeWorkshopTemplateSnapshotR1W9D(profile.id, payload);
+
+      var state = initialState();
+      state.site.name = profile.name;
+      state.site.author = profile.author;
+      state.site.icon = profile.icon;
+      state.site.siteColor = profile.color;
+      state.site.accentColor = profile.color;
+      state.site.menuColor = profile.color;
+      state.site.buttonColor = profile.color;
+      state.site.logoBackgroundColor = profile.color;
+      state.site.faviconBackgroundColor = profile.color;
+      resetNewSiteIdentityV092E(state);
+      state.site.tagline = t('Site-local Workshop template snapshot', 'Локальный снимок шаблона Мастерской');
+      state.site.activeTemplate = 'workshop:' + packageId;
+      state.site.template = 'workshop:' + packageId;
+      state.site.templateSource = 'workshop-installed-snapshot';
+      state.site.workshopTemplateSnapshot = snapshotMeta;
+      state = applySiteProfileToState(state, profile);
+      resetNewSiteIdentityV092E(state);
+
+      var page = state.pages && state.pages[0];
+      if (page) {
+        page.pageName = t('Template snapshot', 'Снимок шаблона');
+        page.title = page.pageName;
+        page.menuLabel = page.pageName;
+        page.headline = '';
+        page.summary = t('The original HTML/CSS/JavaScript snapshot is preserved outside the structured editor.', 'Исходный снимок HTML/CSS/JavaScript сохранён отдельно от структурного редактора.');
+        page.bodyHtml = '';
+        page.inMenu = false;
+        page.inFooter = false;
+        page.slug = 'index';
+        page.status = 'published';
+        page.updatedAt = new Date().toISOString();
+      }
+      state.menuGroups = [
+        { id: 'menu-main-header', name: 'Главное меню', position: 'header', items: [] },
+        { id: 'menu-main-footer', name: 'Меню подвала', position: 'footer', items: [] }
+      ];
+      state.activeMenuGroupId = 'menu-main-header';
+      state.menuGroupsSeeded = true;
+      state.updatedAt = new Date().toISOString();
+
+      manager.sites.push(Object.assign({}, profile, { state: state }));
+      manager.activeSiteId = profile.id;
+      writeSiteManager(manager);
+      resetSiteManagerDraft();
+      activeTab = 'preview';
+      collapsedRight = true;
+      renderStudio();
+      return true;
+    } catch (error) {
+      log('Workshop template site materialization failed', error);
+      siteManagerError = t('Could not create a site snapshot from the installed template: ', 'Не удалось создать снимок сайта из установленного шаблона: ') + String(error && error.message || error || 'unknown error');
+      siteManagerErrorField = 'template';
+      activeTab = 'sites';
+      renderStudio();
+      return false;
+    }
+  }
+
+  async function createLocalSite() {
     /* IRGEZTNE_OFFICIAL_TEMPLATE_STARTERS_V071A */
     function normalizeTemplateIdV071A(value) {
       var id = String(value || '').trim().toLowerCase();
@@ -7271,6 +10801,12 @@
       return;
     }
 
+    var selectedWorkshopPackageIdR1W9D = workshopSelectedPackageIdR1W9D(draft);
+    if (selectedWorkshopPackageIdR1W9D) {
+      await createWorkshopTemplateLocalSiteR1W9D(manager, name, author, draft);
+      return;
+    }
+
     var templateId = normalizeTemplateIdV071A(draft.template || 'project-landing');
     var meta = templateMetaV071A(templateId);
     var profile = normalizeSiteProfile({
@@ -7291,22 +10827,13 @@
     state.site.buttonColor = profile.color;
     state.site.logoBackgroundColor = profile.color;
     state.site.faviconBackgroundColor = profile.color;
-    state.site.logoLetters = initialsFromName(profile.name);
-    /*
-       Empty values mean: follow logoLetters automatically.
-       A user-entered favicon letter remains an explicit override.
-    */
-    state.site.faviconSymbol = '';
-    state.site.faviconLetters = '';
-    state.site.faviconText = '';
-    state.site.faviconIcon = '';
+    resetNewSiteIdentityV092E(state);
     state.site.tagline = meta.tagline;
     state.site.activeTemplate = templateId;
     state.site.template = templateId;
-    var templateLabPathForNewSiteV083K = normalizeTemplateLabPathV083K(draft.templatePreviewPath || '') || templateLabPathForTemplateIdV083K(templateId);
-    state.site.templateSource = 'template-lab';
-    state.site.templateLabPath = templateLabPathForNewSiteV083K;
-    state.site.templatePreviewPath = templateLabPathForNewSiteV083K;
+    state.site.templateSource = 'webstudio-official';
+    state.site.templateLabPath = '';
+    state.site.templatePreviewPath = '';
     state = applySiteProfileToState(state, profile);
 
     /*
@@ -7317,6 +10844,12 @@
        owns newly created sites.
     */
     applyOfficialTemplateStarterV068C(state, templateId);
+    /*
+       IRGEZTNE_NEW_SITE_IDENTITY_FINAL_BARRIER_V092E
+       Keep this after every profile/template starter. No earlier default or
+       future starter may turn the site name into a logo or favicon.
+    */
+    resetNewSiteIdentityV092E(state);
 
     var pages = Array.isArray(state.pages)
       ? state.pages
@@ -7332,7 +10865,12 @@
     state.__irgeztneOfficialTemplateStarterV068C = templateId;
     state.updatedAt = new Date().toISOString();
 
-    manager.sites.push(Object.assign({}, profile, { state: state, template: templateId, templateSource: 'template-lab', templateLabPath: templateLabPathForNewSiteV083K }));
+    manager.sites.push(Object.assign({}, profile, {
+      state: state,
+      template: templateId,
+      templateSource: 'webstudio-official',
+      templateLabPath: ''
+    }));
     manager.activeSiteId = profile.id;
     writeSiteManager(manager);
     resetSiteManagerDraft();
@@ -7384,12 +10922,11 @@
 
   function deleteLocalSite(siteId) {
     var manager = readSiteManager();
-    if (manager.sites.length <= 1) return;
     var site = manager.sites.find(function (item) { return item.id === siteId; });
     if (!site) return;
     if (!window.confirm(t('Delete website “', 'Удалить сайт “') + site.name + '”?')) return;
     manager.sites = manager.sites.filter(function (item) { return item.id !== siteId; });
-    if (manager.activeSiteId === siteId) manager.activeSiteId = manager.sites[0].id;
+    if (manager.activeSiteId === siteId) manager.activeSiteId = manager.sites[0] ? manager.sites[0].id : '';
     writeSiteManager(manager);
     activeTab = 'sites';
     renderStudio();
@@ -9612,10 +13149,56 @@
     var action = actionEl.dataset.v5Action;
     event.preventDefault();
     if (action === 'close' || action === 'back-editor' || action === 'exit-studio') { closeStudio(); return; }
+    if (action === 'open-account-release-r1') {
+      var connectedAccountReleaseR1 = window.IRGEZTNEConnected || null;
+      if (connectedAccountReleaseR1 && typeof connectedAccountReleaseR1.openAccountSurface === 'function') {
+        saveAllFromDom(false);
+        closeStudio();
+        connectedAccountReleaseR1.openAccountSurface();
+      }
+      return;
+    }
     // IRGEZTNE_V083I_TEMPLATE_LAB_ACTIONS
+    if (action === 'workshop-installed-template-preview-r1w9c' || action === 'workshop-installed-template-preview-r1w9a') {
+      event.preventDefault();
+      void openWorkshopInstalledTemplatePreviewR1W9A(
+        actionEl.dataset.v5WorkshopPackageId || '',
+        actionEl.dataset.v5TemplateTitle || ''
+      );
+      return;
+    }
+
+    if (action === 'workshop-installed-theme-apply-r1w9e') {
+      event.preventDefault();
+      void applyWorkshopInstalledThemeR1W9E(actionEl.dataset.v5WorkshopPackageId || '');
+      return;
+    }
+
+    if (action === 'workshop-installed-component-insert-r1w9f') {
+      event.preventDefault();
+      void insertWorkshopInstalledComponentR1W9F(actionEl.dataset.v5WorkshopPackageId || '');
+      return;
+    }
+
+    if (action === 'workshop-snapshot-open-preview-r1w9d') {
+      event.preventDefault();
+      activeTab = 'preview';
+      collapsedRight = true;
+      renderStudio();
+      return;
+    }
+
     if (action === 'template-lab-open-preview-v083i') {
       event.preventDefault();
-      openTemplateLabPreviewV083I(actionEl.dataset.v5TemplatePath || '', actionEl.dataset.v5TemplateTitle || '');
+      openTemplateLabPreviewV083I(actionEl.dataset.v5TemplateId || '', actionEl.dataset.v5TemplateTitle || '');
+      return;
+    }
+
+    if (action === 'template-generated-open-window-v094a') {
+      event.preventDefault();
+      openGeneratedTemplatePreviewWindowV094A(
+        actionEl.dataset.v5TemplateId || 'project-landing'
+      );
       return;
     }
 
@@ -9625,14 +13208,35 @@
       return;
     }
 
+    if (action === 'workshop-installed-template-use-r1w9d') {
+      event.preventDefault();
+      var workshopPackageIdR1W9D = actionEl.dataset.v5WorkshopPackageId || '';
+      var workshopTemplateR1W9D = workshopTemplateByPackageIdR1W9D(workshopPackageIdR1W9D);
+      if (!workshopTemplateR1W9D) {
+        try { alert(t('Installed template is no longer available.', 'Установленный шаблон больше недоступен.')); } catch (errorAlertR1W9D) {}
+        return;
+      }
+      var workshopDraftR1W9D = getSiteManagerDraft();
+      workshopDraftR1W9D.template = 'workshop:' + workshopPackageIdR1W9D;
+      workshopDraftR1W9D.templateSource = 'workshop-installed';
+      workshopDraftR1W9D.workshopPackageId = workshopPackageIdR1W9D;
+      workshopDraftR1W9D.workshopTemplateTitle = String(workshopTemplateR1W9D.title || actionEl.dataset.v5TemplateTitle || '');
+      activeTab = 'sites';
+      siteManagerMode = 'list';
+      collapsedRight = true;
+      renderStudio();
+      return;
+    }
+
     if (action === 'template-lab-use-v083h') {
       event.preventDefault();
       var selectedTemplateIdV083I = actionEl.dataset.v5TemplateId || 'project-landing';
-      var selectedTemplatePathV083I = actionEl.dataset.v5TemplatePath || '';
       var draftV083I = getSiteManagerDraft();
       draftV083I.template = selectedTemplateIdV083I;
-      draftV083I.templateSource = 'template-lab';
-      draftV083I.templatePreviewPath = normalizeTemplateLabPathV083K(selectedTemplatePathV083I) || templateLabPathForTemplateIdV083K(selectedTemplateIdV083I);
+      draftV083I.templateSource = 'webstudio-official';
+      draftV083I.workshopPackageId = '';
+      draftV083I.workshopTemplateTitle = '';
+      draftV083I.templatePreviewPath = '';
       activeTab = 'sites';
       siteManagerMode = 'list';
       collapsedRight = true;
@@ -9663,7 +13267,7 @@
     }
     if (action === 'site-draft-icon') { getSiteManagerDraft().icon = actionEl.dataset.v5SiteIcon || '◆'; activeTab = 'sites'; renderStudio(); return; }
     if (action === 'site-draft-color') { getSiteManagerDraft().color = actionEl.dataset.v5SiteColor || '#2f7be6'; activeTab = 'sites'; renderStudio(); return; }
-    if (action === 'site-create') { createLocalSite(); return; }
+    if (action === 'site-create') { void createLocalSite(); return; }
     if (action === 'site-switch') { switchLocalSite(actionEl.dataset.v5SiteId); return; }
     if (action === 'site-duplicate') { duplicateLocalSite(actionEl.dataset.v5SiteId); return; }
     if (action === 'site-delete') { deleteLocalSite(actionEl.dataset.v5SiteId); return; }
@@ -9700,7 +13304,7 @@
     if (action === 'publish-select-provider') { var stPublishSelect = readState(); stPublishSelect.site.publishSettings = normalizePublishSettings(stPublishSelect.site.publishSettings); var selectedProvider = actionEl.dataset.v5Provider || 'manual'; stPublishSelect.site.publishSettings.selectedProvider = selectedProvider; if (selectedProvider === 'manual' || selectedProvider === 'ipfs') { stPublishSelect.site.publishSettings.providers[selectedProvider] = stPublishSelect.site.publishSettings.providers[selectedProvider] || defaultPublishProviderConfig(selectedProvider); stPublishSelect.site.publishSettings.providers[selectedProvider].enabled = true; } writeState(stPublishSelect); activeTab = 'server'; renderStudio(); try { window.requestAnimationFrame(function () { var target = overlay && overlay.querySelector('[data-v5-publish-settings="1"]') || overlay && overlay.querySelector('.ir-site-studio-v5-publish-picker'); if (target && typeof target.scrollIntoView === 'function') target.scrollIntoView({ block: 'start', behavior: 'smooth' }); }); } catch (error) {} return; }
     if (action === 'publish-download-starter-zip' || action === 'publish-download-starter-html') { saveAllFromDom(false); downloadPublishStarterZip(); return; }
     if (action === 'publish-save-settings') { saveAllFromDom(false); savePublishSettings(); return; }
-    if (action === 'publish-clear-token') { var stClear = readState(); stClear.site.publishSettings = normalizePublishSettings(stClear.site.publishSettings); var pidClear = stClear.site.publishSettings.selectedProvider || 'manual'; if (stClear.site.publishSettings.providers[pidClear]) { clearPublishSecrets(pidClear, stClear.site.publishSettings.providers[pidClear]); stClear.site.publishSettings.providers[pidClear].enabled = false; stClear.site.publishSettings.providers[pidClear].lastStatus = t('Token cleared locally.', 'Token локально очищен.'); stClear.site.publishSettings.providers[pidClear].lastResult = 'info'; } writeState(stClear); activeTab = 'server'; renderStudio(); return; }
+    if (action === 'publish-clear-token') { var stClear = readState(); stClear.site.publishSettings = normalizePublishSettings(stClear.site.publishSettings); var pidClear = stClear.site.publishSettings.selectedProvider || 'manual'; if (stClear.site.publishSettings.providers[pidClear]) { clearPublishSecrets(pidClear, stClear.site.publishSettings.providers[pidClear]); stClear.site.publishSettings.providers[pidClear].enabled = false; stClear.site.publishSettings.providers[pidClear].lastStatus = pidClear === 'ftp' || pidClear === 'ftps' || pidClear === 'sftp' ? t('Password cleared locally.', 'Пароль локально очищен.') : t('Token cleared locally.', 'Token локально очищен.'); stClear.site.publishSettings.providers[pidClear].lastResult = 'info'; } writeState(stClear); activeTab = 'server'; renderStudio(); return; }
     if (action === 'publish-test-settings') { saveAllFromDom(false); testPublishSettings(); return; }
     if (action === 'publish-foundation') { saveAllFromDom(false); publishFoundation(); return; }
     if (action === 'publish-download-zip') { saveAllFromDom(false); downloadSiteZip(); return; }
@@ -9804,6 +13408,20 @@
       var draft = getSiteManagerDraft();
       var draftKeyV074A = siteManagerFieldEl.dataset.v5SiteManagerField;
       draft[draftKeyV074A] = siteManagerFieldEl.value;
+      if (draftKeyV074A === 'template') {
+        var selectedTemplateValueR1W9D = String(siteManagerFieldEl.value || '');
+        if (selectedTemplateValueR1W9D.indexOf('workshop:') === 0) {
+          var selectedWorkshopIdR1W9D = selectedTemplateValueR1W9D.slice('workshop:'.length);
+          var selectedWorkshopTemplateR1W9D = workshopTemplateByPackageIdR1W9D(selectedWorkshopIdR1W9D);
+          draft.templateSource = 'workshop-installed';
+          draft.workshopPackageId = selectedWorkshopIdR1W9D;
+          draft.workshopTemplateTitle = String(selectedWorkshopTemplateR1W9D && selectedWorkshopTemplateR1W9D.title || '');
+        } else {
+          draft.templateSource = 'webstudio-official';
+          draft.workshopPackageId = '';
+          draft.workshopTemplateTitle = '';
+        }
+      }
 
       if (
         siteManagerError &&
@@ -9976,21 +13594,9 @@
       var key2 = siteEl.dataset.v5SiteField;
       var siteValue = siteEl.value;
 
-      var previousLogoLettersV084U = normalizeLooseLogoLettersV069E(
-        state2.site.logoLetters || ''
-      ).slice(0, 3);
-
-      var previousFaviconLettersV084U = normalizeLooseLogoLettersV069E(
-        state2.site.faviconLetters ||
-        state2.site.faviconText ||
-        state2.site.faviconSymbol ||
-        state2.site.faviconIcon ||
-        ''
-      ).slice(0, 2);
-
-      var faviconWasFollowingLogoV084U =
-        !previousFaviconLettersV084U ||
-        previousFaviconLettersV084U === previousLogoLettersV084U.slice(0, 2);
+      /* IRGEZTNE_LOGO_FAVICON_INDEPENDENT_V098F
+         Logo and favicon are separate fields. Changing one must not silently
+         rewrite, clear or visually fake the other. */
 
       if (key2 === 'logoLetters' || key2 === 'faviconLetters' || key2 === 'faviconSymbol' || key2 === 'faviconText' || key2 === 'faviconIcon' || key2 === 'icon') {
         var maxLettersV073B = key2 === 'logoLetters' ? 3 : 2;
@@ -10004,22 +13610,6 @@
         state2.site.faviconSymbol = siteValue;
         state2.site.faviconText = siteValue;
         state2.site.faviconIcon = siteValue;
-      }
-
-      if (key2 === 'logoLetters' && faviconWasFollowingLogoV084U) {
-        state2.site.faviconLetters = '';
-        state2.site.faviconSymbol = '';
-        state2.site.faviconText = '';
-        state2.site.faviconIcon = '';
-
-        var liveFaviconFieldV084U = overlay && overlay.querySelector(
-          '[data-v5-site-field="faviconLetters"]'
-        );
-
-        if (liveFaviconFieldV084U) {
-          liveFaviconFieldV084U.value =
-            normalizeLooseLogoLettersV069E(siteValue).slice(0, 2);
-        }
       }
 
       writeState(state2);
@@ -10037,6 +13627,7 @@
       }
       if (/(name|icon|logoLetters|faviconLetters|faviconSymbol|faviconText|faviconIcon|logoShape|faviconShape|logoBackgroundColor|logoTextColor|faviconBackgroundColor|faviconTextColor|logoFont|faviconFont|logoWeight|faviconWeight|logoHeaderSize)/.test(key2)) {
         updateIdentityLogoPreview(state2.site);
+        updateIdentityHeaderLogoV098F(state2.site);
       }
       if (key2 === 'logoShape' || key2 === 'faviconShape') {
         activeTab = 'identity';
@@ -10345,6 +13936,11 @@
   }
 
   function boot() {
+    document.addEventListener('irg:language-changed', function (event) {
+      studioLang = event.detail && event.detail.language === 'ru' ? 'ru' : 'en';
+      try { localStorage.setItem(STUDIO_LANG_KEY, studioLang); } catch (_) {}
+      if (overlay && overlay.classList.contains('is-open')) renderStudio();
+    });
     document.addEventListener('click', function (event) {
       var trigger = event.target && event.target.closest ? event.target.closest('[data-action="open-site-studio-safe-v5"], [data-action="open-site-studio-safe-v4"], [data-ir-site-studio-v5-open="1"], [data-ir-site-studio-v4-open="1"]') : null;
       if (!trigger) return;
@@ -10359,6 +13955,8 @@
     window.IRGEZTNESiteStudioSafeV5 = {
       open: openStudio,
       openTab: openStudioTab,
+      openTemplateSelection: openOfficialTemplateSelectionV092B,
+      loadTemplateThumbnail: loadOfficialTemplateThumbnailR1M,
       readState: readState,
       reset: resetTestСтраницы,
       version: VERSION
@@ -10371,7 +13969,9 @@
       normalizePageStatus: normalizePageStatusV091B,
       normalizeState: normalizeState,
       migrateDocumentationHome: migrateDocumentationHomeV092A,
+      migrateUntouchedOfficialStarter: migrateUntouchedOfficialStarterV095A,
       starterPagesForTemplate: starterPagesForTemplateV068C,
+      officialTemplateProductId: officialTemplateProductIdV095A,
       editorPages: editorPagesV091A,
       publicPages: publicPagesV091A,
       createPreviewPayload: createPreviewPayload,
@@ -10382,7 +13982,13 @@
       createEditorPreviewPayload: createEditorPreviewPayloadV091B,
       publicRenderTarget: publicRenderTargetV091B,
       renderPublicSiteHtml: renderPublicSiteHtmlV091B,
-      renderSiteHtml: renderSiteHtml
+      renderSiteHtml: renderSiteHtml,
+      templatePreviewState: templatePreviewStateV094A,
+      templatePreviewHtml: templatePreviewHtmlV094A,
+      templatePreviewPayload: templatePreviewPayloadV095A,
+      prepareOfficialTemplateSelection: prepareOfficialTemplateSelectionV092B,
+      resetNewSiteIdentity: resetNewSiteIdentityV092E,
+      faviconLetters: faviconLetters
     };
   }
 
@@ -10394,6 +14000,7 @@
 
 /* IRGEZTNE_TEMPLATE_PREVIEW_PICKER_V070A */
 (function () {
+  if (window.__IRGEZTNE_CANONICAL_TEMPLATE_PREVIEW_V094A__) return;
   if (window.__IRGEZTNE_TEMPLATE_PREVIEW_PICKER_V070A__) return;
   window.__IRGEZTNE_TEMPLATE_PREVIEW_PICKER_V070A__ = true;
 
@@ -10651,6 +14258,7 @@
 
 /* IRGEZTNE_TEMPLATE_PREVIEW_OPEN_FIX_V070B */
 (function(){
+  if (window.__IRGEZTNE_CANONICAL_TEMPLATE_PREVIEW_V094A__) return;
   if (window.__IRGEZTNE_TEMPLATE_PREVIEW_OPEN_FIX_V070B__) return;
   window.__IRGEZTNE_TEMPLATE_PREVIEW_OPEN_FIX_V070B__ = true;
 
@@ -10863,8 +14471,23 @@
     return v.includes('галере') || v.includes('gallery') || v.includes('открыть галерею');
   };
 
+  // IRGEZTNE_WORKSHOP_INSTALLED_TEMPLATE_PREVIEW_VISIBILITY_R1W9C1
+  // V070D predates Workshop installed-template previews. Its broad legacy matcher
+  // sees `template-preview` inside the new data-action and would hide the new
+  // controls immediately after render. Protect only the current public-adapter
+  // preview actions; the obsolete inline preview buttons remain hidden.
+  const isCurrentWorkshopInstalledPreviewControl = (el) => {
+    if (!el || typeof el.matches !== 'function') return false;
+    return el.matches(
+      '[data-v5-action="workshop-installed-template-preview-r1w9c"], ' +
+      '[data-v5-action="workshop-installed-template-preview-r1w9a"], ' +
+      '.ir-site-studio-v5-workshop-preview-hit-r1w9c'
+    );
+  };
+
   const looksLikeOldPreviewButton = (el) => {
     if (!el) return false;
+    if (isCurrentWorkshopInstalledPreviewControl(el)) return false;
     const text = normalize(el.textContent);
     const aria = normalize(el.getAttribute && el.getAttribute('aria-label'));
     const title = normalize(el.getAttribute && el.getAttribute('title'));

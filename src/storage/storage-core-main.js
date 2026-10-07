@@ -3,8 +3,10 @@
 const fs = require('fs');
 const path = require('path');
 const Database = require('better-sqlite3');
+const workspaceBackup = require('./workspace-backup-main.cjs');
 const { ensureSchema } = require('./storage-schema');
 const { createSecretTools } = require('./storage-secrets');
+const { createWorkspaceFileStore } = require('./workspace-file-store-main');
 
 function ensureDir(dirPath) {
   if (!fs.existsSync(dirPath)) fs.mkdirSync(dirPath, { recursive: true });
@@ -45,6 +47,11 @@ function createStorageCore(options) {
     secretKeyPath: path.join(dataDir, 'storage-secret.key')
   });
 
+  const fileStore = createWorkspaceFileStore({
+    db,
+    dataDir
+  });
+
   const statements = {
     kvGet: db.prepare('SELECT value FROM app_kv WHERE key=?'),
     kvSet: db.prepare(`INSERT INTO app_kv(key, value, updated_at)
@@ -81,7 +88,14 @@ function createStorageCore(options) {
 
   return {
     status() {
-      return { ok: true, dbPath, dataDir, schemaVersion: schema.schemaVersion, secretMode: secretTools.mode };
+      return {
+        ok: true,
+        dbPath,
+        dataDir,
+        schemaVersion: schema.schemaVersion,
+        secretMode: secretTools.mode,
+        fileStore: fileStore.status()
+      };
     },
     get(key, fallback) { return getJson(statements.kvGet, key, fallback); },
     set(key, value) { return setJson(statements.kvSet, key, value); },
@@ -113,6 +127,39 @@ function createStorageCore(options) {
       statements.secretDelete.run(String(scope || 'default'), String(key || 'token'));
       return { ok: true };
     },
+
+    fileStoreStatus() {
+      return fileStore.status();
+    },
+
+    importWorkspaceFileFromPath(payload) {
+      return fileStore.importFromPath(payload);
+    },
+
+    getWorkspaceFile(fileId) {
+      return fileStore.getFile(fileId);
+    },
+
+    listWorkspaceFiles(options) {
+      return fileStore.listFiles(options);
+    },
+
+    attachWorkspaceFile(payload) {
+      return fileStore.attachExistingFile(payload);
+    },
+
+    removeWorkspaceFileReference(refId) {
+      return fileStore.removeReference(refId);
+    },
+
+    collectWorkspaceFileOrphans(options) {
+      return fileStore.collectOrphans(options);
+    },
+
+    exportWorkspaceBundle(storage) { return workspaceBackup.exportBundle(db, dataDir, storage); },
+    validateWorkspaceBundle(bundle) { return workspaceBackup.validate(bundle, db); },
+    restoreWorkspaceBundle(bundle) { return workspaceBackup.restoreBundle(db, dataDir, bundle); },
+    cleanTestWorkspace(storage, indexedDB) { return require('./workspace-cleanup-main.cjs').cleanup(db, dataDir, workspaceBackup, storage, indexedDB); },
     close() { db.close(); }
   };
 }

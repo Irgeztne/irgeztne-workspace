@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="ru" data-theme="light">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Команда, принципы и процесс работы над бизнес-системами и цифровыми продуктами.">
+    <meta name="theme-color" content="#17694b">
+    <title>Как работает Meridian</title>
+    <script>
+      try {
+        const urlTheme = new URLSearchParams(location.search).get("theme");
+        const savedTheme = localStorage.getItem("irgeztne-business-canon-theme");
+        const initialTheme =
+          urlTheme === "dark" || urlTheme === "light" ? urlTheme : savedTheme;
+        if (initialTheme === "dark" || initialTheme === "light") {
+          document.documentElement.dataset.theme = initialTheme;
+        }
+      } catch {}
+    </script>
+    <link rel="stylesheet" href="../shared/styles.css">
+    <script defer src="../shared/site.js"></script>
+  </head>
+  <body data-page="about" data-nav-open="false">
+    
+    <header class="site-header">
+      <div class="header-shell">
+        <a class="brand" href="index.html" data-brand-text-fallback="true">
+          <strong>Meridian</strong>
+          <span>Системы для бизнеса и продукта</span>
+        </a>
+        <nav class="site-nav" aria-label="Главное меню"><a href="index.html">Главная</a><a href="services.html">Услуги</a><a href="about.html" aria-current="page">О компании</a><a href="contacts.html">Контакты</a></nav>
+        <div class="header-actions">
+          <a class="header-cta" href="contacts.html">Обсудить проект</a>
+          <button
+            class="theme-toggle"
+            type="button"
+            data-theme-toggle
+            data-label-dark="Включить тёмную тему"
+            data-label-light="Включить светлую тему"
+            aria-label="Включить тёмную тему"
+          >☾</button>
+          <button
+            class="menu-toggle"
+            type="button"
+            data-menu-toggle
+            aria-label="Открыть меню"
+            aria-expanded="false"
+          >☰</button>
+        </div>
+      </div>
+    </header>
+    
+    <main class="main-shell subpage">
+      <section class="subpage-hero">
+        <article class="content-panel">
+          <div><span class="eyebrow">Как мы работаем</span><h1>Команда, которая отвечает не за красивый файл, а за запуск.</h1><p>Мы соединяем структуру, содержание, дизайн и реализацию в один проверяемый результат. Без второго владельца, который появляется между макетом и рабочим сайтом.</p></div>
+          <div class="subpage-index"><div><b>Фокус</b><span>Понятная задача</span></div><div><b>Ритм</b><span>Короткие проверки</span></div><div><b>Итог</b><span>Рабочая версия</span></div></div>
+        </article>
+        <figure class="subpage-media" data-template-slot="about.image">
+          <img src="../assets/hero-office.webp" alt="Команда Meridian в рабочем пространстве" width="883" height="475">
+          <figcaption class="media-note"><strong>Небольшая команда, широкий контекст</strong><span>Стратегия, интерфейс и сборка остаются в одной логике.</span></figcaption>
+        </figure>
+      </section>
+
+      <section class="section values-grid">
+        <article class="value-card"><b>01 · Ясность</b><h2>Называть вещи своими именами</h2><p>Не выдавать заглушку за функцию, а будущий слот — за работающую медиасистему.</p><ul><li>Проверяем владельца</li><li>Фиксируем границы</li><li>Отделяем факт от предположения</li></ul></article>
+        <article class="value-card"><b>02 · Целостность</b><h2>Не сокращать продукт ради скорости</h2><p>Рабочая основа важнее красивого первого экрана, который ломается на втором переходе.</p><ul><li>Полные страницы</li><li>Настоящие маршруты</li><li>Единое поведение тем</li></ul></article>
+        <article class="value-card"><b>03 · Проверка</b><h2>Принимать по фактическому результату</h2><p>Скриншоты, переходы и реальный браузер важнее зелёного теста, который проверяет не то.</p><ul><li>Визуальная приёмка</li><li>Проверка взаимодействий</li><li>Сравнение сборок</li></ul></article>
+      </section>
+
+      <section class="section team-band">
+        <figure class="image-panel" data-template-slot="team.image"><img src="../assets/process-team.webp" alt="Обсуждение проекта у рабочей доски" width="880" height="252"></figure>
+        <div class="metric-panel">
+          <article><strong>1</strong><span>единый маршрут от идеи до запуска</span></article>
+          <article><strong>4</strong><span>точки проверки до передачи</span></article>
+          <article><strong>2</strong><span>полноценные цветовые темы</span></article>
+          <article><strong>0</strong><span>скрытых внешних зависимостей</span></article>
+        </div>
+      </section>
+
+      <section class="section statement"><div><span class="eyebrow">Манифест</span><h2>Хороший бизнес-сайт не выглядит как административная система.</h2></div><p>Навигация помогает двигаться, а самостоятельная страница открывает содержание — без технической подписи «страница» и автоматического повтора пункта меню.</p></section>
+      <section class="cta-band"><div><span class="eyebrow">Знакомство</span><h2>Если задача сложная, начнём с карты — не с обещания готового ответа.</h2></div><a class="button-primary" href="contacts.html">Связаться</a></section>
+    </main>
+    
+    <footer class="site-footer">
+      <div class="footer-shell">
+        <div class="footer-brand">
+          <strong>Meridian</strong>
+          <p>Спокойная бизнес-структура для компаний, продуктов и сервисов.</p>
+        </div>
+        <div class="footer-column">
+          <b>Разделы</b>
+          <a href="services.html">Услуги</a>
+          <a href="about.html">О компании</a>
+          <a href="contacts.html">Контакты</a>
+        </div>
+        <div class="footer-column">
+          <b>Связаться</b>
+          <a href="mailto:hello@example.com">hello@example.com</a>
+          <a href="tel:+994000000000">+994 00 000 00 00</a>
+        </div>
+      </div>
+      <div class="footer-bottom">© 2026 Meridian · Демонстрационный контент Business Canon v1</div>
+    </footer>
+  </body>
+</html>

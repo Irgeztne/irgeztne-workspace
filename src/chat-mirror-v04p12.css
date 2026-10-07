@@ -1,0 +1,52 @@
+/*
+ IRGEZTNE Workspace — Green Lightning Chat Mirror v0.4P12
+ Two real local MLS device identities in one Workspace conversation.
+*/
+
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p12-sender-toggle {
+  min-height: 32px;
+  padding: 0 11px;
+  border: 1px solid #2c5679;
+  border-radius: 999px;
+  background: #10263c;
+  color: #dceeff;
+  font: inherit;
+  font-size: 12.5px !important;
+  font-weight: 700;
+  line-height: 1 !important;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p12-sender-toggle:hover {
+  border-color: #4384b8;
+  background: #15324d;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p12-sender-toggle.is-peer {
+  border-color: #347b72;
+  background: #103431;
+  color: #d8fff7;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p12-sender-toggle.is-peer:hover {
+  border-color: #4aa898;
+  background: #15413d;
+}
+
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message.is-mine {
+  margin-left: auto !important;
+  margin-right: 0 !important;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message.is-peer {
+  margin-left: 0 !important;
+  margin-right: auto !important;
+  background: linear-gradient(145deg, #12372f, #102d2b) !important;
+  border-color: #285e57 !important;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message.is-peer .gl-p1-message-state {
+  color: #7fd3c3 !important;
+}
+
+.workspace-shell .workspace-panel .cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p12-sender-toggle {
+  min-height: 30px;
+  padding-inline: 9px;
+  font-size: 12px !important;
+}

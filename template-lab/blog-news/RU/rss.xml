@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Northline Journal — материалы</title>
+    <link>index.html</link>
+    <description>Демонстрационная RSS-лента шаблона Northline Journal.</description>
+    <language>ru</language>
+    
+    <item>
+      <title>Как современные веб-продукты меняют работу небольших редакций</title>
+      <link>article-modern-web-products.html</link>
+      <description>Большой материал о новых инструментах, ясной структуре и спокойном процессе публикации.</description>
+      <guid>northline-ru-1</guid>
+    </item>
+    <item>
+      <title>Новые инструменты делают публикацию быстрее и спокойнее</title>
+      <link>article-publishing-tools.html</link>
+      <description>Как автоматизация убирает повторяющиеся операции и оставляет больше времени для содержания.</description>
+      <guid>northline-ru-2</guid>
+    </item>
+    <item>
+      <title>Почему продуктовым страницам нужна более ясная структура</title>
+      <link>article-clear-product-pages.html</link>
+      <description>Короткий разбор для команд, авторов и создателей цифровых сервисов.</description>
+      <guid>northline-ru-3</guid>
+    </item>
+  </channel>
+</rss>

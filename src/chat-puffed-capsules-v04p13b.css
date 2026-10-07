@@ -1,0 +1,93 @@
+/*
+  IRGEZTNE Workspace — Green Lightning Puffed Capsules v0.4P13b
+
+  Visual-only owner:
+  - preserves existing sender colors from P13
+  - adds soft inflated volume
+  - asymmetric "pinched" corner hints at message direction
+  - no Messenger/Core/MLS changes
+*/
+
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message {
+  position: relative !important;
+  isolation: isolate !important;
+  overflow: hidden !important;
+
+  border-radius: 22px 22px 22px 8px !important;
+  border: 1px solid rgba(255, 255, 255, 0.11) !important;
+
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.24),
+    0 2px 6px rgba(0, 0, 0, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.20),
+    inset 0 -12px 22px rgba(0, 0, 0, 0.10) !important;
+
+  transform: translateZ(0);
+}
+
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message.is-mine {
+  border-radius: 22px 22px 8px 22px !important;
+}
+
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message.is-peer,
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message.is-camel {
+  border-radius: 22px 22px 22px 8px !important;
+}
+
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      120% 76% at 18% -10%,
+      rgba(255, 255, 255, 0.20) 0%,
+      rgba(255, 255, 255, 0.09) 26%,
+      rgba(255, 255, 255, 0.00) 58%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.055) 0%,
+      rgba(255, 255, 255, 0.00) 42%,
+      rgba(0, 0, 0, 0.045) 100%
+    );
+}
+
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message::after {
+  content: "";
+  position: absolute;
+  top: 7px;
+  left: 13px;
+  width: 22px;
+  height: 5px;
+  border-radius: 999px;
+  z-index: 0;
+  pointer-events: none;
+  background: rgba(255, 255, 255, 0.10);
+}
+
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message.is-mine::after {
+  left: auto;
+  right: 13px;
+}
+
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message > * {
+  position: relative;
+  z-index: 1;
+}
+
+.irgeztne-floating-window
+  .cabinet-section-panel[data-cabinet-panel="rooms"]
+  .gl-p1-message,
+[data-irgeztne-floating-window]
+  .cabinet-section-panel[data-cabinet-panel="rooms"]
+  .gl-p1-message {
+  box-shadow:
+    0 8px 18px rgba(0, 0, 0, 0.22),
+    0 2px 5px rgba(0, 0, 0, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -10px 18px rgba(0, 0, 0, 0.09) !important;
+}

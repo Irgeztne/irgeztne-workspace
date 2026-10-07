@@ -16,10 +16,10 @@
         en: 'A modern widescreen landing page for a product, app, service, or project presentation.'
       },
       accent: 'blue',
-      sections: ['Главная', 'Продукт', 'Контакты'],
+      sections: ['Hero', 'Возможности', 'Сценарий', 'Доказательства', 'FAQ', 'CTA'],
       structure: {
         templateType: 'wide-landing',
-        pages: ['Главная', 'Продукт', 'Контакты'],
+        pages: ['Главная'],
         layout: 'widescreen split hero',
         export: ['html', 'site-studio']
       }
@@ -254,7 +254,8 @@
       .preview4-template-compact-preview .preview4-template-visual {
         min-width: 0;
         width: 100%;
-        height: 158px;
+        height: 158px !important;
+        min-height: 158px !important;
         transform: none;
         transform-origin: initial;
         border-radius: 13px;
@@ -436,6 +437,7 @@
   function openWebStudio(template) {
     const payload = {
       selectedAt: new Date().toISOString(),
+      owner: 'webstudio-official',
       template: templateJson(template)
     };
 
@@ -446,8 +448,14 @@
       window.dispatchEvent(new CustomEvent('irgeztne:preview4-template-selected', { detail: payload }));
     } catch (error) {}
 
-    if (window.NSWebAnalyticsV0 && typeof window.NSWebAnalyticsV0.recordEvent === 'function') {
-      window.NSWebAnalyticsV0.recordEvent('template-open-webstudio', { templateId: template.id });
+    if (
+      window.IRGEZTNESiteStudioSafeV5 &&
+      typeof window.IRGEZTNESiteStudioSafeV5.openTemplateSelection === 'function'
+    ) {
+      window.IRGEZTNESiteStudioSafeV5.openTemplateSelection(
+        templateJson(template)
+      );
+      return;
     }
 
     if (window.IRGEZTNESiteStudioSafeV5 && typeof window.IRGEZTNESiteStudioSafeV5.open === 'function') {
@@ -571,6 +579,17 @@
 
   // IRGEZTNE_TEMPLATE_CARD_REALISTIC_PREVIEWS_V068O
   function previewMarkup(template) {
+    const canonicalOwner = window.IRGEZTNESiteStudioSafeV5;
+    if (canonicalOwner && typeof canonicalOwner.loadTemplateThumbnail === 'function') {
+      return [
+        '<div class="preview4-template-visual preview4-template-visual--canonical-r1m">',
+        '  <iframe class="preview4-template-canonical-frame-r1m" loading="lazy" tabindex="-1" aria-hidden="true" data-preview4-canonical-template-frame-r1m="1" data-template-id="' + escapeHtml(template.id) + '" title=""></iframe>',
+        '</div>'
+      ].join('');
+    }
+
+    // Emergency fallback only: retain the old schematic thumbnail if the
+    // canonical Web Studio owner is unavailable during an incomplete boot.
     const info = templatePreviewData(template);
     const id = String(template.id || 'project-landing');
     const title = escapeHtml(info.headline || t(template.title));
@@ -698,6 +717,88 @@
     ].join(''), '#f8fbff');
   }
 
+  // IRGEZTNE_TEMPLATE_VITRINA_CANONICAL_PREVIEWS_R1M
+  function ensureCanonicalPreviewStylesR1M() {
+    if (document.getElementById('preview4-template-canonical-preview-style-r1m')) return;
+    const style = document.createElement('style');
+    style.id = 'preview4-template-canonical-preview-style-r1m';
+    style.textContent = `
+      .preview4-template-visual--canonical-r1m {
+        position: relative !important;
+        overflow: hidden !important;
+        min-width: 0 !important;
+        background: #07101d !important;
+      }
+      .preview4-template-canonical-frame-r1m {
+        position: absolute;
+        display: block;
+        width: 1440px;
+        height: 900px;
+        margin: 0;
+        border: 0;
+        background: #07101d;
+        pointer-events: none;
+        transform-origin: 0 0;
+      }
+      .preview4-template-compact-preview .preview4-template-visual--canonical-r1m {
+        height: 158px !important;
+        min-height: 158px !important;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  function fitCanonicalTemplateFrameR1M(frame) {
+    if (!frame || !frame.parentElement) return;
+    const wrap = frame.parentElement;
+    const baseWidth = 1440;
+    const baseHeight = 900;
+    const width = Math.max(1, wrap.clientWidth || 0);
+    const height = Math.max(1, wrap.clientHeight || 0);
+    const scale = Math.min(width / baseWidth, height / baseHeight);
+    frame.style.left = Math.max(0, (width - baseWidth * scale) / 2) + 'px';
+    frame.style.top = Math.max(0, (height - baseHeight * scale) / 2) + 'px';
+    frame.style.transform = 'scale(' + scale + ')';
+  }
+
+  function hydrateCanonicalTemplatePreviewsR1M(root) {
+    if (!root || !root.querySelectorAll) return;
+    const owner = window.IRGEZTNESiteStudioSafeV5;
+    if (!owner || typeof owner.loadTemplateThumbnail !== 'function') return;
+
+    root.querySelectorAll('[data-preview4-canonical-template-frame-r1m="1"]').forEach((frame) => {
+      fitCanonicalTemplateFrameR1M(frame);
+      frame.addEventListener('load', () => {
+        frame.removeAttribute('data-v5-template-preview-loading');
+        fitCanonicalTemplateFrameR1M(frame);
+        window.setTimeout(() => fitCanonicalTemplateFrameR1M(frame), 120);
+      }, { once: true });
+
+      if (frame.dataset.preview4CanonicalHydratedR1m === '1') return;
+      frame.dataset.preview4CanonicalHydratedR1m = '1';
+
+      // The Cabinet Templates panel is normally hidden during initial boot.
+      // Re-fit when its card becomes visible instead of freezing a 1px scale.
+      if (typeof ResizeObserver === 'function' && frame.parentElement) {
+        const observer = new ResizeObserver(() => fitCanonicalTemplateFrameR1M(frame));
+        observer.observe(frame.parentElement);
+        frame.__preview4CanonicalResizeObserverR1m = observer;
+      }
+
+      const id = frame.getAttribute('data-template-id') || '';
+      Promise.resolve(owner.loadTemplateThumbnail(frame, id)).catch(() => {
+        frame.removeAttribute('data-v5-template-preview-loading');
+      });
+    });
+  }
+
+  if (!window.__IRGEZTNE_TEMPLATE_VITRINA_CANONICAL_RESIZE_R1M__) {
+    window.__IRGEZTNE_TEMPLATE_VITRINA_CANONICAL_RESIZE_R1M__ = true;
+    window.addEventListener('resize', () => {
+      document.querySelectorAll('[data-preview4-canonical-template-frame-r1m="1"]').forEach(fitCanonicalTemplateFrameR1M);
+    });
+  }
+
   function cardMarkup(template) {
     return [
       '<article class="preview4-template-card" data-template-id="' + escapeHtml(template.id) + '">',
@@ -712,7 +813,7 @@
       '  <p>' + escapeHtml(t(template.description)) + '</p>',
       '  <div class="preview4-template-actions">',
       '    <button type="button" data-preview4-template-action="use" data-template-id="' + escapeHtml(template.id) + '">' + escapeHtml(isRu() ? 'Выбрать шаблон' : 'Choose template') + '</button>',
-      '    <span class="preview4-template-action-note">' + escapeHtml(isRu() ? 'Превью показывает стиль. Контент и страницы пользователь создаёт сам.' : 'Preview shows the style. Content and pages are created by the user.') + '</span>',
+      '    <span class="preview4-template-action-note">' + escapeHtml(isRu() ? 'Выбор передаёт Web Studio полный официальный starter с его страницами и секциями.' : 'Selection passes the complete official starter with its pages and sections to Web Studio.') + '</span>',
       '  </div>',
       '</article>'
     ].join('');
@@ -751,7 +852,7 @@
       '      <h3>' + escapeHtml(isRu() ? 'Официальные шаблоны' : 'Official templates') + '</h3>',
       '      <p></p>',
       '    </div>',
-      '    <strong>' + escapeHtml(isRu() ? '3' : '3') + '</strong>',
+      '    <strong>' + escapeHtml(String(templates.length)) + '</strong>',
       '  </div>',
       '  <div class="preview4-template-compact-list">',
       templates.map(compactCardMarkup).join(''),
@@ -768,8 +869,8 @@
       '      <div class="preview4-template-kicker">IRGEZTNE PREVIEW.4</div>',
       '      <h3>' + escapeHtml(isRu() ? 'Официальные бесплатные шаблоны' : 'Official free templates') + '</h3>',
       '      <p>' + escapeHtml(isRu()
-        ? 'Шесть стартовых шаблонов с реальным мини-превью. Демо-блоки не навязываются созданному сайту — пользователь сам пишет страницы и включает нужные разделы.'
-        : 'Six starter templates with realistic mini previews. Demo blocks are not forced into the generated site — users create pages and enable sections themselves.'
+        ? 'Шесть стартовых шаблонов с каноническим мини-превью из текущего Web Studio renderer.'
+        : 'Six starter templates with canonical mini previews from the current Web Studio renderer.'
       ) + '</p>',
       '    </div>',
       '    <strong>' + escapeHtml(isRu() ? '6 шаблонов' : '6 templates') + '</strong>',
@@ -782,13 +883,16 @@
   }
 
   function renderRoot(root) {
+    ensureCanonicalPreviewStylesR1M();
     const surface = (root.getAttribute('data-vitrina-surface') || '').toLowerCase();
     if (surface === 'workspace') {
       renderWorkspaceRoot(root);
+      hydrateCanonicalTemplatePreviewsR1M(root);
       return;
     }
 
     renderCabinetRoot(root);
+    hydrateCanonicalTemplatePreviewsR1M(root);
   }
 
   function renderAll() {
@@ -948,4 +1052,3 @@
 
   document.head.appendChild(style);
 })();
-

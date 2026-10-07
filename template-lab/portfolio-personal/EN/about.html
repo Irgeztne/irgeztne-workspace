@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="About Aster Works and the creative process."><title>About — Aster Works</title>
+  <script>
+    (() => {
+      const queryTheme = new URLSearchParams(location.search).get("theme");
+      let theme = queryTheme === "dark" || queryTheme === "light" ? queryTheme : null;
+      if (!theme) {
+        try {
+          const savedTheme = localStorage.getItem("aster-works-theme");
+          if (savedTheme === "dark" || savedTheme === "light") theme = savedTheme;
+        } catch {}
+      }
+      if (!theme && window.matchMedia?.("(prefers-color-scheme: dark)").matches) theme = "dark";
+      document.documentElement.dataset.theme = theme || "light";
+    })();
+  </script>
+<link rel="stylesheet" href="../style.css"></head>
+<body>
+  <header class="site-header"><div class="header-inner shell">
+    <a class="brand" href="index.html" aria-label="Aster Works — home"><span class="brand-mark">A</span><span class="brand-copy"><strong>Aster Works</strong><small>Portfolio / personal site</small></span></a>
+    <nav class="main-nav" data-main-nav data-open="false" aria-label="Main navigation"><a href="index.html">Home</a><a href="works.html">Works</a><a href="about.html" aria-current="page">About</a><a href="about.html#process">Process</a><a href="contact.html">Contact</a></nav>
+    <div class="header-actions"><a class="header-cta" href="contact.html">Discuss a project</a><button class="theme-toggle" type="button" data-theme-toggle data-label-light="Switch to light theme" data-label-dark="Switch to dark theme" aria-label="Switch to dark theme">☾</button><button class="menu-toggle" type="button" data-menu-toggle aria-label="Open menu" aria-expanded="false">☰</button></div>
+  </div></header>
+  <main class="main shell">
+    <header class="page-intro"><span class="eyebrow">About</span><h1>Independent designer and editor of digital stories.</h1><p class="lead">I help small teams turn complex material into a clear product, publication or visual system.</p></header>
+    <section class="about-hero">
+      <article class="panel about-copy"><div><span class="eyebrow">Approach</span><h2>Content first. Form follows.</h2><p class="lead">I do not begin with a ready-made style. I begin with conversation, research and structure. The result is not a random shell; it continues the logic of the project itself.</p></div><div class="facts"><div class="fact"><strong>9 years</strong><span>in digital design</span></div><div class="fact"><strong>28</strong><span>completed launches</span></div><div class="fact"><strong>4</strong><span>long partnerships</span></div></div></article>
+      <figure class="panel about-media"><img src="../assets/portfolio-author-process.webp" alt="A creator's hands arranging project layouts and materials"></figure>
+    </section>
+    <section class="section-head" id="process"><div><span class="eyebrow">Process</span><h2>Three clear stages, with no black box.</h2></div><p>Decisions, working materials and the next step stay visible throughout. The project remains a shared conversation, not a closed production line.</p></section>
+    <section class="process-grid"><article><span>01 · Frame</span><h3>Understand the task</h3><p>Goal, audience, content, constraints and a shared definition of done.</p></article><article><span>02 · System</span><h3>Build the solution</h3><p>Architecture, visual direction, prototypes and working scenarios.</p></article><article><span>03 · Release</span><h3>Test it in life</h3><p>Responsive behavior, accessibility, final content and a clean handoff.</p></article></section>
+    <section class="split-panel"><article class="panel"><span class="eyebrow">I can help with</span><h2>Strategy, design and editing.</h2><div class="panel-list"><div><strong>01</strong><span><h3>Digital products</h3><p>Structure, interface, design system and launch.</p></span></div><div><strong>02</strong><span><h3>Author-led sites</h3><p>Portfolios, journals, cultural and research projects.</p></span></div><div><strong>03</strong><span><h3>Editorial series</h3><p>Content, visual rhythm and publication formats.</p></span></div></div></article><article class="note-card"><div><span class="eyebrow">Now</span><h3>Available for one new project this autumn.</h3></div><p><a class="button button-accent" href="contact.html">Share your brief</a></p></article></section>
+  </main>
+  <footer class="site-footer shell"><div><strong>Aster Works</strong><span>Independent portfolio · 2026</span></div><nav class="footer-nav" aria-label="Footer navigation"><a href="index.html">Home</a><a href="works.html">Works</a><a href="about.html">About</a><a href="about.html#process">Process</a><a href="contact.html">Contact</a></nav></footer>
+  <script src="../site.js"></script>
+</body>
+</html>

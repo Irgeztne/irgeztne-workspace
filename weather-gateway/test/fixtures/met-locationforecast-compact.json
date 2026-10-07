@@ -1,0 +1,76 @@
+{
+  "type": "Feature",
+  "geometry": {
+    "type": "Point",
+    "coordinates": [8.5417, 47.3769, 408]
+  },
+  "properties": {
+    "meta": {
+      "updated_at": "2026-09-11T09:00:00Z",
+      "units": {
+        "air_pressure_at_sea_level": "hPa",
+        "air_temperature": "celsius",
+        "precipitation_amount": "mm",
+        "relative_humidity": "%",
+        "wind_from_direction": "degrees",
+        "wind_speed": "m/s"
+      }
+    },
+    "timeseries": [
+      {
+        "time": "2026-09-11T12:00:00Z",
+        "data": {
+          "instant": {
+            "details": {
+              "air_pressure_at_sea_level": 1017.4,
+              "air_temperature": 14.2,
+              "relative_humidity": 68.0,
+              "wind_from_direction": 248.0,
+              "wind_speed": 3.5
+            }
+          },
+          "next_1_hours": {
+            "summary": { "symbol_code": "partlycloudy_day" },
+            "details": { "precipitation_amount": 0.1 }
+          }
+        }
+      },
+      {
+        "time": "2026-09-11T13:00:00Z",
+        "data": {
+          "instant": {
+            "details": {
+              "air_pressure_at_sea_level": 1017.0,
+              "air_temperature": 15.0,
+              "relative_humidity": 64.0,
+              "wind_from_direction": 252.0,
+              "wind_speed": 3.9
+            }
+          },
+          "next_1_hours": {
+            "summary": { "symbol_code": "rainshowers_day" },
+            "details": { "precipitation_amount": 0.4 }
+          }
+        }
+      },
+      {
+        "time": "2026-09-11T14:00:00Z",
+        "data": {
+          "instant": {
+            "details": {
+              "air_pressure_at_sea_level": 1016.6,
+              "air_temperature": 15.3,
+              "relative_humidity": 63.0,
+              "wind_from_direction": 255.0,
+              "wind_speed": 4.1
+            }
+          },
+          "next_6_hours": {
+            "summary": { "symbol_code": "cloudy" },
+            "details": { "precipitation_amount": 1.2 }
+          }
+        }
+      }
+    ]
+  }
+}

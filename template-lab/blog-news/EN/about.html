@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>About · Northline Journal</title>
+  <meta name="description" content="About the Northline Journal editorial desk and principles.">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:title" content="About · Northline Journal">
+  <meta property="og:description" content="About the Northline Journal editorial desk and principles.">
+  <meta name="theme-color" content="#c83e2b">
+  <script>
+    try {
+      const queryTheme = new URLSearchParams(location.search).get("theme");
+      const savedTheme = localStorage.getItem("irgeztne-blog-news-canon-theme");
+      document.documentElement.dataset.theme =
+        queryTheme === "dark" || queryTheme === "light"
+          ? queryTheme
+          : savedTheme === "dark" || savedTheme === "light"
+            ? savedTheme
+            : "light";
+    } catch {}
+  </script>
+  <link rel="stylesheet" href="../shared/styles.css">
+  <script src="../shared/site.js" defer></script>
+</head>
+<body data-page="about" data-nav-open="false">
+  
+  <header class="site-header">
+    <div class="header-shell">
+      <a class="brand" href="index.html" aria-label="Northline Journal">
+        <strong>Northline</strong>
+        <span>Journal</span>
+        <small>Independent digital journal</small>
+      </a>
+      <button class="menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-label="Open menu">☰</button>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="index.html">Home</a>
+        <a href="articles.html">Articles</a>
+        <a href="topics.html">Topics</a>
+        <a href="about.html" aria-current="page">About</a>
+      </nav>
+      <div class="header-actions">
+        <a class="subscribe-link" href="about.html#subscribe">Subscribe</a>
+        <button
+          class="theme-toggle"
+          type="button"
+          data-theme-toggle
+          data-label-dark="Switch to dark theme"
+          data-label-light="Switch to light theme"
+          aria-label="Switch to dark theme"
+        >☾</button>
+      </div>
+    </div>
+    <nav class="section-nav" aria-label="Editorial sections">
+      <div class="section-shell">
+        <a href="topics.html#technology">Technology</a><a href="topics.html#business">Business</a><a href="topics.html#culture">Culture</a><a href="topics.html#design">Design</a><a href="topics.html#guides">Guides</a><a href="topics.html#opinion">Opinion</a>
+      </div>
+    </nav>
+  </header>
+  <main class="main-shell">
+    
+    <section class="page-intro page-intro--about">
+      <div>
+        <p class="eyebrow">About the journal</p>
+        <h1>An independent digital publication about work, technology and ideas</h1>
+        <p>Northline Journal explains change without rushing and shows how new tools affect people, teams and digital products.</p>
+      </div>
+    </section>
+
+    <section class="mission-grid">
+      <div class="mission-copy">
+        <p class="eyebrow">Editorial mission</p>
+        <h2>Give readers context, verifiable facts and practical value. Short updates explain what happened; long reads show the causes and consequences.</h2>
+      </div>
+      <figure class="mission-image">
+        <img src="../assets/main.jpg" alt="A small editorial desk with a wide view" loading="lazy" data-template-slot="about.image" data-slot="about.image" data-slot-kind="image">
+      </figure>
+    </section>
+
+    <section class="principles-section">
+      <div class="section-heading section-heading--compact">
+        <div>
+          <p class="eyebrow">Our principles</p>
+          <h2>Our principles</h2>
+        </div>
+      </div>
+      <div class="principle-grid">
+        
+          <article>
+            <span>01</span>
+            <h3>Clarity</h3>
+            <p>Complex subjects are explained in precise, plain language.</p>
+          </article>
+          <article>
+            <span>02</span>
+            <h3>Context</h3>
+            <p>Facts come with sources, periods and useful explanation.</p>
+          </article>
+          <article>
+            <span>03</span>
+            <h3>Rhythm</h3>
+            <p>Readers choose between a quick brief and a long read.</p>
+          </article>
+          <article>
+            <span>04</span>
+            <h3>Independence</h3>
+            <p>Editorial logic is not shaped by advertising noise.</p>
+          </article>
+      </div>
+    </section>
+
+    <section class="team-subscribe">
+      <article>
+        <p class="eyebrow">A small editorial desk with a wide view</p>
+        <h2>A small editorial desk with a wide view</h2>
+        <p>Writers, researchers and designers work as one team: checking data, connecting topics and making stories worth returning to.</p>
+      </article>
+      <form
+        id="subscribe"
+        class="subscribe-form"
+        data-demo-form
+        data-demo-message="This is a template demonstration form."
+      >
+        <p class="eyebrow">Get the next edition</p>
+        <h2>Get the next edition</h2>
+        <p>One calm brief with the essential stories. This demo form does not send data.</p>
+        <label>
+          <span>Email address</span>
+          <input type="email" placeholder="reader@example.com" required>
+        </label>
+        <button class="button" type="submit">Subscribe</button>
+        <p class="form-status" data-form-status tabindex="-1" aria-live="polite"></p>
+      </form>
+    </section>
+  </main>
+  
+  <footer class="site-footer">
+    <div class="footer-shell">
+      <div class="footer-brand">
+        <strong>Northline Journal</strong>
+        <p>Stories, analysis and practical guides for modern teams.</p>
+        <small>Northline Journal · editorial template</small>
+      </div>
+      <nav class="footer-nav" aria-label="Footer navigation">
+        <a href="articles.html">Archive</a>
+        <a href="topics.html">All topics</a>
+        <a href="about.html">Editorial desk</a>
+        <a href="rss.xml">RSS</a>
+      </nav>
+      <div class="footer-meta">
+        <span>© 2026 Northline Journal</span>
+        <a href="mailto:editor@northline.example">editor@northline.example</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

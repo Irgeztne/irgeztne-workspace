@@ -2,7 +2,24 @@
   if (window.__IRGEZTNE_PREVIEW4_CARD_DRAG_V1__) return;
   window.__IRGEZTNE_PREVIEW4_CARD_DRAG_V1__ = true;
 
-  const STORAGE_KEY = 'irgeztne.preview4.cabinet.cardOrder.v1';
+  const STORAGE_KEY = 'irgeztne.preview4.cabinet.cardOrder.v3.tasks';
+  const DEFAULT_ORDER = [
+    'workspace',
+    'files',
+    'projects',
+    'documents',
+    'notes',
+    'rooms',
+    'tasks',
+    'tools',
+    'marketplace',
+    'codehub',
+    'site-pages',
+    'map',
+    'editor',
+    'fili-store',
+    'fili-safe'
+  ];
 
   function storageApi() {
     return window.nsAPI || null;
@@ -19,19 +36,28 @@
 
   function readOrder() {
     const api = storageApi();
-    if (api && typeof api.storageGetLayoutSync === 'function') {
-      const saved = api.storageGetLayoutSync(STORAGE_KEY, null);
-      if (Array.isArray(saved)) return saved;
 
-      // One-time migration from old LocalStorage value if present.
-      const legacy = readLegacyOrder();
-      if (legacy.length && typeof api.storageSetLayout === 'function') {
-        try { api.storageSetLayout(STORAGE_KEY, legacy); } catch (error) { console.warn('[IRGEZTNE Card Drag] migration failed', error); }
-        return legacy;
+    if (
+      api &&
+      typeof api.storageGetLayoutSync === 'function'
+    ) {
+      const saved = api.storageGetLayoutSync(
+        STORAGE_KEY,
+        null
+      );
+
+      if (Array.isArray(saved) && saved.length) {
+        return saved;
       }
-      return [];
+
+      return DEFAULT_ORDER.slice();
     }
-    return readLegacyOrder();
+
+    const saved = readLegacyOrder();
+
+    return saved.length
+      ? saved
+      : DEFAULT_ORDER.slice();
   }
 
   function saveOrder() {

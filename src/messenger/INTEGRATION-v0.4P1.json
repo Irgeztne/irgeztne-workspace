@@ -1,0 +1,8 @@
+{
+  "version": "0.4P1",
+  "secure_core": "0.4N2 frozen",
+  "mode": "local-secure-loopback",
+  "network": "disabled",
+  "ui": "full-office shell + collapsible rail + info drawer",
+  "checkpoint": "/home/acer/Загрузки/_CHECKPOINTS/workspace/20260815-113300-BEFORE-GREEN-LIGHTNING-v0.4P1"
+}

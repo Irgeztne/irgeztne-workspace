@@ -1,0 +1,29 @@
+/* IRGEZTNE Office Formula v1 — local source and MathML editor. */
+.ns-office-formula { display:grid; grid-template-rows:auto minmax(0,1fr); gap:12px; min-width:0; color:var(--text-1,#eaf2ff); }
+.ns-office-formula * { box-sizing:border-box; }
+.ns-office-formula__source { display:grid; gap:7px; color:var(--text-2,#aebbd0); font-size:12px; }
+.ns-office-formula input,.ns-office-formula textarea,.ns-office-formula button { border:1px solid rgba(112,170,255,.28); border-radius:10px; background:rgba(8,24,47,.92); color:var(--text-1,#eaf2ff); font:inherit; }
+.ns-office-formula input { min-height:36px; padding:7px 9px; }
+.ns-office-formula textarea { width:100%; min-height:340px; padding:16px; resize:vertical; outline:none; font:16px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace; }
+.ns-office-formula button { min-height:36px; padding:0 12px; font-size:12px; font-weight:760; cursor:pointer; }
+.ns-office-formula button:hover { border-color:rgba(93,175,255,.66); background:rgba(31,69,122,.92); }
+.ns-office-formula input:focus,.ns-office-formula textarea:focus,.ns-office-formula button:focus-visible { outline:none; border-color:#4c8dff; box-shadow:0 0 0 3px rgba(76,141,255,.18); }
+.ns-office-formula button:disabled { opacity:.44; cursor:not-allowed; }
+.ns-office-formula__toolbar { display:flex; flex-wrap:wrap; align-items:center; width:100%; gap:6px; }
+.ns-office-formula__object-title { flex:1 1 260px; min-width:220px; max-width:420px; }
+.ns-office-formula__toolbar button { flex:0 0 auto; min-height:32px; padding:0 9px; white-space:nowrap; }
+.ns-office-formula__layout { display:grid; grid-template-columns:minmax(320px,.8fr) minmax(360px,1.2fr); gap:12px; }
+.ns-office-formula__source,.ns-office-formula__preview { min-width:0; padding:16px; border:1px solid rgba(112,170,255,.22); border-radius:17px; background:rgba(7,22,43,.72); }
+.ns-office-formula__source small { color:var(--text-2,#aebbd0); line-height:1.45; }
+.ns-office-formula__preview { display:grid; align-content:start; gap:16px; min-height:420px; }
+.ns-office-formula__math { display:grid; place-items:center; min-height:260px; padding:24px; overflow:auto; border-radius:14px; background:#f8fbff; color:#10243d; font-size:34px; }
+.ns-office-formula__preview code { padding:12px; overflow:auto; border-radius:10px; background:rgba(2,13,28,.68); color:#a9c9ef; white-space:pre-wrap; }
+.ns-office-formula__error { padding:16px; border:1px solid rgba(244,91,105,.48); border-radius:12px; background:rgba(130,24,39,.2); color:#ffc3ca; line-height:1.55; }
+
+html[data-theme="light"] .ns-office-formula,body[data-theme="light"] .ns-office-formula { color:#10243d; }
+html[data-theme="light"] .ns-office-formula input,html[data-theme="light"] .ns-office-formula textarea,html[data-theme="light"] .ns-office-formula button,body[data-theme="light"] .ns-office-formula input,body[data-theme="light"] .ns-office-formula textarea,body[data-theme="light"] .ns-office-formula button { background:#e7f1fd; border-color:rgba(67,104,151,.38); color:#173957; }
+html[data-theme="light"] .ns-office-formula__source,html[data-theme="light"] .ns-office-formula__preview,body[data-theme="light"] .ns-office-formula__source,body[data-theme="light"] .ns-office-formula__preview { background:#f8fbff; border-color:rgba(67,104,151,.34); }
+html[data-theme="light"] .ns-office-formula__preview code,body[data-theme="light"] .ns-office-formula__preview code { background:#e8f0fa; color:#254b75; }
+html[data-theme="light"] .ns-office-formula__error,body[data-theme="light"] .ns-office-formula__error { background:#fff0f2; color:#8e2030; }
+
+@media (max-width:900px) { .ns-office-formula__layout { grid-template-columns:1fr; } }

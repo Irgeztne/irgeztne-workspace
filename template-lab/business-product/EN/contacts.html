@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A contact page for discussing a product, website, or business challenge.">
+    <meta name="theme-color" content="#17694b">
+    <title>Start a conversation · Meridian</title>
+    <script>
+      try {
+        const urlTheme = new URLSearchParams(location.search).get("theme");
+        const savedTheme = localStorage.getItem("irgeztne-business-canon-theme");
+        const initialTheme =
+          urlTheme === "dark" || urlTheme === "light" ? urlTheme : savedTheme;
+        if (initialTheme === "dark" || initialTheme === "light") {
+          document.documentElement.dataset.theme = initialTheme;
+        }
+      } catch {}
+    </script>
+    <link rel="stylesheet" href="../shared/styles.css">
+    <script defer src="../shared/site.js"></script>
+  </head>
+  <body data-page="contacts" data-nav-open="false">
+    
+    <header class="site-header">
+      <div class="header-shell">
+        <a class="brand" href="index.html" data-brand-text-fallback="true">
+          <strong>Meridian</strong>
+          <span>Business and product systems</span>
+        </a>
+        <nav class="site-nav" aria-label="Main navigation"><a href="index.html">Home</a><a href="services.html">Services</a><a href="about.html">Company</a><a href="contacts.html" aria-current="page">Contact</a></nav>
+        <div class="header-actions">
+          <a class="header-cta" href="contacts.html">Discuss a project</a>
+          <button
+            class="theme-toggle"
+            type="button"
+            data-theme-toggle
+            data-label-dark="Use dark theme"
+            data-label-light="Use light theme"
+            aria-label="Use dark theme"
+          >☾</button>
+          <button
+            class="menu-toggle"
+            type="button"
+            data-menu-toggle
+            aria-label="Open menu"
+            aria-expanded="false"
+          >☰</button>
+        </div>
+      </div>
+    </header>
+    
+    <main class="main-shell subpage">
+      <section class="contact-layout">
+        <article class="contact-panel">
+          <div><span class="eyebrow">Start a conversation</span><h1>Let’s begin with a short conversation and identify the next step quickly.</h1><p>Tell us what already exists, what is not working, and what outcome you need. A few sentences are enough for the first contact.</p></div>
+          <div class="contact-details">
+            <article class="contact-detail"><b>Email</b><a href="mailto:hello@example.com">hello@example.com</a><p>For the challenge and supporting material.</p></article>
+            <article class="contact-detail"><b>Phone</b><a href="tel:+994000000000">+994 00 000 00 00</a><p>Demonstration contact.</p></article>
+            <article class="contact-detail"><b>Format</b><strong>Online / Baku</strong><p>Working hours are agreed in advance.</p></article>
+            <article class="contact-detail"><b>Response</b><strong>1–2 business days</strong><p>No automated funnel.</p></article>
+          </div>
+        </article>
+        <article class="form-panel">
+          <h2>Tell us about the challenge</h2>
+          <p>This is a demonstration form: it shows the contact layout but does not submit data.</p>
+          <form class="contact-form" data-demo-form data-demo-message="Demonstration: no data was submitted.">
+            <label>Name<input name="name" autocomplete="name" placeholder="How should we address you?"></label>
+            <label>Email<input type="email" name="email" autocomplete="email" placeholder="name@example.com"></label>
+            <label>Challenge<textarea name="message" placeholder="What exists today and what outcome do you need?"></textarea></label>
+            <button class="button-primary" type="submit">Test the form</button>
+            <p class="form-note" data-form-status tabindex="-1">The canonical template has no connected server-side form owner.</p>
+          </form>
+        </article>
+      </section>
+      <section class="section statement"><div><span class="eyebrow">Before the call</span><h2>You do not need a technical brief spanning dozens of pages.</h2></div><p>Name the challenge, the current state, and the constraints. We will shape the remaining structure together after the x-ray.</p></section>
+    </main>
+    
+    <footer class="site-footer">
+      <div class="footer-shell">
+        <div class="footer-brand">
+          <strong>Meridian</strong>
+          <p>A calm business structure for companies, products, and services.</p>
+        </div>
+        <div class="footer-column">
+          <b>Sections</b>
+          <a href="services.html">Services</a>
+          <a href="about.html">Company</a>
+          <a href="contacts.html">Contact</a>
+        </div>
+        <div class="footer-column">
+          <b>Contact</b>
+          <a href="mailto:hello@example.com">hello@example.com</a>
+          <a href="tel:+994000000000">+994 00 000 00 00</a>
+        </div>
+      </div>
+      <div class="footer-bottom">© 2026 Meridian · Business Canon v1 demonstration content</div>
+    </footer>
+  </body>
+</html>

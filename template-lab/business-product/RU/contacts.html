@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="ru" data-theme="light">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Контактная страница для обсуждения продукта, сайта или бизнес-задачи.">
+    <meta name="theme-color" content="#17694b">
+    <title>Начать разговор · Meridian</title>
+    <script>
+      try {
+        const urlTheme = new URLSearchParams(location.search).get("theme");
+        const savedTheme = localStorage.getItem("irgeztne-business-canon-theme");
+        const initialTheme =
+          urlTheme === "dark" || urlTheme === "light" ? urlTheme : savedTheme;
+        if (initialTheme === "dark" || initialTheme === "light") {
+          document.documentElement.dataset.theme = initialTheme;
+        }
+      } catch {}
+    </script>
+    <link rel="stylesheet" href="../shared/styles.css">
+    <script defer src="../shared/site.js"></script>
+  </head>
+  <body data-page="contacts" data-nav-open="false">
+    
+    <header class="site-header">
+      <div class="header-shell">
+        <a class="brand" href="index.html" data-brand-text-fallback="true">
+          <strong>Meridian</strong>
+          <span>Системы для бизнеса и продукта</span>
+        </a>
+        <nav class="site-nav" aria-label="Главное меню"><a href="index.html">Главная</a><a href="services.html">Услуги</a><a href="about.html">О компании</a><a href="contacts.html" aria-current="page">Контакты</a></nav>
+        <div class="header-actions">
+          <a class="header-cta" href="contacts.html">Обсудить проект</a>
+          <button
+            class="theme-toggle"
+            type="button"
+            data-theme-toggle
+            data-label-dark="Включить тёмную тему"
+            data-label-light="Включить светлую тему"
+            aria-label="Включить тёмную тему"
+          >☾</button>
+          <button
+            class="menu-toggle"
+            type="button"
+            data-menu-toggle
+            aria-label="Открыть меню"
+            aria-expanded="false"
+          >☰</button>
+        </div>
+      </div>
+    </header>
+    
+    <main class="main-shell subpage">
+      <section class="contact-layout">
+        <article class="contact-panel">
+          <div><span class="eyebrow">Начать разговор</span><h1>Начнём с короткого разговора — и быстро поймём следующий шаг.</h1><p>Расскажите, что уже существует, что не работает и какой результат нужен. Для первого контакта достаточно нескольких предложений.</p></div>
+          <div class="contact-details">
+            <article class="contact-detail"><b>Почта</b><a href="mailto:hello@example.com">hello@example.com</a><p>Для описания задачи и материалов.</p></article>
+            <article class="contact-detail"><b>Телефон</b><a href="tel:+994000000000">+994 00 000 00 00</a><p>Демонстрационный контакт.</p></article>
+            <article class="contact-detail"><b>Формат</b><strong>Онлайн / Баку</strong><p>Рабочее время согласуем заранее.</p></article>
+            <article class="contact-detail"><b>Ответ</b><strong>1–2 рабочих дня</strong><p>Без автоматической воронки.</p></article>
+          </div>
+        </article>
+        <article class="form-panel">
+          <h2>Коротко о задаче</h2>
+          <p>Эта форма демонстрационная: она показывает компоновку контакта, но не отправляет данные.</p>
+          <form class="contact-form" data-demo-form data-demo-message="Демонстрация: данные не отправлены.">
+            <label>Имя<input name="name" autocomplete="name" placeholder="Как к вам обращаться"></label>
+            <label>Почта<input type="email" name="email" autocomplete="email" placeholder="name@example.com"></label>
+            <label>Задача<textarea name="message" placeholder="Что уже есть и какой результат нужен"></textarea></label>
+            <button class="button-primary" type="submit">Проверить форму</button>
+            <p class="form-note" data-form-status tabindex="-1">В каноническом шаблоне серверный владелец формы не подключён.</p>
+          </form>
+        </article>
+      </section>
+      <section class="section statement"><div><span class="eyebrow">До разговора</span><h2>Не нужно готовить техническое задание на десятки страниц.</h2></div><p>Достаточно назвать задачу, текущую точку и ограничения. Остальную структуру мы соберём вместе после рентгена.</p></section>
+    </main>
+    
+    <footer class="site-footer">
+      <div class="footer-shell">
+        <div class="footer-brand">
+          <strong>Meridian</strong>
+          <p>Спокойная бизнес-структура для компаний, продуктов и сервисов.</p>
+        </div>
+        <div class="footer-column">
+          <b>Разделы</b>
+          <a href="services.html">Услуги</a>
+          <a href="about.html">О компании</a>
+          <a href="contacts.html">Контакты</a>
+        </div>
+        <div class="footer-column">
+          <b>Связаться</b>
+          <a href="mailto:hello@example.com">hello@example.com</a>
+          <a href="tel:+994000000000">+994 00 000 00 00</a>
+        </div>
+      </div>
+      <div class="footer-bottom">© 2026 Meridian · Демонстрационный контент Business Canon v1</div>
+    </footer>
+  </body>
+</html>

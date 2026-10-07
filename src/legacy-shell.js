@@ -55,7 +55,7 @@ function normalizeWorkspaceLabel(value) {
     ['Документы','Office'],
     ['Карта','Map'],
     ['Комнаты','Rooms'],
-    ['Аналитика','Analytics'],
+    ['Задачи','Tasks'],
     ['Инструменты','Tools'],
     ['Шаблоны','Templates'],
     ['Главная','Home'],
@@ -78,7 +78,7 @@ function normalizeWorkspaceLabel(value) {
     ['документы','Office'],
     ['карта','Map'],
     ['комнаты','Rooms'],
-    ['аналитика','Analytics'],
+    ['задачи','Tasks'],
     ['инструменты','Tools'],
     ['каталог','Templates'],
     ['главная','Home']
@@ -110,12 +110,15 @@ function normalizeProjectMetaText(text) {
   let homeDashboardSubscribed = false;
 
   bindWorkspace();
+  bindStartRailFullOwnerV04P17();
   bindCabinet();
   bindHomeShortcuts();
   initHomeDashboard();
   applyWorkspaceUi();
   syncCabinetUi();
   setWorkspaceSection(state.activeWorkspaceSection);
+  ensureWorkspaceFullContractStyle();
+  window.setTimeout(scheduleWorkspaceNavigationContractSync, 0);
 
   function bindWorkspace() {
     els.workspaceToggle?.addEventListener('click', () => {
@@ -198,15 +201,319 @@ function normalizeProjectMetaText(text) {
     }
   }
 
+  function closeWorkspaceSurfacesForHome() {
+    if (state.isCabinetOpen) closeCabinet();
+
+    if (state.workspaceEnabled) {
+      setWorkspaceEnabled(false);
+      setWorkspaceMode('normal');
+    }
+  }
+
+  function activateRealWorkspaceHome() {
+    closeWorkspaceSurfacesForHome();
+
+    const homeBtn = document.getElementById('homeBtn');
+    if (homeBtn) {
+      homeBtn.click();
+      return;
+    }
+
+    // Fallback for a future shell where the browser Home control is absent.
+    document.dispatchEvent(new CustomEvent('irgeztne:start-search', {
+      detail: { query: 'irgeztne://workspace' }
+    }));
+  }
+
+  function ensureWorkspaceFullContractStyle() {
+    let style = document.getElementById('workspaceFullContractStyleV04P13');
+    if (style) return style;
+
+    style = document.createElement('style');
+    style.id = 'workspaceFullContractStyleV04P13';
+    style.textContent = `
+      body.is-workspace-full-module-open .cabinet-expanded-header {
+        min-height: 44px !important;
+        padding: 5px 12px !important;
+        gap: 8px !important;
+        align-items: center !important;
+      }
+      body.is-workspace-full-module-open .cabinet-expanded-left,
+      body.is-workspace-full-module-open .cabinet-expanded-right {
+        min-height: 32px !important;
+        align-items: center !important;
+      }
+      body.is-workspace-full-module-open .cabinet-expanded-left {
+        gap: 10px !important;
+      }
+      body.is-workspace-full-module-open .cabinet-expanded-title {
+        line-height: 1.05 !important;
+        margin: 0 !important;
+      }
+      body.is-workspace-full-module-open .cabinet-expanded-subtitle {
+        line-height: 1.15 !important;
+        margin-top: 2px !important;
+      }
+      body.is-workspace-full-module-open .cabinet-expanded-right {
+        gap: 7px !important;
+        height: 32px !important;
+        min-height: 32px !important;
+        max-height: 32px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-end !important;
+      }
+      body.is-workspace-full-module-open #workspaceFullLanguageBtn {
+        width: 44px !important;
+        min-width: 44px !important;
+        height: 32px !important;
+        min-height: 32px !important;
+        margin: 0 !important;
+        padding: 0 8px !important;
+        border-radius: 9px !important;
+      }
+      body.is-workspace-full-module-open #cabinetCloseBtnExpanded,
+      body.is-workspace-full-module-open #cabinetBackBtn {
+        width: 32px !important;
+        min-width: 32px !important;
+        height: 32px !important;
+        min-height: 32px !important;
+        border-radius: 9px !important;
+      }
+      body.is-workspace-full-module-open .cabinet-inner-nav {
+        min-height: 36px !important;
+        padding: 5px 12px !important;
+        gap: 6px !important;
+        align-items: center !important;
+      }
+      body.is-workspace-full-module-open .cabinet-inner-nav-btn {
+        min-height: 26px !important;
+        padding: 4px 9px !important;
+        line-height: 1 !important;
+      }
+    `;
+    document.head.appendChild(style);
+    return style;
+  }
+
+  // IRGEZTNE_TASKS_CANONICAL_ROUTE_V05T1B
+  const FULL_NAV_CONTRACT_V04P13 = [
+    { key: 'workspace', section: 'workspace', en: 'Home', ru: 'Главная' },
+    { key: 'files', section: 'files', en: 'Files', ru: 'Файлы' },
+    { key: 'projects', section: 'projects', en: 'Projects', ru: 'Проекты' },
+    { key: 'documents', section: 'documents', en: 'Office', ru: 'Офис' },
+    { key: 'notes', section: 'notes', en: 'Notes', ru: 'Заметки' },
+    { key: 'tasks', section: 'tasks', en: 'Tasks', ru: 'Задачи' },
+    { key: 'tools', section: 'tools', en: 'Tools', ru: 'Инструменты' },
+    { key: 'rooms', section: 'rooms', en: 'Chat', ru: 'Чат' },
+    { key: 'templates', deepLink: 'templates', en: 'Templates', ru: 'Шаблоны' },
+    { key: 'workshop', deepLink: 'workshop', en: 'Workshop', ru: 'Мастерская' },
+    { key: 'site-pages', section: 'site-pages', en: 'Web Studio', ru: 'Веб-студия' }
+  ];
+
+  function normalizeFullModuleNavigation() {
+    const nav = document.getElementById('cabinetInnerNav');
+    if (!nav) return;
+
+    const keep = new Set();
+    for (const item of FULL_NAV_CONTRACT_V04P13) {
+      let button = null;
+      if (item.section) {
+        button = nav.querySelector(`.cabinet-inner-nav-btn[data-section="${item.section}"]`);
+      } else {
+        button = nav.querySelector(`.cabinet-inner-nav-btn[data-workspace-deep-link="${item.deepLink}"]`);
+      }
+
+      if (!button) {
+        button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'cabinet-inner-nav-btn';
+        if (item.deepLink) button.dataset.workspaceDeepLink = item.deepLink;
+      }
+
+      button.textContent = isRu() ? item.ru : item.en;
+      button.hidden = false;
+      button.style.removeProperty('display');
+      keep.add(button);
+      nav.appendChild(button);
+    }
+
+    Array.from(nav.children).forEach((button) => {
+      if (keep.has(button)) return;
+      // Keep old route nodes in the DOM for legacy queries, but remove them from
+      // the visible navigation contract.
+      button.hidden = true;
+      button.style.setProperty('display', 'none', 'important');
+    });
+  }
+
+  function normalizeWorkspaceHomeCardOrder() {
+    const grid = document.querySelector('.irgeztne-start-quick');
+    if (!grid) return false;
+
+    const selectors = [
+      '.irgeztne-start-card--files',
+      '.irgeztne-start-card--projects',
+      '.irgeztne-start-card--office',
+      '.irgeztne-start-card--notes',
+      '.irgeztne-start-card--tasks',
+      '.irgeztne-start-card--tools',
+      '.irgeztne-start-card--rooms',
+      '.irgeztne-start-card--templates',
+      '.irgeztne-start-card--workshop',
+      '.irgeztne-start-card--web'
+    ];
+
+    const cards = selectors.map((selector) => grid.querySelector(selector)).filter(Boolean);
+    if (cards.length < 8) return false;
+    cards.forEach((card) => grid.appendChild(card));
+    return true;
+  }
+
+  function scheduleWorkspaceNavigationContractSync() {
+    normalizeFullModuleNavigation();
+    normalizeWorkspaceHomeCardOrder();
+    window.setTimeout(() => {
+      normalizeFullModuleNavigation();
+      normalizeWorkspaceHomeCardOrder();
+    }, 0);
+    window.setTimeout(() => {
+      normalizeFullModuleNavigation();
+      normalizeWorkspaceHomeCardOrder();
+    }, 120);
+  }
+
+  function openWorkspaceDeepLink(kind) {
+    const selector = kind === 'templates'
+      ? '.irgeztne-start-card--templates'
+      : '.irgeztne-start-card--workshop';
+    const source = document.querySelector(selector);
+    if (!source) return false;
+
+    // Reuse the already-accepted Home-card route instead of inventing another
+    // Templates / Workshop router in the Full shell.
+    closeCabinet();
+    window.setTimeout(() => source.click(), 0);
+    return true;
+  }
+
+  function ensureFullModuleLanguageButton() {
+    const right = els.cabinetCloseBtnExpanded && els.cabinetCloseBtnExpanded.parentElement;
+    if (!right) return null;
+
+    let button = document.getElementById('workspaceFullLanguageBtn');
+    if (!button) {
+      button = document.createElement('button');
+      button.type = 'button';
+      button.id = 'workspaceFullLanguageBtn';
+      button.className = 'utility-btn';
+      button.setAttribute('aria-label', 'Workspace language');
+      button.setAttribute('title', 'Workspace language');
+      button.style.width = '44px';
+      button.style.minWidth = '44px';
+      button.style.minHeight = '32px';
+      button.style.fontSize = '12px';
+      button.style.fontWeight = '700';
+      button.style.letterSpacing = '0.08em';
+      button.style.marginRight = '0';
+      button.hidden = true;
+
+      button.addEventListener('click', () => {
+        // Reuse the one existing Workspace language owner. The browser control is
+        // visually hidden in Full mode, but it remains the canonical RU/EN switch.
+        const owner = document.getElementById('languageToggleBtn');
+        if (!owner || owner === button) return;
+        owner.click();
+        window.setTimeout(syncFullModuleLanguageButton, 0);
+      });
+
+      right.insertBefore(button, els.cabinetCloseBtnExpanded || null);
+    }
+
+    return button;
+  }
+
+  function syncFullModuleLanguageButton() {
+    const button = ensureFullModuleLanguageButton();
+    if (!button) return;
+
+    const owner = document.getElementById('languageToggleBtn');
+    const ownerLabel = owner ? String(owner.textContent || '').trim().toUpperCase() : '';
+    const htmlLang = String(document.documentElement.lang || '').trim().toLowerCase();
+    button.textContent = ownerLabel === 'RU' || ownerLabel === 'EN'
+      ? ownerLabel
+      : (htmlLang === 'ru' ? 'RU' : 'EN');
+
+    const ru = button.textContent === 'RU';
+    button.setAttribute('title', ru ? 'Язык Workspace' : 'Workspace language');
+    button.setAttribute('aria-label', ru ? 'Язык Workspace' : 'Workspace language');
+  }
+
+  function setFullModuleLanguageButtonVisible(visible) {
+    const button = ensureFullModuleLanguageButton();
+    if (!button) return;
+    button.hidden = !visible;
+    if (visible) syncFullModuleLanguageButton();
+  }
+
+  function bindStartRailFullOwnerV04P17() {
+    // IRGEZTNE_START_RAIL_FULL_OWNER_V04P17
+    // The visible Workspace Home rail is created by src/browser/tabs.js.
+    // Its ordinary module buttons use data-open-section, but their old generic
+    // bubbling route is not reliable on the start surface. Own only this rail,
+    // in capture phase, and reuse the already-stable Full Cabinet router.
+    //
+    // Deliberately excluded here:
+    // - site-pages / marketplace: Web Studio's direct bridge already owns them;
+    // - codehub: Workshop belongs inside Web Studio and is a separate deep link;
+    // - Home cards: they keep their existing compact/right-panel behaviour.
+    if (document.documentElement.dataset.irgeztneStartRailFullOwnerV04P17 === '1') return;
+    document.documentElement.dataset.irgeztneStartRailFullOwnerV04P17 = '1';
+
+    const fullSections = new Set([
+      'files',
+      'projects',
+      'documents',
+      'notes',
+      'tasks',
+      'tools',
+      'rooms'
+    ]);
+
+    document.addEventListener('click', (event) => {
+      const button = event.target && event.target.closest
+        ? event.target.closest('.irgeztne-start-nav button[data-open-section]')
+        : null;
+      if (!button) return;
+
+      const section = String(button.dataset.openSection || '').trim();
+      if (!fullSections.has(section)) return;
+
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      showCabinetSection(section);
+    }, true);
+  }
+
   function bindCabinet() {
     document.addEventListener('irgeztne:global-navigation-start', () => {
-      if (state.isCabinetOpen) closeCabinet();
-
-      if (state.workspaceEnabled) {
-        setWorkspaceEnabled(false);
-        setWorkspaceMode('normal');
-      }
+      closeWorkspaceSurfacesForHome();
     });
+
+    document.addEventListener('irg:language-changed', () => {
+      syncFullModuleLanguageButton();
+      scheduleWorkspaceNavigationContractSync();
+      // Global localization can rewrite the expanded header after the module
+      // rendered. Reassert the active full-module owner after that pass.
+      window.setTimeout(syncCabinetUi, 80);
+      window.setTimeout(syncCabinetUi, 220);
+    });
+
+    // Browser-shell Home must always escape any open Cabinet/full-module surface.
+    // The tabs owner then activates the one real Workspace start page.
+    document.getElementById('homeBtn')?.addEventListener('click', () => {
+      closeWorkspaceSurfacesForHome();
+    }, true);
 
     els.hamburgerBtn?.addEventListener('click', () => {
       if (state.isCabinetOpen) closeCabinet();
@@ -226,10 +533,18 @@ function normalizeProjectMetaText(text) {
     els.cabinetCloseBtn?.addEventListener('click', closeCabinet);
     els.cabinetCloseBtnExpanded?.addEventListener('click', closeCabinet);
     els.cabinetBackBtn?.addEventListener('click', () => {
-      closeCabinet();
+      activateRealWorkspaceHome();
     });
 
     document.addEventListener('click', (event) => {
+      const deepLink = event.target.closest('.cabinet-inner-nav-btn[data-workspace-deep-link]');
+      if (deepLink) {
+        event.preventDefault();
+        event.stopPropagation();
+        openWorkspaceDeepLink(String(deepLink.dataset.workspaceDeepLink || ''));
+        return;
+      }
+
       const tile = event.target.closest('[data-open-section]');
       if (tile) {
         const section = String(tile.dataset.openSection || 'workspace');
@@ -242,6 +557,10 @@ function normalizeProjectMetaText(text) {
         const section = String(inner.dataset.section || 'workspace');
         showCabinetSection(section);
       }
+    });
+
+    document.addEventListener('irgeztne:open-account-surface', () => {
+      showCabinetSection('account');
     });
 
     document.addEventListener('keydown', (event) => {
@@ -512,6 +831,23 @@ function normalizeProjectMetaText(text) {
 
   function showCabinetSection(section) {
     const next = String(section || 'workspace');
+
+    // IRGEZTNE_FLOATING_WINDOW_MANAGER_BEFORE_V04P17B
+    const floatingWindowManagerP17B = window.__IRGEZTNE_FLOATING_WINDOW_MANAGER_V04P17B;
+    const floatingWindowIntentP17B = (
+      floatingWindowManagerP17B &&
+      typeof floatingWindowManagerP17B.beforeLegacyRoute === 'function'
+    ) ? floatingWindowManagerP17B.beforeLegacyRoute(next) : null;
+
+
+
+    // There is only one Home in Workspace: the browser start page.
+    // Do not open the old Cabinet 'workspace' page as a second Home.
+    if (next === 'workspace') {
+      activateRealWorkspaceHome();
+      return;
+    }
+
     state.activeCabinetSection = next;
     state.isCabinetOpen = true;
     state.cabinetMode = 'expanded';
@@ -523,6 +859,8 @@ function normalizeProjectMetaText(text) {
     if (els.cabinetExpandedSubtitle) {
       els.cabinetExpandedSubtitle.textContent = getCabinetSubtitle(next);
     }
+
+    normalizeFullModuleNavigation();
 
     document.querySelectorAll('.cabinet-inner-nav-btn').forEach((button) => {
       const isActive = button.dataset.section === next;
@@ -553,11 +891,67 @@ function normalizeProjectMetaText(text) {
     }
 
     syncCabinetUi();
+
+    // IRGEZTNE_FLOATING_WINDOW_MANAGER_AFTER_V04P17B
+    if (
+      floatingWindowIntentP17B &&
+      floatingWindowManagerP17B &&
+      typeof floatingWindowManagerP17B.afterLegacyRoute === 'function'
+    ) {
+      floatingWindowManagerP17B.afterLegacyRoute(next, floatingWindowIntentP17B);
+    }
   }
 
   function syncCabinetUi() {
     const isOpen = state.isCabinetOpen;
     const expanded = isOpen && state.cabinetMode === 'expanded';
+    const fullModuleShellOpen = expanded && [
+      'files',
+      'projects',
+      'notes',
+      'documents',
+      'site-pages',
+      'tools',
+      'rooms',
+      'tasks',
+      'account'
+    ].includes(state.activeCabinetSection);
+
+    // Full Workspace modules reuse the already-stable Full Office shell behavior:
+    // the browser chrome is hidden and the active module owns the wide surface.
+    // Home keeps the browser. Templates/Workshop are intentionally not folded into
+    // this rule here because their final ownership belongs inside Web Studio.
+    // Keep the legacy class name: existing CSS already owns the proven behavior.
+    document.body.classList.toggle('is-office-shell-open', fullModuleShellOpen);
+    document.body.classList.toggle('is-workspace-full-module-open', fullModuleShellOpen);
+    if (fullModuleShellOpen) document.body.dataset.workspaceFullModule = state.activeCabinetSection;
+    else delete document.body.dataset.workspaceFullModule;
+
+    const accountFullSurface = fullModuleShellOpen && state.activeCabinetSection === 'account';
+    const innerNav = document.getElementById('cabinetInnerNav');
+    if (innerNav) {
+      innerNav.hidden = accountFullSurface;
+      if (accountFullSurface) innerNav.style.setProperty('display', 'none', 'important');
+      else innerNav.style.removeProperty('display');
+    }
+
+    if (fullModuleShellOpen && !accountFullSurface) normalizeFullModuleNavigation();
+    else if (!fullModuleShellOpen) normalizeWorkspaceHomeCardOrder();
+
+    if (expanded) {
+      if (els.cabinetExpandedTitle) els.cabinetExpandedTitle.textContent = getCabinetTitle(state.activeCabinetSection);
+      if (els.cabinetExpandedSubtitle) els.cabinetExpandedSubtitle.textContent = getCabinetSubtitle(state.activeCabinetSection);
+      document.querySelectorAll('.cabinet-inner-nav-btn').forEach((button) => {
+        const active = button.dataset.section === state.activeCabinetSection;
+        button.classList.toggle('active', active);
+        button.setAttribute('aria-pressed', String(active));
+      });
+    }
+
+    // v0.4P12: Full Workspace modules keep exactly one global control from the
+    // hidden Browser Shell: RU/EN. Web Studio is excluded because it already owns
+    // its own language control and should not receive a duplicate button.
+    setFullModuleLanguageButtonVisible(fullModuleShellOpen && state.activeCabinetSection !== 'site-pages');
 
     els.cabinetOverlay?.classList.toggle('hidden', !isOpen);
     els.cabinetOverlay?.setAttribute('aria-hidden', String(!isOpen));
@@ -571,6 +965,18 @@ function normalizeProjectMetaText(text) {
     if (els.cabinetOverlay) {
       els.cabinetOverlay.dataset.cabinetMode = state.cabinetMode;
       els.cabinetOverlay.dataset.cabinetSection = state.activeCabinetSection;
+
+      // v0.4P2: expanded real modules must own the complete application surface.
+      // The base Cabinet CSS intentionally reserves topbar + tabsbar height.
+      // Full Office hides that browser chrome, so keeping the reserved inset
+      // exposes the page underneath (the visible strip seen above Full Chat).
+      // Apply the geometry at the shared Cabinet owner instead of patching
+      // Green Lightning / Office / every module separately.
+      if (fullModuleShellOpen) {
+        els.cabinetOverlay.style.setProperty('inset', '0px', 'important');
+      } else {
+        els.cabinetOverlay.style.removeProperty('inset');
+      }
     }
   }
 
@@ -1061,7 +1467,7 @@ function openLibraryItemInTab(fileId) {
       rooms: tr('Chat', 'Чат'),
       'fili-store': 'Fili Store',
       'fili-safe': 'Fili Safe',
-      analytics: tr('Analytics', 'Аналитика'),
+      tasks: tr('Tasks', 'Задачи'),
       files: tr('Files', 'Файлы'),
       projects: tr('Projects', 'Проекты'),
       notes: tr('Notes', 'Заметки'),
@@ -1073,6 +1479,7 @@ function openLibraryItemInTab(fileId) {
       codehub: tr('Web Workshop', 'Веб-мастерская'),
       marketplace: tr('Templates', 'Шаблоны'),
       map: tr('Map', 'Карта'),
+      account: tr('Account', 'Аккаунт'),
       workspace: tr('Home', 'Главная')
     };
     return map[section] || tr('Section', 'Раздел');
@@ -1085,11 +1492,11 @@ function openLibraryItemInTab(fileId) {
       rooms: tr('Simple encrypted-ready project chat.', 'Простой проектный чат с основой под шифрование.'),
       'fili-store': tr('Useful file catalog shell; no payments or credits in v0', 'Оболочка полезного файлового каталога; без оплат и credits в v0'),
       'fili-safe': tr('Local safe/profile shell for future signatures and File Credits', 'Локальная безопасная зона для будущих подписей и File Credits'),
-      analytics: tr('Local analytics for site pages, templates, documents, preview/export, and publishing.', 'Локальная аналитика страниц сайта, шаблонов, документов, preview/export и публикации.'),
+      tasks: tr('Personal and project tasks, next actions, and working context.', 'Личные и проектные задачи, следующие действия и рабочий контекст.'),
       files: tr('Sources, uploads, and documents', 'Источники, загрузки и документы'),
       projects: tr('Project containers and workspace flow', 'Контейнеры проектов и рабочий поток'),
       notes: tr('Linked notes and references', 'Связанные заметки и ссылки'),
-      documents: tr('Lightweight Writer for articles, reports, research, and Markdown/HTML export', 'Лёгкий Writer для статей, отчётов, исследований и Markdown/HTML-экспорта'),
+      documents: tr('Native workspace for documents, spreadsheets, presentations, diagrams, and formulas', 'Родное рабочее пространство для документов, таблиц, презентаций, диаграмм и формул'),
       'site-pages': tr('Site identity, pages, menu, and publishing foundation', 'Identity сайта, страницы, меню и основа публикации'),
       'site-pages': tr('Site identity, Pages Manager, menu foundation, and future build/export flow', 'Идентичность сайта, Pages Manager, основа меню и будущий build/export flow'),
       tools: tr('Utilities for files, images, PDF, text and publishing', 'Утилиты для файлов, изображений, PDF, текста и публикации'),
@@ -1098,6 +1505,7 @@ function openLibraryItemInTab(fileId) {
       codehub: tr('Package drafts and template preparation', 'Черновики пакетов и подготовка шаблонов'),
       marketplace: tr('Templates, themes, packs, and submitted Templates items', 'Шаблоны, темы, паки и отправленные элементы Шаблоныа'),
       map: tr('Canvas map for research, regions, projects, and future file links', 'Canvas-карта для исследований, регионов, проектов и будущих связей с файлами'),
+      account: tr('Connected identity, trusted device, services, and security', 'Подключённая идентичность, доверенное устройство, сервисы и безопасность'),
       workspace: tr('Main launch point for files, notes, projects, editor, and bookmarks', 'Главная точка запуска для файлов, заметок, проектов, редактора и закладок')
     };
     return map[section] || tr('Workspace section', 'Раздел пространства');

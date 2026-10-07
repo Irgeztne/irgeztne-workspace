@@ -1,0 +1,125 @@
+/*
+ IRGEZTNE Workspace — Green Lightning Reactions v0.4P17
+
+ Real persisted reactions:
+ - encrypted through the same MLS application channel
+ - stored in SQLCipher outgoing history as invisible application events
+ - aggregated back onto real message cards
+*/
+
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p17-reactions {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 5px !important;
+  width: auto !important;
+  height: auto !important;
+  margin: 7px 0 0 !important;
+  overflow: visible !important;
+}
+
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p17-reaction-chip {
+  min-width: 34px;
+  height: 27px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 2px 8px;
+  border: 1px solid rgba(139,181,211,.24);
+  border-radius: 999px;
+  background: rgba(3,16,27,.22);
+  color: #d6e4ef;
+  font: inherit;
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    transform .12s ease,
+    border-color .12s ease,
+    background .12s ease;
+}
+
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p17-reaction-chip:hover,
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p17-reaction-chip:focus-visible {
+  transform: translateY(-1px);
+  border-color: rgba(127,199,181,.55);
+  background: rgba(14,53,57,.34);
+  outline: none;
+}
+
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p17-reaction-chip.is-active {
+  border-color: rgba(103,215,185,.72);
+  background: rgba(28,102,83,.38);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+}
+
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p17-reaction-count {
+  color: #9eb7c9;
+  font-size: 11.5px;
+  line-height: 1;
+}
+
+/* P17 expands the already accepted P16 actions menu just enough for quick reactions. */
+.gl-p16-message-menu {
+  width: 242px;
+}
+
+.gl-p17-reaction-picker {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 4px;
+  padding: 2px 1px 6px;
+}
+
+.gl-p17-reaction-choice {
+  height: 34px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: transparent;
+  color: #e5eef6;
+  font: inherit;
+  font-size: 18px;
+  cursor: pointer;
+  transition:
+    transform .12s ease,
+    border-color .12s ease,
+    background .12s ease;
+}
+
+.gl-p17-reaction-choice:hover,
+.gl-p17-reaction-choice:focus-visible {
+  transform: translateY(-1px) scale(1.05);
+  border-color: rgba(127,199,181,.42);
+  background: rgba(43,108,105,.20);
+  outline: none;
+}
+
+.gl-p17-reaction-choice.is-active {
+  border-color: rgba(103,215,185,.68);
+  background: rgba(28,102,83,.34);
+}
+
+.gl-p17-reaction-picker-label {
+  grid-column: 1 / -1;
+  padding: 2px 5px 3px;
+  color: #7f9bb0;
+  font-size: 10.5px;
+  line-height: 1.2;
+}
+
+/* Reuse the compact P16 toast surface for reaction failures. */
+.gl-p16-copy-toast.gl-p17-reaction-toast {
+  border-color: rgba(87,188,164,.45);
+  background: rgba(7,30,39,.96);
+  color: #9fe0cf;
+}
+
+.gl-p16-copy-toast.gl-p17-reaction-toast.is-error {
+  border-color: rgba(255,127,144,.40);
+  background: rgba(45,18,25,.96);
+  color: #ffc0c8;
+}

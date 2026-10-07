@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Discuss a project with Vector Atelier."><title>Contact · Vector Atelier</title>
+  <script>
+    (() => {
+      const queryTheme = new URLSearchParams(location.search).get("theme");
+      let theme = queryTheme === "dark" || queryTheme === "light" ? queryTheme : null;
+      if (!theme) {
+        try {
+          const savedTheme = localStorage.getItem("vector-atelier-theme");
+          if (savedTheme === "dark" || savedTheme === "light") theme = savedTheme;
+        } catch {}
+      }
+      if (!theme && window.matchMedia?.("(prefers-color-scheme: dark)").matches) theme = "dark";
+      document.documentElement.dataset.theme = theme || "light";
+    })();
+  </script>
+<link rel="stylesheet" href="../style.css"></head>
+<body><header class="site-header"><div class="header-inner"><a class="brand" href="index.html"><span class="brand-mark">V</span><span><strong>Vector Atelier</strong><small>Agency · Creative studio</small></span></a><nav class="main-nav" aria-label="Main navigation"><a href="index.html">Home</a><a href="cases.html">Cases</a><a href="services.html">Services</a><a href="process.html">Process</a><a href="contact.html" aria-current="page">Contact</a></nav><div class="header-actions"><a class="header-cta" href="contact.html">Discuss a project</a><button class="theme-toggle" data-theme-toggle data-dark-label="Use dark theme" data-light-label="Use light theme" aria-label="Use dark theme">☾</button><button class="menu-toggle" data-menu-toggle aria-label="Open menu" aria-expanded="false">≡</button></div></div></header>
+<main><section class="contact-layout"><div class="contact-panel surface"><span class="eyebrow">Contact</span><h2>Tell us what should change after the project.</h2><p>You do not need a finished brief for the first conversation. Describe the challenge, current situation and the outcome you want to create.</p><ul class="brief-list"><li>What are you creating or changing?</li><li>Who is the project for?</li><li>What do you already have?</li><li>What outcome would be useful?</li></ul></div><aside class="contact-card surface"><span class="eyebrow">Your contact area</span><h2>Connect the channel that fits.</h2><p>Replace this neutral block with a form, email address, meeting calendar or your own request system.</p><span class="button primary">Site owner's contact</span></aside></section>
+<section class="section-head"><div><span class="eyebrow">What happens next</span><h2>We first clarify the challenge and the right format.</h2></div><p>After the initial contact, define the scope, decision points and materials needed for a confident start.</p></section><section class="proof-grid"><article class="proof-card"><h3>Introduction</h3><p>Discuss the context, purpose and constraints.</p></article><article class="proof-card"><h3>Proposal</h3><p>Define the scope, stages and expected outputs.</p></article><article class="proof-card"><h3>Start</h3><p>Gather materials and begin the first working cycle.</p></article><article class="proof-card"><h3>Review</h3><p>Confirm the direction before deeper production.</p></article></section></main>
+<footer class="site-footer"><div class="footer-inner"><div><strong>Vector Atelier</strong><span>Agency and creative studio</span></div><nav aria-label="Footer navigation"><a href="index.html">Home</a><a href="cases.html">Cases</a><a href="services.html">Services</a><a href="process.html">Process</a><a href="contact.html">Contact</a></nav></div></footer><script src="../site.js"></script></body></html>

@@ -1,5 +1,10 @@
 # IRGEZTNE Preview.4 — Current State
 
+> **Historical snapshot:** this file records the Storage Core state on
+> 2026-05-22 and is not the current cross-module release status. Use
+> [`docs/release/00-READ-ME-FIRST.md`](docs/release/00-READ-ME-FIRST.md) for the
+> canonical documentation index. The dated evidence below is retained unchanged.
+
 ## Current stable point
 
 Date: 2026-05-22

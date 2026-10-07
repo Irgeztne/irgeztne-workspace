@@ -1,0 +1,151 @@
+/*
+  IRGEZTNE Workspace — Green Lightning Chat Typography Owner Fix v0.4P11a
+
+  Purpose:
+  - defeat the accumulated P3..P10 typography cascade in Chat only
+  - Full and Floating Chat share the same data-cabinet-panel="rooms" owner
+  - no JS, IPC, storage, MLS or SQLCipher changes
+
+  IMPORTANT is intentional here and limited to font metrics/readability.
+*/
+
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1 {
+  font-size: 14px !important;
+  line-height: 1.48 !important;
+}
+
+/* Left rail */
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-rail-title strong {
+  font-size: 16px !important;
+  line-height: 1.25 !important;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-rail-title span {
+  font-size: 12.5px !important;
+  line-height: 1.4 !important;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-rail-search,
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-rail-search input {
+  font-size: 13.5px !important;
+  line-height: 1.4 !important;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-filters,
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-filters button {
+  font-size: 12.5px !important;
+  line-height: 1.35 !important;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-conv-copy strong {
+  font-size: 14px !important;
+  line-height: 1.32 !important;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-conv-copy span {
+  font-size: 12.5px !important;
+  line-height: 1.42 !important;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-avatar {
+  font-size: 12px !important;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-avatar.is-large {
+  font-size: 15px !important;
+}
+
+/* Conversation header */
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-chat-title strong {
+  font-size: 16px !important;
+  line-height: 1.25 !important;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-chat-title span {
+  font-size: 13px !important;
+  line-height: 1.4 !important;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-status,
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-status * {
+  font-size: 12.5px !important;
+  line-height: 1.35 !important;
+}
+
+/* Messages — this is the key P11a fix.
+   The bubble itself becomes the readable owner; descendants inherit unless
+   they are obvious metadata elements. */
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message {
+  font-size: 16px !important;
+  line-height: 1.55 !important;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message div,
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message p {
+  font-size: 16px !important;
+  line-height: 1.55 !important;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message strong,
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message b {
+  font-size: 13px !important;
+  line-height: 1.4 !important;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message small,
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message time,
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message > span {
+  font-size: 12.5px !important;
+  line-height: 1.4 !important;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-empty {
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-empty strong {
+  font-size: 16px !important;
+}
+
+/* Composer */
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-compose textarea,
+.cabinet-section-panel[data-cabinet-panel="rooms"] textarea[data-gl-compose] {
+  min-height: 46px !important;
+  font-size: 15px !important;
+  line-height: 1.45 !important;
+  padding-top: 11px !important;
+  padding-bottom: 11px !important;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-compose textarea::placeholder,
+.cabinet-section-panel[data-cabinet-panel="rooms"] textarea[data-gl-compose]::placeholder {
+  font-size: 15px !important;
+}
+
+/* Right info drawer: make every textual leaf readable first,
+   then restore hierarchy with larger headings. */
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-info,
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-info span,
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-info strong,
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-info b,
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-info small,
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-info p,
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-info button {
+  font-size: 13.5px !important;
+  line-height: 1.42 !important;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-info-head strong {
+  font-size: 17px !important;
+  line-height: 1.25 !important;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-profile strong {
+  font-size: 16px !important;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-profile span {
+  font-size: 13px !important;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-info-section h5,
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-info h5 {
+  font-size: 12.5px !important;
+  line-height: 1.35 !important;
+  letter-spacing: 0.055em !important;
+}
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-info-row span,
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-info-row strong {
+  font-size: 13.5px !important;
+}
+
+/* Any late security/runtime grids inside the same drawer inherit a sane floor. */
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-info [class*="security"] *,
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-info [class*="status"] *,
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-info [class*="runtime"] *,
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-info [class*="tech"] * {
+  font-size: 12.5px !important;
+  line-height: 1.4 !important;
+}

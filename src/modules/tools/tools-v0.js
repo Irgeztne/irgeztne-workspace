@@ -1,8 +1,6 @@
 (function () {
   'use strict';
 
-  const state = new WeakMap();
-
   function getLang() {
     const saved = localStorage.getItem('nsbrowser.v8.language');
     if (saved === 'ru' || saved === 'en') return saved;
@@ -45,6 +43,107 @@
     return '<option value="' + esc(value) + '">' + esc(tr(en, ru)) + '</option>';
   }
 
+  function activateToolTab(rootEl, target, mode) {
+    if (!rootEl) return;
+
+    rootEl.querySelectorAll('[data-tools-tab]').forEach(function (button) {
+      const active = button.getAttribute('data-tools-tab') === target;
+      button.classList.toggle('is-active', active);
+      button.setAttribute('aria-pressed', String(active));
+    });
+
+    rootEl.querySelectorAll('[data-tools-panel]').forEach(function (panel) {
+      panel.classList.toggle('is-active', panel.getAttribute('data-tools-panel') === target);
+    });
+
+    if (target === 'convert' && mode) {
+      const select = rootEl.querySelector('[data-tools-convert-mode]');
+      if (select) select.value = mode;
+    }
+  }
+
+  function openRegisteredTool(toolId, context) {
+    const mapping = {
+      'workspace.image.convert': { tab: 'image' },
+      'workspace.html.convert': { tab: 'convert', mode: 'plain-html' },
+      'workspace.json.format': { tab: 'convert', mode: 'json-pretty' },
+      'workspace.document.export': { tab: 'export' },
+      'workspace.text.cleanup': { tab: 'text' }
+    };
+    const target = mapping[String(toolId || '')];
+    if (!target) throw new Error('Unknown Tools surface: ' + toolId);
+
+    renderAll();
+
+    const surface = context && context.surface ? String(context.surface) : 'workspace';
+    const rootEl = document.querySelector(
+      '[data-tools-root][data-tools-surface="' + surface.replace(/"/g, '') + '"]'
+    ) || document.querySelector('[data-tools-root]');
+
+    if (!rootEl) throw new Error('Tools host is not available.');
+    activateToolTab(rootEl, target.tab, target.mode);
+
+    if (toolId === 'workspace.image.convert' && window.NSImageToolV1) {
+      const mount = rootEl.querySelector('[data-image-tool-root]');
+      if (mount) window.NSImageToolV1.mount(mount, Object.assign({}, context || {}, {
+        mount: mount,
+        surface: surface,
+        mode: context && context.mode ? context.mode : 'full'
+      }));
+    }
+  }
+
+  function registerCurrentTools() {
+    const registry = window.NSToolRegistryV1;
+    if (!registry || typeof registry.register !== 'function') return;
+
+    const tools = [
+      {
+        id: 'workspace.html.convert',
+        title: { ru: 'HTML-конвертер', en: 'HTML converter' },
+        description: { ru: 'Преобразование простого текста и HTML.', en: 'Plain text and HTML conversion.' },
+        category: 'text', icon: 'code',
+        inputTypes: ['text/plain', 'text/html'], outputTypes: ['text/plain', 'text/html'],
+        supportedHosts: ['tools'], modes: ['full', 'embedded']
+      },
+      {
+        id: 'workspace.json.format',
+        title: { ru: 'JSON-форматирование', en: 'JSON formatter' },
+        description: { ru: 'Форматирование и сжатие JSON.', en: 'Format and minify JSON.' },
+        category: 'data', icon: 'braces',
+        inputTypes: ['application/json', 'text/plain'], outputTypes: ['application/json'],
+        supportedHosts: ['tools'], modes: ['full', 'embedded']
+      },
+      {
+        id: 'workspace.document.export',
+        title: { ru: 'Экспорт текста', en: 'Text export' },
+        description: { ru: 'Экспорт текста в TXT, Markdown и HTML.', en: 'Export text to TXT, Markdown and HTML.' },
+        category: 'document', icon: 'download',
+        inputTypes: ['text/plain'], outputTypes: ['text/plain', 'text/markdown', 'text/html'],
+        supportedHosts: ['tools'], modes: ['full', 'embedded']
+      },
+      {
+        id: 'workspace.text.cleanup',
+        title: { ru: 'Очистка текста', en: 'Text cleanup' },
+        description: { ru: 'Очистка, сортировка и удаление дублей.', en: 'Clean, sort and deduplicate text.' },
+        category: 'text', icon: 'text',
+        inputTypes: ['text/plain'], outputTypes: ['text/plain'],
+        supportedHosts: ['tools'], modes: ['full', 'embedded']
+      }
+    ];
+
+    tools.forEach(function (tool) {
+      if (registry.get(tool.id)) return;
+      registry.register(Object.assign({}, tool, {
+        version: '1.0.0',
+        capabilities: { network: false, auth: false },
+        implementation: {
+          open: function (context) { openRegisteredTool(tool.id, context); }
+        }
+      }));
+    });
+  }
+
   function renderRoot(surface) {
     return [
       '<div class="ns-tools-v1 ns-tools-v1--practical" data-tools-surface="' + esc(surface) + '">',
@@ -78,22 +177,7 @@
       '  </section>',
 
       '  <section class="ns-tools-v1__panel" data-tools-panel="image">',
-      '    <div class="ns-tools-v1__head"><div><h4>' + esc(tr('Image converter', 'Конвертер изображений')) + '</h4><p>' + esc(tr('Drop an image here or choose a file. Then convert it to WebP, PNG or JPG.', 'Перетащите изображение сюда или выберите файл. Затем конвертируйте его в WebP, PNG или JPG.')) + '</p></div></div>',
-      '    <label class="ns-tools-v1__dropzone" data-tools-image-drop>',
-      '      <input class="ns-tools-v1__file-hidden" type="file" accept="image/*" data-tools-image-file>',
-      '      <span class="ns-tools-v1__drop-icon">IMG</span>',
-      '      <strong data-tools-image-drop-title>' + esc(tr('Choose image or drop it here', 'Выберите изображение или перетащите сюда')) + '</strong>',
-      '      <small data-tools-image-drop-subtitle>' + esc(tr('PNG, JPG, WebP and other browser-readable images', 'PNG, JPG, WebP и другие изображения, которые читает браузер')) + '</small>',
-      '      <span class="ns-tools-v1__choose-button">' + esc(tr('Choose file', 'Выбрать файл')) + '</span>',
-      '    </label>',
-      '    <div class="ns-tools-v1__toolbar">',
-      '      <label class="ns-tools-v1__field compact"><span>' + esc(tr('Format', 'Формат')) + '</span><select data-tools-image-format><option value="image/webp">WebP</option><option value="image/png">PNG</option><option value="image/jpeg">JPG</option></select></label>',
-      '      <label class="ns-tools-v1__field compact"><span>' + esc(tr('Width', 'Ширина')) + '</span><input data-tools-image-width inputmode="numeric" placeholder="auto"></label>',
-      '      <label class="ns-tools-v1__field compact"><span>' + esc(tr('Quality', 'Качество')) + '</span><input data-tools-image-quality type="range" min="40" max="100" value="86"></label>',
-      '    </div>',
-      '    <div class="ns-tools-v1__actions"><button type="button" class="ns-tools-v1__btn primary" data-tools-action="image-convert">' + esc(tr('Convert image', 'Конвертировать изображение')) + '</button><button type="button" class="ns-tools-v1__btn" data-tools-action="image-download">' + esc(tr('Download result', 'Скачать результат')) + '</button><button type="button" class="ns-tools-v1__btn secondary" data-tools-action="image-clear">' + esc(tr('Clear image', 'Очистить изображение')) + '</button></div>',
-      '    <div class="ns-tools-v1__image-preview" data-tools-image-preview>' + esc(tr('Choose an image first.', 'Сначала выберите изображение.')) + '</div>',
-      '    <div class="ns-tools-v1__status" data-tools-status="image">' + esc(tr('Ready.', 'Готово.')) + '</div>',
+      '    <div data-image-tool-root data-image-tool-host="tools" data-image-tool-surface="' + esc(surface) + '" data-image-tool-mode="full"></div>',
       '  </section>',
 
       '  <section class="ns-tools-v1__panel" data-tools-panel="export">',
@@ -122,17 +206,7 @@
       const tab = event.target.closest('[data-tools-tab]');
       if (tab) {
         const target = tab.getAttribute('data-tools-tab');
-
-        rootEl.querySelectorAll('[data-tools-tab]').forEach(function (button) {
-          const active = button.getAttribute('data-tools-tab') === target;
-          button.classList.toggle('is-active', active);
-          button.setAttribute('aria-pressed', String(active));
-        });
-
-        rootEl.querySelectorAll('[data-tools-panel]').forEach(function (panel) {
-          panel.classList.toggle('is-active', panel.getAttribute('data-tools-panel') === target);
-        });
-
+        activateToolTab(rootEl, target);
         return;
       }
 
@@ -141,41 +215,6 @@
       handleAction(rootEl, actionButton.getAttribute('data-tools-action'));
     });
 
-    rootEl.addEventListener('change', function (event) {
-      const fileInput = event.target.closest('[data-tools-image-file]');
-      if (!fileInput) return;
-
-      const file = fileInput.files && fileInput.files[0];
-      if (file) loadImageFile(rootEl, file);
-
-      fileInput.value = '';
-    });
-
-    rootEl.addEventListener('dragover', function (event) {
-      const drop = event.target.closest('[data-tools-image-drop]');
-      if (!drop) return;
-
-      event.preventDefault();
-      drop.classList.add('is-dragover');
-    });
-
-    rootEl.addEventListener('dragleave', function (event) {
-      const drop = event.target.closest('[data-tools-image-drop]');
-      if (!drop) return;
-
-      drop.classList.remove('is-dragover');
-    });
-
-    rootEl.addEventListener('drop', function (event) {
-      const drop = event.target.closest('[data-tools-image-drop]');
-      if (!drop) return;
-
-      event.preventDefault();
-      drop.classList.remove('is-dragover');
-
-      const file = event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0];
-      if (file) loadImageFile(rootEl, file);
-    });
   }
 
   function status(rootEl, key, text) {
@@ -257,10 +296,6 @@
       return status(rootEl, 'convert', tr('Cleared.', 'Очищено.'));
     }
 
-    if (action === 'image-convert') return convertImage(rootEl);
-    if (action === 'image-download') return downloadImage(rootEl);
-    if (action === 'image-clear') return clearImage(rootEl);
-
     if (action === 'doc-txt') return exportDocument(rootEl, 'txt');
     if (action === 'doc-md') return exportDocument(rootEl, 'md');
     if (action === 'doc-html') return exportDocument(rootEl, 'html');
@@ -305,210 +340,6 @@
     } catch (error) {
       status(rootEl, statusKey, tr('Copy failed.', 'Не удалось скопировать.'));
     }
-  }
-
-  function loadImageFile(rootEl, file) {
-    if (!file || !String(file.type || '').startsWith('image/')) {
-      status(rootEl, 'image', tr('Please choose an image file.', 'Выберите файл изображения.'));
-      return;
-    }
-
-    const reader = new FileReader();
-
-    reader.onload = function () {
-      const dataUrl = String(reader.result || '');
-      const img = new Image();
-
-      img.onload = function () {
-        const meta = {
-          fileName: file.name || 'image',
-          fileType: file.type || 'image',
-          fileSize: file.size || 0,
-          sourceDataUrl: dataUrl,
-          sourceWidth: img.naturalWidth || 0,
-          sourceHeight: img.naturalHeight || 0,
-          convertedDataUrl: '',
-          convertedBlob: null,
-          convertedFormat: ''
-        };
-
-        state.set(rootEl, meta);
-        updateImageDropzone(rootEl, meta);
-        showImagePreview(
-          rootEl,
-          dataUrl,
-          meta.sourceWidth,
-          meta.sourceHeight,
-          meta.fileSize,
-          tr('Original image', 'Исходное изображение')
-        );
-        status(rootEl, 'image', tr('Image selected. Press Convert image.', 'Изображение выбрано. Нажмите «Конвертировать изображение».'));
-      };
-
-      img.onerror = function () {
-        status(rootEl, 'image', tr('Could not read this image.', 'Не удалось прочитать изображение.'));
-      };
-
-      img.src = dataUrl;
-    };
-
-    reader.onerror = function () {
-      status(rootEl, 'image', tr('Could not read this image.', 'Не удалось прочитать изображение.'));
-    };
-
-    reader.readAsDataURL(file);
-  }
-
-  function updateImageDropzone(rootEl, meta) {
-    const title = rootEl.querySelector('[data-tools-image-drop-title]');
-    const subtitle = rootEl.querySelector('[data-tools-image-drop-subtitle]');
-    const drop = rootEl.querySelector('[data-tools-image-drop]');
-
-    if (drop) drop.classList.add('has-file');
-    if (title) title.textContent = meta.fileName || tr('Image selected', 'Изображение выбрано');
-
-    if (subtitle) {
-      subtitle.textContent = [
-        meta.sourceWidth + '×' + meta.sourceHeight,
-        Math.round((meta.fileSize || 0) / 1024) + ' KB',
-        tr('click to choose another', 'нажмите, чтобы выбрать другое')
-      ].join(' · ');
-    }
-  }
-
-  function showImagePreview(rootEl, src, width, height, size, label) {
-    const preview = rootEl.querySelector('[data-tools-image-preview]');
-    if (!preview) return;
-
-    preview.innerHTML = [
-      '<div class="ns-tools-v1__preview-label">' + esc(label || '') + '</div>',
-      '<img alt="preview" src="' + src + '">',
-      '<span>' + esc((width || 0) + '×' + (height || 0) + ' · ' + Math.round((size || 0) / 1024) + ' KB') + '</span>'
-    ].join('');
-  }
-
-  function dataUrlToBlob(dataUrl) {
-    const parts = String(dataUrl || '').split(',');
-    const meta = parts[0] || '';
-    const b64 = parts[1] || '';
-    const mimeMatch = meta.match(/data:([^;]+)/);
-    const mime = mimeMatch ? mimeMatch[1] : 'application/octet-stream';
-    const binary = atob(b64);
-    const bytes = new Uint8Array(binary.length);
-
-    for (let i = 0; i < binary.length; i += 1) {
-      bytes[i] = binary.charCodeAt(i);
-    }
-
-    return new Blob([bytes], { type: mime });
-  }
-
-  function convertImage(rootEl) {
-    const meta = state.get(rootEl) || {};
-
-    if (!meta.sourceDataUrl) {
-      return status(rootEl, 'image', tr('Choose an image first.', 'Сначала выберите изображение.'));
-    }
-
-    const format = value(rootEl, '[data-tools-image-format]') || 'image/webp';
-    const widthRaw = parseInt(value(rootEl, '[data-tools-image-width]'), 10);
-    const quality = Math.max(0.4, Math.min(1, Number(value(rootEl, '[data-tools-image-quality]') || 86) / 100));
-
-    const img = new Image();
-
-    img.onload = function () {
-      const targetWidth = Number.isFinite(widthRaw) && widthRaw > 0 ? widthRaw : img.naturalWidth;
-      const ratio = targetWidth / Math.max(1, img.naturalWidth);
-      const targetHeight = Math.max(1, Math.round(img.naturalHeight * ratio));
-
-      const canvas = document.createElement('canvas');
-      canvas.width = targetWidth;
-      canvas.height = targetHeight;
-
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
-
-      let dataUrl = '';
-
-      try {
-        dataUrl = canvas.toDataURL(format, quality);
-      } catch (error) {
-        dataUrl = canvas.toDataURL('image/png');
-      }
-
-      const blob = dataUrlToBlob(dataUrl);
-      const nextMeta = Object.assign({}, meta, {
-        convertedDataUrl: dataUrl,
-        convertedBlob: blob,
-        convertedFormat: format,
-        convertedWidth: targetWidth,
-        convertedHeight: targetHeight
-      });
-
-      state.set(rootEl, nextMeta);
-      showImagePreview(
-        rootEl,
-        dataUrl,
-        targetWidth,
-        targetHeight,
-        blob.size,
-        tr('Converted image', 'Конвертированное изображение')
-      );
-      status(rootEl, 'image', tr('Image converted.', 'Изображение конвертировано.'));
-    };
-
-    img.onerror = function () {
-      status(rootEl, 'image', tr('Could not read this image.', 'Не удалось прочитать изображение.'));
-    };
-
-    img.src = meta.sourceDataUrl;
-  }
-
-  function downloadImage(rootEl) {
-    const data = state.get(rootEl) || {};
-
-    if (!data.convertedDataUrl) {
-      return status(rootEl, 'image', tr('Convert the image first.', 'Сначала конвертируйте изображение.'));
-    }
-
-    const ext = data.convertedFormat === 'image/png' ? 'png' : data.convertedFormat === 'image/jpeg' ? 'jpg' : 'webp';
-    const baseName = String(data.fileName || 'irgeztne-image')
-      .replace(/\.[^.]+$/, '')
-      .replace(/[^a-z0-9а-яё_-]+/gi, '-')
-      .replace(/^-+|-+$/g, '') || 'irgeztne-image';
-
-    const a = document.createElement('a');
-    a.href = data.convertedDataUrl;
-    a.download = baseName + '-converted.' + ext;
-
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-
-    status(rootEl, 'image', tr('Image downloaded.', 'Изображение скачано.'));
-  }
-
-  function clearImage(rootEl) {
-    const input = rootEl.querySelector('[data-tools-image-file]');
-    if (input) input.value = '';
-
-    state.delete(rootEl);
-
-    const preview = rootEl.querySelector('[data-tools-image-preview]');
-    if (preview) {
-      preview.textContent = tr('Choose an image first.', 'Сначала выберите изображение.');
-    }
-
-    const drop = rootEl.querySelector('[data-tools-image-drop]');
-    if (drop) drop.classList.remove('has-file', 'is-dragover');
-
-    const title = rootEl.querySelector('[data-tools-image-drop-title]');
-    if (title) title.textContent = tr('Choose image or drop it here', 'Выберите изображение или перетащите сюда');
-
-    const subtitle = rootEl.querySelector('[data-tools-image-drop-subtitle]');
-    if (subtitle) subtitle.textContent = tr('PNG, JPG, WebP and other browser-readable images', 'PNG, JPG, WebP и другие изображения, которые читает браузер');
-
-    status(rootEl, 'image', tr('Image cleared.', 'Изображение очищено.'));
   }
 
   function exportDocument(rootEl, kind) {
@@ -615,10 +446,13 @@
       if (rootEl.dataset.toolsBound !== '1') {
         bindRoot(rootEl);
       }
+
+      if (window.NSImageToolV1) window.NSImageToolV1.mountAll(rootEl);
     });
   }
 
   function init() {
+    registerCurrentTools();
     renderAll();
 
     document.addEventListener('irg:language-changed', renderAll);
@@ -638,5 +472,8 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
 
-  window.NSToolsV1 = { renderAll: renderAll };
+  window.NSToolsV1 = {
+    renderAll: renderAll,
+    openTool: function (toolId, context) { return openRegisteredTool(toolId, context || {}); }
+  };
 })();

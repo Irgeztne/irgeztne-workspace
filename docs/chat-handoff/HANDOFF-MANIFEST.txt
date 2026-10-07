@@ -1,0 +1,41 @@
+IRGEZTNE WORKSPACE CHAT HANDOFF MANIFEST
+Updated: 2026-08-06T16:32:49+04:00
+Project: /home/acer/Загрузки/irgeztne-workspace-main
+
+[chat-handoff]
+00-READ-ME-FIRST.md	3647 bytes
+CHECKPOINTS.md	3062 bytes
+CHECKSUMS.sha256	2105 bytes
+CURRENT-STATE.md	8939 bytes
+EVIDENCE-INDEX.md	665 bytes
+FILE-OWNERS.md	5943 bytes
+HANDOFF-MANIFEST.txt	1010 bytes
+NAVIGATION-V031M-ACCEPTANCE.md	2473 bytes
+NEXT-SESSION.md	6192 bytes
+PROJECT-CONTEXT.md	3019 bytes
+PROJECT-SNAPSHOT.txt	6447 bytes
+WIDGETS-AND-TOOL-STUDIO.md	3729 bytes
+WORKFLOW-RULES.md	2530 bytes
+WORKSHOP-RESTORE-ACCEPTANCE.md	2585 bytes
+evidence/index.html	66251 bytes
+evidence/main.js	65697 bytes
+evidence/package.json	3336 bytes
+evidence/src/legacy-shell.js	46629 bytes
+evidence/src/ns-codehub-store.js	14897 bytes
+evidence/src/preview4-cabinet-card-drag-v1.js	4436 bytes
+evidence/src/preview4-cabinet-nav-drag-v1.js	4076 bytes
+evidence/src/preview4-grid-nav-lang-fix.js	7623 bytes
+evidence/src/v88-codehub-v1.css	20750 bytes
+evidence/src/v88-codehub-v1.js	74682 bytes
+
+[workspace-v1]
+00-READ-ME-FIRST.md	2417 bytes
+CHECKSUMS.sha256	837 bytes
+CURRENT-CAPABILITY-INVENTORY.md	4967 bytes
+DECISIONS-2026-08-06.md	7810 bytes
+EMBEDDABLE-TOOLS-CONTRACT-V1.md	5300 bytes
+MANIFEST.txt	457 bytes
+TASKS-V1-DESIGN-BASELINE.md	4260 bytes
+WEB-STUDIO-WORKSHOP-INTEGRATION-SPEC.md	4726 bytes
+WORKSPACE-HOME-V1-SPEC.md	3439 bytes
+WORKSPACE-V1-PRODUCT-MAP.md	4791 bytes

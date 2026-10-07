@@ -1,0 +1,148 @@
+/*
+ IRGEZTNE Workspace — Green Lightning Message Lifecycle v0.4P19
+ Closes the small message-lifecycle UX tail in one pass:
+ - clear Edit save affordance
+ - Delete for everyone
+ - deleted tombstones
+ - confirmation modal
+*/
+
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-send.is-edit-save {
+  border-color: rgba(100,214,181,.66) !important;
+  background: linear-gradient(180deg,rgba(35,125,99,.78),rgba(22,83,72,.90)) !important;
+  color: #d8fff4 !important;
+}
+
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-send.is-edit-save:hover,
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-send.is-edit-save:focus-visible {
+  box-shadow:
+    0 0 0 1px rgba(117,230,198,.16),
+    0 7px 20px rgba(30,139,110,.22) !important;
+}
+
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p19-deleted-copy {
+  margin: 8px 0 3px !important;
+  color: #8ba0af !important;
+  font-style: italic !important;
+  opacity: .92;
+}
+
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message.is-deleted {
+  opacity: .88;
+  filter: saturate(.72);
+}
+
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message.is-deleted .gl-p1-message-meta {
+  opacity: .9;
+}
+
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p19-deleted-state {
+  color: #8299aa !important;
+}
+
+.gl-p16-message-menu button[data-gl-message-menu-action="delete-for-all"] {
+  color: #ffc1c8;
+}
+
+.gl-p16-message-menu button[data-gl-message-menu-action="delete-for-all"] .gl-p1-svg {
+  color: #ff9ba8;
+}
+
+.gl-p19-confirm-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483200;
+  display: grid;
+  place-items: center;
+  padding: 22px;
+  background: rgba(1,7,13,.62);
+  backdrop-filter: blur(3px);
+}
+
+.gl-p19-confirm-dialog {
+  width: min(430px, calc(100vw - 36px));
+  overflow: hidden;
+  border: 1px solid rgba(84,135,173,.55);
+  border-radius: 16px;
+  background:
+    linear-gradient(180deg,rgba(18,41,62,.995),rgba(8,24,39,.998));
+  box-shadow:
+    0 24px 70px rgba(0,0,0,.52),
+    inset 0 1px 0 rgba(255,255,255,.05);
+  color: #dce9f4;
+}
+
+.gl-p19-confirm-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 15px 16px 11px;
+  border-bottom: 1px solid rgba(86,132,166,.20);
+}
+
+.gl-p19-confirm-head strong {
+  font-size: 15px;
+}
+
+.gl-p19-confirm-body {
+  padding: 15px 16px 12px;
+}
+
+.gl-p19-confirm-body p {
+  margin: 0;
+  color: #b8cad8;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.gl-p19-delete-preview {
+  margin-top: 12px;
+  padding: 9px 10px;
+  border-left: 3px solid rgba(255,136,151,.66);
+  border-radius: 9px;
+  background: rgba(57,21,31,.34);
+  color: #d3dee7;
+  font-size: 12.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gl-p19-confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 11px 16px 15px;
+}
+
+.gl-p19-confirm-actions button {
+  min-height: 36px;
+  padding: 7px 13px;
+  border: 1px solid rgba(108,151,183,.38);
+  border-radius: 9px;
+  background: rgba(25,55,77,.58);
+  color: #dce9f4;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.gl-p19-confirm-actions button:hover,
+.gl-p19-confirm-actions button:focus-visible {
+  outline: none;
+  border-color: rgba(131,184,222,.62);
+  background: rgba(38,78,105,.70);
+}
+
+.gl-p19-confirm-actions .is-danger {
+  border-color: rgba(255,125,140,.50);
+  background: rgba(115,37,51,.72);
+  color: #ffe4e7;
+}
+
+.gl-p19-confirm-actions .is-danger:hover,
+.gl-p19-confirm-actions .is-danger:focus-visible {
+  border-color: rgba(255,155,168,.78);
+  background: rgba(145,45,62,.82);
+}

@@ -1,19 +1,81 @@
 process.env.ELECTRON_DISABLE_SANDBOX = '1';
-const { app, BrowserWindow, Menu, ipcMain, shell, dialog, safeStorage } = require('electron');
+const { app, BrowserWindow, screen, Menu, ipcMain, shell, dialog, safeStorage, protocol, net } = require('electron');
 const { spawn, spawnSync } = require('child_process');
 const path = require('path');
+
+// IRGEZTNE_CANONICAL_APP_IDENTITY_V2
+// Keep one application name, but do not force a second userData directory.
+// productName in package.json uses the same spelling.
+const IRGEZTNE_CANONICAL_APP_NAME = 'IRGEZTNE Workspace';
+try { app.setName(IRGEZTNE_CANONICAL_APP_NAME); }
+catch (error) {
+  console.warn('[IRGEZTNE profile] failed to set canonical app name:', error && error.message ? error.message : error);
+}
 const crypto = require('crypto');
 const fs = require('fs');
 const fsp = fs.promises;
 const { pathToFileURL } = require('url');
 const { createStorageCore } = require('./src/storage/storage-core-main');
+const { createAccountDesktopController, registerAccountDesktopIpc } = require('./src/account/account-desktop-main.cjs');
+const { createIdentityController, registerIdentityIpc } = require('./src/identity/identity-core-main.cjs');
+const { createIdentityAccountController, registerIdentityAccountIpc } = require('./src/identity/identity-account-main.cjs');
+const { createWorkspaceMessengerController, registerWorkspaceMessengerIpc } = require('./src/messenger/messenger-main.cjs');
+const { registerDocumentBundleIpc } = require('./src/office-document-bundle-main.cjs');
+const { createWeatherWindowController } = require('./src/modules/weather/weather-window-main.cjs');
+const remotePublish = require('./src/publishing/remote-publish-main.cjs');
+
+// IRGEZTNE_WORKSPACE_ASSET_PROTOCOL_V1
+// App-owned raster assets only. No host filesystem path is exposed to renderer.
+protocol.registerSchemesAsPrivileged([
+  {
+    scheme: 'irgeztne-asset',
+    privileges: {
+      standard: true,
+      secure: true
+    }
+  }
+]);
 
 const DATA_DIR = app.isPackaged ? path.join(app.getPath('userData'), 'data') : path.join(__dirname, 'data');
 const PAGES_DIR = path.join(DATA_DIR, 'pages');
 const TEMPLATES_DIR = path.join(__dirname, 'templates');
 const WEBSTUDIO_MEDIA_DIR = path.join(DATA_DIR, 'webstudio-media');
-const INDEX_FILE = path.join(__dirname, 'index.html');
+const TEST_CLEANUP_MODE = process.env.IRGEZTNE_CLEAN_TEST_DATA === '1';
+const INDEX_FILE = path.join(__dirname, TEST_CLEANUP_MODE ? 'maintenance-cleanup.html' : 'index.html');
 const INDEX_URL = pathToFileURL(INDEX_FILE).toString();
+const ECONOMY_PROOF_URL = pathToFileURL(path.join(__dirname, 'proofs', 'economy-widget-standalone.html')).toString();
+const WEATHER_PROOF_URL = pathToFileURL(path.join(__dirname, 'proofs', 'weather-widget-standalone.html')).toString();
+const WEATHER_DATA_VIEW_PRELOAD = path.join(__dirname, 'src', 'modules', 'weather', 'weather-data-view-preload.cjs');
+const WEATHER_STATE_KEYS = Object.freeze({
+  location: 'irgeztne.weather.client.v1',
+  cache: 'irgeztne.weather.cache.v1'
+});
+const WEATHER_OFFICIAL_LINKS = new Set([
+  'https://api.met.no/doc/License',
+  'https://api.met.no/weatherapi/locationforecast/2.0/documentation'
+]);
+const irgeztneWeatherWindowController = createWeatherWindowController({
+  BrowserWindow,
+  weatherUrl: WEATHER_PROOF_URL,
+  preloadPath: WEATHER_DATA_VIEW_PRELOAD
+});
+let irgeztneDataPlatformServer = null;
+
+async function startIRGEZTNEDataPlatformV02() {
+  if (irgeztneDataPlatformServer) return irgeztneDataPlatformServer;
+  const runtimeDataDir = path.join(DATA_DIR, 'economy-data-platform');
+  const runtimeSnapshot = path.join(runtimeDataDir, 'latest.json');
+  const bundledSnapshot = path.join(__dirname, 'data-platform', 'data', 'latest.json');
+  ensureDir(runtimeDataDir);
+  if (!fs.existsSync(runtimeSnapshot) && fs.existsSync(bundledSnapshot)) {
+    fs.copyFileSync(bundledSnapshot, runtimeSnapshot);
+  }
+  process.env.IRGEZTNE_DATA_DIR = runtimeDataDir;
+  const moduleUrl = pathToFileURL(path.join(__dirname, 'data-platform', 'src', 'server.js')).href;
+  const dataPlatform = await import(moduleUrl);
+  irgeztneDataPlatformServer = await dataPlatform.startServer();
+  return irgeztneDataPlatformServer;
+}
 
 function resolveIRGEZTNEAppIconPath() {
   const candidates = [
@@ -24,11 +86,6 @@ function resolveIRGEZTNEAppIconPath() {
   ];
   return candidates.find((candidate) => fs.existsSync(candidate)) || undefined;
 }
-
-try {
-  app.setName('IRGEZTNE Workspace');
-}
-catch {}
 
 
 function getAppIconPath() {
@@ -114,6 +171,18 @@ function videoMimeV084H(extension) {
   return map[String(extension || '').toLowerCase()] || '';
 }
 
+function imageMimeV092C(extension) {
+  const map = {
+    '.png': 'image/png',
+    '.jpg': 'image/jpeg',
+    '.jpeg': 'image/jpeg',
+    '.webp': 'image/webp',
+    '.gif': 'image/gif'
+  };
+
+  return map[String(extension || '').toLowerCase()] || '';
+}
+
 /* IRGEZTNE_VIDEO_SIGNATURE_DETECT_V084I
    Detect real video type from file contents.
    Downloaders may save MP4 with a hash instead of .mp4. */
@@ -190,6 +259,211 @@ async function detectVideoTypeV084I(filePath, originalExtension) {
     extension: fallbackMime
       ? originalExtension
       : ''
+  };
+}
+
+/* IRGEZTNE_IMAGE_SIGNATURE_DETECT_V092C
+   Local images use verified bitmap signatures. SVG stays URL-only because
+   an SVG file may contain active content. */
+async function detectImageTypeV092C(filePath, originalExtension) {
+  const fallbackMime = imageMimeV092C(originalExtension);
+  let handle = null;
+
+  try {
+    handle = await fsp.open(filePath, 'r');
+
+    const probe = Buffer.alloc(32);
+    const result = await handle.read(
+      probe,
+      0,
+      probe.length,
+      0
+    );
+
+    const data = probe.subarray(0, result.bytesRead);
+
+    if (
+      data.length >= 8 &&
+      data[0] === 0x89 &&
+      data.subarray(1, 4).toString('ascii') === 'PNG' &&
+      data[4] === 0x0d &&
+      data[5] === 0x0a &&
+      data[6] === 0x1a &&
+      data[7] === 0x0a
+    ) {
+      return {
+        mimeType: 'image/png',
+        extension: '.png'
+      };
+    }
+
+    if (
+      data.length >= 3 &&
+      data[0] === 0xff &&
+      data[1] === 0xd8 &&
+      data[2] === 0xff
+    ) {
+      return {
+        mimeType: 'image/jpeg',
+        extension: fallbackMime === 'image/jpeg' &&
+          originalExtension === '.jpeg'
+          ? '.jpeg'
+          : '.jpg'
+      };
+    }
+
+    if (
+      data.length >= 6 &&
+      (
+        data.subarray(0, 6).toString('ascii') === 'GIF87a' ||
+        data.subarray(0, 6).toString('ascii') === 'GIF89a'
+      )
+    ) {
+      return {
+        mimeType: 'image/gif',
+        extension: '.gif'
+      };
+    }
+
+    if (
+      data.length >= 12 &&
+      data.subarray(0, 4).toString('ascii') === 'RIFF' &&
+      data.subarray(8, 12).toString('ascii') === 'WEBP'
+    ) {
+      return {
+        mimeType: 'image/webp',
+        extension: '.webp'
+      };
+    }
+  } catch (error) {
+    console.warn(
+      '[webstudio-media] image signature detection failed:',
+      error
+    );
+  } finally {
+    if (handle) {
+      try {
+        await handle.close();
+      } catch {}
+    }
+  }
+
+  return {
+    mimeType: '',
+    extension: ''
+  };
+}
+
+async function importSiteImageV092C(owner, payload = {}) {
+  const picked = await dialog.showOpenDialog(
+    owner || undefined,
+    {
+      title: 'Choose image / Выберите изображение',
+      properties: ['openFile'],
+      filters: [
+        {
+          name: 'Image',
+          extensions: ['png', 'jpg', 'jpeg', 'webp', 'gif']
+        },
+        {
+          name: 'All files',
+          extensions: ['*']
+        }
+      ]
+    }
+  );
+
+  if (picked.canceled || !picked.filePaths?.[0]) {
+    return { ok: false, canceled: true };
+  }
+
+  const selectedPath = path.resolve(picked.filePaths[0]);
+  const originalExtension = path
+    .extname(selectedPath)
+    .toLowerCase();
+
+  const detectedType = await detectImageTypeV092C(
+    selectedPath,
+    originalExtension
+  );
+
+  const extension = detectedType.extension;
+  const mimeType = detectedType.mimeType;
+
+  if (!mimeType || !extension) {
+    return {
+      ok: false,
+      error: 'unsupported-image-type'
+    };
+  }
+
+  const stat = await fsp.stat(selectedPath);
+
+  if (!stat.isFile()) {
+    return {
+      ok: false,
+      error: 'not-a-file'
+    };
+  }
+
+  if (stat.size > 50 * 1024 * 1024) {
+    return {
+      ok: false,
+      error: 'image-too-large'
+    };
+  }
+
+  const siteId = sanitizeMediaSegmentV084H(
+    payload.siteId,
+    'active-site'
+  );
+
+  const baseName = sanitizeMediaSegmentV084H(
+    path.basename(selectedPath, originalExtension),
+    'image'
+  ).slice(0, 54);
+
+  const digest = crypto
+    .createHash('sha1')
+    .update(
+      selectedPath +
+      ':' +
+      stat.size +
+      ':' +
+      stat.mtimeMs +
+      ':' +
+      Date.now()
+    )
+    .digest('hex')
+    .slice(0, 12);
+
+  const fileName = `${baseName}-${digest}${extension}`;
+
+  const targetDir = path.join(
+    WEBSTUDIO_MEDIA_DIR,
+    siteId,
+    'image'
+  );
+
+  const targetPath = path.join(targetDir, fileName);
+
+  ensureDir(targetDir);
+  await fsp.copyFile(selectedPath, targetPath);
+
+  return {
+    ok: true,
+    asset: {
+      id: `media_${digest}`,
+      kind: 'image',
+      name: path.basename(selectedPath),
+      fileName,
+      mimeType,
+      size: stat.size,
+      sourcePath: targetPath,
+      sourceUrl: pathToFileURL(targetPath).toString(),
+      publicPath: `assets/media/image/${fileName}`,
+      createdAt: new Date().toISOString()
+    }
   };
 }
 
@@ -322,12 +596,44 @@ function getVitrinaRegistryPath() {
   return path.join(DATA_DIR, 'vitrina-registry.json');
 }
 
+// IRGEZTNE_WEBSTUDIO_PREVIEW_TEMP_ROOT_R2
+// Generated browser previews are disposable runtime artifacts, not Workspace data.
 function getPreviewsDir() {
-  return path.join(DATA_DIR, 'previews');
+  return path.join(app.getPath('temp'), 'irgeztne-workspace-previews');
+}
+
+function clearSitePreviewTempDir() {
+  try {
+    fs.rmSync(getPreviewsDir(), { recursive: true, force: true });
+  } catch (_) {}
 }
 
 function getExportsDir() {
   return path.join(DATA_DIR, 'exports');
+}
+
+function getChatAttachmentOpenTempDir() {
+  return path.join(app.getPath('temp'), 'irgeztne-workspace-chat-open');
+}
+
+function clearChatAttachmentOpenTempDir() {
+  try {
+    fs.rmSync(getChatAttachmentOpenTempDir(), { recursive: true, force: true });
+  } catch (_) {}
+}
+
+// IRGEZTNE_WORKSPACE_FILE_OPEN_R1N
+// Workspace File Store-backed documents can be opened without exposing a
+// filesystem path to the renderer. Temporary copies are private and cleared
+// on the next app start / quit.
+function getWorkspaceFileOpenTempDir() {
+  return path.join(app.getPath('temp'), 'irgeztne-workspace-file-open');
+}
+
+function clearWorkspaceFileOpenTempDir() {
+  try {
+    fs.rmSync(getWorkspaceFileOpenTempDir(), { recursive: true, force: true });
+  } catch (_) {}
 }
 
 function getTemplatesDir() {
@@ -345,11 +651,30 @@ function assertTrustedSender(event) {
   }
 }
 
+function isWeatherDataViewUrl(value) {
+  try {
+    const parsed = new URL(String(value || ''));
+    const expected = new URL(WEATHER_PROOF_URL);
+    return parsed.protocol === 'file:' && parsed.pathname === expected.pathname;
+  } catch (_) {
+    return false;
+  }
+}
+
+function assertWeatherDataViewSender(event) {
+  const senderUrl = String(event?.senderFrame?.url || event?.sender?.getURL?.() || '');
+  if (!isWeatherDataViewUrl(senderUrl)) throw new Error('Blocked Weather IPC from untrusted sender');
+}
+
 
 // preview.4 v7g4 step2 — Storage Core IPC for app preferences/layout.
 // This is intentionally limited to app preferences, layout and generic module state.
 // Web Studio state and provider tokens are not migrated in this step.
 let irgeztneStorageCoreInstance = null;
+let irgeztneMessengerController = null;
+let irgeztneAccountDesktopController = null;
+let irgeztneIdentityController = null;
+let irgeztneIdentityAccountController = null;
 
 function getIRGEZTNEStorageCore() {
   if (!irgeztneStorageCoreInstance) {
@@ -361,6 +686,82 @@ function getIRGEZTNEStorageCore() {
   }
   return irgeztneStorageCoreInstance;
 }
+
+function getIRGEZTNEAccountDesktopController() {
+  if (!irgeztneAccountDesktopController) {
+    irgeztneAccountDesktopController = createAccountDesktopController({
+      app,
+      safeStorage,
+      shell,
+      apiBase: process.env.IRGEZTNE_ACCOUNT_API_URL || 'https://account.irgeztne.com'
+    });
+  }
+  return irgeztneAccountDesktopController;
+}
+
+function getIRGEZTNEIdentityController() {
+  if (!irgeztneIdentityController) {
+    irgeztneIdentityController = createIdentityController({
+      app,
+      safeStorage,
+      dataDir: DATA_DIR
+    });
+  }
+  return irgeztneIdentityController;
+}
+
+function getIRGEZTNEIdentityAccountController() {
+  if (!irgeztneIdentityAccountController) {
+    irgeztneIdentityAccountController = createIdentityAccountController({
+      app,
+      fetchImpl: (...args) => net.fetch(...args),
+      getIdentityController: getIRGEZTNEIdentityController,
+      getLegacyAccountStatus: () => getIRGEZTNEAccountDesktopController().getStatus(),
+      identityApiBase: process.env.IRGEZTNE_IDENTITY_API_URL || '',
+      accountApiBase: process.env.IRGEZTNE_ACCOUNT_API_URL || ''
+    });
+  }
+  return irgeztneIdentityAccountController;
+}
+
+registerIdentityIpc({
+  ipcMain,
+  dialog,
+  assertTrustedSender,
+  getController: getIRGEZTNEIdentityController
+});
+
+registerIdentityAccountIpc({
+  ipcMain,
+  assertTrustedSender,
+  getController: getIRGEZTNEIdentityAccountController
+});
+
+registerAccountDesktopIpc({
+  ipcMain,
+  assertTrustedSender,
+  getController: getIRGEZTNEAccountDesktopController
+});
+
+// IRGEZTNE_DOCUMENT_BUNDLE_EXPORT_R1L
+registerDocumentBundleIpc({
+  ipcMain,
+  dialog,
+  BrowserWindow,
+  assertTrustedSender,
+  getStorageCore: getIRGEZTNEStorageCore,
+  dataDir: DATA_DIR
+});
+
+require('./src/storage/workspace-backup-main.cjs').registerWorkspaceBackupIpc({ ipcMain, dialog, BrowserWindow, assertTrustedSender, getStorageCore: getIRGEZTNEStorageCore });
+let testCleanupCompleted = false;
+ipcMain.handle('ns:workspace:testCleanup', (event, payload = {}) => {
+  assertTrustedSender(event);
+  if (!TEST_CLEANUP_MODE || testCleanupCompleted) throw new Error('Test cleanup requires the isolated maintenance launch');
+  const result = getIRGEZTNEStorageCore().cleanTestWorkspace(payload.storage, payload.indexedDB);
+  testCleanupCompleted = true;
+  return result;
+});
 
 function runStorageCoreRequest(event, fallback, fn) {
   try {
@@ -396,6 +797,57 @@ ipcMain.on('ns:storage:setModuleStateSync', (event, payload = {}) => {
   event.returnValue = runStorageCoreRequest(event, { ok: false }, (storage) => storage.setModuleState(payload.moduleId, payload.value));
 });
 
+// IRGEZTNE_WEATHER_DATA_VIEW_BRIDGE_V1
+// The standalone Weather surface gets only two fixed state slots and two
+// allowlisted official MET Norway links. It never receives generic nsAPI access.
+ipcMain.handle('irgeztne:weather:openFull', async (event, payload = {}) => {
+  assertTrustedSender(event);
+  return irgeztneWeatherWindowController.open(payload);
+});
+
+ipcMain.on('irgeztne:weather:getStateSync', (event, payload = {}) => {
+  try {
+    assertWeatherDataViewSender(event);
+    const key = WEATHER_STATE_KEYS[String(payload.slot || '')];
+    event.returnValue = key ? getIRGEZTNEStorageCore().getModuleState(key, payload.fallback) : payload.fallback;
+  } catch (_) {
+    event.returnValue = payload.fallback;
+  }
+});
+
+ipcMain.on('irgeztne:weather:setStateSync', (event, payload = {}) => {
+  try {
+    assertWeatherDataViewSender(event);
+    const key = WEATHER_STATE_KEYS[String(payload.slot || '')];
+    const serialized = JSON.stringify(payload.value);
+    if (!key || serialized.length > 512000) throw new Error('Invalid Weather state payload');
+    event.returnValue = getIRGEZTNEStorageCore().setModuleState(key, payload.value);
+  } catch (_) {
+    event.returnValue = { ok: false };
+  }
+});
+
+ipcMain.on('irgeztne:weather:locationChanged', (event) => {
+  try {
+    assertWeatherDataViewSender(event);
+    BrowserWindow.getAllWindows().forEach((window) => {
+      if (!window.isDestroyed() && window.webContents.getURL() === INDEX_URL) {
+        window.webContents.send('irgeztne:weather:locationChanged');
+      }
+    });
+  } catch (_) {}
+});
+
+ipcMain.handle('irgeztne:weather:openOfficialLink', async (event, payload = {}) => {
+  assertWeatherDataViewSender(event);
+  let url;
+  try { url = new URL(String(payload.url || '')).toString().replace(/\/$/, ''); }
+  catch (_) { return { ok: false, error: 'invalid-url' }; }
+  if (!WEATHER_OFFICIAL_LINKS.has(url)) return { ok: false, error: 'not-allowlisted' };
+  await shell.openExternal(url);
+  return { ok: true };
+});
+
 // preview.4 v7g4 step4A — Storage Core encrypted secret IPC only.
 // This step intentionally does not touch Web Studio UI or publish logic.
 ipcMain.handle('ns:storage:secretSave', async (event, payload = {}) => runStorageCoreRequest(event, { ok: false }, (storage) => storage.saveSecret(payload.scope, payload.key, payload.value)));
@@ -413,6 +865,931 @@ ipcMain.on('ns:storage:secretReadSync', (event, payload = {}) => {
 });
 
 ipcMain.handle('ns:storage:secretClear', async (event, payload = {}) => runStorageCoreRequest(event, { ok: false }, (storage) => storage.clearSecret(payload.scope, payload.key)));
+
+// IRGEZTNE_WORKSHOP_FOLDER_PICKER_R1W7B
+// Native folder picker for Workshop. The renderer receives only package-relative
+// paths and bounded file bytes; the selected host filesystem path never crosses IPC.
+const WORKSHOP_FOLDER_PICK_MAX_FILES = 200;
+const WORKSHOP_FOLDER_PICK_MAX_FILE_BYTES = 64 * 1024 * 1024;
+const WORKSHOP_FOLDER_PICK_MAX_TOTAL_BYTES = 128 * 1024 * 1024;
+
+const WORKSHOP_FOLDER_MIME_BY_EXTENSION = Object.freeze({
+  '.html': 'text/html',
+  '.htm': 'text/html',
+  '.css': 'text/css',
+  '.js': 'text/javascript',
+  '.mjs': 'text/javascript',
+  '.json': 'application/json',
+  '.txt': 'text/plain',
+  '.md': 'text/markdown',
+  '.svg': 'image/svg+xml',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.webp': 'image/webp',
+  '.gif': 'image/gif',
+  '.avif': 'image/avif',
+  '.ico': 'image/x-icon',
+  '.woff': 'font/woff',
+  '.woff2': 'font/woff2',
+  '.ttf': 'font/ttf',
+  '.otf': 'font/otf'
+});
+
+function workshopFolderMime(filePath) {
+  return WORKSHOP_FOLDER_MIME_BY_EXTENSION[path.extname(String(filePath || '')).toLowerCase()] || 'application/octet-stream';
+}
+
+async function collectWorkshopFolderFiles(rootPath) {
+  const files = [];
+  let totalBytes = 0;
+
+  async function walk(currentPath) {
+    const entries = await fsp.readdir(currentPath, { withFileTypes: true });
+    entries.sort((a, b) => String(a.name).localeCompare(String(b.name)));
+
+    for (const entry of entries) {
+      const fullPath = path.join(currentPath, entry.name);
+      if (entry.isSymbolicLink()) {
+        throw new Error(`Symbolic links are not allowed in Workshop folders: ${entry.name}`);
+      }
+      if (entry.isDirectory()) {
+        await walk(fullPath);
+        continue;
+      }
+      if (!entry.isFile()) continue;
+
+      if (files.length >= WORKSHOP_FOLDER_PICK_MAX_FILES) {
+        throw new Error(`Workshop folder exceeds ${WORKSHOP_FOLDER_PICK_MAX_FILES} files`);
+      }
+
+      const stat = await fsp.stat(fullPath);
+      const size = Number(stat.size || 0);
+      if (size > WORKSHOP_FOLDER_PICK_MAX_FILE_BYTES) {
+        throw new Error(`Workshop file is too large: ${entry.name}`);
+      }
+      totalBytes += size;
+      if (totalBytes > WORKSHOP_FOLDER_PICK_MAX_TOTAL_BYTES) {
+        throw new Error('Workshop folder exceeds the package size limit');
+      }
+
+      const relativeNative = path.relative(rootPath, fullPath);
+      if (!relativeNative || relativeNative.startsWith('..') || path.isAbsolute(relativeNative)) {
+        throw new Error('Invalid Workshop folder path');
+      }
+      const relativePath = relativeNative.split(path.sep).join('/');
+      const bytes = await fsp.readFile(fullPath);
+      files.push({
+        name: path.basename(fullPath),
+        relativePath,
+        size,
+        mime: workshopFolderMime(fullPath),
+        bytes: new Uint8Array(bytes.buffer, bytes.byteOffset, bytes.byteLength)
+      });
+    }
+  }
+
+  await walk(rootPath);
+  return files;
+}
+
+ipcMain.handle('ns:workshop:pickFolder', async (event) => {
+  try {
+    assertTrustedSender(event);
+    const owner = BrowserWindow.fromWebContents(event.sender);
+    const options = {
+      title: 'Выберите папку сайта / Choose website folder',
+      buttonLabel: 'Выбрать папку / Select folder',
+      properties: ['openDirectory']
+    };
+    const picked = owner
+      ? await dialog.showOpenDialog(owner, options)
+      : await dialog.showOpenDialog(options);
+    if (picked.canceled || !picked.filePaths?.[0]) {
+      return { ok: false, canceled: true, files: [] };
+    }
+    const files = await collectWorkshopFolderFiles(path.resolve(picked.filePaths[0]));
+    if (!files.length) {
+      return { ok: false, canceled: false, files: [], error: { code: 'WORKSHOP_FOLDER_EMPTY', message: 'Selected folder is empty' } };
+    }
+    return { ok: true, canceled: false, files };
+  } catch (error) {
+    console.warn('[Workshop] folder picker failed:', error && error.message ? error.message : error);
+    return {
+      ok: false,
+      canceled: false,
+      files: [],
+      error: { code: 'WORKSHOP_FOLDER_PICK_FAILED', message: String(error && error.message || error) }
+    };
+  }
+});
+
+// IRGEZTNE_WORKSHOP_IMPORT_CONFLICTS_R1W7C
+ipcMain.handle('ns:workshop:resolveImportConflicts', async (event, payload = {}) => {
+  try {
+    assertTrustedSender(event);
+    const locale = payload && payload.locale === 'en' ? 'en' : 'ru';
+    const count = Math.max(1, Math.min(200, Number(payload && payload.count || 0) || 1));
+    const paths = Array.isArray(payload && payload.paths)
+      ? payload.paths.slice(0, 5).map((value) => String(value || '').replace(/[\r\n]/g, ' ').slice(0, 180)).filter(Boolean)
+      : [];
+    const owner = BrowserWindow.fromWebContents(event.sender);
+    const shown = paths.length ? `\n\n${paths.join('\n')}${count > paths.length ? `\n… +${count - paths.length}` : ''}` : '';
+    const options = locale === 'en'
+      ? {
+          type: 'question',
+          title: 'Matching package files',
+          message: `${count} matching file path${count === 1 ? '' : 's'} already exist in this package.`,
+          detail: `Choose what to do with the matching files.${shown}`,
+          buttons: ['Replace matches', 'Skip matches', 'Cancel'],
+          defaultId: 0,
+          cancelId: 2,
+          noLink: true
+        }
+      : {
+          type: 'question',
+          title: 'Совпадающие файлы пакета',
+          message: `В пакете уже ${count === 1 ? 'есть 1 файл с таким путём' : `есть ${count} файлов с такими путями`}.`,
+          detail: `Выберите, что сделать с совпадающими файлами.${shown}`,
+          buttons: ['Заменить совпадающие', 'Пропустить совпадающие', 'Отмена'],
+          defaultId: 0,
+          cancelId: 2,
+          noLink: true
+        };
+    const result = owner
+      ? await dialog.showMessageBox(owner, options)
+      : await dialog.showMessageBox(options);
+    return {
+      ok: true,
+      action: result.response === 0 ? 'replace' : result.response === 1 ? 'skip' : 'cancel'
+    };
+  } catch (error) {
+    console.warn('[Workshop] import conflict dialog failed:', error && error.message ? error.message : error);
+    return { ok: false, action: 'cancel' };
+  }
+});
+
+// IRGEZTNE_WORKSPACE_FILE_PICKER_V1
+// Trusted Workspace picker: renderer never receives an arbitrary filesystem path.
+const WORKSPACE_FILE_OWNER_TYPES = new Set([
+  'document',
+  'spreadsheet',
+  'presentation',
+  'diagram',
+  'formula',
+  'files',
+  'webstudio',
+  'project',
+  'note',
+  'workspace'
+]);
+
+const WORKSPACE_FILE_ROLES = new Set([
+  'attachment',
+  'image',
+  'media',
+  'asset',
+  'source',
+  'reference',
+  'import'
+]);
+
+
+const WORKSPACE_IMAGE_MIME_BY_EXTENSION = Object.freeze({
+  png: 'image/png',
+  jpg: 'image/jpeg',
+  jpeg: 'image/jpeg',
+  webp: 'image/webp',
+  gif: 'image/gif',
+  avif: 'image/avif'
+});
+
+function workspaceImageMimeFromPath(filePath) {
+  const extension = path.extname(String(filePath || ''))
+    .toLowerCase()
+    .replace(/^\./, '');
+
+  return WORKSPACE_IMAGE_MIME_BY_EXTENSION[extension] || '';
+}
+
+function cleanWorkspaceFileToken(value, label, allowed) {
+  const text = String(value == null ? '' : value).trim().toLowerCase();
+
+  if (
+    !text ||
+    text.length > 64 ||
+    !/^[a-z][a-z0-9_-]*$/.test(text) ||
+    (allowed && !allowed.has(text))
+  ) {
+    const error = new TypeError(`Invalid ${label}`);
+    error.code = 'WORKSPACE_FILE_INVALID_CONTEXT';
+    throw error;
+  }
+
+  return text;
+}
+
+function cleanWorkspaceFileOwnerId(value) {
+  const text = String(value == null ? '' : value).trim();
+
+  if (
+    !text ||
+    text.length > 300 ||
+    /[\u0000-\u001f\u007f]/.test(text)
+  ) {
+    const error = new TypeError('Invalid Workspace file owner id');
+    error.code = 'WORKSPACE_FILE_INVALID_CONTEXT';
+    throw error;
+  }
+
+  return text;
+}
+
+function publicWorkspaceFilePassport(file) {
+  if (!file) return null;
+
+  return {
+    fileId: String(file.fileId || ''),
+    blobId: String(file.blobId || ''),
+    originalName: String(file.originalName || ''),
+    displayName: String(file.displayName || ''),
+    mimeType: String(file.mimeType || 'application/octet-stream'),
+    extension: String(file.extension || ''),
+    sourceKind: String(file.sourceKind || ''),
+    sizeBytes: Number(file.sizeBytes || 0),
+    sha256: String(file.sha256 || ''),
+    blobState: String(file.blobState || ''),
+    createdAt: String(file.createdAt || ''),
+    updatedAt: String(file.updatedAt || '')
+  };
+}
+
+function publicWorkspaceFileRef(ref) {
+  if (!ref) return null;
+
+  return {
+    refId: String(ref.ref_id || ref.refId || ''),
+    fileId: String(ref.file_id || ref.fileId || ''),
+    ownerType: String(ref.owner_type || ref.ownerType || ''),
+    ownerId: String(ref.owner_id || ref.ownerId || ''),
+    role: String(ref.role || ''),
+    createdAt: String(ref.created_at || ref.createdAt || '')
+  };
+}
+
+function cleanWorkspaceFileOpaqueId(value, label) {
+  const text = String(value == null ? '' : value).trim();
+
+  if (
+    !text ||
+    text.length > 200 ||
+    /[\u0000-\u001f\u007f]/.test(text)
+  ) {
+    const error = new TypeError(`Invalid ${label}`);
+    error.code = 'WORKSPACE_FILE_INVALID_CONTEXT';
+    throw error;
+  }
+
+  return text;
+}
+
+function publicWorkspaceFileImportResult(result) {
+  const blob = result && result.blob ? result.blob : {};
+
+  return {
+    ok: true,
+    canceled: false,
+    file: publicWorkspaceFilePassport(result && result.file),
+    ref: publicWorkspaceFileRef(result && result.ref),
+    blob: {
+      blobId: String(blob.blobId || ''),
+      sha256: String(blob.sha256 || ''),
+      sizeBytes: Number(blob.sizeBytes || 0),
+      reusedPhysicalBlob: Boolean(blob.reusedPhysicalBlob)
+    }
+  };
+}
+
+ipcMain.handle('ns:storage:workspaceFilePickImport', async (event, payload = {}) => {
+  try {
+    assertTrustedSender(event);
+
+    const intent = payload.intent === 'image' ? 'image' : 'any';
+
+    const ownerType = cleanWorkspaceFileToken(
+      payload.ownerType,
+      'Workspace file owner type',
+      WORKSPACE_FILE_OWNER_TYPES
+    );
+
+    const ownerId = cleanWorkspaceFileOwnerId(payload.ownerId);
+
+    const role = cleanWorkspaceFileToken(
+      payload.role || 'attachment',
+      'Workspace file role',
+      WORKSPACE_FILE_ROLES
+    );
+
+    const owner = BrowserWindow.fromWebContents(event.sender);
+
+    const picked = await dialog.showOpenDialog(
+      owner || undefined,
+      {
+        title: 'Choose file / Выберите файл',
+        properties: ['openFile'],
+        filters: intent === 'image'
+          ? [
+              {
+                name: 'Images',
+                extensions: ['png', 'jpg', 'jpeg', 'webp', 'gif', 'avif']
+              }
+            ]
+          : [
+              {
+                name: 'All files',
+                extensions: ['*']
+              }
+            ]
+      }
+    );
+
+    if (picked.canceled || !picked.filePaths?.[0]) {
+      return {
+        ok: false,
+        canceled: true
+      };
+    }
+
+    const pickedPath = picked.filePaths[0];
+    const imageMimeType = intent === 'image'
+      ? workspaceImageMimeFromPath(pickedPath)
+      : '';
+
+    if (intent === 'image' && !imageMimeType) {
+      return {
+        ok: false,
+        canceled: false,
+        error: { code: 'WORKSPACE_IMAGE_UNSUPPORTED_TYPE' }
+      };
+    }
+
+    const imported = await getIRGEZTNEStorageCore()
+      .importWorkspaceFileFromPath({
+        sourcePath: pickedPath,
+        ownerType,
+        ownerId,
+        role,
+        sourceKind: 'computer',
+        mimeType: imageMimeType || undefined
+      });
+
+    return publicWorkspaceFileImportResult(imported);
+  } catch (error) {
+    const code = String(
+      error && error.code
+        ? error.code
+        : 'WORKSPACE_FILE_IMPORT_FAILED'
+    );
+
+    console.warn(
+      '[IRGEZTNE Workspace File Picker]',
+      code,
+      error && error.message ? error.message : error
+    );
+
+    return {
+      ok: false,
+      canceled: false,
+      error: {
+        code: /^[A-Z0-9_]{1,80}$/.test(code)
+          ? code
+          : 'WORKSPACE_FILE_IMPORT_FAILED'
+      }
+    };
+  }
+});
+
+
+// IRGEZTNE_FILES_DURABLE_IMPORT_V1
+// Drag/drop and the Files upload input can only provide renderer File bytes.
+// Import those bytes through trusted IPC into the same Workspace File Store
+// used by Office attachments. No arbitrary filesystem path crosses to renderer.
+function workspaceFileBufferFromPayload(value) {
+  if (Buffer.isBuffer(value)) return Buffer.from(value);
+
+  if (value instanceof ArrayBuffer) {
+    return Buffer.from(value);
+  }
+
+  if (ArrayBuffer.isView(value)) {
+    return Buffer.from(value.buffer, value.byteOffset, value.byteLength);
+  }
+
+  if (
+    value &&
+    value.type === 'Buffer' &&
+    Array.isArray(value.data)
+  ) {
+    return Buffer.from(value.data);
+  }
+
+  throw Object.assign(
+    new TypeError('Invalid Workspace file bytes'),
+    { code: 'WORKSPACE_FILE_INVALID_BYTES' }
+  );
+}
+
+function cleanWorkspaceFileName(value) {
+  const name = path.basename(String(value || '').trim());
+
+  if (
+    !name ||
+    name.length > 255 ||
+    /[\u0000-\u001f\u007f]/.test(name)
+  ) {
+    throw Object.assign(
+      new TypeError('Invalid Workspace file name'),
+      { code: 'WORKSPACE_FILE_INVALID_NAME' }
+    );
+  }
+
+  return name;
+}
+
+ipcMain.handle('ns:storage:workspaceFileImportBuffer', async (event, payload = {}) => {
+  let tempPath = '';
+
+  try {
+    assertTrustedSender(event);
+
+    const ownerType = cleanWorkspaceFileToken(
+      payload.ownerType,
+      'Workspace file owner type',
+      WORKSPACE_FILE_OWNER_TYPES
+    );
+    const ownerId = cleanWorkspaceFileOwnerId(payload.ownerId);
+    const role = cleanWorkspaceFileToken(
+      payload.role || 'source',
+      'Workspace file role',
+      WORKSPACE_FILE_ROLES
+    );
+    const originalName = cleanWorkspaceFileName(payload.originalName);
+    const displayName = cleanWorkspaceFileName(
+      payload.displayName || originalName
+    );
+    const requestedSourceKind = String(
+      payload.sourceKind || 'computer'
+    ).trim().toLowerCase();
+    const sourceKind =
+      requestedSourceKind === 'imported' ||
+      requestedSourceKind === 'import'
+        ? 'imported'
+        : 'computer';
+    const mimeType = String(payload.mimeType || 'application/octet-stream')
+      .trim()
+      .slice(0, 255) || 'application/octet-stream';
+
+    const bytes = workspaceFileBufferFromPayload(payload.bytes);
+
+    // Keep IPC memory use bounded. The File Store itself can hold larger files
+    // through the native path picker used by Office.
+    if (bytes.length > 128 * 1024 * 1024) {
+      const error = new Error('Workspace renderer import is too large');
+      error.code = 'WORKSPACE_FILE_TOO_LARGE';
+      throw error;
+    }
+
+    const tempDir = path.join(DATA_DIR, 'files', 'renderer-imports');
+    ensureDir(tempDir);
+    tempPath = path.join(
+      tempDir,
+      `renderer-${process.pid}-${Date.now()}-${crypto.randomUUID()}.tmp`
+    );
+
+    const handle = await fsp.open(tempPath, 'wx', 0o600);
+    try {
+      await handle.writeFile(bytes);
+      await handle.sync();
+    } finally {
+      await handle.close();
+    }
+
+    const imported = await getIRGEZTNEStorageCore()
+      .importWorkspaceFileFromPath({
+        sourcePath: tempPath,
+        originalName,
+        displayName,
+        ownerType,
+        ownerId,
+        role,
+        sourceKind,
+        mimeType
+      });
+
+    return publicWorkspaceFileImportResult(imported);
+  } catch (error) {
+    const code = String(
+      error && error.code
+        ? error.code
+        : 'WORKSPACE_FILE_IMPORT_FAILED'
+    );
+
+    console.warn(
+      '[IRGEZTNE Workspace File Buffer Import]',
+      code,
+      error && error.message ? error.message : error
+    );
+
+    return {
+      ok: false,
+      canceled: false,
+      error: {
+        code: /^[A-Z0-9_]{1,80}$/.test(code)
+          ? code
+          : 'WORKSPACE_FILE_IMPORT_FAILED'
+      }
+    };
+  } finally {
+    if (tempPath) {
+      try { await fsp.unlink(tempPath); }
+      catch (error) {
+        if (!error || error.code !== 'ENOENT') {
+          console.warn('[IRGEZTNE Workspace File Buffer Import] temp cleanup failed', error);
+        }
+      }
+    }
+  }
+});
+
+
+// IRGEZTNE_WORKSPACE_FILE_LIST_V1
+ipcMain.on('ns:storage:workspaceFileListSync', (event, payload = {}) => {
+  try {
+    assertTrustedSender(event);
+    const files = getIRGEZTNEStorageCore().listWorkspaceFiles({
+      limit: Math.max(1, Math.min(10000, Number(payload.limit || 5000) || 5000))
+    });
+    event.returnValue = {
+      ok: true,
+      files: Array.isArray(files) ? files.map(publicWorkspaceFilePassport) : []
+    };
+  } catch (error) {
+    console.warn('[IRGEZTNE Workspace File List]', error && error.message ? error.message : error);
+    event.returnValue = { ok: false, files: [], error: { code: 'WORKSPACE_FILE_LIST_FAILED' } };
+  }
+});
+
+ipcMain.handle('ns:storage:workspaceFileGet', async (event, payload = {}) => {
+  try {
+    assertTrustedSender(event);
+
+    const fileId = cleanWorkspaceFileOpaqueId(
+      payload.fileId,
+      'Workspace file id'
+    );
+
+    const file = getIRGEZTNEStorageCore().getWorkspaceFile(fileId);
+
+    if (!file) {
+      return {
+        ok: false,
+        error: { code: 'WORKSPACE_FILE_NOT_FOUND' }
+      };
+    }
+
+    return {
+      ok: true,
+      file: publicWorkspaceFilePassport(file)
+    };
+  } catch (error) {
+    const code = String(
+      error && error.code
+        ? error.code
+        : 'WORKSPACE_FILE_GET_FAILED'
+    );
+
+    return {
+      ok: false,
+      error: {
+        code: /^[A-Z0-9_]{1,80}$/.test(code)
+          ? code
+          : 'WORKSPACE_FILE_GET_FAILED'
+      }
+    };
+  }
+});
+
+
+// IRGEZTNE_WORKSPACE_FILE_SAVE_AS_V1
+ipcMain.handle('ns:storage:workspaceFileSaveAs', async (event, payload = {}) => {
+  try {
+    assertTrustedSender(event);
+
+    const fileId = cleanWorkspaceFileOpaqueId(
+      payload.fileId,
+      'Workspace file id'
+    );
+    const file = getIRGEZTNEStorageCore().getWorkspaceFile(fileId);
+
+    if (!file || file.blobState !== 'ready') {
+      return {
+        ok: false,
+        canceled: false,
+        error: { code: 'WORKSPACE_FILE_NOT_FOUND' }
+      };
+    }
+
+    const dataRoot = path.resolve(DATA_DIR);
+    const sourcePath = path.resolve(
+      dataRoot,
+      String(file.storageRelpath || '')
+    );
+
+    if (
+      sourcePath === dataRoot ||
+      !sourcePath.startsWith(dataRoot + path.sep)
+    ) {
+      return {
+        ok: false,
+        canceled: false,
+        error: { code: 'WORKSPACE_FILE_INVALID_PATH' }
+      };
+    }
+
+    const owner = BrowserWindow.fromWebContents(event.sender);
+    const suggestedName = cleanWorkspaceFileName(
+      payload.suggestedName ||
+      file.displayName ||
+      file.originalName ||
+      'workspace-file'
+    );
+
+    const picked = await dialog.showSaveDialog(owner || undefined, {
+      title: 'Save file / Сохранить файл',
+      defaultPath: suggestedName
+    });
+
+    if (picked.canceled || !picked.filePath) {
+      return { ok: false, canceled: true };
+    }
+
+    await fsp.copyFile(sourcePath, picked.filePath);
+
+    return {
+      ok: true,
+      canceled: false,
+      fileName: path.basename(picked.filePath)
+    };
+  } catch (error) {
+    const code = String(
+      error && error.code
+        ? error.code
+        : 'WORKSPACE_FILE_SAVE_FAILED'
+    );
+
+    console.warn(
+      '[IRGEZTNE Workspace File Save As]',
+      code,
+      error && error.message ? error.message : error
+    );
+
+    return {
+      ok: false,
+      canceled: false,
+      error: {
+        code: /^[A-Z0-9_]{1,80}$/.test(code)
+          ? code
+          : 'WORKSPACE_FILE_SAVE_FAILED'
+      }
+    };
+  }
+});
+
+
+// IRGEZTNE_WORKSPACE_FILE_OPEN_R1N
+ipcMain.handle('ns:storage:workspaceFileOpen', async (event, payload = {}) => {
+  try {
+    assertTrustedSender(event);
+
+    const fileId = cleanWorkspaceFileOpaqueId(
+      payload.fileId,
+      'Workspace file id'
+    );
+
+    const file = getIRGEZTNEStorageCore().getWorkspaceFile(fileId);
+
+    if (!file || file.blobState !== 'ready') {
+      return {
+        ok: false,
+        error: { code: 'WORKSPACE_FILE_NOT_FOUND' }
+      };
+    }
+
+    const originalName = cleanWorkspaceFileName(
+      file.displayName ||
+      file.originalName ||
+      'workspace-file'
+    );
+    const extension = String(
+      path.extname(originalName).replace(/^\./, '') ||
+      file.extension ||
+      ''
+    ).toLowerCase();
+
+    // Open only passive/common document, image and archive formats.
+    // HTML/SVG/scripts/installers/executables deliberately require Save As.
+    const safeOpenExtensions = new Set([
+      'txt', 'md', 'markdown', 'json', 'csv', 'pdf',
+      'png', 'jpg', 'jpeg', 'webp', 'gif', 'avif',
+      'zip',
+      'rtf', 'doc', 'docx', 'odt',
+      'xls', 'xlsx', 'ods',
+      'ppt', 'pptx', 'odp'
+    ]);
+
+    if (!safeOpenExtensions.has(extension)) {
+      return {
+        ok: false,
+        error: { code: 'WORKSPACE_FILE_OPEN_REQUIRES_SAVE' }
+      };
+    }
+
+    const dataRoot = path.resolve(DATA_DIR);
+    const sourcePath = path.resolve(
+      dataRoot,
+      String(file.storageRelpath || '')
+    );
+
+    if (
+      sourcePath === dataRoot ||
+      !sourcePath.startsWith(dataRoot + path.sep)
+    ) {
+      return {
+        ok: false,
+        error: { code: 'WORKSPACE_FILE_INVALID_PATH' }
+      };
+    }
+
+    const stat = await fsp.stat(sourcePath);
+
+    if (!stat.isFile()) {
+      return {
+        ok: false,
+        error: { code: 'WORKSPACE_FILE_NOT_FOUND' }
+      };
+    }
+
+    if (stat.size > 256 * 1024 * 1024) {
+      return {
+        ok: false,
+        error: { code: 'WORKSPACE_FILE_OPEN_TOO_LARGE' }
+      };
+    }
+
+    const tempRoot = getWorkspaceFileOpenTempDir();
+    ensureDir(tempRoot);
+    try { await fsp.chmod(tempRoot, 0o700); } catch (_) {}
+
+    const target = path.join(
+      tempRoot,
+      `${Date.now()}-${crypto.randomUUID()}-${originalName}`
+    );
+
+    await fsp.copyFile(sourcePath, target);
+    try { await fsp.chmod(target, 0o600); } catch (_) {}
+
+    const openError = await shell.openPath(target);
+
+    if (openError) {
+      try { await fsp.unlink(target); } catch (_) {}
+      return {
+        ok: false,
+        error: { code: 'WORKSPACE_FILE_OPEN_FAILED' }
+      };
+    }
+
+    return {
+      ok: true,
+      opened: true
+    };
+  } catch (error) {
+    const code = String(
+      error && error.code
+        ? error.code
+        : 'WORKSPACE_FILE_OPEN_FAILED'
+    );
+
+    console.warn(
+      '[IRGEZTNE Workspace File Open]',
+      code,
+      error && error.message ? error.message : error
+    );
+
+    return {
+      ok: false,
+      error: {
+        code: /^[A-Z0-9_]{1,80}$/.test(code)
+          ? code
+          : 'WORKSPACE_FILE_OPEN_FAILED'
+      }
+    };
+  }
+});
+
+ipcMain.handle('ns:storage:workspaceFileAttach', async (event, payload = {}) => {
+  try {
+    assertTrustedSender(event);
+
+    const fileId = cleanWorkspaceFileOpaqueId(
+      payload.fileId,
+      'Workspace file id'
+    );
+
+    const ownerType = cleanWorkspaceFileToken(
+      payload.ownerType,
+      'Workspace file owner type',
+      WORKSPACE_FILE_OWNER_TYPES
+    );
+
+    const ownerId = cleanWorkspaceFileOwnerId(payload.ownerId);
+
+    const role = cleanWorkspaceFileToken(
+      payload.role || 'attachment',
+      'Workspace file role',
+      WORKSPACE_FILE_ROLES
+    );
+
+    const storage = getIRGEZTNEStorageCore();
+
+    const attached = storage.attachWorkspaceFile({
+      fileId,
+      ownerType,
+      ownerId,
+      role
+    });
+
+    const file = storage.getWorkspaceFile(fileId);
+
+    return {
+      ok: true,
+      created: Boolean(attached && attached.created),
+      file: publicWorkspaceFilePassport(file),
+      ref: publicWorkspaceFileRef(attached && attached.ref)
+    };
+  } catch (error) {
+    const code = String(
+      error && error.code
+        ? error.code
+        : 'WORKSPACE_FILE_ATTACH_FAILED'
+    );
+
+    return {
+      ok: false,
+      error: {
+        code: /^[A-Z0-9_]{1,80}$/.test(code)
+          ? code
+          : 'WORKSPACE_FILE_ATTACH_FAILED'
+      }
+    };
+  }
+});
+
+ipcMain.handle('ns:storage:workspaceFileRemoveReference', async (event, payload = {}) => {
+  try {
+    assertTrustedSender(event);
+
+    const refId = cleanWorkspaceFileOpaqueId(
+      payload.refId,
+      'Workspace file reference id'
+    );
+
+    const result = getIRGEZTNEStorageCore()
+      .removeWorkspaceFileReference(refId);
+
+    return {
+      ok: true,
+      removed: Boolean(result && result.removed),
+      deletedFileId: result && result.deletedFileId
+        ? String(result.deletedFileId)
+        : ''
+    };
+  } catch (error) {
+    const code = String(
+      error && error.code
+        ? error.code
+        : 'WORKSPACE_FILE_REMOVE_FAILED'
+    );
+
+    return {
+      ok: false,
+      error: {
+        code: /^[A-Z0-9_]{1,80}$/.test(code)
+          ? code
+          : 'WORKSPACE_FILE_REMOVE_FAILED'
+      }
+    };
+  }
+});
 
 
 function sanitizePlainText(value, maxLength = 2_000_000) {
@@ -581,6 +1958,34 @@ function normalizeZipEntryName(value) {
 }
 
 function packageEntryBufferV084H(entry) {
+  if (entry && entry.templateAsset) {
+    const templateRoot = path.resolve(
+      __dirname,
+      'template-lab'
+    );
+    const assetPath = path.resolve(
+      __dirname,
+      String(entry.templateAsset || '')
+    );
+    const allowedExtension = /\.(?:avif|gif|jpe?g|png|svg|webp)$/i.test(
+      assetPath
+    );
+
+    if (
+      !allowedExtension ||
+      (
+        assetPath !== templateRoot &&
+        !assetPath.startsWith(templateRoot + path.sep)
+      )
+    ) {
+      throw new Error(
+        'Template asset is outside the official Template Lab'
+      );
+    }
+
+    return fs.readFileSync(assetPath);
+  }
+
   if (entry && entry.sourcePath) {
     const sourcePath = path.resolve(
       String(entry.sourcePath || '')
@@ -703,6 +2108,12 @@ function getExportZipDefaultPath(payload) {
 
 function normalizePackageEntryContent(value, fallback = '') {
   if (value && typeof value === 'object' && !Buffer.isBuffer(value)) {
+    if (value.templateAsset) {
+      return {
+        templateAsset: String(value.templateAsset || ''),
+        mimeType: String(value.mimeType || '')
+      };
+    }
     if (value.sourcePath) {
       return {
         sourcePath: String(value.sourcePath || ''),
@@ -837,7 +2248,7 @@ async function pollNetlifyDeploy(deployId, token) {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: 'application/json',
-          'User-Agent': 'IRGEZTNE Preview.4'
+          'User-Agent': 'IRGEZTNE/1.0.0'
         }
       });
       if (!result.response.ok) {
@@ -881,7 +2292,7 @@ async function publishNetlifyZipPackage(payload) {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/zip',
         Accept: 'application/json',
-        'User-Agent': 'IRGEZTNE Preview.4'
+        'User-Agent': 'IRGEZTNE/1.0.0'
       },
       body: zipBuffer
     });
@@ -940,7 +2351,7 @@ async function fetchCloudflareJson(url, token, options = {}) {
   const headers = {
     Authorization: `Bearer ${token}`,
     Accept: 'application/json',
-    'User-Agent': 'IRGEZTNE Preview.4',
+    'User-Agent': 'IRGEZTNE/1.0.0',
     ...(options.headers || {})
   };
   const response = await fetch(url, { ...options, headers });
@@ -1097,7 +2508,7 @@ async function verifyPublishedUrl(url) {
   for (let attempt = 0; attempt < 6; attempt += 1) {
     if (attempt > 0) await wait(1500);
     try {
-      const response = await fetch(target, { method: 'GET', headers: { 'User-Agent': 'IRGEZTNE Preview.4' } });
+      const response = await fetch(target, { method: 'GET', headers: { 'User-Agent': 'IRGEZTNE/1.0.0' } });
       last = { ok: response.ok, status: response.status, message: `HTTP ${response.status}` };
       if (response.ok) return last;
       if (response.status === 404 || response.status >= 500) continue;
@@ -1106,6 +2517,117 @@ async function verifyPublishedUrl(url) {
     }
   }
   return last || { ok: false, status: 0, message: 'URL check failed' };
+}
+
+
+// IRGEZTNE_REMOTE_PUBLISH_R1Q
+// Real FTP/FTPS/SFTP publishing with a local per-target SHA-256 manifest.
+// First publish sends the complete build. Later publishes send only changed/new
+// files and remove only files previously published by this Workspace target.
+function remotePublishManifestDir() {
+  return path.join(app.getPath('userData'), 'publish-sync');
+}
+
+function normalizeRemotePublishConfig(providerId, payload) {
+  const source = payload && typeof payload === 'object' ? payload : {};
+  const config = source.config && typeof source.config === 'object' ? source.config : source;
+  const provider = String(providerId || source.providerId || '').trim().toLowerCase();
+  return {
+    providerId: provider,
+    host: sanitizePlainText(config.host || '', 512).trim(),
+    port: sanitizePlainText(config.port || '', 16).trim(),
+    username: sanitizePlainText(config.username || '', 512).trim(),
+    password: String(config.password || '').slice(0, 16384),
+    remotePath: sanitizePlainText(config.remotePath || '/', 2048).trim() || '/',
+    protocol: sanitizePlainText(config.protocol || (provider === 'ftp' ? 'ftps' : ''), 32).trim().toLowerCase()
+  };
+}
+
+function remotePublishManifestPath(providerId, config, siteKey) {
+  const key = remotePublish.targetIdentity(providerId, config, siteKey || 'default');
+  return path.join(remotePublishManifestDir(), `${key}.json`);
+}
+
+async function readRemotePublishManifest(providerId, config, siteKey) {
+  const filePath = remotePublishManifestPath(providerId, config, siteKey);
+  try {
+    const parsed = JSON.parse(await fsp.readFile(filePath, 'utf8'));
+    return parsed && parsed.files && typeof parsed.files === 'object' ? parsed : { version: 1, files: {} };
+  } catch (_) {
+    return { version: 1, files: {} };
+  }
+}
+
+async function writeRemotePublishManifest(providerId, config, siteKey, manifest) {
+  ensureDir(remotePublishManifestDir());
+  const filePath = remotePublishManifestPath(providerId, config, siteKey);
+  const tmpPath = `${filePath}.tmp-${process.pid}-${Date.now()}`;
+  await fsp.writeFile(tmpPath, JSON.stringify(manifest || { version: 1, files: {} }, null, 2), { mode: 0o600 });
+  await fsp.rename(tmpPath, filePath);
+}
+
+function remotePublishEntries(packageFiles) {
+  const entries = buildPackageEntries(packageFiles, [
+    'index.html',
+    'styles.css',
+    'content/page.json',
+    'meta.json'
+  ]);
+  if (!entries.some((entry) => entry.name === 'index.html')) {
+    entries.unshift({ name: 'index.html', content: '<!doctype html><html><body><h1>Empty publish</h1></body></html>' });
+  }
+  return entries.map((entry) => ({ name: entry.name, buffer: packageEntryBufferV084H(entry) }));
+}
+
+async function testRemotePublishConnection(payload) {
+  const providerId = String(payload?.providerId || '').trim().toLowerCase();
+  if (providerId !== 'ftp' && providerId !== 'sftp') {
+    return { ok: false, message: 'Unsupported remote publishing provider' };
+  }
+  const config = normalizeRemotePublishConfig(providerId, payload);
+  try {
+    const result = await remotePublish.testConnection(providerId, config);
+    return {
+      ok: true,
+      providerId,
+      remotePath: result && result.remotePath ? result.remotePath : config.remotePath,
+      message: `${providerId.toUpperCase()} connection verified`
+    };
+  } catch (error) {
+    return { ok: false, providerId, message: error && error.message ? error.message : String(error || 'Connection failed') };
+  }
+}
+
+async function publishRemotePackage(payload) {
+  const providerId = String(payload?.providerId || '').trim().toLowerCase();
+  if (providerId !== 'ftp' && providerId !== 'sftp') {
+    return { ok: false, message: 'Unsupported remote publishing provider' };
+  }
+  const config = normalizeRemotePublishConfig(providerId, payload);
+  const siteKey = sanitizePlainText(payload?.siteKey || payload?.slug || payload?.title || 'default', 512).trim() || 'default';
+  let entries;
+  try {
+    entries = remotePublishEntries(payload?.package || {});
+  } catch (error) {
+    return { ok: false, providerId, message: error && error.message ? error.message : String(error || 'Could not prepare build') };
+  }
+  try {
+    const previousManifest = await readRemotePublishManifest(providerId, config, siteKey);
+    const result = await remotePublish.publish(providerId, config, entries, previousManifest);
+    await writeRemotePublishManifest(providerId, config, siteKey, result.currentManifest);
+    return {
+      ok: true,
+      providerId,
+      uploaded: result.plan.upload,
+      removed: result.plan.remove,
+      unchanged: result.plan.unchanged,
+      files: Object.keys(result.currentManifest.files || {}),
+      publishedAt: new Date().toISOString(),
+      incremental: Object.keys(previousManifest.files || {}).length > 0
+    };
+  } catch (error) {
+    return { ok: false, providerId, message: error && error.message ? error.message : String(error || 'Remote publish failed') };
+  }
 }
 
 async function publishCloudflarePagesPackage(payload) {
@@ -1308,23 +2830,52 @@ async function openPreviewExternally(indexPath, indexUrl) {
   throw new Error('Preview URL is missing');
 }
 
+function irgeztneNativeEditLabels() {
+  const locale = String((typeof app.getLocale === 'function' ? app.getLocale() : '') || process.env.LANG || '').toLowerCase();
+  const ru = locale.startsWith('ru') || locale.includes('russian');
+  return ru
+    ? {
+        edit: 'Правка',
+        view: 'Вид',
+        undo: 'Отменить',
+        redo: 'Повторить',
+        cut: 'Вырезать',
+        copy: 'Копировать',
+        paste: 'Вставить',
+        delete: 'Удалить',
+        selectAll: 'Выделить всё'
+      }
+    : {
+        edit: 'Edit',
+        view: 'View',
+        undo: 'Undo',
+        redo: 'Redo',
+        cut: 'Cut',
+        copy: 'Copy',
+        paste: 'Paste',
+        delete: 'Delete',
+        selectAll: 'Select All'
+      };
+}
+
 function createAppMenu(win) {
+  const L = irgeztneNativeEditLabels();
   const appMenu = Menu.buildFromTemplate([
     {
-      label: 'Edit',
+      label: L.edit,
       submenu: [
-        { role: 'undo' },
-        { role: 'redo' },
+        { role: 'undo', label: L.undo },
+        { role: 'redo', label: L.redo },
         { type: 'separator' },
-        { role: 'cut' },
-        { role: 'copy' },
-        { role: 'paste' },
-        { role: 'delete' },
-        { role: 'selectAll' }
+        { role: 'cut', label: L.cut },
+        { role: 'copy', label: L.copy },
+        { role: 'paste', label: L.paste },
+        { role: 'delete', label: L.delete },
+        { role: 'selectAll', label: L.selectAll }
       ]
     },
     {
-      label: 'View',
+      label: L.view,
       submenu: [
         { role: 'reload' },
         { role: 'forceReload' },
@@ -1342,11 +2893,11 @@ function createAppMenu(win) {
     const canPaste = Boolean(params.editFlags.canPaste);
 
     const menu = Menu.buildFromTemplate([
-      { label: 'Undo', enabled: params.editFlags.canUndo, click: () => win.webContents.undo() },
-      { label: 'Redo', enabled: params.editFlags.canRedo, click: () => win.webContents.redo() },
+      { label: L.undo, enabled: params.editFlags.canUndo, click: () => win.webContents.undo() },
+      { label: L.redo, enabled: params.editFlags.canRedo, click: () => win.webContents.redo() },
       { type: 'separator' },
-      { label: 'Cut', enabled: canCut, accelerator: 'CmdOrCtrl+X', click: () => win.webContents.cut() },
-      { label: 'Copy', enabled: canCopy, accelerator: 'CmdOrCtrl+C', click: () => {
+      { label: L.cut, enabled: canCut, accelerator: 'CmdOrCtrl+X', click: () => win.webContents.cut() },
+      { label: L.copy, enabled: canCopy, accelerator: 'CmdOrCtrl+C', click: () => {
         try {
           const selected = String((params && params.selectionText) || '').trim();
           if (selected) {
@@ -1358,8 +2909,8 @@ function createAppMenu(win) {
           try { win.webContents.copy(); } catch (_) {}
         }
       } },
-      { label: 'Paste', enabled: canPaste, accelerator: 'CmdOrCtrl+V', click: () => win.webContents.paste() },
-      { label: 'Select All', accelerator: 'CmdOrCtrl+A', click: () => win.webContents.selectAll() }
+      { label: L.paste, enabled: canPaste, accelerator: 'CmdOrCtrl+V', click: () => win.webContents.paste() },
+      { label: L.selectAll, accelerator: 'CmdOrCtrl+A', click: () => win.webContents.selectAll() }
     ]);
 
     menu.popup({ window: win });
@@ -1370,6 +2921,31 @@ function configureWindowSecurity(win) {
   win.webContents.setWindowOpenHandler(({ url }) => {
     try {
       const parsed = new URL(url);
+      const economyProof = new URL(ECONOMY_PROOF_URL);
+      const weatherProof = new URL(WEATHER_PROOF_URL);
+      const isWeatherDataView = parsed.protocol === 'file:' && parsed.pathname === weatherProof.pathname;
+      const isWorkspaceDataView = parsed.protocol === 'file:' &&
+        (parsed.pathname === economyProof.pathname || parsed.pathname === weatherProof.pathname);
+      if (isWorkspaceDataView) {
+        const dataViewPreferences = {
+          contextIsolation: true,
+          nodeIntegration: false,
+          sandbox: true
+        };
+        if (isWeatherDataView) dataViewPreferences.preload = WEATHER_DATA_VIEW_PRELOAD;
+        return {
+          action: 'allow',
+          overrideBrowserWindowOptions: {
+            width: 1180,
+            height: 820,
+            minWidth: 760,
+            minHeight: 620,
+            backgroundColor: '#071224',
+            autoHideMenuBar: true,
+            webPreferences: dataViewPreferences
+          }
+        };
+      }
       if (parsed.protocol === 'https:') {
         shell.openExternal(url).catch(() => {});
       }
@@ -1386,20 +2962,30 @@ function configureWindowSecurity(win) {
     }
   });
 
+  win.webContents.on('did-create-window', (child, details) => {
+    if (!isWeatherDataViewUrl(details && details.url)) return;
+    child.webContents.on('will-navigate', (event) => event.preventDefault());
+    child.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
+  });
+
   const ses = win.webContents.session;
 
-  ses.setPermissionRequestHandler((_wc, _permission, callback) => {
-    callback(false);
+  ses.setPermissionRequestHandler((webContents, permission, callback) => {
+    const allowWeatherLocation = permission === 'geolocation' && isWeatherDataViewUrl(webContents && webContents.getURL());
+    callback(allowWeatherLocation);
   });
 
   if (typeof ses.setPermissionCheckHandler === 'function') {
-    ses.setPermissionCheckHandler(() => false);
+    ses.setPermissionCheckHandler((webContents, permission) => {
+      return permission === 'geolocation' && isWeatherDataViewUrl(webContents && webContents.getURL());
+    });
   }
 }
 
 function createWindow() {
   const win = new BrowserWindow({
-    icon: resolveIRGEZTNEAppIconPath(),
+    
+    resizable: true,icon: resolveIRGEZTNEAppIconPath(),
     width: 1400,
     height: 900,
     backgroundColor: '#111111',
@@ -1420,7 +3006,7 @@ function createWindow() {
   createAppMenu(win);
   configureWindowSecurity(win);
 
-  win.loadFile('index.html');
+  win.loadFile(INDEX_FILE);
 
   win.webContents.once('did-finish-load', () => {
     console.log('IRGEZTNE Workspace: page loaded');
@@ -1432,6 +3018,192 @@ function createWindow() {
 }
 
 function registerIpcHandlers() {
+  
+
+  // IRGEZTNE_WINDOW_CONTROLS_V04P16
+  ipcMain.handle('ns:window:getState', async (event) => {
+    assertTrustedSender(event);
+    const owner = BrowserWindow.fromWebContents(event.sender);
+    if (!owner || owner.isDestroyed()) {
+      return { ok: false, maximized: false, fullScreen: false, resizable: false };
+    }
+    return {
+      ok: true,
+      maximized: owner.isMaximized(),
+      fullScreen: owner.isFullScreen(),
+      resizable: owner.isResizable(),
+      bounds: owner.getBounds()
+    };
+  });
+
+  ipcMain.handle('ns:window:toggleMaximize', async (event) => {
+    assertTrustedSender(event);
+    const owner = BrowserWindow.fromWebContents(event.sender);
+    if (!owner || owner.isDestroyed()) {
+      return { ok: false, maximized: false };
+    }
+
+    if (!owner.isResizable()) owner.setResizable(true);
+
+    const boundsBefore = owner.getBounds();
+    const normalBefore = owner.getNormalBounds();
+    const display = screen.getDisplayMatching(boundsBefore);
+    const work = display && display.workArea ? display.workArea : boundsBefore;
+    const fillsWorkArea =
+      boundsBefore.width >= Math.round(work.width * 0.95) &&
+      boundsBefore.height >= Math.round(work.height * 0.93);
+
+    if (owner.isFullScreen()) owner.setFullScreen(false);
+
+    if (owner.isMaximized() || fillsWorkArea) {
+      if (owner.isMaximized()) owner.unmaximize();
+
+      const normalLooksUseful =
+        normalBefore &&
+        normalBefore.width >= 720 &&
+        normalBefore.height >= 520 &&
+        normalBefore.width < Math.round(work.width * 0.94) &&
+        normalBefore.height < Math.round(work.height * 0.92);
+
+      if (!normalLooksUseful) {
+        const width = Math.max(900, Math.min(1400, Math.round(work.width * 0.78)));
+        const height = Math.max(620, Math.min(900, Math.round(work.height * 0.82)));
+        const x = Math.round(work.x + (work.width - width) / 2);
+        const y = Math.round(work.y + (work.height - height) / 2);
+        owner.setBounds({ x, y, width, height }, true);
+      }
+    } else {
+      owner.maximize();
+    }
+
+    return {
+      ok: true,
+      maximized: owner.isMaximized(),
+      fullScreen: owner.isFullScreen(),
+      resizable: owner.isResizable(),
+      bounds: owner.getBounds()
+    };
+  });
+
+// IRGEZTNE Green Lightning v0.4P: narrow Messenger capability boundary.
+  // The controller starts lazily when the Chat surface asks for status/history.
+  if (!irgeztneMessengerController) {
+    irgeztneMessengerController = createWorkspaceMessengerController({
+      app,
+      runtimeDir: path.join(__dirname, 'src', 'messenger', 'native-runtime'),
+      storage: getIRGEZTNEStorageCore(),
+      safeStorage,
+      // Keep the Chat grant in Main. The shared Workspace Renderer never receives
+      // either the master Account session or a cross-service grant capability.
+      accountServiceGrantProvider: async () =>
+        getIRGEZTNEIdentityAccountController().acquireServiceGrantForMain('CHAT'),
+      fetchImpl: (...args) => net.fetch(...args),
+      chatServiceBaseUrl: process.env.IRGEZTNE_CHAT_API_URL ||
+        'https://irgeztne-chat-staging.irgeztne.workers.dev',
+      // Old Mirror/Camel MLS lab must never resurrect in the normal product.
+      // Explicit opt-in remains available for regression work only.
+      localLabEnabled: process.env.IRGEZTNE_CHAT_LOCAL_LAB === '1'
+    });
+
+    registerWorkspaceMessengerIpc({
+      ipcMain,
+      assertTrustedSender,
+      controller: irgeztneMessengerController,
+      pickAttachmentFile: async (event) => {
+        const owner = BrowserWindow.fromWebContents(event.sender);
+
+        const picked = await dialog.showOpenDialog(
+          owner || undefined,
+          {
+            title: 'Choose attachment / Выберите файл',
+            properties: ['openFile'],
+            filters: [
+              {
+                name: 'All files',
+                extensions: ['*']
+              }
+            ]
+          }
+        );
+
+        if (picked.canceled || !picked.filePaths?.[0]) {
+          return { canceled: true };
+        }
+
+        return {
+          canceled: false,
+          filePath: picked.filePaths[0]
+        };
+      },
+      openAttachmentFile: async (_event, attachment, bytes) => {
+        const safeOpenMimeTypes = new Set([
+          'text/plain',
+          'text/markdown',
+          'application/json',
+          'text/csv',
+          'application/pdf',
+          'image/png',
+          'image/jpeg',
+          'image/webp',
+          'image/gif'
+        ]);
+
+        const mimeType = String(attachment?.mimeType || '').toLowerCase();
+        if (!safeOpenMimeTypes.has(mimeType)) {
+          return {
+            ok: false,
+            error: {
+              code: 'ATTACHMENT_OPEN_REQUIRES_SAVE',
+              message: 'Save this attachment before opening it'
+            }
+          };
+        }
+
+        const tempRoot = getChatAttachmentOpenTempDir();
+        ensureDir(tempRoot);
+        try { await fsp.chmod(tempRoot, 0o700); } catch (_) {}
+
+        const target = path.join(
+          tempRoot,
+          `${Date.now()}-${crypto.randomUUID()}-${attachment.name}`
+        );
+
+        await fsp.writeFile(target, bytes, { mode: 0o600 });
+        const openError = await shell.openPath(target);
+
+        if (openError) {
+          try { await fsp.unlink(target); } catch (_) {}
+          return {
+            ok: false,
+            error: {
+              code: 'ATTACHMENT_OPEN_FAILED',
+              message: String(openError).slice(0, 1200)
+            }
+          };
+        }
+
+        return { ok: true, opened: true };
+      },
+      saveAttachmentFile: async (event, attachment, bytes) => {
+        const owner = BrowserWindow.fromWebContents(event.sender);
+        const picked = await dialog.showSaveDialog(
+          owner || undefined,
+          {
+            title: 'Save attachment / Сохранить вложение',
+            defaultPath: attachment.name
+          }
+        );
+
+        if (picked.canceled || !picked.filePath) {
+          return { ok: false, canceled: true };
+        }
+
+        await fsp.writeFile(picked.filePath, bytes);
+        return { ok: true, saved: true };
+      }
+    });
+  }
+
   ipcMain.handle('ns:notes:load', async (event) => {
     assertTrustedSender(event);
     return readJson(getNotesPath(), { text: '', updatedAt: null });
@@ -1511,6 +3283,19 @@ function registerIpcHandlers() {
     );
   });
 
+  ipcMain.handle('ns:webstudio:media:importImage', async (event, payload) => {
+    assertTrustedSender(event);
+
+    const owner = BrowserWindow.fromWebContents(
+      event.sender
+    );
+
+    return importSiteImageV092C(
+      owner,
+      payload || {}
+    );
+  });
+
   ipcMain.handle('ns:preview:materialize', async (event, payload) => {
     assertTrustedSender(event);
     return writePreviewPackage(payload);
@@ -1548,6 +3333,42 @@ function registerIpcHandlers() {
   ipcMain.handle('ns:publish:cloudflarePages', async (event, payload) => {
     assertTrustedSender(event);
     return publishCloudflarePagesPackage(payload);
+  });
+
+  ipcMain.handle('ns:publish:remoteTest', async (event, payload) => {
+    assertTrustedSender(event);
+    return testRemotePublishConnection(payload);
+  });
+
+  ipcMain.handle('ns:publish:remote', async (event, payload) => {
+    assertTrustedSender(event);
+    return publishRemotePackage(payload);
+  });
+
+  // IRGEZTNE_DOCUMENTS_EXTERNAL_LINK_V6
+  ipcMain.handle('ns:system:openExternalUrl', async (event, payload = {}) => {
+    assertTrustedSender(event);
+
+    const raw = String(payload?.url || '').trim();
+    if (!raw || raw.length > 2048) return { ok: false, error: 'invalid-url' };
+
+    let parsed;
+    try {
+      parsed = new URL(raw);
+    } catch (_) {
+      return { ok: false, error: 'invalid-url' };
+    }
+
+    if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
+      return { ok: false, error: 'unsupported-protocol' };
+    }
+
+    try {
+      await shell.openExternal(parsed.href);
+      return { ok: true };
+    } catch (_) {
+      return { ok: false, error: 'open-failed' };
+    }
   });
 
   ipcMain.handle('ns:preview:openExternal', async (event, payload) => {
@@ -1588,7 +3409,110 @@ function registerIpcHandlers() {
   });
 }
 
-app.whenReady().then(() => {
+function workspaceAssetError(status) {
+  return new Response('', {
+    status,
+    headers: {
+      'Cache-Control': 'no-store',
+      'X-Content-Type-Options': 'nosniff'
+    }
+  });
+}
+
+async function handleWorkspaceAssetRequest(request) {
+  try {
+    if (!request || request.method !== 'GET') {
+      return workspaceAssetError(405);
+    }
+
+    const url = new URL(request.url);
+
+    if (
+      url.protocol !== 'irgeztne-asset:' ||
+      url.hostname !== 'workspace-file'
+    ) {
+      return workspaceAssetError(404);
+    }
+
+    const fileId = decodeURIComponent(
+      String(url.pathname || '').replace(/^\/+/, '')
+    );
+
+    if (
+      !fileId ||
+      fileId.length > 200 ||
+      !/^[A-Za-z0-9_-]+$/.test(fileId)
+    ) {
+      return workspaceAssetError(400);
+    }
+
+    const file = getIRGEZTNEStorageCore().getWorkspaceFile(fileId);
+
+    if (!file || file.blobState !== 'ready') {
+      return workspaceAssetError(404);
+    }
+
+    const extension = String(
+      file.extension ||
+      path.extname(file.originalName || '').replace(/^\./, '')
+    ).toLowerCase();
+
+    const mimeType = WORKSPACE_IMAGE_MIME_BY_EXTENSION[extension];
+
+    // Deliberately raster-only. SVG/HTML/etc. are never served here.
+    if (!mimeType) {
+      return workspaceAssetError(415);
+    }
+
+    const dataRoot = path.resolve(DATA_DIR);
+    const absolutePath = path.resolve(
+      dataRoot,
+      String(file.storageRelpath || '')
+    );
+
+    if (
+      absolutePath === dataRoot ||
+      !absolutePath.startsWith(dataRoot + path.sep)
+    ) {
+      return workspaceAssetError(403);
+    }
+
+    const stat = await fsp.stat(absolutePath);
+
+    if (!stat.isFile()) {
+      return workspaceAssetError(404);
+    }
+
+    // Inline Office images get a bounded display path.
+    // Large files can still live in File Store as normal attachments.
+    if (stat.size > 64 * 1024 * 1024) {
+      return workspaceAssetError(413);
+    }
+
+    const bytes = await fsp.readFile(absolutePath);
+
+    return new Response(bytes, {
+      status: 200,
+      headers: {
+        'Content-Type': mimeType,
+        'Content-Length': String(bytes.length),
+        'Cache-Control': 'private, max-age=3600',
+        'X-Content-Type-Options': 'nosniff'
+      }
+    });
+  } catch (error) {
+    console.warn(
+      '[IRGEZTNE Workspace Asset]',
+      error && error.message ? error.message : error
+    );
+    return workspaceAssetError(404);
+  }
+}
+
+app.whenReady().then(async () => {
+  clearChatAttachmentOpenTempDir();
+  clearWorkspaceFileOpenTempDir();
+  clearSitePreviewTempDir();
   ensureDir(DATA_DIR);
   ensureDir(PAGES_DIR);
   ensureDir(getPreviewsDir());
@@ -1597,6 +3521,14 @@ app.whenReady().then(() => {
   ensureJsonFile(getDraftsPath(), []);
   ensureJsonFile(getPagesPath(), []);
   ensureJsonFile(getVitrinaRegistryPath(), { version: 1, items: [] });
+
+  protocol.handle('irgeztne-asset', handleWorkspaceAssetRequest);
+
+  try {
+    await startIRGEZTNEDataPlatformV02();
+  } catch (error) {
+    console.warn('[Data Platform] local service unavailable; bundled official snapshot remains active:', error && error.message ? error.message : error);
+  }
 
   app.on('web-contents-created', (_event, contents) => {
     // preview.4: route webview popup URLs into the same webview.
@@ -1636,14 +3568,15 @@ app.whenReady().then(() => {
         contents.__irgeztneWebviewCopyMenuInstalled = true;
 
         contents.on('context-menu', (_menuEvent, params) => {
+          const L = irgeztneNativeEditLabels();
           const hasSelection = Boolean(params.selectionText && String(params.selectionText).trim());
           const canCopy = Boolean(params.editFlags && (params.editFlags.canCopy || hasSelection));
           const canCut = Boolean(params.editFlags && params.editFlags.canCut);
           const canPaste = Boolean(params.editFlags && params.editFlags.canPaste);
 
           const menu = Menu.buildFromTemplate([
-            { label: 'Cut', enabled: canCut, accelerator: 'CmdOrCtrl+X', click: () => contents.cut() },
-            { label: 'Copy', enabled: canCopy, accelerator: 'CmdOrCtrl+C', click: () => {
+            { label: L.cut, enabled: canCut, accelerator: 'CmdOrCtrl+X', click: () => contents.cut() },
+            { label: L.copy, enabled: canCopy, accelerator: 'CmdOrCtrl+C', click: () => {
               try {
                 const selected = String((params && params.selectionText) || '').trim();
                 if (selected) {
@@ -1655,9 +3588,9 @@ app.whenReady().then(() => {
                 try { contents.copy(); } catch (_) {}
               }
             } },
-            { label: 'Paste', enabled: canPaste, accelerator: 'CmdOrCtrl+V', click: () => contents.paste() },
+            { label: L.paste, enabled: canPaste, accelerator: 'CmdOrCtrl+V', click: () => contents.paste() },
             { type: 'separator' },
-            { label: 'Select All', accelerator: 'CmdOrCtrl+A', click: () => contents.selectAll() }
+            { label: L.selectAll, accelerator: 'CmdOrCtrl+A', click: () => contents.selectAll() }
           ]);
 
           const owner = BrowserWindow.fromWebContents(contents) || BrowserWindow.getFocusedWindow();
@@ -1745,6 +3678,21 @@ app.whenReady().then(() => {
       createWindow();
     }
   });
+});
+
+app.on('before-quit', () => {
+  irgeztneWeatherWindowController.close();
+  clearChatAttachmentOpenTempDir();
+  clearWorkspaceFileOpenTempDir();
+  if (irgeztneDataPlatformServer) {
+    try { irgeztneDataPlatformServer.close(); } catch (_) {}
+    irgeztneDataPlatformServer = null;
+  }
+  if (irgeztneMessengerController) {
+    void irgeztneMessengerController.close().catch((error) => {
+      console.warn('[Green Lightning] secure-local-service shutdown warning:', error && error.message ? error.message : error);
+    });
+  }
 });
 
 app.on('window-all-closed', () => {

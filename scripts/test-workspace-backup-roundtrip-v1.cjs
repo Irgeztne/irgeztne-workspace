@@ -1,0 +1,58 @@
+'use strict';
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const os = require('node:os');
+const path = require('node:path');
+const { pathToFileURL, fileURLToPath } = require('node:url');
+const { createStorageCore } = require('../src/storage/storage-core-main');
+(async () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(),'irgeztne-backup-'));
+  const first = path.join(tmp,'source'); const second = path.join(tmp,'restored');
+  let a, b;
+  try {
+    a = createStorageCore({dataDir:first}); b = createStorageCore({dataDir:second});
+    const bytes = Buffer.from('89504e470d0a1a0a0000000d49484452000000010000000108060000001f15c4890000000b49444154789c636000020000050001a5f645400000000049454e44ae426082','hex');
+    const img = path.join(first,'webstudio-media','roundtrip','image','marker.png');
+    fs.mkdirSync(path.dirname(img),{recursive:true}); fs.writeFileSync(img,bytes);
+    const fav = path.join(first,'webstudio-media','roundtrip','image','favicon.png'); fs.writeFileSync(fav,bytes);
+    const site = {sites:[{id:'roundtrip',state:{site:{name:'Backup roundtrip',icon:pathToFileURL(fav).href,publishSettings:{providers:{netlify:{token:'PROVIDER-DO-NOT-EXPORT',hasToken:true}}}},pages:[{id:'home',content:'UNIQUE-HOME <img src="'+pathToFileURL(img).href+'">'},{id:'about',content:'UNIQUE-ABOUT'},{id:'contact',content:'UNIQUE-CONTACT'}],media:[{sourcePath:img,sourceUrl:pathToFileURL(img).href}]}}]};
+    a.setModuleState('webstudio.siteManager.v1',site);
+    a.setModuleState('workspace.tasks.v1',{tasks:[{id:'task',title:'preserved'}]});
+    a.setModuleState('workspace.workshop.installed.v1',{items:[{id:'widget',type:'widget',files:[{path:'main.css',content:'.marker{}'}]}]});
+    a.setModuleState('account.session.v1',{token:'MASTER-DO-NOT-EXPORT'});
+    const input = path.join(tmp,'physical.txt'); fs.writeFileSync(input,'PHYSICAL-FILE-MARKER');
+    const file = await a.importWorkspaceFileFromPath({sourcePath:input,ownerType:'document',ownerId:'roundtrip',role:'attachment'});
+    assert.equal(file.ok,true,JSON.stringify(file));
+    const bundle = a.exportWorkspaceBundle({'irgeztne.webStudioSites.v1':JSON.stringify(site),'irgeztne.account.v1':JSON.stringify({token:'MASTER-DO-NOT-EXPORT'})});
+    const exported = JSON.stringify(bundle);
+    assert(!exported.includes('MASTER-DO-NOT-EXPORT')); assert(!exported.includes('PROVIDER-DO-NOT-EXPORT'));
+    assert.equal(bundle.assets.length,3);
+    const exportedFile = path.join(tmp,'exported-backup.json'); fs.writeFileSync(exportedFile,exported);
+    b.setModuleState('account.session.v1',{token:'existing-account-kept'});
+    b.setModuleState('workspace.tasks.v1',{tasks:[{id:'old'}]});
+    const restored = b.restoreWorkspaceBundle(JSON.parse(fs.readFileSync(exportedFile,'utf8'))); assert.equal(restored.ok,true);
+    a.close(); a=null; b.close(); b = createStorageCore({dataDir:second}); // Actual SQLite restart.
+    const manager = b.getModuleState('webstudio.siteManager.v1'); assert.equal(manager.sites.length,1); assert.equal(manager.sites[0].state.pages.length,3);
+    const state = manager.sites[0].state;
+    assert(state.pages[0].content.includes('UNIQUE-HOME')); assert(state.pages[1].content.includes('UNIQUE-ABOUT'));
+    assert.equal(state.media[0].sourcePath,path.join(second,'webstudio-media','roundtrip','image','marker.png'));
+    assert.deepEqual(fs.readFileSync(fileURLToPath(state.media[0].sourceUrl)),bytes);
+    assert.deepEqual(fs.readFileSync(fileURLToPath(state.site.icon)),bytes);
+    assert.equal(b.getModuleState('workspace.workshop.installed.v1').items[0].id,'widget');
+    assert.equal(b.getModuleState('workspace.tasks.v1').tasks[0].id,'task');
+    assert.equal(b.getModuleState('account.session.v1').token,'existing-account-kept');
+    const files = b.listWorkspaceFiles({}); assert.equal(files.length,1,JSON.stringify(files));
+    for (const asset of bundle.assets) if (asset.path.startsWith('files/blobs/')) assert.equal(fs.readFileSync(path.join(second,asset.path),'utf8'),'PHYSICAL-FILE-MARKER');
+    const dbFailure = structuredClone(bundle); dbFailure.tables.workspace_files.push(structuredClone(dbFailure.tables.workspace_files[0]));
+    assert.throws(()=>b.restoreWorkspaceBundle(dbFailure),/UNIQUE/);
+    assert.equal(b.getModuleState('workspace.tasks.v1').tasks[0].id,'task');
+    assert.deepEqual(fs.readFileSync(fileURLToPath(state.media[0].sourceUrl)),bytes);
+    const bad = structuredClone(bundle); bad.assets[0].bytes=Buffer.from('tampered').toString('base64');
+    assert.throws(()=>b.restoreWorkspaceBundle(bad),/integrity/); assert.equal(b.getModuleState('webstudio.siteManager.v1').sites.length,1);
+    const escaped = structuredClone(bundle); escaped.assets[0].path='../outside'; assert.throws(()=>b.restoreWorkspaceBundle(escaped),/Invalid backup asset/);
+    const protectedBundle = structuredClone(bundle); protectedBundle.tables.module_state[0].module_id='account.session.v1'; assert.throws(()=>b.restoreWorkspaceBundle(protectedBundle),/protected module/);
+    const missing = structuredClone(bundle); missing.assets = missing.assets.filter(a=>!a.path.endsWith('marker.png')); assert.throws(()=>b.restoreWorkspaceBundle(missing),/Local asset/);
+    fs.unlinkSync(path.join(second,'webstudio-media','roundtrip','image','marker.png')); assert.throws(()=>b.exportWorkspaceBundle({}),/Local asset/);
+    console.log('PASS: full SQLite + pages + media/favicon + physical file + installed widget roundtrip, restart, path remapping, credential exclusion, corrupt/missing asset and protected-domain rejection');
+  } finally { if(a) a.close(); if(b) b.close(); fs.rmSync(tmp,{recursive:true,force:true}); }
+})().catch(error=>{console.error(error);process.exitCode=1;});

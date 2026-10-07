@@ -2,6 +2,12 @@
 
 IRGEZTNE Workspace is an early local-first desktop workspace built with Electron.
 
+Current cross-module architecture, privacy boundaries, module ownership and
+finalized subsystem references are indexed in
+[`docs/release/00-READ-ME-FIRST.md`](docs/release/00-READ-ME-FIRST.md).
+Historical preview notes below remain release history and do not override that
+canonical documentation.
+
 Preview.4 focuses on turning the project from a simple preview shell into a more practical workspace: browser shell, files, notes, projects, templates, and a much stronger Web Studio flow for creating and publishing static sites.
 
 ## Current preview release

@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="The team, principles, and process behind business systems and digital products.">
+    <meta name="theme-color" content="#17694b">
+    <title>How Meridian works</title>
+    <script>
+      try {
+        const urlTheme = new URLSearchParams(location.search).get("theme");
+        const savedTheme = localStorage.getItem("irgeztne-business-canon-theme");
+        const initialTheme =
+          urlTheme === "dark" || urlTheme === "light" ? urlTheme : savedTheme;
+        if (initialTheme === "dark" || initialTheme === "light") {
+          document.documentElement.dataset.theme = initialTheme;
+        }
+      } catch {}
+    </script>
+    <link rel="stylesheet" href="../shared/styles.css">
+    <script defer src="../shared/site.js"></script>
+  </head>
+  <body data-page="about" data-nav-open="false">
+    
+    <header class="site-header">
+      <div class="header-shell">
+        <a class="brand" href="index.html" data-brand-text-fallback="true">
+          <strong>Meridian</strong>
+          <span>Business and product systems</span>
+        </a>
+        <nav class="site-nav" aria-label="Main navigation"><a href="index.html">Home</a><a href="services.html">Services</a><a href="about.html" aria-current="page">Company</a><a href="contacts.html">Contact</a></nav>
+        <div class="header-actions">
+          <a class="header-cta" href="contacts.html">Discuss a project</a>
+          <button
+            class="theme-toggle"
+            type="button"
+            data-theme-toggle
+            data-label-dark="Use dark theme"
+            data-label-light="Use light theme"
+            aria-label="Use dark theme"
+          >☾</button>
+          <button
+            class="menu-toggle"
+            type="button"
+            data-menu-toggle
+            aria-label="Open menu"
+            aria-expanded="false"
+          >☰</button>
+        </div>
+      </div>
+    </header>
+    
+    <main class="main-shell subpage">
+      <section class="subpage-hero">
+        <article class="content-panel">
+          <div><span class="eyebrow">How we work</span><h1>A team responsible for the launch, not just a polished file.</h1><p>We connect structure, content, design, and implementation into one verifiable outcome. There is no second owner appearing between the mockup and the working site.</p></div>
+          <div class="subpage-index"><div><b>Focus</b><span>A clear challenge</span></div><div><b>Rhythm</b><span>Short reviews</span></div><div><b>Outcome</b><span>A working release</span></div></div>
+        </article>
+        <figure class="subpage-media" data-template-slot="about.image">
+          <img src="../assets/hero-office.webp" alt="The Meridian team in its workspace" width="883" height="475">
+          <figcaption class="media-note"><strong>Small team, broad context</strong><span>Strategy, interface, and delivery stay in one coherent system.</span></figcaption>
+        </figure>
+      </section>
+
+      <section class="section values-grid">
+        <article class="value-card"><b>01 · Clarity</b><h2>Call things by their real names</h2><p>Never present a placeholder as a feature, or a future slot as a working media system.</p><ul><li>Verify the owner</li><li>Define the boundary</li><li>Separate fact from assumption</li></ul></article>
+        <article class="value-card"><b>02 · Integrity</b><h2>Do not shrink the product for speed</h2><p>A working foundation matters more than a beautiful first viewport that fails on the second route.</p><ul><li>Complete pages</li><li>Real navigation</li><li>Consistent theme behaviour</li></ul></article>
+        <article class="value-card"><b>03 · Verification</b><h2>Accept the actual outcome</h2><p>Screens, routes, and the real browser matter more than a green test that checks the wrong thing.</p><ul><li>Visual acceptance</li><li>Interaction testing</li><li>Build comparison</li></ul></article>
+      </section>
+
+      <section class="section team-band">
+        <figure class="image-panel" data-template-slot="team.image"><img src="../assets/process-team.webp" alt="A project workshop at a whiteboard" width="880" height="252"></figure>
+        <div class="metric-panel">
+          <article><strong>1</strong><span>coherent journey from idea to launch</span></article>
+          <article><strong>4</strong><span>review points before handoff</span></article>
+          <article><strong>2</strong><span>complete colour themes</span></article>
+          <article><strong>0</strong><span>hidden external dependencies</span></article>
+        </div>
+      </section>
+
+      <section class="section statement"><div><span class="eyebrow">Manifesto</span><h2>A good business site should not look like an admin system.</h2></div><p>Navigation helps people move, while every independent page opens its actual content — without a technical “page” label or an automatic repeat of the menu item.</p></section>
+      <section class="cta-band"><div><span class="eyebrow">Introduction</span><h2>If the challenge is complex, we’ll start with a map — not a promise of a ready answer.</h2></div><a class="button-primary" href="contacts.html">Get in touch</a></section>
+    </main>
+    
+    <footer class="site-footer">
+      <div class="footer-shell">
+        <div class="footer-brand">
+          <strong>Meridian</strong>
+          <p>A calm business structure for companies, products, and services.</p>
+        </div>
+        <div class="footer-column">
+          <b>Sections</b>
+          <a href="services.html">Services</a>
+          <a href="about.html">Company</a>
+          <a href="contacts.html">Contact</a>
+        </div>
+        <div class="footer-column">
+          <b>Contact</b>
+          <a href="mailto:hello@example.com">hello@example.com</a>
+          <a href="tel:+994000000000">+994 00 000 00 00</a>
+        </div>
+      </div>
+      <div class="footer-bottom">© 2026 Meridian · Business Canon v1 demonstration content</div>
+    </footer>
+  </body>
+</html>

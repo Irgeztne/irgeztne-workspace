@@ -1,0 +1,147 @@
+IRGEZTNE WORKSPACE PROJECT SNAPSHOT
+Generated: 2026-08-06T12:40:21+04:00
+Project: /home/acer/Загрузки/irgeztne-workspace-main
+
+PROJECT SIZE
+834M	/home/acer/Загрузки/irgeztne-workspace-main
+
+NODE
+v24.14.0
+
+GIT BRANCH
+main
+
+GIT HEAD
+df930b4
+
+GIT STATUS
+M main.js
+ M preload.js
+ M scripts/test-webstudio-public-page-contract.js
+ M src/modules/documents/documents-v0.css
+ M src/modules/documents/documents-v0.js
+ M src/modules/editor-site-studio-safe/editor-site-studio-safe-v5.css
+ M src/modules/editor-site-studio-safe/editor-site-studio-safe-v5.js
+ M src/modules/editor-workbench/editor-workbench.css
+ M src/modules/editor-workbench/editor-workbench.html
+ M src/modules/editor-workbench/editor-workbench.js
+ M src/preview4-cabinet-card-drag-v1.js
+ M src/preview4-cabinet-nav-drag-v1.js
+ M src/preview4-grid-nav-lang-fix.js
+ M src/preview4-official-templates-v1.js
+ M template-lab/agency-studio/index.html
+ D template-lab/agency-studio/metadata.json
+ M template-lab/agency-studio/style.css
+ D template-lab/blog-news/README.md
+ D template-lab/blog-news/assets/demo-cover-longread.svg
+ D template-lab/blog-news/assets/demo-cover-tech.svg
+ D template-lab/blog-news/assets/demo-cover-workspace.svg
+ D template-lab/blog-news/assets/news-photo-business.jpg
+ D template-lab/blog-news/assets/news-photo-city-lower.jpg
+ D template-lab/blog-news/assets/news-photo-guide.jpg
+ D template-lab/blog-news/assets/news-photo-main.jpg
+ D template-lab/blog-news/assets/news-photo-tech.jpg
+ D template-lab/blog-news/assets/news-photo-workspace-lower.jpg
+ M template-lab/blog-news/index.html
+ D template-lab/blog-news/metadata.json
+ D template-lab/blog-news/style.css
+ D template-lab/business-product/README.md
+ D template-lab/business-product/assets/business-case-city.svg
+ D template-lab/business-product/assets/business-case-generated.webp
+ D template-lab/business-product/assets/business-case.svg
+ D template-lab/business-product/assets/business-dashboard.svg
+ D template-lab/business-product/assets/business-feature-generated.webp
+ D template-lab/business-product/assets/business-feature-meeting.svg
+ D template-lab/business-product/assets/business-hero-generated.webp
+ D template-lab/business-product/assets/business-hero-workspace.svg
+ D template-lab/business-product/assets/business-team.svg
+ M template-lab/business-product/index.html
+ D template-lab/business-product/metadata.json
+ D template-lab/business-product/style.css
+ M template-lab/portfolio-personal/index.html
+ D template-lab/portfolio-personal/metadata.json
+ M template-lab/portfolio-personal/style.css
+?? IRGEZTNE-FOUR-TEMPLATES-v2-REVIEW-RU.md
+?? IRGEZTNE-WORKSPACE-WEBSTUDIO-v092c-PATCH-INSTRUCTIONS.md
+?? IRGEZTNE-WORKSPACE-WEBSTUDIO-v092d-PATCH-INSTRUCTIONS.md
+?? IRGEZTNE-WORKSPACE-WEBSTUDIO-v094a-PATCH-INSTRUCTIONS.md
+?? IRGEZTNE-WORKSPACE-WEBSTUDIO-v095a-PATCH-INSTRUCTIONS.md
+?? IRGEZTNE-WORKSPACE-WEBSTUDIO-v096a-PATCH-INSTRUCTIONS.md
+?? IRGEZTNE-WORKSPACE-WEBSTUDIO-v096a-QUALITY-REPORT.md
+?? IRGEZTNE-WORKSPACE-WEBSTUDIO-v096b-PATCH-INSTRUCTIONS.md
+?? IRGEZTNE-WORKSPACE-WEBSTUDIO-v096b-QUALITY-REPORT.md
+?? IRGEZTNE-WORKSPACE-WEBSTUDIO-v096c-PATCH-INSTRUCTIONS.md
+?? IRGEZTNE-WORKSPACE-WEBSTUDIO-v096c-QUALITY-REPORT.md
+?? IRGEZTNE-WORKSPACE-WEBSTUDIO-v097a-PATCH-INSTRUCTIONS.md
+?? IRGEZTNE-WORKSPACE-WEBSTUDIO-v097a-QUALITY-REPORT.md
+?? IRGEZTNE-WORKSPACE-WEBSTUDIO-v098a-PATCH-INSTRUCTIONS.md
+?? IRGEZTNE-WORKSPACE-WEBSTUDIO-v098b-PATCH-INSTRUCTIONS.md
+?? IRGEZTNE-WORKSPACE-WEBSTUDIO-v098d-PATCH-INSTRUCTIONS.md
+?? IRGEZTNE-WORKSPACE-WEBSTUDIO-v098e-PATCH-INSTRUCTIONS.md
+?? IRGEZTNE-WORKSPACE-WEBSTUDIO-v098f-PATCH-INSTRUCTIONS.md
+?? IRGEZTNE-WORKSPACE-WEBSTUDIO-v098g-PATCH-INSTRUCTIONS.md
+?? IRGEZTNE-WORKSPACE-WEBSTUDIO-v098h-PATCH-INSTRUCTIONS.md
+?? SUPPLIER-ACCEPTANCE-CHECKLIST.md
+?? SUPPLIER-CHANGELOG-RU.md
+?? SUPPLIER-QUALITY-REPORT.md
+?? SUPPLIER-WIDE-REWORK-REPORT.md
+?? docs/
+?? scripts/test-webstudio-blog-article-routes-v098h.js
+?? scripts/test-webstudio-brand-identity-v098f.js
+?? scripts/test-webstudio-documentation-dark-interaction-v096b.js
+?? scripts/test-webstudio-first-frame-v097a.js
+?? scripts/test-webstudio-landing-documentation-v096a.js
+?? scripts/test-webstudio-media-render-parity-v098g.js
+?? scripts/test-webstudio-official-four-v098a.js
+?? scripts/test-webstudio-official-four-v098b.js
+?? scripts/test-webstudio-template-gallery-v098e.js
+?? scripts/test-webstudio-theme-prepaint-v096c.js
+?? scripts/test-webstudio-theme-runtime-v098d.js
+?? template-lab/agency-studio/EN/
+?? template-lab/agency-studio/MEDIA-RIGHTS.md
+?? template-lab/agency-studio/QUALITY-REPORT.md
+?? template-lab/agency-studio/README-RU.txt
+?? template-lab/agency-studio/RU/
+?? template-lab/agency-studio/assets/
+?? template-lab/agency-studio/site.js
+?? template-lab/blog-news/CANON-XRAY.md
+?? template-lab/blog-news/EN/
+?? template-lab/blog-news/MEDIA-RIGHTS.md
+?? template-lab/blog-news/QUALITY-REPORT.md
+?? template-lab/blog-news/README-RU.txt
+?? template-lab/blog-news/RU/
+?? template-lab/blog-news/assets/business.jpg
+?? template-lab/blog-news/assets/city.jpg
+?? template-lab/blog-news/assets/guide.jpg
+?? template-lab/blog-news/assets/main.jpg
+?? template-lab/blog-news/assets/tech.jpg
+?? template-lab/blog-news/assets/workspace.jpg
+?? template-lab/blog-news/shared/
+?? template-lab/business-product/CANON-XRAY.md
+?? template-lab/business-product/EN/
+?? template-lab/business-product/MEDIA-RIGHTS.md
+?? template-lab/business-product/QUALITY-REPORT.md
+?? template-lab/business-product/README-RU.txt
+?? template-lab/business-product/RU/
+?? template-lab/business-product/assets/case-city.webp
+?? template-lab/business-product/assets/hero-office.webp
+?? template-lab/business-product/assets/process-team.webp
+?? template-lab/business-product/shared/
+?? template-lab/portfolio-personal/EN/
+?? template-lab/portfolio-personal/MEDIA-RIGHTS.md
+?? template-lab/portfolio-personal/QUALITY-REPORT.md
+?? template-lab/portfolio-personal/README-RU.txt
+?? template-lab/portfolio-personal/RU/
+?? template-lab/portfolio-personal/assets/
+?? template-lab/portfolio-personal/site.js
+
+EXPECTED CURRENT NAVIGATION MARKERS
+
+Tasks label in language owner: YES
+  /home/acer/Загрузки/irgeztne-workspace-main/src/preview4-grid-nav-lang-fix.js
+
+Card order storage v2: YES
+  /home/acer/Загрузки/irgeztne-workspace-main/src/preview4-cabinet-card-drag-v1.js
+
+Nav order storage v2: YES
+  /home/acer/Загрузки/irgeztne-workspace-main/src/preview4-cabinet-nav-drag-v1.js

@@ -1,0 +1,16 @@
+{
+  "name": "irgeztne-data-platform",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node engine.js",
+    "refresh": "node engine.js --refresh-only",
+    "build:widget-data": "node scripts/build-workspace-bootstrap.js",
+    "test": "node --test test/*.test.js",
+    "check": "node --check engine.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="The Vector Atelier working process."><title>Process · Vector Atelier</title>
+  <script>
+    (() => {
+      const queryTheme = new URLSearchParams(location.search).get("theme");
+      let theme = queryTheme === "dark" || queryTheme === "light" ? queryTheme : null;
+      if (!theme) {
+        try {
+          const savedTheme = localStorage.getItem("vector-atelier-theme");
+          if (savedTheme === "dark" || savedTheme === "light") theme = savedTheme;
+        } catch {}
+      }
+      if (!theme && window.matchMedia?.("(prefers-color-scheme: dark)").matches) theme = "dark";
+      document.documentElement.dataset.theme = theme || "light";
+    })();
+  </script>
+<link rel="stylesheet" href="../style.css"></head>
+<body><header class="site-header"><div class="header-inner"><a class="brand" href="index.html"><span class="brand-mark">V</span><span><strong>Vector Atelier</strong><small>Agency · Creative studio</small></span></a><nav class="main-nav" aria-label="Main navigation"><a href="index.html">Home</a><a href="cases.html">Cases</a><a href="services.html">Services</a><a href="process.html" aria-current="page">Process</a><a href="contact.html">Contact</a></nav><div class="header-actions"><a class="header-cta" href="contact.html">Discuss a project</a><button class="theme-toggle" data-theme-toggle data-dark-label="Use dark theme" data-light-label="Use light theme" aria-label="Use dark theme">☾</button><button class="menu-toggle" data-menu-toggle aria-label="Open menu" aria-expanded="false">≡</button></div></div></header>
+<main><section class="page-intro surface"><div><span class="eyebrow">Process</span><h1>A calm path from request to launch.</h1></div><p>Every stage has a clear purpose, output and next step. The process remains flexible without losing direction.</p></section>
+<section class="process-rail surface"><span class="eyebrow">Four stages</span><div class="process-grid"><article class="process-card"><span>01</span><h3>Discover</h3><p>Understand the challenge, context, audience and constraints.</p></article><article class="process-card"><span>02</span><h3>Shape</h3><p>Turn observations into structure and visual direction.</p></article><article class="process-card"><span>03</span><h3>Build</h3><p>Prepare the system, pages, content and launch assets.</p></article><article class="process-card"><span>04</span><h3>Launch</h3><p>Check, publish and define the next useful iteration.</p></article></div></section>
+<section class="process-media"><div class="media-band surface"><img src="../assets/agency-process.webp" alt="Working with sketches, color and material samples"></div><article class="process-note surface"><span class="eyebrow">Working together</span><h2>The decisions are visible before the final delivery.</h2><p>Intermediate materials help everyone check the direction before it becomes expensive to produce. The client's team understands the logic and can continue the system after launch.</p></article></section>
+<section class="detail-list"><article class="detail-card surface"><strong>Reviews</strong><h2>Short cycles</h2><p>Regular decision points instead of one large surprise at the end.</p></article><article class="detail-card surface"><strong>Materials</strong><h2>Working system</h2><p>Layouts, principles and components are delivered in a form the team can extend.</p></article><article class="detail-card surface"><strong>Continuity</strong><h2>After launch</h2><p>When needed, we support early updates and the next stage of the system.</p></article></section></main>
+<footer class="site-footer"><div class="footer-inner"><div><strong>Vector Atelier</strong><span>Agency and creative studio</span></div><nav aria-label="Footer navigation"><a href="index.html">Home</a><a href="cases.html">Cases</a><a href="services.html">Services</a><a href="process.html">Process</a><a href="contact.html">Contact</a></nav></div></footer><script src="../site.js"></script></body></html>

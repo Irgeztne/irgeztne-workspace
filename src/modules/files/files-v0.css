@@ -837,3 +837,45 @@
   max-width: min(100%, 280px);
   max-height: 190px;
 }
+
+
+/* IRGEZTNE_FILES_QUICK_DELETE_RELEASE_R1
+   Keep delete reachable without scrolling through the inspector. */
+.ns-library-preview-head {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+}
+.ns-library-preview-head-copy {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+.ns-library-preview-quick-delete {
+  align-self: start;
+  min-height: 34px;
+  padding: 0 13px;
+  border: 1px solid rgba(244, 114, 182, 0.28);
+  border-radius: 11px;
+  background: linear-gradient(180deg, rgba(91, 26, 38, 0.98), rgba(56, 16, 25, 0.98));
+  color: #ffe0e6;
+  font: inherit;
+  font-weight: 760;
+  cursor: pointer;
+}
+.ns-library-preview-quick-delete:hover,
+.ns-library-preview-quick-delete:focus-visible {
+  border-color: rgba(251, 113, 133, .62);
+  filter: brightness(1.08);
+}
+@media (max-width: 720px) {
+  .ns-library-preview-head { grid-template-columns: 1fr; }
+  .ns-library-preview-quick-delete { justify-self: start; }
+}
+
+
+/* IRGEZTNE_FILES_DROPZONE_KEYBOARD_RELEASE_R1 */
+.ns-library-dropzone:focus-visible {
+  outline: 2px solid rgba(126, 190, 255, .78);
+  outline-offset: 3px;
+  border-color: rgba(126, 190, 255, .72);
+}

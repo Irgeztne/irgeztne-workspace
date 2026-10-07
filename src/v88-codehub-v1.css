@@ -630,6 +630,222 @@
   }
 }
 
+/* IRGEZTNE_WEBSTUDIO_WORKSHOP_INTEGRATION_V099A
+   Web Studio supplies the active language and theme on the dynamic CodeHub root.
+   These overrides are intentionally scoped so the existing workspace/cabinet surfaces stay unchanged. */
+.ir-site-studio-v5-workshop-v099a,
+[data-codehub-host="webstudio"] {
+  min-height: 100%;
+}
+
+[data-codehub-host="webstudio"] {
+  --codehub-host-surface: rgba(13, 25, 43, 0.94);
+  --codehub-host-surface-soft: rgba(16, 31, 53, 0.76);
+  --codehub-host-surface-strong: rgba(9, 19, 34, 0.96);
+  --codehub-host-input: #09162a;
+  --codehub-host-text: #eaf2ff;
+  --codehub-host-muted: #a9b9d2;
+  --codehub-host-line: rgba(130, 176, 238, 0.2);
+  --codehub-host-line-strong: rgba(118, 202, 255, 0.52);
+  --codehub-host-accent: #5fbdff;
+  --codehub-host-primary: linear-gradient(135deg, #5fbdff 0%, #2f7be6 45%, #164a96 100%);
+  --codehub-host-hover: rgba(43, 82, 134, 0.46);
+  --codehub-host-shadow: 0 14px 34px rgba(0, 0, 0, 0.18);
+  display: block;
+  color: var(--codehub-host-text);
+}
+
+[data-codehub-host="webstudio"][data-codehub-theme="light"] {
+  --codehub-host-surface: #ffffff;
+  --codehub-host-surface-soft: #f7faff;
+  --codehub-host-surface-strong: #f2f6fb;
+  --codehub-host-input: #ffffff;
+  --codehub-host-text: #102033;
+  --codehub-host-muted: #5f7188;
+  --codehub-host-line: rgba(60, 96, 150, 0.18);
+  --codehub-host-line-strong: rgba(47, 123, 230, 0.46);
+  --codehub-host-accent: #1f64c4;
+  --codehub-host-primary: linear-gradient(135deg, #2f7be6 0%, #1f5fbf 100%);
+  --codehub-host-hover: #e8f3ff;
+  --codehub-host-shadow: 0 14px 34px rgba(38, 74, 120, 0.08);
+}
+
+[data-codehub-host="webstudio"] .ns-codehub-v1__hero,
+[data-codehub-host="webstudio"] .ns-codehub-v1__panel,
+[data-codehub-host="webstudio"] .ns-codehub-v1__builder-shell,
+[data-codehub-host="webstudio"] .ns-codehub-v1__side,
+[data-codehub-host="webstudio"] .ns-codehub-v1__submit-card,
+[data-codehub-host="webstudio"] .ns-codehub-v1__overview-note,
+[data-codehub-host="webstudio"] .ns-codehub-v1__validation,
+[data-codehub-host="webstudio"] .ns-codehub-v1__meta-report {
+  border-color: var(--codehub-host-line);
+  background: var(--codehub-host-surface);
+  color: var(--codehub-host-text);
+  box-shadow: var(--codehub-host-shadow);
+}
+
+[data-codehub-host="webstudio"] .ns-codehub-v1__hero {
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--codehub-host-accent) 12%, transparent), transparent 34%),
+    var(--codehub-host-surface);
+}
+
+[data-codehub-host="webstudio"] .ns-codehub-v1__summary-card,
+[data-codehub-host="webstudio"] .ns-codehub-v1__overview-card,
+[data-codehub-host="webstudio"] .ns-codehub-v1__rule-card,
+[data-codehub-host="webstudio"] .ns-codehub-v1__recent-row,
+[data-codehub-host="webstudio"] .ns-codehub-v1__type-card,
+[data-codehub-host="webstudio"] .ns-codehub-v1__card,
+[data-codehub-host="webstudio"] .ns-codehub-v1__file-row,
+[data-codehub-host="webstudio"] .ns-codehub-v1__flow-step,
+[data-codehub-host="webstudio"] .ns-codehub-v1__meta-summary span,
+[data-codehub-host="webstudio"] .ns-codehub-v1__check-row,
+[data-codehub-host="webstudio"] .ns-codehub-v1__badge,
+[data-codehub-host="webstudio"] .ns-codehub-v1__tag {
+  border-color: var(--codehub-host-line);
+  background: var(--codehub-host-surface-soft);
+  color: var(--codehub-host-text);
+  box-shadow: none;
+}
+
+[data-codehub-host="webstudio"] .ns-codehub-v1__kicker,
+[data-codehub-host="webstudio"] .ns-codehub-v1__card-kicker {
+  color: var(--codehub-host-accent);
+}
+
+[data-codehub-host="webstudio"] .ns-codehub-v1__hero h3,
+[data-codehub-host="webstudio"] .ns-codehub-v1__panel h4,
+[data-codehub-host="webstudio"] .ns-codehub-v1__builder-shell h4,
+[data-codehub-host="webstudio"] .ns-codehub-v1__submit-card h4,
+[data-codehub-host="webstudio"] .ns-codehub-v1__summary-card strong,
+[data-codehub-host="webstudio"] .ns-codehub-v1__overview-card strong,
+[data-codehub-host="webstudio"] .ns-codehub-v1__recent-copy strong,
+[data-codehub-host="webstudio"] .ns-codehub-v1__type-card strong,
+[data-codehub-host="webstudio"] .ns-codehub-v1__card h5,
+[data-codehub-host="webstudio"] .ns-codehub-v1__file-copy strong,
+[data-codehub-host="webstudio"] .ns-codehub-v1__validation-head strong,
+[data-codehub-host="webstudio"] .ns-codehub-v1__submit-card strong,
+[data-codehub-host="webstudio"] .ns-codehub-v1__check-row strong {
+  color: var(--codehub-host-text);
+}
+
+[data-codehub-host="webstudio"] .ns-codehub-v1__hero p,
+[data-codehub-host="webstudio"] .ns-codehub-v1__panel-head span,
+[data-codehub-host="webstudio"] .ns-codehub-v1__card-copy,
+[data-codehub-host="webstudio"] .ns-codehub-v1__validation p,
+[data-codehub-host="webstudio"] .ns-codehub-v1__rules-grid span,
+[data-codehub-host="webstudio"] .ns-codehub-v1__overview-note p,
+[data-codehub-host="webstudio"] .ns-codehub-v1__summary-card span,
+[data-codehub-host="webstudio"] .ns-codehub-v1__overview-card span,
+[data-codehub-host="webstudio"] .ns-codehub-v1__rule-card strong,
+[data-codehub-host="webstudio"] .ns-codehub-v1__field > span,
+[data-codehub-host="webstudio"] .ns-codehub-v1__validation-group > span,
+[data-codehub-host="webstudio"] .ns-codehub-v1__side-row strong,
+[data-codehub-host="webstudio"] .ns-codehub-v1__recent-copy span,
+[data-codehub-host="webstudio"] .ns-codehub-v1__type-card span,
+[data-codehub-host="webstudio"] .ns-codehub-v1__card-meta,
+[data-codehub-host="webstudio"] .ns-codehub-v1__badge,
+[data-codehub-host="webstudio"] .ns-codehub-v1__side-row span,
+[data-codehub-host="webstudio"] .ns-codehub-v1__submit-meta span,
+[data-codehub-host="webstudio"] .ns-codehub-v1__meta-report p,
+[data-codehub-host="webstudio"] .ns-codehub-v1__check-row span {
+  color: var(--codehub-host-muted);
+}
+
+[data-codehub-host="webstudio"] .ns-codehub-v1__btn,
+[data-codehub-host="webstudio"] .ns-codehub-v1__topnav-btn,
+[data-codehub-host="webstudio"] .ns-codehub-v1__builder-tab,
+[data-codehub-host="webstudio"] .ns-codehub-v1__inline-btn,
+[data-codehub-host="webstudio"] .ns-codehub-v1__upload span {
+  border-color: var(--codehub-host-line);
+  background: var(--codehub-host-surface-soft);
+  color: var(--codehub-host-text);
+  box-shadow: none;
+}
+
+[data-codehub-host="webstudio"] .ns-codehub-v1__btn:hover,
+[data-codehub-host="webstudio"] .ns-codehub-v1__topnav-btn:hover,
+[data-codehub-host="webstudio"] .ns-codehub-v1__builder-tab:hover,
+[data-codehub-host="webstudio"] .ns-codehub-v1__inline-btn:hover,
+[data-codehub-host="webstudio"] .ns-codehub-v1__upload span:hover,
+[data-codehub-host="webstudio"] .ns-codehub-v1__type-card:hover,
+[data-codehub-host="webstudio"] .ns-codehub-v1__recent-row:hover {
+  border-color: var(--codehub-host-line-strong);
+  background: var(--codehub-host-hover);
+}
+
+[data-codehub-host="webstudio"] .ns-codehub-v1__btn--primary,
+[data-codehub-host="webstudio"] .ns-codehub-v1__topnav-btn.is-active,
+[data-codehub-host="webstudio"] .ns-codehub-v1__builder-tab.is-active,
+[data-codehub-host="webstudio"] .ns-codehub-v1__flow-step strong {
+  border-color: var(--codehub-host-line-strong);
+  background: var(--codehub-host-primary);
+  color: #ffffff;
+}
+
+[data-codehub-host="webstudio"] .ns-codehub-v1__btn--muted {
+  color: var(--codehub-host-muted);
+}
+
+[data-codehub-host="webstudio"] .ns-codehub-v1__notice,
+[data-codehub-host="webstudio"] .ns-codehub-v1__empty {
+  border-color: var(--codehub-host-line);
+  background: var(--codehub-host-surface-soft);
+  color: var(--codehub-host-muted);
+}
+
+[data-codehub-host="webstudio"] .ns-codehub-v1__input,
+[data-codehub-host="webstudio"] .ns-codehub-v1__textarea,
+[data-codehub-host="webstudio"] .ns-codehub-v1__select {
+  border-color: var(--codehub-host-line);
+  background-color: var(--codehub-host-input);
+  color: var(--codehub-host-text);
+}
+
+[data-codehub-host="webstudio"] .ns-codehub-v1__input::placeholder,
+[data-codehub-host="webstudio"] .ns-codehub-v1__textarea::placeholder,
+[data-codehub-host="webstudio"] .ns-codehub-v1__search::placeholder {
+  color: var(--codehub-host-muted);
+  opacity: 0.72;
+}
+
+[data-codehub-host="webstudio"][data-codehub-theme="light"] .ns-codehub-v1__select {
+  background-image:
+    linear-gradient(45deg, transparent 50%, #53667e 50%),
+    linear-gradient(135deg, #53667e 50%, transparent 50%);
+}
+
+[data-codehub-host="webstudio"] .ns-codehub-v1__validation-group ul {
+  color: var(--codehub-host-text);
+}
+
+[data-codehub-host="webstudio"] .ns-codehub-v1__topnav {
+  border-top-color: var(--codehub-host-line);
+}
+
+[data-codehub-host="webstudio"] .ns-codehub-v1__validation.is-passed,
+[data-codehub-host="webstudio"] .ns-codehub-v1__meta-report.is-passed,
+[data-codehub-host="webstudio"] .ns-codehub-v1__check-row.is-pass {
+  border-color: rgba(38, 161, 98, 0.38);
+}
+
+[data-codehub-host="webstudio"] .ns-codehub-v1__validation.is-failed,
+[data-codehub-host="webstudio"] .ns-codehub-v1__meta-report.is-failed,
+[data-codehub-host="webstudio"] .ns-codehub-v1__check-row.is-fail {
+  border-color: rgba(205, 70, 86, 0.42);
+}
+
+[data-codehub-host="webstudio"] .ns-codehub-v1__check-row.is-warn {
+  border-color: rgba(205, 132, 28, 0.42);
+}
+
+[data-codehub-host="webstudio"] .ns-codehub-v1__btn--danger,
+[data-codehub-host="webstudio"] .ns-codehub-v1__inline-btn--danger {
+  border-color: rgba(205, 70, 86, 0.38);
+  background: linear-gradient(135deg, #dc5b67 0%, #a72f42 100%);
+  color: #ffffff;
+}
+
 
 .ns-codehub-v1__btn--danger,
 .ns-codehub-v1__inline-btn--danger {
@@ -956,3 +1172,249 @@
   }
 }
 
+
+/* IRGEZTNE_WORKSHOP_CUSTOMS_ACCOUNT_RELEASE_R1 */
+.ns-codehub-v1__account-release-r1 {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  border: 1px solid rgba(246, 200, 95, .34);
+  border-radius: 999px;
+  background: rgba(246, 200, 95, .08);
+  color: var(--codehub-host-text, #eaf2ff);
+  font: inherit;
+  font-weight: 760;
+  cursor: pointer;
+}
+.ns-codehub-v1__account-release-r1 > span {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #f6c85f;
+  box-shadow: 0 0 10px rgba(246, 200, 95, .42);
+}
+.ns-codehub-v1__account-release-r1.is-connected {
+  border-color: rgba(87, 223, 155, .38);
+  background: rgba(87, 223, 155, .08);
+}
+.ns-codehub-v1__account-release-r1.is-connected > span {
+  background: #57df9b;
+  box-shadow: 0 0 10px rgba(87, 223, 155, .48);
+}
+.ns-codehub-v1__customs-release-r1 {
+  display: grid;
+  gap: 5px;
+  padding: 13px 15px;
+  border: 1px solid rgba(246, 200, 95, .28);
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(246, 200, 95, .09), rgba(59, 130, 246, .06));
+}
+.ns-codehub-v1__customs-release-r1 strong {
+  color: var(--codehub-host-text, #eaf2ff);
+  font-size: 14px;
+}
+.ns-codehub-v1__customs-release-r1 span {
+  color: var(--codehub-host-muted, #9fb2ca);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+/* IRGEZTNE_WEBSTUDIO_WORKSHOP_LIGHT_LAYERS_V100B
+   Release light-layer contract for Workshop embedded in Web Studio only. */
+[data-codehub-host="webstudio"][data-codehub-theme="light"] {
+  --codehub-host-canvas: #e7eef7;
+  --codehub-host-surface: #fcfdff;
+  --codehub-host-surface-soft: #f1f6fc;
+  --codehub-host-surface-strong: #e9f1fa;
+  --codehub-host-control: #e1edfb;
+  --codehub-host-input: #ffffff;
+  --codehub-host-text: #102033;
+  --codehub-host-muted: #465d78;
+  --codehub-host-line: rgba(67, 104, 151, .25);
+  --codehub-host-line-strong: rgba(67, 104, 151, .42);
+  --codehub-host-hover: #e7f2ff;
+  background: var(--codehub-host-canvas);
+}
+[data-codehub-host="webstudio"][data-codehub-theme="light"] .ns-codehub-v1__summary.panel-card,
+[data-codehub-host="webstudio"][data-codehub-theme="light"] .ns-codehub-v1__hero,
+[data-codehub-host="webstudio"][data-codehub-theme="light"] .ns-codehub-v1__panel,
+[data-codehub-host="webstudio"][data-codehub-theme="light"] .ns-codehub-v1__builder-shell,
+[data-codehub-host="webstudio"][data-codehub-theme="light"] .ns-codehub-v1__submit-card {
+  background: var(--codehub-host-surface);
+  border-color: var(--codehub-host-line);
+  color: var(--codehub-host-text);
+}
+[data-codehub-host="webstudio"][data-codehub-theme="light"] .ns-codehub-v1__type-card strong,
+[data-codehub-host="webstudio"][data-codehub-theme="light"] .ns-codehub-v1__summary-card strong,
+[data-codehub-host="webstudio"][data-codehub-theme="light"] .ns-codehub-v1__overview-card strong {
+  color: var(--codehub-host-text);
+}
+[data-codehub-host="webstudio"][data-codehub-theme="light"] .ns-codehub-v1__btn,
+[data-codehub-host="webstudio"][data-codehub-theme="light"] .ns-codehub-v1__topnav-btn,
+[data-codehub-host="webstudio"][data-codehub-theme="light"] .ns-codehub-v1__builder-tab,
+[data-codehub-host="webstudio"][data-codehub-theme="light"] .ns-codehub-v1__inline-btn {
+  background: var(--codehub-host-control);
+  border-color: var(--codehub-host-line);
+  color: #173a61;
+}
+[data-codehub-host="webstudio"][data-codehub-theme="light"] .ns-codehub-v1__btn:hover,
+[data-codehub-host="webstudio"][data-codehub-theme="light"] .ns-codehub-v1__topnav-btn:hover,
+[data-codehub-host="webstudio"][data-codehub-theme="light"] .ns-codehub-v1__builder-tab:hover,
+[data-codehub-host="webstudio"][data-codehub-theme="light"] .ns-codehub-v1__type-card:hover {
+  background: #d6e9ff;
+  border-color: var(--codehub-host-line-strong);
+}
+[data-codehub-host="webstudio"][data-codehub-theme="light"] .ns-codehub-v1__btn:active,
+[data-codehub-host="webstudio"][data-codehub-theme="light"] .ns-codehub-v1__topnav-btn:active {
+  transform: translateY(1px);
+}
+[data-codehub-host="webstudio"][data-codehub-theme="light"] .ns-codehub-v1__btn:disabled,
+[data-codehub-host="webstudio"][data-codehub-theme="light"] .ns-codehub-v1__topnav-btn:disabled {
+  opacity: .48;
+  cursor: not-allowed;
+}
+[data-codehub-host="webstudio"][data-codehub-theme="light"] .ns-codehub-v1__btn:focus-visible,
+[data-codehub-host="webstudio"][data-codehub-theme="light"] .ns-codehub-v1__topnav-btn:focus-visible,
+[data-codehub-host="webstudio"][data-codehub-theme="light"] .ns-codehub-v1__input:focus-visible,
+[data-codehub-host="webstudio"][data-codehub-theme="light"] .ns-codehub-v1__select:focus-visible,
+[data-codehub-host="webstudio"][data-codehub-theme="light"] .ns-codehub-v1__textarea:focus-visible {
+  outline: 2px solid rgba(47, 123, 230, .48);
+  outline-offset: 2px;
+}
+
+/* IRGEZTNE_WORKSHOP_RELEASE_FILTERS_R1W10A
+   Release-only Workshop navigation/filter cleanup. Package contracts and adapters stay unchanged. */
+.ns-codehub-v1__type-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin: 12px 0 14px;
+}
+
+.ns-codehub-v1__type-filter-btn {
+  min-height: 36px;
+  padding: 0 9px 0 12px;
+  border: 1px solid rgba(118, 169, 255, 0.18);
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.035);
+  color: rgba(228, 238, 253, 0.92);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: background .16s ease, border-color .16s ease, transform .16s ease;
+}
+
+.ns-codehub-v1__type-filter-btn strong {
+  min-width: 24px;
+  min-height: 22px;
+  padding: 0 6px;
+  border-radius: 8px;
+  background: rgba(118, 169, 255, 0.10);
+  color: rgba(226, 237, 255, 0.88);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  line-height: 1;
+}
+
+.ns-codehub-v1__type-filter-btn:hover {
+  border-color: rgba(118, 169, 255, 0.34);
+  background: rgba(118, 169, 255, 0.08);
+  transform: translateY(-1px);
+}
+
+.ns-codehub-v1__type-filter-btn.is-active {
+  border-color: rgba(118, 169, 255, 0.42);
+  background: linear-gradient(180deg, rgba(46, 82, 152, 0.96), rgba(23, 45, 86, 0.96));
+  color: #fff;
+}
+
+.ns-codehub-v1__type-filter-btn.is-active strong {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+}
+
+.ns-codehub-v1__type-filter-btn:focus-visible {
+  outline: none;
+  border-color: rgba(118, 169, 255, 0.52);
+  box-shadow: 0 0 0 2px rgba(118, 169, 255, 0.14);
+}
+
+.ns-codehub-v1__toolbar--my-packages {
+  grid-template-columns: minmax(0, 1fr) minmax(180px, 220px);
+}
+
+.ns-codehub-v1__empty--release-filter {
+  align-content: center;
+  gap: 7px;
+}
+
+.ns-codehub-v1__empty--release-filter strong {
+  color: rgba(240, 246, 255, 0.96);
+  font-size: 15px;
+}
+
+.ns-codehub-v1__empty--release-filter span {
+  max-width: 760px;
+  color: rgba(187, 205, 232, 0.86);
+  line-height: 1.5;
+}
+
+[data-codehub-host="webstudio"][data-codehub-theme="light"] .ns-codehub-v1__type-filter-btn {
+  background: #edf4fc;
+  border-color: #bfd3ea;
+  color: #173a61;
+}
+
+[data-codehub-host="webstudio"][data-codehub-theme="light"] .ns-codehub-v1__type-filter-btn strong {
+  background: #dceaf8;
+  color: #274c75;
+}
+
+[data-codehub-host="webstudio"][data-codehub-theme="light"] .ns-codehub-v1__type-filter-btn:hover {
+  background: #e1efff;
+  border-color: #8fb8e6;
+}
+
+[data-codehub-host="webstudio"][data-codehub-theme="light"] .ns-codehub-v1__type-filter-btn.is-active {
+  background: linear-gradient(180deg, #2d6fb7, #20578f);
+  border-color: #245f9d;
+  color: #fff;
+}
+
+[data-codehub-host="webstudio"][data-codehub-theme="light"] .ns-codehub-v1__type-filter-btn.is-active strong {
+  background: rgba(255, 255, 255, 0.20);
+  color: #fff;
+}
+
+[data-codehub-host="webstudio"][data-codehub-theme="light"] .ns-codehub-v1__empty--release-filter strong {
+  color: var(--codehub-host-text, #102033);
+}
+
+[data-codehub-host="webstudio"][data-codehub-theme="light"] .ns-codehub-v1__empty--release-filter span {
+  color: var(--codehub-host-muted, #465d78);
+}
+
+@media (max-width: 760px) {
+  .ns-codehub-v1__type-filter {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ns-codehub-v1__type-filter-btn {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .ns-codehub-v1__toolbar--my-packages {
+    grid-template-columns: 1fr;
+  }
+}

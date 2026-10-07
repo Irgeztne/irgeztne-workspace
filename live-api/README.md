@@ -1,5 +1,11 @@
 # IRGEZTNE Live API v1 Foundation
 
+> **Historical prototype:** this directory is not the active secure Chat
+> pipeline and must not be revived as a parallel messenger. Current Chat uses
+> the narrow renderer bridge, trusted IPC, Messenger controller, device
+> registry/revocation contracts and native secure service described in
+> [`../docs/release/IRGEZTNE-WORKSPACE-MODULE-OWNERSHIP-v1.md`](../docs/release/IRGEZTNE-WORKSPACE-MODULE-OWNERSHIP-v1.md).
+
 This folder is the first server-side foundation for IRGEZTNE Workspace 1.0.0.
 
 The desktop app stays local-first and does not require an IRGEZTNE account for normal work.

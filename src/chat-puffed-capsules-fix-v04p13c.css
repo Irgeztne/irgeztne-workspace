@@ -1,0 +1,73 @@
+/*
+  IRGEZTNE Workspace — Puffed Capsules visibility/geometry fix v0.4P13c
+
+  Visual-only hotfix loaded after P13b.
+  Restores full message content flow while keeping the inflated capsule look.
+*/
+
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message {
+  width: fit-content !important;
+  min-width: 0 !important;
+  max-width: min(70%, 820px) !important;
+
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+
+  overflow: visible !important;
+  box-sizing: border-box !important;
+
+  padding-top: 11px !important;
+  padding-bottom: 11px !important;
+}
+
+/* Keep the glossy skin visually clipped to the capsule,
+   without clipping the real message content. */
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message::before {
+  border-radius: inherit !important;
+  overflow: hidden !important;
+}
+
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message::after {
+  border-radius: 999px !important;
+}
+
+/* Explicitly restore text to normal document flow. */
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message p,
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message-meta,
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message-state {
+  position: relative !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message p {
+  display: block !important;
+  white-space: pre-wrap !important;
+  overflow-wrap: anywhere !important;
+  line-height: 1.42 !important;
+}
+
+/* Mine stays right; peers stay left. */
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message.is-mine {
+  margin-left: auto !important;
+  margin-right: 0 !important;
+}
+
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message.is-peer,
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message.is-camel {
+  margin-left: 0 !important;
+  margin-right: auto !important;
+}
+
+/* Slightly wider in the floating Chat where horizontal space is scarcer. */
+.irgeztne-floating-window
+  .cabinet-section-panel[data-cabinet-panel="rooms"]
+  .gl-p1-message,
+[data-irgeztne-floating-window]
+  .cabinet-section-panel[data-cabinet-panel="rooms"]
+  .gl-p1-message {
+  max-width: min(76%, 700px) !important;
+}

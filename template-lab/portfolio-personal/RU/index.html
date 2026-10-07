@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ru" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Авторское портфолио Aster Works: проекты, подход и контакты.">
+  <title>Aster Works — авторское портфолио</title>
+  <script>
+    (() => {
+      const queryTheme = new URLSearchParams(location.search).get("theme");
+      let theme = queryTheme === "dark" || queryTheme === "light" ? queryTheme : null;
+      if (!theme) {
+        try {
+          const savedTheme = localStorage.getItem("aster-works-theme");
+          if (savedTheme === "dark" || savedTheme === "light") theme = savedTheme;
+        } catch {}
+      }
+      if (!theme && window.matchMedia?.("(prefers-color-scheme: dark)").matches) theme = "dark";
+      document.documentElement.dataset.theme = theme || "light";
+    })();
+  </script>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <header class="site-header"><div class="header-inner shell">
+    <a class="brand" href="index.html" aria-label="Aster Works — главная">
+      <span class="brand-mark">A</span><span class="brand-copy"><strong>Aster Works</strong><small>Портфолио / авторский сайт</small></span>
+    </a>
+    <nav class="main-nav" data-main-nav data-open="false" aria-label="Основная навигация">
+      <a href="index.html" aria-current="page">Главная</a><a href="works.html">Работы</a><a href="about.html">Обо мне</a><a href="about.html#process">Процесс</a><a href="contact.html">Контакт</a>
+    </nav>
+    <div class="header-actions">
+      <a class="header-cta" href="contact.html">Обсудить проект</a>
+      <button class="theme-toggle" type="button" data-theme-toggle data-label-light="Включить светлую тему" data-label-dark="Включить тёмную тему" aria-label="Включить тёмную тему">☾</button>
+      <button class="menu-toggle" type="button" data-menu-toggle aria-label="Открыть меню" aria-expanded="false">☰</button>
+    </div>
+  </div></header>
+  <main class="main shell">
+    <section class="hero">
+      <div class="hero-copy">
+        <div><span class="eyebrow">Независимый автор · цифровые проекты</span><h1 class="display">Собираю ясные истории из сложных идей.</h1><p class="lead">Дизайн, цифровые продукты и редакционные проекты — от первого исследования до цельной публикации.</p><div class="button-row"><a class="button button-primary" href="works.html">Смотреть работы</a><a class="button" href="about.html">Познакомиться</a></div></div>
+        <div class="hero-meta"><div><strong>12 проектов</strong><span>в отобранном архиве</span></div><div><strong>6 направлений</strong><span>от стратегии до публикации</span></div></div>
+      </div>
+      <figure class="hero-media"><img src="../assets/portfolio-hero-studio.webp" alt="Авторская студия с макетами и материалами для цифровых проектов"><figcaption class="media-label">Авторская студия · 2026</figcaption></figure>
+    </section>
+    <div class="discipline-strip"><strong>Айдентика</strong><strong>Интерфейсы</strong><strong>Редактура</strong><strong>Фотография</strong><span>Портфолио для автора, которому важен контекст.</span></div>
+    <section class="section-head"><div><span class="eyebrow">Избранные работы</span><h2>Разные проекты — с разным визуальным весом.</h2></div><p>Большой кейс, самостоятельная серия и короткое наблюдение не обязаны выглядеть одинаково. Эта подборка сохраняет их собственный ритм.</p></section>
+    <section class="works-grid" aria-label="Избранные проекты">
+      <a class="work-card work-featured" href="works.html#serein"><img src="../assets/portfolio-product-interface.webp" alt="Рабочее пространство с макетом спокойного модульного интерфейса"><span class="work-card-copy"><span class="eyebrow">Главный кейс</span><h2>Serein: цифровая среда для сосредоточенной работы.</h2><p>Исследование, продуктовая логика, интерфейс и запуск.</p></span></a>
+      <a class="work-card work-small work-city" href="works.html#city"><img src="../assets/portfolio-editorial-city.webp" alt="Современный город в вечернем свете"><span class="work-card-copy"><span class="eyebrow">Редакционная серия</span><h3>Город после шести.</h3></span></a>
+      <a class="work-card work-small" href="works.html#fieldwork"><img src="../assets/portfolio-identity-system.webp" alt="Материалы абстрактной визуальной системы на рабочем столе"><span class="work-card-copy"><span class="eyebrow">Айдентика</span><h3>Fieldwork: система, которая оставляет воздух.</h3></span></a>
+    </section>
+    <section class="split-panel">
+      <article class="note-card"><div><span class="eyebrow">Принцип отбора</span><h3>Портфолио — не склад выполненных задач.</h3></div><p>Здесь остаются проекты, в которых видны мысль, решение и результат. Остальное сохраняется в рабочем архиве.</p></article>
+      <article class="panel"><span class="eyebrow">Как я работаю</span><h2>От вопроса к форме.</h2><div class="panel-list"><div><strong>01</strong><span><h3>Слушаю</h3><p>Разбираю задачу, контекст и реальные ограничения.</p></span></div><div><strong>02</strong><span><h3>Собираю</h3><p>Связываю исследование, содержание и визуальную систему.</p></span></div><div><strong>03</strong><span><h3>Проверяю</h3><p>Довожу решение до состояния, которым можно пользоваться.</p></span></div></div></article>
+    </section>
+    <section class="quote-card"><blockquote>«Хорошая форма не закрывает смысл. Она помогает его увидеть».</blockquote><p>Работаю с независимыми авторами, культурными проектами и небольшими командами, которым нужен цельный результат без лишнего шума.</p></section>
+  </main>
+  <footer class="site-footer shell"><div><strong>Aster Works</strong><span>Авторское портфолио · 2026</span></div><nav class="footer-nav" aria-label="Навигация в подвале"><a href="index.html">Главная</a><a href="works.html">Работы</a><a href="about.html">Обо мне</a><a href="about.html#process">Процесс</a><a href="contact.html">Контакт</a></nav></footer>
+  <script src="../site.js"></script>
+</body>
+</html>

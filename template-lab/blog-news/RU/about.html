@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="ru" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>О журнале · Northline Journal</title>
+  <meta name="description" content="О редакции и принципах Northline Journal.">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="ru_RU">
+  <meta property="og:title" content="О журнале · Northline Journal">
+  <meta property="og:description" content="О редакции и принципах Northline Journal.">
+  <meta name="theme-color" content="#c83e2b">
+  <script>
+    try {
+      const queryTheme = new URLSearchParams(location.search).get("theme");
+      const savedTheme = localStorage.getItem("irgeztne-blog-news-canon-theme");
+      document.documentElement.dataset.theme =
+        queryTheme === "dark" || queryTheme === "light"
+          ? queryTheme
+          : savedTheme === "dark" || savedTheme === "light"
+            ? savedTheme
+            : "light";
+    } catch {}
+  </script>
+  <link rel="stylesheet" href="../shared/styles.css">
+  <script src="../shared/site.js" defer></script>
+</head>
+<body data-page="about" data-nav-open="false">
+  
+  <header class="site-header">
+    <div class="header-shell">
+      <a class="brand" href="index.html" aria-label="Northline Journal">
+        <strong>Northline</strong>
+        <span>Journal</span>
+        <small>Независимый цифровой журнал</small>
+      </a>
+      <button class="menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-label="Открыть меню">☰</button>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="index.html">Главная</a>
+        <a href="articles.html">Материалы</a>
+        <a href="topics.html">Темы</a>
+        <a href="about.html" aria-current="page">О журнале</a>
+      </nav>
+      <div class="header-actions">
+        <a class="subscribe-link" href="about.html#subscribe">Подписаться</a>
+        <button
+          class="theme-toggle"
+          type="button"
+          data-theme-toggle
+          data-label-dark="Включить тёмную тему"
+          data-label-light="Включить светлую тему"
+          aria-label="Включить тёмную тему"
+        >☾</button>
+      </div>
+    </div>
+    <nav class="section-nav" aria-label="Editorial sections">
+      <div class="section-shell">
+        <a href="topics.html#technology">Технологии</a><a href="topics.html#business">Бизнес</a><a href="topics.html#culture">Культура</a><a href="topics.html#design">Дизайн</a><a href="topics.html#guides">Гайды</a><a href="topics.html#opinion">Мнения</a>
+      </div>
+    </nav>
+  </header>
+  <main class="main-shell">
+    
+    <section class="page-intro page-intro--about">
+      <div>
+        <p class="eyebrow">О журнале</p>
+        <h1>Независимое цифровое издание о работе, технологиях и идеях</h1>
+        <p>Northline Journal объясняет изменения без спешки и показывает, как новые инструменты влияют на людей, команды и цифровые продукты.</p>
+      </div>
+    </section>
+
+    <section class="mission-grid">
+      <div class="mission-copy">
+        <p class="eyebrow">Редакционная задача</p>
+        <h2>Давать читателю контекст, проверяемые факты и практическую пользу. Короткие новости помогают быстро понять событие, а большие материалы — увидеть причины и последствия.</h2>
+      </div>
+      <figure class="mission-image">
+        <img src="../assets/main.jpg" alt="Небольшая редакция, широкий взгляд" loading="lazy" data-template-slot="about.image" data-slot="about.image" data-slot-kind="image">
+      </figure>
+    </section>
+
+    <section class="principles-section">
+      <div class="section-heading section-heading--compact">
+        <div>
+          <p class="eyebrow">Наши принципы</p>
+          <h2>Наши принципы</h2>
+        </div>
+      </div>
+      <div class="principle-grid">
+        
+          <article>
+            <span>01</span>
+            <h3>Ясность</h3>
+            <p>Сложные темы объясняются простым и точным языком.</p>
+          </article>
+          <article>
+            <span>02</span>
+            <h3>Контекст</h3>
+            <p>Факт сопровождается источником, периодом и объяснением.</p>
+          </article>
+          <article>
+            <span>03</span>
+            <h3>Ритм</h3>
+            <p>Читатель сам выбирает: короткая сводка или длинный материал.</p>
+          </article>
+          <article>
+            <span>04</span>
+            <h3>Независимость</h3>
+            <p>Редакционная логика не подчиняется рекламному шуму.</p>
+          </article>
+      </div>
+    </section>
+
+    <section class="team-subscribe">
+      <article>
+        <p class="eyebrow">Небольшая редакция, широкий взгляд</p>
+        <h2>Небольшая редакция, широкий взгляд</h2>
+        <p>Авторы, исследователи и дизайнеры работают как одна команда: проверяют данные, связывают темы и собирают материалы, к которым хочется возвращаться.</p>
+      </article>
+      <form
+        id="subscribe"
+        class="subscribe-form"
+        data-demo-form
+        data-demo-message="Это демонстрационная форма шаблона."
+      >
+        <p class="eyebrow">Получать новый выпуск</p>
+        <h2>Получать новый выпуск</h2>
+        <p>Одна спокойная сводка с главными публикациями. Демонстрационная форма ничего не отправляет.</p>
+        <label>
+          <span>Электронная почта</span>
+          <input type="email" placeholder="reader@example.com" required>
+        </label>
+        <button class="button" type="submit">Подписаться</button>
+        <p class="form-status" data-form-status tabindex="-1" aria-live="polite"></p>
+      </form>
+    </section>
+  </main>
+  
+  <footer class="site-footer">
+    <div class="footer-shell">
+      <div class="footer-brand">
+        <strong>Northline Journal</strong>
+        <p>Истории, аналитика и практические материалы для современных команд.</p>
+        <small>Northline Journal · редакционный шаблон</small>
+      </div>
+      <nav class="footer-nav" aria-label="Footer navigation">
+        <a href="articles.html">Архив</a>
+        <a href="topics.html">Все темы</a>
+        <a href="about.html">Редакция</a>
+        <a href="rss.xml">RSS</a>
+      </nav>
+      <div class="footer-meta">
+        <span>© 2026 Northline Journal</span>
+        <a href="mailto:editor@northline.example">editor@northline.example</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,7 +1,7 @@
 {
   "name": "irgeztne-workspace",
-  "version": "1.0.0-preview.4",
-  "description": "IRGEZTNE Workspace Preview.4 is an early local-first desktop workspace with Web Studio, publishing preparation, notes, projects, files, and workspace tools.",
+  "version": "1.0.0",
+  "description": "IRGEZTNE Workspace is a local-first desktop workspace with Web Studio, publishing, notes, projects, files, and workspace tools.",
   "main": "main.js",
   "author": {
     "name": "Irgeztne",
@@ -21,15 +21,17 @@
     "tiptap:sandbox": "vite tiptap-sandbox --host 127.0.0.1 --port 5179"
   },
   "dependencies": {
+    "@tiptap/core": "latest",
+    "@tiptap/extension-image": "latest",
+    "@tiptap/extension-link": "latest",
+    "@tiptap/extension-placeholder": "latest",
+    "@tiptap/extension-underline": "latest",
+    "@tiptap/starter-kit": "latest",
+    "basic-ftp": "6.2.0",
     "better-sqlite3": "^12.10.0",
     "jodit": "^4.12.2",
-    "tinymce": "^6.8.6",
-    "@tiptap/core": "latest",
-    "@tiptap/starter-kit": "latest",
-    "@tiptap/extension-image": "latest",
-    "@tiptap/extension-placeholder": "latest",
-    "@tiptap/extension-link": "latest",
-    "@tiptap/extension-underline": "latest"
+    "ssh2-sftp-client": "12.1.1",
+    "tinymce": "^6.8.6"
   },
   "devDependencies": {
     "electron": "41.3.0",
@@ -38,7 +40,7 @@
   },
   "build": {
     "appId": "com.irgeztne.workspace",
-    "productName": "IRGEZTNE-Workspace",
+    "productName": "IRGEZTNE Workspace",
     "artifactName": "IRGEZTNE-Workspace-${version}.${ext}",
     "directories": {
       "output": "dist"
@@ -46,14 +48,25 @@
     "files": [
       "assets/**/*",
       "src/**/*",
+      "data-platform/**/*",
+      "proofs/economy-widget-standalone.html",
+      "proofs/weather-widget-standalone.html",
       "templates/**/*",
+      "template-lab/**/*",
       "index.html",
       "main.js",
       "preload.js",
       "renderer.js",
       "state.js",
       "styles.css",
-      "package.json"
+      "package.json",
+      "LICENSE",
+      "LICENSE_HISTORY.md",
+      "THIRD_PARTY_NOTICES.md",
+      "!src/messenger/INTEGRATION*.json",
+      "!src/**/*.good-*",
+      "!src/**/*.before-*",
+      "!src/**/*.bak-*"
     ],
     "linux": {
       "target": [
@@ -67,7 +80,7 @@
         "entry": {
           "GenericName": "Desktop workspace",
           "Keywords": "IRGEZTNE;Workspace;Browser;Editor;Publishing;Notes;Files;",
-          "Comment": "IRGEZTNE Workspace is an early preview desktop workspace for browsing, writing, editing, and preparing web projects for future publishing.",
+          "Comment": "IRGEZTNE Workspace for browsing, writing, editing, and publishing web projects.",
           "Name": "IRGEZTNE Workspace",
           "StartupWMClass": "irgeztne-workspace"
         }
@@ -96,7 +109,7 @@
     },
     "executableName": "irgeztne-workspace"
   },
-  "productName": "IRGEZTNE-Workspace",
+  "productName": "IRGEZTNE Workspace",
   "homepage": "https://irgeztne.com",
   "repository": {
     "type": "git",

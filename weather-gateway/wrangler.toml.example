@@ -1,0 +1,16 @@
+name = "irgeztne-weather-gateway"
+main = "cloudflare-worker/worker.mjs"
+compatibility_date = "2026-09-11"
+workers_dev = true
+
+# Create this namespace before deployment and replace the placeholder.
+[[kv_namespaces]]
+binding = "WEATHER_CACHE"
+id = "REPLACE_WITH_WEATHER_CACHE_KV_NAMESPACE_ID"
+
+[vars]
+MET_NORWAY_USER_AGENT = "IRGEZTNE-Weather-Gateway/1.0 (+https://irgeztne.com/contact)"
+
+# After workers.dev validation, attach api.irgeztne.com/weather/v1* as a custom
+# route in Cloudflare. The portable Core and Weather API contract do not depend
+# on this runtime or route.

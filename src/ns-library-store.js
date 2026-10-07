@@ -1,5 +1,15 @@
 (function () {
-  const STORAGE_KEY = 'nsbrowser:v8:source-library';
+  'use strict';
+
+  const STORAGE_KEY = 'nsbrowser:v8:source-library'; // legacy migration/cache
+  const DURABLE_STATE_KEY = 'files.library.v1';
+  const DURABLE_PERSISTENCE_VERSION = 1;
+  let migrateLegacyOnBoot = false;
+  // IRGEZTNE_FILES_NO_GHOST_RECOVERY_R1D
+  // Raw Workspace File Store recovery is emergency-only. A persisted Files
+  // snapshot (even an empty one) is authoritative and must not be repopulated
+  // from files that are still retained by Office/Chat/other owners.
+  let recoverWorkspaceFilesOnBoot = false;
 
   const DEFAULT_STATE = {
     items: [],
@@ -179,7 +189,10 @@
 
       storage: {
         kind: storageInput.kind || 'local',
-        dataUrl: storageInput.dataUrl || null
+        dataUrl: storageInput.dataUrl || null,
+        fileId: storageInput.fileId || null,
+        refId: storageInput.refId || null,
+        sha256: storageInput.sha256 || null
       },
 
       preview: {
@@ -209,41 +222,105 @@
     };
   }
 
-  function readState() {
+  function clone(obj) {
+    return JSON.parse(JSON.stringify(obj));
+  }
+
+  function normalizeStoredState(parsed) {
+    if (!parsed || typeof parsed !== 'object') return null;
+
+    const items = Array.isArray(parsed.items) ? parsed.items.map(normalizeItem) : [];
+    let activeId = parsed.activeId || null;
+
+    if (
+      activeId &&
+      !items.some(function (item) {
+        return item.id === activeId;
+      })
+    ) {
+      activeId = items.length ? items[0].id : null;
+    }
+
+    return {
+      items: items,
+      activeId: activeId,
+      filters: {
+        query: (parsed.filters && parsed.filters.query) || '',
+        category: normalizeCategory((parsed.filters && parsed.filters.category) || 'all'),
+        sort: (parsed.filters && parsed.filters.sort) || 'recent'
+      },
+      savedAt: typeof parsed.savedAt === 'string' ? parsed.savedAt : '',
+      persistenceVersion: Math.max(0, Number(parsed.persistenceVersion || 0))
+    };
+  }
+
+  function storedStateStamp(candidate) {
+    if (!candidate) return 0;
+    const explicit = Date.parse(candidate.savedAt || '');
+    if (Number.isFinite(explicit)) return explicit;
+
+    return (candidate.items || []).reduce(function (latest, item) {
+      const value = Date.parse(item && item.updatedAt || '');
+      return Number.isFinite(value) ? Math.max(latest, value) : latest;
+    }, 0);
+  }
+
+  function readLegacyLocalState() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return JSON.parse(JSON.stringify(DEFAULT_STATE));
-
-      const parsed = JSON.parse(raw);
-      const items = Array.isArray(parsed.items) ? parsed.items.map(normalizeItem) : [];
-      let activeId = parsed.activeId || null;
-
-      if (
-        activeId &&
-        !items.some(function (item) {
-          return item.id === activeId;
-        })
-      ) {
-        activeId = items.length ? items[0].id : null;
-      }
-
-      return {
-        items: items,
-        activeId: activeId,
-        filters: {
-          query: (parsed.filters && parsed.filters.query) || '',
-          category: normalizeCategory((parsed.filters && parsed.filters.category) || 'all'),
-          sort: (parsed.filters && parsed.filters.sort) || 'recent'
-        }
-      };
+      return raw ? normalizeStoredState(JSON.parse(raw)) : null;
     } catch (err) {
-      console.error('[NSLibraryStore] Failed to read state:', err);
-      return JSON.parse(JSON.stringify(DEFAULT_STATE));
+      console.warn('[NSLibraryStore] Failed to read legacy local state:', err);
+      return null;
     }
   }
 
-  function clone(obj) {
-    return JSON.parse(JSON.stringify(obj));
+  function readDurableState() {
+    try {
+      const api = window.nsAPI;
+      if (!api || typeof api.storageGetModuleStateSync !== 'function') return null;
+      return normalizeStoredState(
+        api.storageGetModuleStateSync(DURABLE_STATE_KEY, null)
+      );
+    } catch (err) {
+      console.warn('[NSLibraryStore] Failed to read Storage Core state:', err);
+      return null;
+    }
+  }
+
+  function readState() {
+    const durableCandidate = readDurableState();
+    const localCandidate = readLegacyLocalState();
+
+    const durableCount = durableCandidate && Array.isArray(durableCandidate.items)
+      ? durableCandidate.items.length
+      : 0;
+    const localCount = localCandidate && Array.isArray(localCandidate.items)
+      ? localCandidate.items.length
+      : 0;
+
+    // Recovery rule: an empty/new durable record never erases a richer legacy
+    // library. When both contain data, prefer the newer snapshot.
+    if (localCount > 0 && durableCount === 0) {
+      migrateLegacyOnBoot = true;
+      return localCandidate;
+    }
+
+    if (localCount > 0 && durableCount > 0 && storedStateStamp(localCandidate) > storedStateStamp(durableCandidate)) {
+      migrateLegacyOnBoot = true;
+      return localCandidate;
+    }
+
+    if (durableCandidate) return durableCandidate;
+    if (localCandidate) {
+      migrateLegacyOnBoot = true;
+      return localCandidate;
+    }
+
+    // No Files snapshot exists at all: only in this emergency case may the
+    // Workspace File Store be used to reconstruct the library.
+    recoverWorkspaceFilesOnBoot = true;
+    return clone(DEFAULT_STATE);
   }
 
   const state = readState();
@@ -289,12 +366,134 @@
 
   syncState();
 
+  if (migrateLegacyOnBoot) {
+    if (save()) migrateLegacyOnBoot = false;
+  }
+
+  function serializeState() {
+    return {
+      items: state.items.map(normalizeItem),
+      activeId: state.activeId,
+      filters: Object.assign({}, state.filters),
+      savedAt: safeNow(),
+      persistenceVersion: DURABLE_PERSISTENCE_VERSION
+    };
+  }
+
   function save() {
+    const payload = serializeState();
+    let durableSaved = false;
+
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      const api = window.nsAPI;
+      if (api && typeof api.storageSetModuleStateSync === 'function') {
+        const result = api.storageSetModuleStateSync(DURABLE_STATE_KEY, payload);
+        durableSaved = Boolean(result && result.ok === true);
+        if (!durableSaved) {
+          console.warn('[NSLibraryStore] Storage Core rejected Files state');
+        }
+      }
     } catch (err) {
-      console.error('[NSLibraryStore] Failed to save state:', err);
+      console.warn('[NSLibraryStore] Failed to save Files state to Storage Core:', err);
     }
+
+    // Keep the historic renderer copy only as a migration/cache fallback.
+    // Storage Core remains the canonical owner once available.
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    } catch (err) {
+      if (!durableSaved) {
+        console.error('[NSLibraryStore] Failed to save Files state:', err);
+      } else {
+        console.warn('[NSLibraryStore] Legacy local mirror was not updated:', err);
+      }
+    }
+
+    return durableSaved;
+  }
+
+  function workspaceFileListSync() {
+    try {
+      const api = window.nsAPI;
+      if (!api || typeof api.workspaceFileListSync !== 'function') return [];
+      const result = api.workspaceFileListSync(5000);
+      return result && result.ok === true && Array.isArray(result.files) ? result.files : [];
+    } catch (err) {
+      console.warn('[NSLibraryStore] Workspace File Store list failed:', err);
+      return [];
+    }
+  }
+
+  function libraryItemFromWorkspaceFile(file) {
+    const name = file && (file.displayName || file.originalName) || 'workspace-file';
+    const type = file && file.mimeType || 'application/octet-stream';
+    return normalizeItem({
+      id: 'ws_' + String(file.fileId || makeId('file')),
+      name: name,
+      originalName: file.originalName || name,
+      type: type,
+      ext: file.extension || getExt(name),
+      size: Number(file.sizeBytes || 0),
+      createdAt: file.createdAt || safeNow(),
+      updatedAt: file.updatedAt || file.createdAt || safeNow(),
+      category: inferCategory({ type: type, name: name }),
+      fingerprint: '',
+      storage: {
+        kind: 'workspace-file',
+        dataUrl: null,
+        fileId: file.fileId || null,
+        refId: null,
+        sha256: file.sha256 || null
+      },
+      preview: {
+        kind: detectPreviewKind(type, name),
+        excerpt: '',
+        textContent: '',
+        textType: isRdfLike(type, name) ? 'rdf' : 'text'
+      }
+    });
+  }
+
+  function recoverFromWorkspaceFileStore() {
+    const durableFiles = workspaceFileListSync();
+    if (!durableFiles.length) return 0;
+
+    const byFileId = new Set();
+    const bySha = new Set();
+    state.items.forEach(function (item) {
+      const storage = item && item.storage ? item.storage : {};
+      if (storage.fileId) byFileId.add(String(storage.fileId));
+      if (storage.sha256) bySha.add(String(storage.sha256));
+    });
+
+    let recovered = 0;
+    durableFiles.forEach(function (file) {
+      if (!file || file.blobState !== 'ready' || !file.fileId) return;
+      if (byFileId.has(String(file.fileId))) return;
+      if (file.sha256 && bySha.has(String(file.sha256))) return;
+      const item = libraryItemFromWorkspaceFile(file);
+      state.items.push(item);
+      byFileId.add(String(file.fileId));
+      if (file.sha256) bySha.add(String(file.sha256));
+      recovered += 1;
+    });
+
+    if (recovered) {
+      state.items.sort(function (a, b) {
+        return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+      });
+      state.activeId = normalizeActiveId(state.activeId);
+      save();
+    }
+    return recovered;
+  }
+
+  const recoveredWorkspaceFiles = recoverWorkspaceFilesOnBoot
+    ? recoverFromWorkspaceFileStore()
+    : 0;
+
+  if (recoveredWorkspaceFiles) {
+    console.info('[NSLibraryStore] recovered Workspace File Store items:', recoveredWorkspaceFiles);
   }
 
   function emitChange() {
@@ -557,6 +756,86 @@
     ].join('::');
   }
 
+  function getWorkspaceFileApi() {
+    const api = window.nsAPI;
+    if (!api || typeof api.workspaceFileImportBuffer !== 'function') return null;
+    return api;
+  }
+
+  async function createItemFromWorkspaceFile(file) {
+    const api = getWorkspaceFileApi();
+    if (!api || !file || typeof file.arrayBuffer !== 'function') return null;
+
+    const previewKind = detectPreviewKind(file.type, file.name);
+    let textContent = '';
+    let excerpt = '';
+
+    if (previewKind === 'text') {
+      textContent = await fileToText(file);
+      excerpt = textContent.slice(0, 1000);
+    }
+
+    let result = null;
+
+    try {
+      result = await api.workspaceFileImportBuffer({
+        ownerType: 'files',
+        ownerId: 'library',
+        role: 'source',
+        sourceKind: 'computer',
+        originalName: file.name,
+        displayName: file.name,
+        mimeType: file.type || 'application/octet-stream',
+        bytes: await file.arrayBuffer()
+      });
+    } catch (err) {
+      console.warn('[NSLibraryStore] Workspace File Store import failed:', err);
+      return null;
+    }
+
+    if (!result || result.ok !== true || !result.file || !result.ref) {
+      return null;
+    }
+
+    return normalizeItem({
+      name: result.file.displayName || result.file.originalName || file.name,
+      originalName: result.file.originalName || file.name,
+      type: result.file.mimeType || file.type || 'application/octet-stream',
+      ext: result.file.extension || getExt(file.name),
+      size: Number(result.file.sizeBytes || file.size || 0),
+      category: inferCategory(file),
+      tags: [],
+      description: '',
+      favorite: false,
+      pinned: false,
+      fingerprint: makeFingerprint(file),
+      storage: {
+        kind: 'workspace-file',
+        dataUrl: null,
+        fileId: result.file.fileId,
+        refId: result.ref.refId,
+        sha256: result.file.sha256 || null
+      },
+      preview: {
+        kind: previewKind,
+        excerpt: excerpt,
+        textContent: textContent,
+        textType: isRdfLike(file.type, file.name) ? 'rdf' : 'text'
+      },
+      usage: {
+        inChatContext: false,
+        inEditor: false,
+        inPublishing: false,
+        inSiteAssets: false
+      },
+      publishing: {
+        ipfsReady: false,
+        ipfsCid: null,
+        publishName: null
+      }
+    });
+  }
+
   async function createItemFromFile(file) {
     const previewKind = detectPreviewKind(file.type, file.name);
     let dataUrl = null;
@@ -616,33 +895,27 @@
 
     for (const file of files) {
       try {
-        const nextItem = await createItemFromFile(file);
-        const nextFingerprint = makeFingerprint(file);
+        let nextItem = null;
 
-        const existingIndex = state.items.findIndex(function (item) {
-          return item && item.fingerprint && item.fingerprint === nextFingerprint;
-        });
+        if (getWorkspaceFileApi()) {
+          nextItem = await createItemFromWorkspaceFile(file);
 
-        if (existingIndex !== -1) {
-          const existing = state.items[existingIndex];
-          const updated = normalizeItem(
-            Object.assign({}, existing, nextItem, {
-              id: existing.id,
-              createdAt: existing.createdAt,
-              updatedAt: safeNow(),
-              favorite: existing.favorite,
-              pinned: existing.pinned,
-              tags: Array.isArray(existing.tags) ? existing.tags : [],
-              description: typeof existing.description === 'string' ? existing.description : ''
-            })
-          );
-
-          state.items[existingIndex] = updated;
-          created.push(updated);
+          if (!nextItem) {
+            throw new Error('Workspace File Store import failed');
+          }
         } else {
-          state.items.unshift(nextItem);
-          created.push(nextItem);
+          // Compatibility only for older builds that do not expose the
+          // Workspace File Store bridge.
+          nextItem = await createItemFromFile(file);
         }
+
+        // IRGEZTNE_FILES_ONE_IMPORT_ONE_ITEM_R1G
+        // Files is a user-facing library: every explicit import creates one
+        // logical library item. Physical bytes remain content-addressed and
+        // deduplicated by the Workspace File Store, so repeated content does
+        // not require duplicate blob storage.
+        state.items.unshift(nextItem);
+        created.push(nextItem);
       } catch (err) {
         console.error('[NSLibraryStore] Failed to import file:', file && file.name, err);
       }

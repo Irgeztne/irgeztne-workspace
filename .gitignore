@@ -46,3 +46,29 @@ _archive_project_cleanup/
 *.broken.*
 *.dirty-*
 
+
+# Local history, generated outputs and machine profiles; never publish on GitHub
+.*-backups/
+.office-backups/
+.chat-backups/
+checkpoints/
+_checkpoints/
+_patches/
+_experiments/
+node_modules/
+.env
+.env.*
+!.env.example
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+.wrangler/
+coverage/
+*.log
+*.db-wal
+*.db-shm
+account-secure-v1.json
+identity-secure-v1.json
+identity-account-public-v1.json
+*.pem
+*.key

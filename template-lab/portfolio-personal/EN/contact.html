@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Contact Aster Works to discuss a project."><title>Contact — Aster Works</title>
+  <script>
+    (() => {
+      const queryTheme = new URLSearchParams(location.search).get("theme");
+      let theme = queryTheme === "dark" || queryTheme === "light" ? queryTheme : null;
+      if (!theme) {
+        try {
+          const savedTheme = localStorage.getItem("aster-works-theme");
+          if (savedTheme === "dark" || savedTheme === "light") theme = savedTheme;
+        } catch {}
+      }
+      if (!theme && window.matchMedia?.("(prefers-color-scheme: dark)").matches) theme = "dark";
+      document.documentElement.dataset.theme = theme || "light";
+    })();
+  </script>
+<link rel="stylesheet" href="../style.css"></head>
+<body>
+  <header class="site-header"><div class="header-inner shell">
+    <a class="brand" href="index.html" aria-label="Aster Works — home"><span class="brand-mark">A</span><span class="brand-copy"><strong>Aster Works</strong><small>Portfolio / personal site</small></span></a>
+    <nav class="main-nav" data-main-nav data-open="false" aria-label="Main navigation"><a href="index.html">Home</a><a href="works.html">Works</a><a href="about.html">About</a><a href="about.html#process">Process</a><a href="contact.html" aria-current="page">Contact</a></nav>
+    <div class="header-actions"><a class="header-cta" href="contact.html">Discuss a project</a><button class="theme-toggle" type="button" data-theme-toggle data-label-light="Switch to light theme" data-label-dark="Switch to dark theme" aria-label="Switch to dark theme">☾</button><button class="menu-toggle" type="button" data-menu-toggle aria-label="Open menu" aria-expanded="false">☰</button></div>
+  </div></header>
+  <main class="main shell">
+    <header class="page-intro"><span class="eyebrow">Contact</span><h1>Tell me what you want to make.</h1><p class="lead">A few sentences are enough: what the project is, where it stands now and where you need the most help.</p></header>
+    <section class="contact-layout">
+      <article class="contact-card contact-main"><div><span class="eyebrow">Start a conversation</span><h2>Email is the best first step.</h2><p>Describe the task in your own words. If the project is a good fit, the next step will be a short introduction and a clear plan.</p></div><div><a class="contact-link" href="mailto:hello@asterworks.example"><span>hello@asterworks.example</span><span aria-hidden="true">↗</span></a></div></article>
+      <aside class="contact-card contact-side"><div><span class="brief-label">Short brief</span><dl><div><dt>Goal</dt><dd>Context and desired outcome</dd></div><div><dt>Materials</dt><dd>Links, copy or references</dd></div><div><dt>Timeline</dt><dd>Preferred launch date</dd></div></dl></div><p>A formal brief is not required: a few clear sentences are enough to begin.</p></aside>
+    </section>
+    <section class="section-head"><div><span class="eyebrow">Before you write</span><h2>Three things that help us begin faster.</h2></div><p>You do not need a detailed brief. A short note about the task, the desired outcome and the real deadline is enough.</p></section>
+    <section class="process-grid"><article><span>01</span><h3>What are we making?</h3><p>A site, digital product, visual system or editorial series.</p></article><article><span>02</span><h3>Who is it for?</h3><p>Who will use the result and what matters to them.</p></article><article><span>03</span><h3>When?</h3><p>The target date and any event the project must support.</p></article></section>
+  </main>
+  <footer class="site-footer shell"><div><strong>Aster Works</strong><span>Independent portfolio · 2026</span></div><nav class="footer-nav" aria-label="Footer navigation"><a href="index.html">Home</a><a href="works.html">Works</a><a href="about.html">About</a><a href="about.html#process">Process</a><a href="contact.html">Contact</a></nav></footer>
+  <script src="../site.js"></script>
+</body>
+</html>

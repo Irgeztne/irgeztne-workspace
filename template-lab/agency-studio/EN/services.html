@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Vector Atelier services: strategy, design, web and launch."><title>Services · Vector Atelier</title>
+  <script>
+    (() => {
+      const queryTheme = new URLSearchParams(location.search).get("theme");
+      let theme = queryTheme === "dark" || queryTheme === "light" ? queryTheme : null;
+      if (!theme) {
+        try {
+          const savedTheme = localStorage.getItem("vector-atelier-theme");
+          if (savedTheme === "dark" || savedTheme === "light") theme = savedTheme;
+        } catch {}
+      }
+      if (!theme && window.matchMedia?.("(prefers-color-scheme: dark)").matches) theme = "dark";
+      document.documentElement.dataset.theme = theme || "light";
+    })();
+  </script>
+<link rel="stylesheet" href="../style.css"></head>
+<body><header class="site-header"><div class="header-inner"><a class="brand" href="index.html"><span class="brand-mark">V</span><span><strong>Vector Atelier</strong><small>Agency · Creative studio</small></span></a><nav class="main-nav" aria-label="Main navigation"><a href="index.html">Home</a><a href="cases.html">Cases</a><a href="services.html" aria-current="page">Services</a><a href="process.html">Process</a><a href="contact.html">Contact</a></nav><div class="header-actions"><a class="header-cta" href="contact.html">Discuss a project</a><button class="theme-toggle" data-theme-toggle data-dark-label="Use dark theme" data-light-label="Use light theme" aria-label="Use dark theme">☾</button><button class="menu-toggle" data-menu-toggle aria-label="Open menu" aria-expanded="false">≡</button></div></div></header>
+<main><section class="page-intro surface"><div><span class="eyebrow">Services</span><h1>From direction to a confident launch.</h1></div><p>Start with one focused challenge or build a complete journey across research, system design, digital product and launch materials.</p></section>
+<section class="service-stack"><article class="service-row surface"><span>01</span><h2>Strategy</h2><p>We study the context and audience, clarify positioning, shape the product story and organize the communication structure.</p></article><article class="service-row surface"><span>02</span><h2>Design</h2><p>We create identity, typography, color, graphic principles and a family of applications that the team can extend.</p></article><article class="service-row surface"><span>03</span><h2>Web</h2><p>We design structure, prototypes and interfaces for landing pages, product, editorial and corporate sites.</p></article><article class="service-row surface"><span>04</span><h2>Launch</h2><p>We prepare content and assets, check the published experience and support the first round of iteration.</p></article></section>
+<section class="manifesto surface"><div><span class="eyebrow">Ways of working</span><h2>A team shaped around the challenge, without unnecessary layers.</h2></div><p>The mix of specialists changes with the project, while direction and responsibility remain unified. This protects both speed and coherence.</p></section></main>
+<footer class="site-footer"><div class="footer-inner"><div><strong>Vector Atelier</strong><span>Agency and creative studio</span></div><nav aria-label="Footer navigation"><a href="index.html">Home</a><a href="cases.html">Cases</a><a href="services.html">Services</a><a href="process.html">Process</a><a href="contact.html">Contact</a></nav></div></footer><script src="../site.js"></script></body></html>

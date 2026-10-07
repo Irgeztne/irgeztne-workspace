@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="ru" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Обсудить проект с Vector Atelier."><title>Контакт · Vector Atelier</title>
+  <script>
+    (() => {
+      const queryTheme = new URLSearchParams(location.search).get("theme");
+      let theme = queryTheme === "dark" || queryTheme === "light" ? queryTheme : null;
+      if (!theme) {
+        try {
+          const savedTheme = localStorage.getItem("vector-atelier-theme");
+          if (savedTheme === "dark" || savedTheme === "light") theme = savedTheme;
+        } catch {}
+      }
+      if (!theme && window.matchMedia?.("(prefers-color-scheme: dark)").matches) theme = "dark";
+      document.documentElement.dataset.theme = theme || "light";
+    })();
+  </script>
+<link rel="stylesheet" href="../style.css"></head>
+<body><header class="site-header"><div class="header-inner"><a class="brand" href="index.html"><span class="brand-mark">V</span><span><strong>Vector Atelier</strong><small>Агентство · Креативная студия</small></span></a><nav class="main-nav" aria-label="Основная навигация"><a href="index.html">Главная</a><a href="cases.html">Кейсы</a><a href="services.html">Услуги</a><a href="process.html">Процесс</a><a href="contact.html" aria-current="page">Контакт</a></nav><div class="header-actions"><a class="header-cta" href="contact.html">Обсудить проект</a><button class="theme-toggle" data-theme-toggle data-dark-label="Включить тёмную тему" data-light-label="Включить светлую тему" aria-label="Включить тёмную тему">☾</button><button class="menu-toggle" data-menu-toggle aria-label="Открыть меню" aria-expanded="false">≡</button></div></div></header>
+<main><section class="contact-layout"><div class="contact-panel surface"><span class="eyebrow">Контакт</span><h2>Расскажите, что должно измениться после проекта.</h2><p>Для первого разговора не нужен готовый бриф. Достаточно описать задачу, текущую ситуацию и желаемый результат.</p><ul class="brief-list"><li>Что вы создаёте или меняете?</li><li>Для кого предназначен проект?</li><li>Что уже есть на старте?</li><li>Какой результат будет полезным?</li></ul></div><aside class="contact-card surface"><span class="eyebrow">Место для вашей связи</span><h2>Подключите удобный канал.</h2><p>Замените этот нейтральный блок формой, адресом электронной почты, календарём встречи или собственной системой заявок.</p><span class="button primary">Контакт владельца сайта</span></aside></section>
+<section class="section-head"><div><span class="eyebrow">Что дальше</span><h2>Сначала уточним задачу и подходящий формат.</h2></div><p>После первого контакта можно определить состав работ, контрольные точки и материалы, необходимые для уверенного старта.</p></section><section class="proof-grid"><article class="proof-card"><h3>Знакомство</h3><p>Коротко обсуждаем контекст, цель и ограничения.</p></article><article class="proof-card"><h3>Предложение</h3><p>Фиксируем объём, этапы и ожидаемые результаты.</p></article><article class="proof-card"><h3>Старт</h3><p>Собираем материалы и начинаем первый рабочий цикл.</p></article><article class="proof-card"><h3>Сверка</h3><p>Показываем направление до глубокой реализации.</p></article></section></main>
+<footer class="site-footer"><div class="footer-inner"><div><strong>Vector Atelier</strong><span>Агентство и креативная студия</span></div><nav aria-label="Навигация в подвале"><a href="index.html">Главная</a><a href="cases.html">Кейсы</a><a href="services.html">Услуги</a><a href="process.html">Процесс</a><a href="contact.html">Контакт</a></nav></div></footer><script src="../site.js"></script></body></html>

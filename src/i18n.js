@@ -2,10 +2,13 @@ const DICTIONARY = {
   en: {
     browserShell: 'browser shell',
     workspace: 'Workspace',
+    information: 'Information',
     cabinet: 'Cabinet',
     openCabinet: 'Open cabinet',
     toggleWorkspace: 'Toggle split workspace mode',
     closeWorkspace: 'Close workspace',
+    toggleInformation: 'Toggle information panel',
+    closeInformation: 'Close information panel',
     back: 'Back',
     forward: 'Forward',
     reload: 'Reload',
@@ -17,7 +20,7 @@ const DICTIONARY = {
     projects: 'Projects',
     notes: 'Notes',
     documents: 'Office',
-      'site-pages': 'Web Studio',
+    'site-pages': 'Web Studio',
     tools: 'Tools',
     map: 'Map',
     editor: 'Editor',
@@ -82,16 +85,16 @@ const DICTIONARY = {
     videoChat: 'Rooms',
     marketplace: 'Fili Store v0',
     wallet: 'Fili Safe v0',
-    analyticsModule: 'Web Analytics',
+    tasksModule: 'Tasks',
     roomsModule: 'Chat',
     roomsCardDesc: 'Simple encrypted-ready project chat..',
     filiStoreCardDesc: 'Useful file showcase for templates, packs, and Templates flow without real payments in v0.',
     filiSafeCardDesc: 'Local profile, package safety notes, and future validation layer.',
-    analyticsCardDesc: 'Analytics for sites, exports, and publishing.',
+    tasksCardDesc: 'Personal and project tasks, next actions, and working context.',
     rooms: 'Chat',
     filiStore: 'Fili Store',
     filiSafe: 'Fili Safe',
-    analytics: 'Analytics',
+    tasks: 'Tasks',
     open: 'Open',
     tab: 'Tab',
     waiting: 'Waiting',
@@ -111,11 +114,11 @@ const DICTIONARY = {
       rooms: 'Simple encrypted-ready project chat.',
       'fili-store': 'Useful file showcase; no real payments or sales in v0',
       'fili-safe': 'Local safe/profile shell for package validation and Fili Credits',
-      analytics: 'Local analytics for site pages, templates, documents, preview/export, and publishing.',
+      tasks: 'Personal and project tasks with next actions and working context.',
       files: 'Sources, uploads, and documents',
       projects: 'Project containers and workspace flow',
       notes: 'Linked notes and references',
-      documents: 'Light Writer for articles, reports, research notes, and Markdown/HTML export',
+      documents: 'Native workspace for documents, spreadsheets, presentations, diagrams, formulas, and forms',
       tools: 'Utilities for files, images, PDF, text and publishing',
       toolsCategoryLine: 'Converters · PDF · images · text · files',
       editor: 'Draft writing and edit surface',
@@ -139,16 +142,20 @@ const DICTIONARY = {
       rooms: 'Chat',
       'fili-store': 'Fili Store',
       'fili-safe': 'Fili Safe',
-      analytics: 'Analytics'
+      tasks: 'Tasks',
+      'site-pages': 'Web Studio'
     }
   },
   ru: {
     browserShell: 'оболочка браузера',
     workspace: 'Пространство',
+    information: 'Информация',
     cabinet: 'Кабинет',
     openCabinet: 'Открыть кабинет',
     toggleWorkspace: 'Переключить рабочее пространство',
     closeWorkspace: 'Закрыть рабочее пространство',
+    toggleInformation: 'Переключить информационную панель',
+    closeInformation: 'Закрыть информационную панель',
     back: 'Назад',
     forward: 'Вперёд',
     reload: 'Обновить',
@@ -160,7 +167,7 @@ const DICTIONARY = {
     projects: 'Проекты',
     notes: 'Заметки',
     documents: 'Офис',
-      'site-pages': 'Web Studio',
+    'site-pages': 'Веб-студия',
     tools: 'Инструменты',
     map: 'Карта',
     editor: 'Редактор',
@@ -225,16 +232,16 @@ const DICTIONARY = {
     videoChat: 'Rooms',
     marketplace: 'Fili Store v0',
     wallet: 'Fili Safe v0',
-    analyticsModule: 'Аналитика',
+    tasksModule: 'Задачи',
     roomsModule: 'Чат',
     roomsCardDesc: 'Простой проектный чат с основой под шифрование..',
     filiStoreCardDesc: 'Витрина полезных шаблонов, пакетов и потока в Шаблоны без реальных оплат в v0.',
     filiSafeCardDesc: 'Локальный профиль, заметки проверки пакетов и будущий слой валидации.',
-    analyticsCardDesc: 'Аналитика сайта, экспортов и публикации.',
+    tasksCardDesc: 'Личные и проектные задачи, следующие действия и рабочий контекст.',
     rooms: 'Чат',
     filiStore: 'Fili Store',
     filiSafe: 'Fili Safe',
-    analytics: 'Аналитика',
+    tasks: 'Задачи',
     open: 'Открыть',
     tab: 'Вкладка',
     waiting: 'Ожидание',
@@ -254,11 +261,11 @@ const DICTIONARY = {
       rooms: 'Простой проектный чат с основой под шифрование.',
       'fili-store': 'Витрина полезных файлов; без реальных оплат и продаж в v0',
       'fili-safe': 'Локальная безопасная зона для проверки пакетов и Fili Credits',
-      analytics: 'Локальная аналитика страниц сайта, шаблонов, документов, preview/export и публикации.',
+      tasks: 'Личные и проектные задачи со следующими действиями и рабочим контекстом.',
       files: 'Источники, загрузки и документы',
       projects: 'Контейнеры проектов и рабочий поток пространства',
       notes: 'Связанные заметки и ссылки',
-      documents: 'Лёгкий Writer для статей, отчётов, исследований и Markdown/HTML-экспорта',
+      documents: 'Родное рабочее пространство для документов, таблиц, презентаций, диаграмм, формул и форм',
       tools: 'Утилиты для файлов, изображений, PDF, текста и публикации',
       toolsCategoryLine: 'Конвертеры · PDF · изображения · текст · файлы',
       editor: 'Поверхность для письма и редактирования черновиков',
@@ -282,7 +289,8 @@ const DICTIONARY = {
       rooms: 'Чат',
       'fili-store': 'Fili Store',
       'fili-safe': 'Fili Safe',
-      analytics: 'Аналитика'
+      tasks: 'Задачи',
+      'site-pages': 'Веб-студия'
     }
   }
 };
@@ -378,7 +386,7 @@ function translateCabinetFrame(state) {
   if (future[0]) future[0].textContent = dict.videoChat;
   if (future[1]) future[1].textContent = dict.marketplace;
   if (future[2]) future[2].textContent = dict.wallet;
-  if (future[3]) future[3].textContent = dict.analyticsModule || dict.analytics;
+  if (future[3]) future[3].textContent = dict.tasksModule || dict.tasks;
 }
 
 function translateCabinetExpanded(state) {
@@ -394,7 +402,7 @@ function translateCabinetExpanded(state) {
     rooms: dict.rooms,
     'fili-store': dict.filiStore,
     'fili-safe': dict.filiSafe,
-    analytics: dict.analytics,
+    tasks: dict.tasks,
     files: dict.files,
     projects: dict.projects,
     notes: dict.notes,
@@ -403,7 +411,7 @@ function translateCabinetExpanded(state) {
     map: dict.map,
     editor: dict.editor,
     wallet: dict.wallet,
-    analytics: dict.analytics,
+    tasks: dict.tasks,
     codehub: dict.codehub,
     marketplace: dict.catalog,
     workspace: dict.home
@@ -517,7 +525,7 @@ function translateWorkspaceHome(state) {
   if (futureChips[0]) futureChips[0].textContent = dict.videoChat;
   if (futureChips[1]) futureChips[1].textContent = dict.marketplace;
   if (futureChips[2]) futureChips[2].textContent = dict.wallet;
-  if (futureChips[3]) futureChips[3].textContent = dict.analyticsModule || dict.analytics;
+  if (futureChips[3]) futureChips[3].textContent = dict.tasksModule || dict.tasks;
 }
 
 function translateCabinetTiles(state) {
@@ -606,7 +614,7 @@ function translateCabinetHome(state) {
   if (future[0]) future[0].textContent = dict.videoChat;
   if (future[1]) future[1].textContent = dict.marketplace;
   if (future[2]) future[2].textContent = dict.wallet;
-  if (future[3]) future[3].textContent = dict.analyticsModule || dict.analytics;
+  if (future[3]) future[3].textContent = dict.tasksModule || dict.tasks;
 }
 
 function translateEcosystemCards(state) {
@@ -615,13 +623,13 @@ function translateEcosystemCards(state) {
     rooms: dict.roomsModule || dict.videoChat,
     'fili-store': dict.marketplace,
     'fili-safe': dict.wallet,
-    analytics: dict.analyticsModule || dict.analytics
+    tasks: dict.tasksModule || dict.tasks
   };
   const descMap = {
     rooms: dict.roomsCardDesc,
     'fili-store': dict.filiStoreCardDesc,
     'fili-safe': dict.filiSafeCardDesc,
-    analytics: dict.analyticsCardDesc
+    tasks: dict.tasksCardDesc
   };
 
   document.querySelectorAll('[data-ecosystem-card]').forEach((card) => {
@@ -1041,8 +1049,8 @@ function translateGenericUi(state) {
     'Fili Store v0': 'Fili Store v0',
     'Fili Safe': 'Fili Safe',
     'Fili Safe v0': 'Fili Safe v0',
-    'Analytics': 'Аналитика',
-    'Web Analytics': 'Аналитика',
+    'Tasks': 'Задачи',
+    'Tasks module': 'Задачи',
     'Ecosystem modules · v0': 'Экосистемные модули · v0',
     'Ecosystem layer v0': 'Экосистемный слой v0',
     'First honest shells for future directions, without heavy network or finance.': 'Первые честные оболочки будущих направлений, без тяжёлой сети и финансов.',
@@ -1462,9 +1470,9 @@ export function applyLanguage(state, els, options = {}) {
 
     setText('.brand-shell-label', dict.browserShell);
 
-    setText('#workspaceToggle .workspace-toggle-text', dict.workspace);
-    setAttribute('#workspaceToggle', 'title', dict.toggleWorkspace);
-    setAttribute('#workspaceToggle', 'aria-label', dict.toggleWorkspace);
+    setText('#workspaceToggle .workspace-toggle-text', dict.information);
+    setAttribute('#workspaceToggle', 'title', dict.toggleInformation);
+    setAttribute('#workspaceToggle', 'aria-label', dict.toggleInformation);
 
     setAttribute('#hamburgerBtn', 'title', dict.openCabinet);
     setAttribute('#hamburgerBtn', 'aria-label', dict.openCabinet);
@@ -1482,8 +1490,8 @@ export function applyLanguage(state, els, options = {}) {
     setAttribute('#sourceDropdown', 'aria-label', dict.searchSource);
     updateSourcePlaceholder(state, els);
 
-    setText('.workspace-shell-title span:last-child', dict.workspace);
-    setAttribute('#workspaceCollapseBtn', 'title', dict.closeWorkspace);
+    setText('.workspace-shell-title span:last-child', dict.information);
+    setAttribute('#workspaceCollapseBtn', 'title', dict.closeInformation);
     setAttribute('#workspaceDivider', 'aria-label', dict.resizeWorkspace);
 
     updateNavButtons(state);

@@ -1,0 +1,48 @@
+/*
+  IRGEZTNE Workspace — Green Lightning Chat Bubble Geometry v0.4P12a
+
+  Scope:
+  - geometry only
+  - keep P11a readability
+  - keep P12 two-sided MLS conversation
+  - no JS / IPC / persistence / crypto changes
+*/
+
+/* Short messages should not become long fixed-width "sausages".
+   The delivery line naturally establishes a useful minimum visual width,
+   while long text wraps at a calm messenger-like maximum. */
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message {
+  width: fit-content !important;
+  min-width: 0 !important;
+  max-width: min(62%, 720px) !important;
+  box-sizing: border-box !important;
+}
+
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message p {
+  margin-right: 0 !important;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message-state {
+  white-space: normal !important;
+  overflow-wrap: anywhere;
+}
+
+/* Preserve explicit P12 seating. */
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message.is-mine {
+  margin-left: auto !important;
+  margin-right: 0 !important;
+}
+
+.cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message.is-peer {
+  margin-left: 0 !important;
+  margin-right: auto !important;
+}
+
+/* In a floating Chat window allow a little more relative width,
+   because the available canvas is much narrower than Full. */
+.irgeztne-floating-window .cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message,
+[data-irgeztne-floating-window] .cabinet-section-panel[data-cabinet-panel="rooms"] .gl-p1-message {
+  max-width: min(72%, 620px) !important;
+}

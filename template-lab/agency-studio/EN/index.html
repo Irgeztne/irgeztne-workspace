@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Vector Atelier — strategy, design and digital launches.">
+  <title>Vector Atelier · Agency and creative studio</title>
+  <script>
+    (() => {
+      const queryTheme = new URLSearchParams(location.search).get("theme");
+      let theme = queryTheme === "dark" || queryTheme === "light" ? queryTheme : null;
+      if (!theme) {
+        try {
+          const savedTheme = localStorage.getItem("vector-atelier-theme");
+          if (savedTheme === "dark" || savedTheme === "light") theme = savedTheme;
+        } catch {}
+      }
+      if (!theme && window.matchMedia?.("(prefers-color-scheme: dark)").matches) theme = "dark";
+      document.documentElement.dataset.theme = theme || "light";
+    })();
+  </script>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <header class="site-header"><div class="header-inner">
+    <a class="brand" href="index.html"><span class="brand-mark">V</span><span><strong>Vector Atelier</strong><small>Agency · Creative studio</small></span></a>
+    <nav class="main-nav" aria-label="Main navigation"><a href="index.html" aria-current="page">Home</a><a href="cases.html">Cases</a><a href="services.html">Services</a><a href="process.html">Process</a><a href="contact.html">Contact</a></nav>
+    <div class="header-actions"><a class="header-cta" href="contact.html">Discuss a project</a><button class="theme-toggle" data-theme-toggle data-dark-label="Use dark theme" data-light-label="Use light theme" aria-label="Use dark theme">☾</button><button class="menu-toggle" data-menu-toggle aria-label="Open menu" aria-expanded="false">≡</button></div>
+  </div></header>
+  <main>
+    <section class="hero">
+      <div class="hero-copy surface"><span class="eyebrow">Strategy · Design · Launch</span><h1>We build strong systems for new ideas.</h1><p class="lead">We help products and organizations find a clear direction, develop a coherent visual language and meet their audience without unnecessary noise.</p><div class="hero-actions"><a class="button primary" href="cases.html">View cases</a><a class="button secondary" href="services.html">Our services</a></div><div class="metrics"><div class="metric"><strong>18</strong><span>launches prepared</span></div><div class="metric"><strong>4</strong><span>core disciplines</span></div><div class="metric"><strong>1</strong><span>team across the journey</span></div></div></div>
+      <div class="hero-media surface"><img src="../assets/agency-architecture.webp" alt="Architectural space with concrete forms and color accents"><div class="media-note"><span>Studio system</span><strong>From an initial thought to a recognizable presence</strong></div></div>
+    </section>
+    <section class="focus-strip surface" aria-label="Studio disciplines"><strong>A connected system of decisions, not separate decoration</strong><span>Brand</span><span>Web</span><span>Content</span><span>Launch</span><span>Growth</span></section>
+    <section class="section-head"><div><span class="eyebrow">Selected cases</span><h2>We present the work as a story of decisions.</h2></div><p>Each case explains the challenge, direction, system of materials and outcome — not just a random gallery of thumbnails.</p></section>
+    <section class="case-grid">
+      <article class="case-card large surface"><img src="../assets/agency-identity.webp" alt="Identity system in orange, violet and graphite"><div class="case-copy"><span class="eyebrow">Identity system</span><h3>Orbis: one language for a growing platform</h3><p>Strategy, visual system and a coordinated set of launch materials.</p></div></article>
+      <div class="case-side"><article class="case-card surface"><img src="../assets/agency-digital.webp" alt="Screen displaying a digital design system"><div class="case-copy"><span class="eyebrow">Digital product</span><h3>Helio: an interface with a clear hierarchy</h3></div></article><article class="case-card surface"><img src="../assets/agency-process.webp" alt="Desk with sketches and material samples"><div class="case-copy"><span class="eyebrow">Research</span><h3>Field Notes: from material to visual language</h3></div></article></div>
+    </section>
+    <section class="section-head"><div><span class="eyebrow">Services</span><h2>Four disciplines, one coherent process.</h2></div><p>Engage one discipline for a focused challenge or combine them into a complete journey.</p></section>
+    <section class="service-grid"><article class="service-card"><span>01</span><h3>Strategy</h3><p>Positioning, audience, narrative structure and launch planning.</p></article><article class="service-card"><span>02</span><h3>Design</h3><p>Identity, visual system, grids and practical guidelines.</p></article><article class="service-card"><span>03</span><h3>Web</h3><p>Landing pages, product and editorial sites, interfaces.</p></article><article class="service-card"><span>04</span><h3>Launch</h3><p>Content, assets, publishing and early-stage support.</p></article></section>
+    <section class="manifesto surface"><div><span class="eyebrow">Studio principle</span><h2>A strong result starts with a clear decision.</h2></div><p>We connect strategy, form and technology. The site, identity and launch materials then speak with one voice and give the project room to grow.</p></section>
+  </main>
+  <footer class="site-footer"><div class="footer-inner"><div><strong>Vector Atelier</strong><span>Agency and creative studio</span></div><nav aria-label="Footer navigation"><a href="index.html">Home</a><a href="cases.html">Cases</a><a href="services.html">Services</a><a href="process.html">Process</a><a href="contact.html">Contact</a></nav></div></footer>
+  <script src="../site.js"></script>
+</body></html>
