@@ -1,5 +1,9 @@
 # IRGEZTNE Workspace
 
+
+https://github.com/user-attachments/assets/66a71cff-7cda-4500-8b93-1ee52971a3bd
+
+
 IRGEZTNE Workspace is a local-first desktop application built with Electron.
 
 ## Development status
