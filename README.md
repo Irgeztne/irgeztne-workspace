@@ -1,5 +1,7 @@
 # IRGEZTNE Workspace
+> **[Archived Preview 1–3]** This branch preserves historical preview releases under the MIT License. For current v1.0.0 development (MPL-2.0), switch to the default branch [`workspace-checkpoint-20261007`](https://github.com/Irgeztne/irgeztne-workspace/tree/workspace-checkpoint-20261007).
 
+---
 IRGEZTNE Workspace is an early preview desktop workspace built with Electron.
 
 The project is focused on browsing, writing, editing, organizing files/source content, and preparing web projects for future publishing.
