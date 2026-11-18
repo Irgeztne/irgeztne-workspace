@@ -26,7 +26,7 @@
       website: 'Официальный сайт',
       updates: 'Проверить новую версию',
       releases: 'Релизы / история версий',
-      docs: 'Документация — в разработке',
+      docs: 'Документация',
       github: 'GitHub репозиторий',
       about: 'О IRGEZTNE',
       bookmarks: 'Закладки',
@@ -50,7 +50,7 @@
       website: 'Official website',
       updates: 'Check for updates',
       releases: 'Releases / version history',
-      docs: 'Documentation — in development',
+      docs: 'Documentation',
       github: 'GitHub repository',
       about: 'About IRGEZTNE',
       bookmarks: 'Bookmarks',
@@ -334,7 +334,7 @@
         return;
       }
       if (action === 'docs-status') {
-        showStatus(t('docsStatus'));
+        openInternalTab({ url: 'https://irgeztne.com', title: 'IRGEZTNE Documentation' });
         return;
       }
       if (action === 'about') {

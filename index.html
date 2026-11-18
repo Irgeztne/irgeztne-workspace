@@ -66,6 +66,64 @@
   <link rel="stylesheet" href="src/chat-message-edit-v04p18.css">
   <link rel="stylesheet" href="src/chat-message-lifecycle-v04p19.css">
   <link rel="stylesheet" href="src/chat-local-cleanup-v04p20.css">
+<style id="irgeztne-native-v1-badges">
+  [data-section="codehub"],
+  [data-open-section="codehub"],
+  [data-home-open="codehub"],
+  [data-workspace-deep-link="workshop"],
+  [data-section="rooms"],
+  [data-open-section="rooms"],
+  [data-home-open="rooms"] {
+    pointer-events: none !important;
+    cursor: default !important;
+    opacity: 0.86;
+  }
+  .workspace-home-rail [data-open-section="codehub"],
+  .workspace-home-rail [data-home-open="codehub"] {
+    display: none !important;
+  }
+  [data-section="codehub"]::after,
+  [data-open-section="codehub"]:not(.cabinet-tile)::after,
+  [data-open-section="codehub"] > strong::after,
+  [data-open-section="codehub"] > .cabinet-tile-title::after,
+  [data-home-open="codehub"] > strong::after,
+  [data-workspace-deep-link="workshop"] > strong::after,
+  [data-workspace-deep-link="workshop"]:not(:has(strong))::after,
+  [data-section="rooms"]::after,
+  [data-open-section="rooms"]:not(.cabinet-tile)::after,
+  [data-open-section="rooms"] > strong::after,
+  [data-open-section="rooms"] > .cabinet-tile-title::after,
+  [data-home-open="rooms"] > strong::after {
+    content: "Скоро" !important;
+    display: inline-block;
+    margin-left: 7px;
+    padding: 2px 7px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #fcd34d;
+    background: rgba(245, 158, 11, 0.16);
+    border: 1px solid rgba(245, 158, 11, 0.45);
+    border-radius: 999px;
+    vertical-align: middle;
+    line-height: 1.3;
+  }
+  html[lang="en"] [data-section="codehub"]::after,
+  html[lang="en"] [data-open-section="codehub"]:not(.cabinet-tile)::after,
+  html[lang="en"] [data-open-section="codehub"] > strong::after,
+  html[lang="en"] [data-open-section="codehub"] > .cabinet-tile-title::after,
+  html[lang="en"] [data-home-open="codehub"] > strong::after,
+  html[lang="en"] [data-workspace-deep-link="workshop"] > strong::after,
+  html[lang="en"] [data-workspace-deep-link="workshop"]:not(:has(strong))::after,
+  html[lang="en"] [data-section="rooms"]::after,
+  html[lang="en"] [data-open-section="rooms"]:not(.cabinet-tile)::after,
+  html[lang="en"] [data-open-section="rooms"] > strong::after,
+  html[lang="en"] [data-open-section="rooms"] > .cabinet-tile-title::after,
+  html[lang="en"] [data-home-open="rooms"] > strong::after {
+    content: "Soon" !important;
+  }
+</style>
 </head>
 <body>
   <div class="app-shell" id="appShell">
@@ -1024,7 +1082,7 @@
                   <button type="button" class="workspace-home-shortcut workspace-home-shortcut--primary" data-open-section="site-pages"><strong>Web Studio</strong><span>Identity, pages, menu and export/build foundation.</span></button>
                   <button type="button" class="workspace-home-shortcut" data-open-section="map"><strong>Карта</strong><span>Canvas-карта для проектов, регионов, материалов и будущих связей.</span></button>
                   <button type="button" class="workspace-home-shortcut" data-open-section="editor"><strong>Редактор</strong><span>Пишите, дорабатывайте, просматривайте и готовьте выпуск.</span></button>
-                  <button type="button" class="workspace-home-shortcut workspace-home-shortcut--primary" data-open-section="codehub">Мастерская</button>
+                  <button type="button" class="workspace-home-shortcut workspace-home-shortcut--primary" data-open-section="codehub" hidden>Мастерская</button>
                   <button type="button" class="workspace-home-shortcut workspace-home-shortcut--primary" data-open-section="marketplace"><strong>Шаблоны</strong><span>Открывайте бесплатные официальные шаблоны для быстрого старта.</span></button>
                 </div>
               </div>

@@ -9150,11 +9150,21 @@
 
   function templatePreviewHtmlV094A(templateId) {
     var state = templatePreviewStateV094A(templateId);
-    var home = findHomePage(state) || state.pages[0];
-    return renderSiteHtml(state, home, {
+    var home = findHomePage(state) || state.pages;
+    var html = renderSiteHtml(state, home, {
       linkMode: 'hash',
       inlineAssets: true
     });
+    var baseHref = "";
+    try {
+      baseHref = new URL(".", window.location.href).href;
+    } catch (_) {}
+    html = html
+      .replace(/(?:\.\/|\/)?assets\/template\/business\//g, baseHref + 'template-lab/business-product/assets/')
+      .replace(/(?:\.\/|\/)?assets\/template\/blog\//g, baseHref + 'template-lab/blog-news/assets/')
+      .replace(/(?:\.\/|\/)?assets\/template\/portfolio\//g, baseHref + 'template-lab/portfolio-personal/assets/')
+      .replace(/(?:\.\/|\/)?assets\/template\/agency\//g, baseHref + 'template-lab/agency-studio/assets/');
+    return html;
   }
 
   function templatePreviewPayloadV095A(templateId) {
@@ -10089,7 +10099,7 @@
   function webStudioCurrentTopTabIdsV082Clean3() {
     // IRGEZTNE_V082_CLEAN_11_TEMPLATES_TAB_STABLE
     // IRGEZTNE_V084S_SITE_SETTINGS_TAB_STABLE
-    return ['sites', 'site-settings', 'templates', 'workshop', 'page', 'pages', 'menu', 'identity', 'preview', 'server'];
+    return ['sites', 'site-settings', 'templates', 'page', 'pages', 'menu', 'identity', 'preview', 'server'];
   }
 
   function webStudioCurrentTopTabsV082Clean3() {
@@ -10217,10 +10227,8 @@
   function renderWebStudioAccountReleaseR1() {
     var account = window.IRGEZTNEConnected || null;
     var connected = Boolean(account && typeof account.isConnected === 'function' && account.isConnected());
-    var title = connected
-      ? t('IRGEZTNE ID connected', 'IRGEZTNE ID подключён')
-      : t('Account and device', 'Аккаунт и устройство');
-    return '<button class="ir-site-studio-v5-account-release-r1' + (connected ? ' is-connected' : '') + '" data-v5-action="open-account-release-r1" type="button" aria-haspopup="menu" aria-label="' + escapeHtml(title) + '" title="' + escapeHtml(title) + '">' +
+    var title = t('Account — in development (soon)', 'Аккаунт — в разработке (скоро)');
+    return '<button class="ir-site-studio-v5-account-release-r1" style="cursor:default;opacity:0.75;" type="button" aria-label="' + escapeHtml(title) + '" title="' + escapeHtml(title) + '">' +
       '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 12.25a4.25 4.25 0 1 0 0-8.5 4.25 4.25 0 0 0 0 8.5Zm0 2.1c-3.95 0-7.25 2.12-7.25 4.72 0 .64.52 1.18 1.18 1.18h12.14c.66 0 1.18-.54 1.18-1.18 0-2.6-3.3-4.72-7.25-4.72Z"></path></svg>' +
       '<span class="ir-site-studio-v5-account-dot" aria-hidden="true"></span>' +
       '</button>';
@@ -13150,12 +13158,6 @@
     event.preventDefault();
     if (action === 'close' || action === 'back-editor' || action === 'exit-studio') { closeStudio(); return; }
     if (action === 'open-account-release-r1') {
-      var connectedAccountReleaseR1 = window.IRGEZTNEConnected || null;
-      if (connectedAccountReleaseR1 && typeof connectedAccountReleaseR1.openAccountSurface === 'function') {
-        saveAllFromDom(false);
-        closeStudio();
-        connectedAccountReleaseR1.openAccountSurface();
-      }
       return;
     }
     // IRGEZTNE_V083I_TEMPLATE_LAB_ACTIONS

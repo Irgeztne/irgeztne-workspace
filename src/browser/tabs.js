@@ -492,7 +492,6 @@ function renderWorkspaceStartPane(state) {
             <button type="button" data-start-action="create-site">${startLang('Создать сайт', 'Create site')}</button>
             <button type="button" data-start-action="new-project">${startLang('Новый проект', 'New project')}</button>
             <button type="button" data-open-section="marketplace">${startLang('Шаблоны', 'Templates')}</button>
-            <button type="button" data-open-section="codehub">${startLang('Мастерская', 'Workshop')}</button>
           </div>
         </section>
       </div>

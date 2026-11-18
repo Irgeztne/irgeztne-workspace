@@ -614,7 +614,7 @@
     }
   }
 
-  function openAccount(mode) {
+  function openAccount() { return;
     const state = readState();
     const status = accountStatus();
     const url = (status && status.api_base) || state.accountUrl || ACCOUNT_URL;
@@ -774,7 +774,11 @@
 
     accountButtons().forEach((btn) => {
       btn.classList.toggle('is-connected', connected);
-      btn.setAttribute('title', title);
+      btn.setAttribute('title', t('Аккаунт — в разработке (скоро)', 'Account — in development (soon)'));
+      btn.style.cursor = 'default';
+      btn.style.opacity = '0.75';
+      const oldBadge = btn.querySelector('.ir-acc-soon-badge');
+      if (oldBadge) oldBadge.remove();
       btn.setAttribute('aria-label', title);
     });
   }
@@ -1775,7 +1779,7 @@
     });
   }
 
-  function openAccountSurface() {
+  function openAccountSurface() { return;
     requestAccountSurface();
     window.setTimeout(() => {
       bindAccountSurface();
@@ -2042,7 +2046,7 @@
     menuAnchor = null;
   }
 
-  function toggleMenu(anchor) {
+  function toggleMenu(anchor) { return;
     const menu = ensureMenu();
     if (menu.classList.contains('hidden')) openMenuFrom(anchor || defaultMenuAnchor());
     else closeMenu();
