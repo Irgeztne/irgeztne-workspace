@@ -13,7 +13,7 @@ Version **1.0.0** is available for Linux (`.deb`, `.AppImage`), Windows (`.exe`)
 
 ## Documentation & Security
 
-- **Docs:** `docs/release/00-READ-ME-FIRST.md` and [://irgeztne.com](https://irgeztne.com/docs.html).
+- **Docs:** `docs/release/00-READ-ME-FIRST.md` and [irgeztne.com/docs.html](https://irgeztne.com/docs.html).
 - **Security:** Do not commit account secrets or private backups.
 
 ## License & Contact
