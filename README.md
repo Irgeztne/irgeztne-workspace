@@ -4,7 +4,7 @@
 
 ## Release Status — v1.0.0
 
-Version **1.0.0** is available for Linux (`.deb`, `.AppImage`), Windows (`.exe`), and macOS (`.dmg`) on [GitHub Releases](https://github.com).
+Version **1.0.0** is available for Linux (`.deb`, `.AppImage`), Windows (`.exe`), and macOS (`.dmg`) on [GitHub Releases](https://github.com/Irgeztne/irgeztne-workspace/releases/tag/v1.0.0).
 
 ## Workspace Modules
 
@@ -13,12 +13,12 @@ Version **1.0.0** is available for Linux (`.deb`, `.AppImage`), Windows (`.exe`)
 
 ## Documentation & Security
 
-- **Docs:** `docs/release/00-READ-ME-FIRST.md` and [://irgeztne.com](https://://irgeztne.com).
+- **Docs:** `docs/release/00-READ-ME-FIRST.md` and [://irgeztne.com](https://irgeztne.com/docs.html).
 - **Security:** Do not commit account secrets or private backups.
 
 ## License & Contact
 
 - **License:** Mozilla Public License 2.0 (MPL-2.0). See [LICENSE](LICENSE).
-- **Website:** [https://irgeztne.com](https://irgeztne.com)
+- **Website:** [https://irgeztne.com/](https://irgeztne.com/)
 - **Email:** contact@irgeztne.com
-- **Repository:** [https://github.com](https://github.com)
+- **Repository:** [https://github.com/Irgeztne/irgeztne-workspace](https://github.com/Irgeztne/irgeztne-workspace)
