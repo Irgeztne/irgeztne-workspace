@@ -2,8 +2,15 @@
   'use strict';
 
   function getLang() {
-    const saved = localStorage.getItem('nsbrowser.v8.language');
-    if (saved === 'ru' || saved === 'en') return saved;
+    try {
+      if (window.__IRG_BROWSER_SHELL_API && typeof window.__IRG_BROWSER_SHELL_API.getLanguage === 'function') {
+        const apiLang = window.__IRG_BROWSER_SHELL_API.getLanguage();
+        if (apiLang === 'ru' || apiLang === 'en') return apiLang;
+      }
+    } catch (_) {}
+    const htmlLangTop = (document.documentElement.getAttribute('lang') || '').toLowerCase();
+    if (htmlLangTop.startsWith('en')) return 'en';
+    if (htmlLangTop.startsWith('ru')) return 'ru';
 
     const workspaceToggle = document.querySelector('#workspaceToggle .workspace-toggle-text, #workspaceToggle');
     const workspaceText = (workspaceToggle && workspaceToggle.textContent || '').trim().toLowerCase();
