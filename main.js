@@ -1,5 +1,7 @@
-process.env.ELECTRON_DISABLE_SANDBOX = '1';
 const { app, BrowserWindow, screen, Menu, ipcMain, shell, dialog, safeStorage, protocol, net } = require('electron');
+if (process.platform === 'linux' && process.env.APPIMAGE) {
+  app.commandLine.appendSwitch('no-sandbox');
+}
 const { spawn, spawnSync } = require('child_process');
 const path = require('path');
 

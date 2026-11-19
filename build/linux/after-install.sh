@@ -1,11 +1,23 @@
 #!/usr/bin/env bash
 set -e
 
-
-SANDBOX="/opt/IRGEZTNE-Workspace/chrome-sandbox"
+SANDBOX="/opt/IRGEZTNE Workspace/chrome-sandbox"
 if [ -f "$SANDBOX" ]; then
   chown root:root "$SANDBOX" || true
   chmod 4755 "$SANDBOX" || true
+fi
+
+if [ -d /etc/apparmor.d ] && command -v apparmor_parser >/dev/null 2>&1; then
+  cat > /etc/apparmor.d/irgeztne-workspace <<'APPARMOR'
+abi <abi/4.0>,
+include <tunables/global>
+
+profile irgeztne-workspace "/opt/IRGEZTNE Workspace/irgeztne-workspace" flags=(unconfined) {
+  userns,
+  include if exists <local/irgeztne-workspace>
+}
+APPARMOR
+  apparmor_parser -r -T -W /etc/apparmor.d/irgeztne-workspace || true
 fi
 
 DESKTOP="/usr/share/applications/irgeztne-workspace.desktop"
@@ -33,18 +45,16 @@ cat > "$META" <<'XML'
     <name>Irgeztne</name>
   </developer>
   <url type="homepage">https://irgeztne.com</url>
-  <url type="bugtracker">https://github.com/Irgeztne/irgeztne-workspace/issues</url>
+  <url type="bugtracker">https://github.com</url>
   <description>
-    <p>IRGEZTNE Workspace is an early preview desktop workspace for browsing, writing, editing, organizing projects, and preparing web content for static-site publishing.</p>
-    <p>Preview.4 includes a browser workspace shell, Web Studio, editor/office tools, notes, files/source library, project tools, templates, and publishing preparation modules.</p>
-    <p>Early preview builds are not code-signed yet.</p>
+    <p>IRGEZTNE Workspace is a local-first desktop workspace for browsing, writing, editing, organizing projects, and preparing web content for static-site publishing.</p>
   </description>
   <categories>
     <category>Utility</category>
     <category>Office</category>
   </categories>
   <releases>
-    <release version="1.0.0-preview.4" date="2026-05-20"/>
+    <release version="1.0.0" date="2026-11-19"/>
   </releases>
   <content_rating type="oars-1.1"/>
 </component>
