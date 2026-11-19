@@ -838,6 +838,20 @@ ipcMain.on('irgeztne:weather:locationChanged', (event) => {
   } catch (_) {}
 });
 
+ipcMain.on('irgeztne:weather:openInternalLink', (_event, payload) => {
+  const url = payload && typeof payload.url === 'string' ? payload.url.trim() : '';
+  if (!url.startsWith('https://met.no')) return;
+  const allWins = BrowserWindow.getAllWindows();
+  const mainWin = allWins.find((w) => w && !w.isDestroyed() && w.webContents && w.webContents.getURL().includes('index.html'));
+  if (mainWin) {
+    if (mainWin.isMinimized()) mainWin.restore();
+    mainWin.show();
+    mainWin.focus();
+    mainWin.webContents.send('irgeztne:open-internal-tab', { url });
+    try { irgeztneWeatherWindowController.close(); } catch (_) {}
+  }
+});
+
 ipcMain.handle('irgeztne:weather:openOfficialLink', async (event, payload = {}) => {
   assertWeatherDataViewSender(event);
   let url;
@@ -2988,7 +3002,11 @@ function createWindow() {
     resizable: true,icon: resolveIRGEZTNEAppIconPath(),
     width: 1400,
     height: 900,
-    backgroundColor: '#111111',
+    backgroundColor: '#071426',
+    ...(process.platform !== 'linux' ? {
+      titleBarStyle: 'hidden',
+      titleBarOverlay: { color: '#071426', symbolColor: '#d6e6ff', height: 34 }
+    } : {}),
     icon: getAppIconPath(),
     autoHideMenuBar: true,
     webPreferences: {
@@ -3700,3 +3718,19 @@ app.on('window-all-closed', () => {
     app.quit();
   }
 });
+
+
+// IRGEZTNE_CUSTOM_TITLEBAR_IPC
+ipcMain.on('irgeztne-window:minimize', (event) => {
+  const w = BrowserWindow.fromWebContents(event.sender);
+  if (w) w.minimize();
+});
+ipcMain.on('irgeztne-window:maximize-toggle', (event) => {
+  const w = BrowserWindow.fromWebContents(event.sender);
+  if (w) { if (w.isMaximized()) w.unmaximize(); else w.maximize(); }
+});
+ipcMain.on('irgeztne-window:close', (event) => {
+  const w = BrowserWindow.fromWebContents(event.sender);
+  if (w) w.close();
+});
+

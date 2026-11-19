@@ -10099,7 +10099,7 @@
   function webStudioCurrentTopTabIdsV082Clean3() {
     // IRGEZTNE_V082_CLEAN_11_TEMPLATES_TAB_STABLE
     // IRGEZTNE_V084S_SITE_SETTINGS_TAB_STABLE
-    return ['sites', 'site-settings', 'templates', 'page', 'pages', 'menu', 'identity', 'preview', 'server'];
+    return ['sites', 'site-settings', 'templates', 'workshop', 'page', 'pages', 'menu', 'identity', 'preview', 'server'];
   }
 
   function webStudioCurrentTopTabsV082Clean3() {
@@ -10165,11 +10165,12 @@
       var extraClass = id === 'server' && serverConfigured ? ' is-server-ready' : '';
       var labelText = id === 'server' && serverConfigured ? ('✓ ' + label) : label;
 
+      var workshopAttr = id === 'workshop' ? ' data-workspace-deep-link="workshop"' : '';
       return '<button class="ir-site-studio-v5-shell-tab-v082clean13' +
         (activeId === id ? ' is-active' : '') +
         extraClass +
-        '" data-v5-tab="' + escapeHtml(id) +
-        '" type="button" title="' + escapeHtml(label) +
+        '" data-v5-tab="' + escapeHtml(id) + '"' + workshopAttr +
+        ' type="button" title="' + escapeHtml(label) +
         '" aria-label="' + escapeHtml(label) +
         '">' + escapeHtml(labelText) + '</button>';
     }).join('') + quickPublishButton + '</div>';
@@ -10194,6 +10195,7 @@
       button.classList.add('ir-site-studio-v5-shell-tab-v082clean13');
 
       button.setAttribute('data-v5-tab', id);
+      if (id === 'workshop') { button.setAttribute('data-workspace-deep-link', 'workshop'); } else { button.removeAttribute('data-workspace-deep-link'); }
       button.setAttribute('title', label);
       button.setAttribute('aria-label', label);
       button.setAttribute('data-v5-shell-owner', 'v082-clean-13');

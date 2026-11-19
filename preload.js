@@ -352,3 +352,15 @@ contextBridge.exposeInMainWorld('irgeztneMessenger', Object.freeze({
     assertMessengerDeleteTargetV04P19(messageId)
   )
 }));
+
+contextBridge.exposeInMainWorld('irgeztneWindowControls', {
+  minimize: () => ipcRenderer.send('irgeztne-window:minimize'),
+  maximizeToggle: () => ipcRenderer.send('irgeztne-window:maximize-toggle'),
+  close: () => ipcRenderer.send('irgeztne-window:close')
+});
+
+ipcRenderer.on('irgeztne:open-internal-tab', (_event, payload) => {
+  if (payload && payload.url) {
+    window.dispatchEvent(new CustomEvent('irgeztne:open-internal-tab', { detail: payload }));
+  }
+});

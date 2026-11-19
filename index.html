@@ -123,17 +123,57 @@
   html[lang="en"] [data-home-open="rooms"] > strong::after {
     content: "Soon" !important;
   }
+
+  .ir-site-studio-v5-overlay .ir-site-studio-v5-shell-tab-v082clean13[data-v5-tab="workshop"]::after {
+    content: "Скоро" !important;
+    display: inline-block !important;
+    margin-left: 7px;
+    padding: 2px 7px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #fcd34d;
+    background: rgba(245, 158, 11, 0.16);
+    border: 1px solid rgba(245, 158, 11, 0.45);
+    border-radius: 999px;
+    vertical-align: middle;
+    line-height: 1.3;
+  }
+  html[lang="en"] .ir-site-studio-v5-overlay .ir-site-studio-v5-shell-tab-v082clean13[data-v5-tab="workshop"]::after {
+    content: "Soon" !important;
+  }
+
+
+  .ir-site-studio-v5-overlay .ir-site-studio-v5-tabs--top {
+    flex-wrap: nowrap !important;
+    gap: 6px !important;
+  }
+  .ir-site-studio-v5-overlay .ir-site-studio-v5-shell-tab-v082clean13,
+  .ir-site-studio-v5-overlay .ir-site-studio-v5-tabs--top .ir-site-studio-v5-quick-publish {
+    padding-left: 11px !important;
+    padding-right: 11px !important;
+    font-size: 13px !important;
+    white-space: nowrap !important;
+  }
+  .ir-site-studio-v5-overlay .ir-site-studio-v5-shell-tab-v082clean13[data-v5-tab="workshop"]::after {
+    margin-left: 5px !important;
+    padding: 1px 6px !important;
+    font-size: 9px !important;
+  }
+
 </style>
 </head>
 <body>
   <div class="app-shell" id="appShell">
+  
     <header class="topbar topbar--true-top">
       <div class="topbar-row topbar-row--tabs">
         <div class="topbar-brand">
           <div class="brand-block brand-block--irgeztne">
 <div class="brand-wordmark-wrap">
               <div class="brand-identity-row" aria-label="IRGEZTNE">
-                <img class="brand-wordmark-image brand-app-mark-image" src="./assets/branding/header-mark-transparent.png?v=v7g2h" alt="" aria-hidden="true" />
+                <img class="brand-wordmark-image brand-app-mark-image" src="./assets/branding/header-mark-transparent.png?v=v8" alt="" aria-hidden="true" />
                 <span class="brand-wordmark-text">IRGEZTNE</span>
               </div>
               <span class="brand-shell-label">оболочка браузера</span>
@@ -255,7 +295,6 @@
             <div class="topbar-more-menu hidden" id="topbarMoreMenu" role="menu" aria-label="IRGEZTNE menu">
               <button type="button" role="menuitem" data-topbar-link="website">Официальный сайт</button>
               <button type="button" role="menuitem" data-topbar-link="updates">Проверить новую версию</button>
-              <button type="button" role="menuitem" data-topbar-link="releases">Релизы / история версий</button>
               <button type="button" role="menuitem" data-topbar-link="github">GitHub репозиторий</button>
               <button type="button" role="menuitem" data-topbar-action="about">О IRGEZTNE</button>
             </div>

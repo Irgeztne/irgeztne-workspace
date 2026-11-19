@@ -1055,8 +1055,7 @@
   function positionBlockChromeR1W9F6() {
     if (!editor || !shell || !blockHandleR1W9F6) return;
     const menuOpen = blockMenuR1W9F6 && !blockMenuR1W9F6.hidden;
-    const focusedBlock = editor.contains(document.activeElement) ? activeBlockFromSelectionR1W9F6() : null;
-    const block = menuOpen ? activeBlockR1W9F6 : (hoveredBlockR1W9F6 || focusedBlock);
+    const block = menuOpen ? activeBlockR1W9F6 : hoveredBlockR1W9F6;
     if (!block || !editor.contains(block)) {
       if (blockMenuR1W9F6 && blockMenuR1W9F6.hidden) blockHandleR1W9F6.hidden = true;
       return;
@@ -3055,7 +3054,13 @@
 
   editor.addEventListener('pointerdown', (event) => {
     const block = topLevelBlockFromNodeR1W9F6(event.target);
-    if (block) setActiveBlockR1W9F6(block);
+    if (block && event.altKey) {
+      hoveredBlockR1W9F6 = block;
+      setActiveBlockR1W9F6(block);
+    } else {
+      hoveredBlockR1W9F6 = null;
+      setActiveBlockR1W9F6(null);
+    }
     setBlockMenuOpenR1W9F6(false);
   });
 

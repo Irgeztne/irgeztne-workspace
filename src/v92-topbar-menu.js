@@ -38,7 +38,7 @@
       savedSitesRemove: 'Удалить',
       savedSitesClose: 'Закрыть',
       docsStatus: 'Документация пока в разработке. Сейчас доступны официальный сайт, проверка новой версии, релизы и GitHub.',
-      aboutStatus: 'IRGEZTNE Workspace — open-source, desktop-first, local-first пространство для файлов, проектов, заметок, документов, редактора, CodeHub и будущей файловой экосистемы.',
+      aboutStatus: 'IRGEZTNE Workspace 1.0.0 — локальное настольное рабочее пространство для файлов, проектов, офиса, заметок, задач, инструментов, Веб-студии и встроенного браузера.',
       bookmarkTitle: 'Закладка — сохранить или удалить текущий сайт',
       bookmarkSaved: 'Сайт сохранён в Закладки.',
       bookmarkRemoved: 'Сайт удалён из Закладок.',
@@ -62,7 +62,7 @@
       savedSitesRemove: 'Remove',
       savedSitesClose: 'Close',
       docsStatus: 'Documentation is in development. For now, use the official website, update check, releases, and GitHub.',
-      aboutStatus: 'IRGEZTNE Workspace is an open-source, desktop-first, local-first space for files, projects, notes, documents, Editor, CodeHub, and the future file ecosystem.',
+      aboutStatus: 'IRGEZTNE Workspace 1.0.0 is a local-first desktop workspace for files, projects, Office, notes, tasks, tools, Web Studio and built-in browser.',
       bookmarkTitle: 'Bookmark — save or remove the current site',
       bookmarkSaved: 'Site saved to Bookmarks.',
       bookmarkRemoved: 'Site removed from Bookmarks.',
@@ -405,6 +405,7 @@
     init();
   }
 
+  window.addEventListener('irgeztne:open-internal-tab', function (e) { if (e && e.detail && e.detail.url) { openInternalTab({ url: e.detail.url, title: 'MET Norway' }); } });
   document.addEventListener('irg:language-changed', updateLabels);
   document.addEventListener('irg:browser-shell-ready', updateLabels);
 })();
