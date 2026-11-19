@@ -38,7 +38,7 @@
       savedSitesRemove: 'Удалить',
       savedSitesClose: 'Закрыть',
       docsStatus: 'Документация пока в разработке. Сейчас доступны официальный сайт, проверка новой версии, релизы и GitHub.',
-      aboutStatus: 'IRGEZTNE Workspace 1.0.0 — локальное настольное рабочее пространство для файлов, проектов, офиса, заметок, задач, инструментов, Веб-студии и встроенного браузера.',
+      aboutStatus: 'IRGEZTNE Workspace 1.0.0 — локальное настольное рабочее пространство для файлов, проектов, офиса, заметок, задач, инструментов, Веб-студии и встроенного браузера. Официальный сайт: https://irgeztne.com/workspace',
       bookmarkTitle: 'Закладка — сохранить или удалить текущий сайт',
       bookmarkSaved: 'Сайт сохранён в Закладки.',
       bookmarkRemoved: 'Сайт удалён из Закладок.',
@@ -62,7 +62,7 @@
       savedSitesRemove: 'Remove',
       savedSitesClose: 'Close',
       docsStatus: 'Documentation is in development. For now, use the official website, update check, releases, and GitHub.',
-      aboutStatus: 'IRGEZTNE Workspace 1.0.0 is a local-first desktop workspace for files, projects, Office, notes, tasks, tools, Web Studio and built-in browser.',
+      aboutStatus: 'IRGEZTNE Workspace 1.0.0 is a local-first desktop workspace for files, projects, Office, notes, tasks, tools, Web Studio and built-in browser. Official site: https://irgeztne.com/workspace',
       bookmarkTitle: 'Bookmark — save or remove the current site',
       bookmarkSaved: 'Site saved to Bookmarks.',
       bookmarkRemoved: 'Site removed from Bookmarks.',
@@ -94,7 +94,16 @@
   function showStatus(message) {
     var status = document.getElementById('topbarStatus');
     if (!status) return;
-    status.textContent = message;
+    if (String(message || '').indexOf('https://irgeztne.com/workspace') !== -1) {
+      status.innerHTML = escapeHtml(message).replace(
+        'https://irgeztne.com/workspace',
+        '<a href="https://irgeztne.com/workspace" style="color:#60a5fa;text-decoration:underline;font-weight:600;margin-left:4px;">://irgeztne.com</a>'
+      );
+      var a = status.querySelector('a');
+      if (a) a.onclick = function (e) { e.preventDefault(); openInternalTab({ url: 'https://irgeztne.com/workspace', title: 'IRGEZTNE Workspace' }); };
+    } else {
+      status.textContent = message;
+    }
     status.classList.remove('hidden');
     window.clearTimeout(showStatus.timer);
     showStatus.timer = window.setTimeout(function () {
@@ -334,7 +343,7 @@
         return;
       }
       if (action === 'docs-status') {
-        openInternalTab({ url: 'https://irgeztne.com', title: 'IRGEZTNE Documentation' });
+        openInternalTab({ url: 'https://irgeztne.com/docs.html', title: 'IRGEZTNE Documentation' });
         return;
       }
       if (action === 'about') {
