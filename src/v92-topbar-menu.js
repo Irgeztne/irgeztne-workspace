@@ -98,13 +98,13 @@
   function showStatus(message) {
     var status = document.getElementById('topbarStatus');
     if (!status) return;
-    if (String(message || '').indexOf('https://irgeztne.com/workspace') !== -1) {
+    if (String(message || '').indexOf('https://irgeztne.com/about.html') !== -1) {
       status.innerHTML = escapeHtml(message).replace(
-        'https://irgeztne.com/workspace',
-        '<a href="https://irgeztne.com/workspace" style="color:#60a5fa;text-decoration:underline;font-weight:600;margin-left:4px;">://irgeztne.com</a>'
+        'https://irgeztne.com/about.html',
+        '<a href="https://irgeztne.com/about.html" style="color:#60a5fa;text-decoration:underline;font-weight:600;margin-left:4px;">://irgeztne.com</a>'
       );
       var a = status.querySelector('a');
-      if (a) a.onclick = function (e) { e.preventDefault(); openInternalTab({ url: 'https://irgeztne.com/workspace', title: 'IRGEZTNE Workspace' }); };
+      if (a) a.onclick = function (e) { e.preventDefault(); openInternalTab({ url: 'https://irgeztne.com/about.html', title: 'IRGEZTNE Workspace' }); };
     } else {
       status.textContent = message;
     }
