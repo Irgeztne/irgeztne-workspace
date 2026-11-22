@@ -343,7 +343,7 @@
     setButtonText('[data-topbar-link="report"]', t('report'));
     if (typeof renderUpdateIndicator === 'function') renderUpdateIndicator();
     setButtonText('[data-topbar-action="docs-status"]', t('docs'));
-    setButtonText('[data-topbar-action="about"]', t('about'));
+    setButtonText('[data-topbar-link="about"]', t('about'));
     renderSavedSitesPanel();
 
     if (bookmark) {
@@ -408,10 +408,6 @@
       }
       if (action === 'docs-status') {
         openInternalTab({ url: 'https://irgeztne.com/docs.html', title: 'IRGEZTNE Documentation' });
-        return;
-      }
-      if (action === 'about') {
-        openInternalTab({ url: 'https://irgeztne.com', title: 'IRGEZTNE Workspace' });
         return;
       }
     });
