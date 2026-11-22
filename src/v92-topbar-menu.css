@@ -169,3 +169,36 @@
   background: #86ffb9;
   box-shadow: 0 0 0 2px rgba(5, 34, 23, 0.72), 0 0 12px rgba(134, 255, 185, 0.92);
 }
+
+
+/* IRGEZTNE_LIVE_UPDATE_DOT_V1 */
+#topbarMoreBtn {
+  position: relative;
+}
+#topbarMoreBtn.has-update-dot::after {
+  content: "";
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 0 2px #0d182e, 0 0 8px #22c55e;
+}
+[data-topbar-link="updates"].has-update-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.irg-update-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #052e16;
+  background: #4ade80;
+}

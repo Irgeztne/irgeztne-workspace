@@ -364,3 +364,33 @@ ipcRenderer.on('irgeztne:open-internal-tab', (_event, payload) => {
     window.dispatchEvent(new CustomEvent('irgeztne:open-internal-tab', { detail: payload }));
   }
 });
+
+// irgeztne-platform-class
+window.addEventListener("DOMContentLoaded", () => {
+  document.documentElement.classList.add("platform-" + process.platform);
+});
+
+// irgeztne-tray-lang-sync
+(function() {
+  function detectIrgeztneLang() {
+    try {
+      const v = localStorage.getItem("nsbrowser.v8.language") || localStorage.getItem("language") || document.documentElement.lang || "";
+      return String(v).toLowerCase().startsWith("en") ? "en" : "ru";
+    } catch (_) {
+      return "ru";
+    }
+  }
+  function pushTrayLang(lang) {
+    const clean = String(lang || detectIrgeztneLang()).toLowerCase().startsWith("en") ? "en" : "ru";
+    ipcRenderer.send("irgeztne-tray:set-lang", clean);
+  }
+  window.addEventListener("DOMContentLoaded", () => pushTrayLang());
+  window.addEventListener("irg:language-changed", (e) => {
+    const next = (e && e.detail && (e.detail.lang || e.detail.language)) || detectIrgeztneLang();
+    pushTrayLang(next);
+  });
+  document.addEventListener("irg:language-changed", (e) => {
+    const next = (e && e.detail && (e.detail.lang || e.detail.language)) || detectIrgeztneLang();
+    pushTrayLang(next);
+  });
+})();

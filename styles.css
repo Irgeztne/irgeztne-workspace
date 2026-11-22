@@ -11479,3 +11479,28 @@ body.is-workspace-full-module-open[data-workspace-full-module="account"] .cabine
   .account-v24__section-head h1 { font-size: 27px; }
   .account-v24__section-head p { font-size: 14px; }
 }
+
+
+/* IRGEZTNE_CROSSPLATFORM_TOPBAR_V1 */
+.platform-darwin .topbar-row--tabs,
+.platform-win32 .topbar-row--tabs {
+  -webkit-app-region: drag;
+  min-height: 38px;
+}
+
+.platform-darwin .topbar-row--tabs button,
+.platform-darwin .topbar-row--tabs .tabs-scroll > *,
+.platform-darwin .topbar-row--tabs .topbar-brand,
+.platform-win32 .topbar-row--tabs button,
+.platform-win32 .topbar-row--tabs .tabs-scroll > *,
+.platform-win32 .topbar-row--tabs .topbar-brand {
+  -webkit-app-region: no-drag;
+}
+
+.platform-darwin .topbar-row--tabs {
+  padding-left: 80px !important;
+}
+
+.platform-win32 .topbar-row--tabs {
+  padding-right: 144px !important;
+}

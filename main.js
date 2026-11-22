@@ -1,4 +1,4 @@
-const { app, BrowserWindow, screen, Menu, ipcMain, shell, dialog, safeStorage, protocol, net } = require('electron');
+const { app, BrowserWindow, screen, Menu, Tray, nativeImage, ipcMain, shell, dialog, safeStorage, protocol, net } = require('electron');
 if (process.platform === 'linux' && process.env.APPIMAGE) {
   app.commandLine.appendSwitch('no-sandbox');
 }
@@ -2895,6 +2895,13 @@ function createAppMenu(win) {
       submenu: [
         { role: 'reload' },
         { role: 'forceReload' },
+        { type: 'separator' },
+        { role: 'resetZoom', accelerator: 'CmdOrCtrl+0' },
+        { role: 'zoomIn', accelerator: 'CmdOrCtrl+=' },
+        { role: 'zoomIn', accelerator: 'CmdOrCtrl+Plus', visible: false },
+        { role: 'zoomOut', accelerator: 'CmdOrCtrl+-' },
+        { type: 'separator' },
+        { role: 'togglefullscreen' },
         ...(!app.isPackaged ? [{ role: 'toggleDevTools' }] : [])
       ]
     }
@@ -2999,17 +3006,34 @@ function configureWindowSecurity(win) {
 }
 
 function createWindow() {
+  const primaryDisplay = screen.getPrimaryDisplay();
+  const { width: workW, height: workH } = primaryDisplay.workAreaSize;
+  const initialWidth = Math.min(1400, Math.max(960, Math.round(workW * 0.9)));
+  const initialHeight = Math.min(900, Math.max(640, Math.round(workH * 0.9)));
+
+  const isMac = process.platform === 'darwin';
+  const isWin = process.platform === 'win32';
+
   const win = new BrowserWindow({
-    
-    resizable: true,icon: resolveIRGEZTNEAppIconPath(),
-    width: 1400,
-    height: 900,
+    resizable: true,
+    width: initialWidth,
+    height: initialHeight,
+    minWidth: 860,
+    minHeight: 580,
     backgroundColor: '#071426',
-    ...(process.platform !== 'linux' ? {
-      titleBarStyle: 'hidden',
-      titleBarOverlay: { color: '#071426', symbolColor: '#d6e6ff', height: 34 }
+    ...(isMac ? {
+      titleBarStyle: 'hiddenInset',
+      trafficLightPosition: { x: 12, y: 10 }
     } : {}),
-    icon: getAppIconPath(),
+    ...(isWin ? {
+      titleBarStyle: 'hidden',
+      titleBarOverlay: {
+        color: '#0d182e',
+        symbolColor: '#d6e6ff',
+        height: 36
+      }
+    } : {}),
+    icon: resolveIRGEZTNEAppIconPath() || getAppIconPath(),
     autoHideMenuBar: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
@@ -3028,10 +3052,27 @@ function createWindow() {
 
   win.loadFile(INDEX_FILE);
 
-  win.webContents.once('did-finish-load', () => {
-    console.log('IRGEZTNE Workspace: page loaded');
-    if (!app.isPackaged) {
+  win.webContents.on('before-input-event', (event, input) => {
+    const mod = Boolean(input.control || input.meta);
+    if (!mod || input.type !== 'keyDown') return;
+
+    if (input.key === '=' || input.key === '+') {
+      const next = Math.min(2.0, Number((win.webContents.getZoomFactor() + 0.1).toFixed(2)));
+      win.webContents.setZoomFactor(next);
+      event.preventDefault();
+    } else if (input.key === '-') {
+      const next = Math.max(0.6, Number((win.webContents.getZoomFactor() - 0.1).toFixed(2)));
+      win.webContents.setZoomFactor(next);
+      event.preventDefault();
+    } else if (input.key === '0') {
+      win.webContents.setZoomFactor(1.0);
+      event.preventDefault();
     }
+  });
+
+  win.webContents.once('did-finish-load', () => {
+    win.webContents.setVisualZoomLevelLimits(1, 3).catch(() => {});
+    console.log('IRGEZTNE Workspace: page loaded');
   });
 
   return win;
@@ -3690,7 +3731,109 @@ app.whenReady().then(async () => {
     app.setName('IRGEZTNE Workspace');
   } catch (_) {}
 
-  registerIpcHandlers();
+  
+// IRGEZTNE_SYSTEM_TRAY_V1
+let irgeztneAppTray = null;
+let irgeztneTrayLang = "ru";
+
+function buildIRGEZTNETrayMenu() {
+  if (!irgeztneAppTray) return;
+  const isEn = irgeztneTrayLang === "en";
+
+  const showMainWin = () => {
+    const wins = BrowserWindow.getAllWindows().filter((w) => w && !w.isDestroyed());
+    if (wins.length > 0) {
+      const w = wins[0];
+      if (w.isMinimized()) w.restore();
+      w.show();
+      w.focus();
+    } else {
+      createWindow();
+    }
+  };
+
+  const minimizeMainWin = () => {
+    const wins = BrowserWindow.getAllWindows().filter((w) => w && !w.isDestroyed());
+    if (wins.length > 0) {
+      wins[0].minimize();
+    }
+  };
+
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: isEn ? "Open IRGEZTNE Workspace" : "Открыть IRGEZTNE Workspace",
+      click: showMainWin
+    },
+    {
+      label: isEn ? "Minimize Window" : "Свернуть в панель",
+      click: minimizeMainWin
+    },
+    { type: "separator" },
+    {
+      label: isEn ? "Quit IRGEZTNE Workspace" : "Закрыть приложение",
+      click: () => {
+        app.quit();
+      }
+    }
+  ]);
+
+  irgeztneAppTray.setContextMenu(contextMenu);
+}
+
+function createIRGEZTNETray() {
+  if (irgeztneAppTray) return irgeztneAppTray;
+  try {
+    const iconCandidates = [
+      path.join(__dirname, "build", "icons", "32x32.png"),
+      path.join(__dirname, "build", "icons", "48x48.png"),
+      path.join(__dirname, "build", "icons", "256x256.png"),
+      path.join(__dirname, "assets", "branding", "app-mark.png")
+    ];
+    const iconFile = iconCandidates.find((p) => fs.existsSync(p));
+    if (!iconFile) return null;
+
+    let trayImg = nativeImage.createFromPath(iconFile);
+    if (process.platform === "darwin") {
+      trayImg = trayImg.resize({ width: 18, height: 18 });
+    }
+
+    const locale = String((typeof app.getLocale === "function" ? app.getLocale() : "") || process.env.LANG || "").toLowerCase();
+    irgeztneTrayLang = locale.startsWith("en") ? "en" : "ru";
+
+    irgeztneAppTray = new Tray(trayImg);
+    irgeztneAppTray.setToolTip("IRGEZTNE Workspace");
+
+    buildIRGEZTNETrayMenu();
+
+    irgeztneAppTray.on("click", () => {
+      const wins = BrowserWindow.getAllWindows().filter((w) => w && !w.isDestroyed());
+      if (wins.length > 0) {
+        const w = wins[0];
+        if (w.isMinimized()) w.restore();
+        w.show();
+        w.focus();
+      } else {
+        createWindow();
+      }
+    });
+
+    return irgeztneAppTray;
+  } catch (err) {
+    console.warn("[IRGEZTNE Tray] failed to create tray:", err && err.message ? err.message : err);
+    return null;
+  }
+}
+
+ipcMain.on("irgeztne-tray:set-lang", (_event, lang) => {
+  const next = String(lang || "").toLowerCase().startsWith("en") ? "en" : "ru";
+  if (next !== irgeztneTrayLang) {
+    irgeztneTrayLang = next;
+    buildIRGEZTNETrayMenu();
+  }
+});
+
+registerIpcHandlers();
+  createIRGEZTNETray();
   createWindow();
 
   app.on('activate', () => {

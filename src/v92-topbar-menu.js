@@ -28,7 +28,10 @@
       releases: 'Релизы / история версий',
       docs: 'Документация',
       github: 'GitHub репозиторий',
+      report: 'Сообщить о проблеме',
       about: 'О IRGEZTNE',
+      upToDate: 'У вас установлена актуальная версия (1.0.0).',
+      updateAvailable: 'Доступна новая версия: ',
       bookmarks: 'Закладки',
       backup: 'Backup / перенос workspace',
       savedSitesTitle: 'Закладки',
@@ -52,7 +55,10 @@
       releases: 'Releases / version history',
       docs: 'Documentation',
       github: 'GitHub repository',
+      report: 'Report a problem',
       about: 'About IRGEZTNE',
+      upToDate: 'You are using the latest version (1.0.0).',
+      updateAvailable: 'New version available: ',
       bookmarks: 'Bookmarks',
       backup: 'Workspace Backup / Migration',
       savedSitesTitle: 'Bookmarks',
@@ -264,6 +270,57 @@
     button.setAttribute('aria-expanded', open ? 'true' : 'false');
   }
 
+  
+  // IRGEZTNE_LIVE_UPDATE_DOT_V1
+  var CURRENT_APP_VERSION = '1.0.0';
+  var latestAvailableVersion = '';
+
+  function compareSemver(a, b) {
+    var pa = String(a || '').replace(/^v/i, '').split('.').map(function (n) { return parseInt(n, 10) || 0; });
+    var pb = String(b || '').replace(/^v/i, '').split('.').map(function (n) { return parseInt(n, 10) || 0; });
+    for (var i = 0; i < Math.max(pa.length, pb.length); i++) {
+      var diff = (pa[i] || 0) - (pb[i] || 0);
+      if (diff !== 0) return diff;
+    }
+    return 0;
+  }
+
+  function renderUpdateIndicator() {
+    var moreBtn = document.getElementById('topbarMoreBtn');
+    var updBtn = document.querySelector('[data-topbar-link="updates"]');
+    var hasUpdate = Boolean(latestAvailableVersion && compareSemver(latestAvailableVersion, CURRENT_APP_VERSION) > 0);
+
+    if (moreBtn) {
+      moreBtn.classList.toggle('has-update-dot', hasUpdate);
+    }
+    if (updBtn) {
+      updBtn.classList.toggle('has-update-item', hasUpdate);
+      updBtn.innerHTML = hasUpdate
+        ? escapeHtml(t('updates')) + ' <span class="irg-update-badge">v' + escapeHtml(latestAvailableVersion) + '</span>'
+        : escapeHtml(t('updates'));
+    }
+  }
+
+  function checkLatestReleaseSilently() {
+    try {
+      fetch('https://github.com', {
+        headers: { 'Accept': 'application/vnd.github+json' }
+      })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (data) {
+          if (!data || !data.tag_name) return;
+          var ver = String(data.tag_name).replace(/^v/i, '').trim();
+          if (ver && compareSemver(ver, CURRENT_APP_VERSION) > 0) {
+            latestAvailableVersion = ver;
+            renderUpdateIndicator();
+          }
+        })
+        .catch(function () {});
+    } catch (_) {}
+  }
+
+  window.setTimeout(checkLatestReleaseSilently, 2200);
+
   function updateLabels() {
     var button = document.getElementById('topbarMoreBtn');
     var menu = document.getElementById('topbarMoreMenu');
@@ -285,6 +342,8 @@
     setButtonText('[data-topbar-link="updates"]', t('updates'));
     setButtonText('[data-topbar-link="releases"]', t('releases'));
     setButtonText('[data-topbar-link="github"]', t('github'));
+    setButtonText('[data-topbar-link="report"]', t('report'));
+    if (typeof renderUpdateIndicator === 'function') renderUpdateIndicator();
     setButtonText('[data-topbar-action="docs-status"]', t('docs'));
     setButtonText('[data-topbar-action="about"]', t('about'));
     renderSavedSitesPanel();
@@ -334,6 +393,13 @@
       if (linkButton) {
         var key = String(linkButton.getAttribute('data-topbar-link') || '');
         openInternalTab(LINKS[key]);
+        if (key === 'updates') {
+          if (latestAvailableVersion) {
+            showStatus(t('updateAvailable') + 'v' + latestAvailableVersion);
+          } else {
+            showStatus(t('upToDate'));
+          }
+        }
         return;
       }
 
