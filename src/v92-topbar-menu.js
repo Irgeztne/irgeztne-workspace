@@ -41,7 +41,6 @@
       savedSitesRemove: 'Удалить',
       savedSitesClose: 'Закрыть',
       docsStatus: 'Документация пока в разработке. Сейчас доступны официальный сайт, проверка новой версии, релизы и GitHub.',
-      aboutStatus: 'IRGEZTNE Workspace 1.0.0 — локальное настольное рабочее пространство для файлов, проектов, офиса, заметок, задач, инструментов, Веб-студии и встроенного браузера. Официальный сайт: https://irgeztne.com/workspace',
       bookmarkTitle: 'Закладка — сохранить или удалить текущий сайт',
       bookmarkSaved: 'Сайт сохранён в Закладки.',
       bookmarkRemoved: 'Сайт удалён из Закладок.',
@@ -68,7 +67,6 @@
       savedSitesRemove: 'Remove',
       savedSitesClose: 'Close',
       docsStatus: 'Documentation is in development. For now, use the official website, update check, releases, and GitHub.',
-      aboutStatus: 'IRGEZTNE Workspace 1.0.0 is a local-first desktop workspace for files, projects, Office, notes, tasks, tools, Web Studio and built-in browser. Official site: https://irgeztne.com/workspace',
       bookmarkTitle: 'Bookmark — save or remove the current site',
       bookmarkSaved: 'Site saved to Bookmarks.',
       bookmarkRemoved: 'Site removed from Bookmarks.',
@@ -413,7 +411,7 @@
         return;
       }
       if (action === 'about') {
-        showStatus(t('aboutStatus'));
+        openInternalTab({ url: 'https://irgeztne.com', title: 'IRGEZTNE Workspace' });
         return;
       }
     });
